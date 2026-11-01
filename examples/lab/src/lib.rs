@@ -2,12 +2,18 @@
 mod app;
 use rustx::prelude::*;
 pub fn engine() -> (rustx_engine::Engine, HttpClient) {
+    engine_with_host(HostCapabilities::get_cancel()).expect("native GET/cancel host")
+}
+pub fn engine_with_host(
+    capabilities: HostCapabilities,
+) -> Result<(rustx_engine::Engine, HttpClient), HostError> {
     let h = HttpClient::default();
+    h.connect(capabilities)?;
     let client = h.clone();
-    (
+    Ok((
         rustx_engine::Engine::new(move |cx| app::root(cx, client.clone())),
         h,
-    )
+    ))
 }
 #[cfg(target_arch = "wasm32")]
 mod browser {
@@ -17,9 +23,14 @@ mod browser {
     use wasm_bindgen::prelude::*;
     thread_local! {static APP:RefCell<Option<WebApp>>=const{RefCell::new(None)};static GPU:RefCell<Option<WebGpu>>=const{RefCell::new(None)};}
     #[wasm_bindgen]
-    pub fn init_app() {
-        let (e, h) = engine();
+    pub fn init_app(capabilities: &str) -> Result<(), JsValue> {
+        let capabilities = serde_json::from_str(capabilities)
+            .map_err(|e| JsValue::from_str(&format!("Invalid host report: {e}")))?;
+        let (e, h) = engine_with_host(capabilities)
+            .map_err(|e| JsValue::from_str(&format!("Host handshake failed: {e:?}")))?;
+        GPU.with(|g| g.replace(None));
         APP.with(|a| a.replace(Some(WebApp::new(e, h))));
+        Ok(())
     }
     #[wasm_bindgen]
     pub async fn init_gpu(canvas: rustx_web::HtmlCanvasElement) -> Result<(), JsValue> {
@@ -111,7 +122,7 @@ mod browser {
         APP.with(|a| serde_json::to_string(&a.borrow().as_ref().unwrap().http.drain()).unwrap())
     }
     #[wasm_bindgen]
-    pub fn response(id: f64, status: u16, body: Vec<u8>, error: String) {
+    pub fn response(id: f64, status: u16, body: Vec<u8>, error: String, version: u32) {
         let Some(id) = rustx_web::host_id(id) else {
             return;
         };
@@ -119,7 +130,7 @@ mod browser {
             a.borrow_mut()
                 .as_mut()
                 .unwrap()
-                .response(id, status, body, &error)
+                .response(id, status, body, &error, version)
         });
     }
     #[wasm_bindgen]

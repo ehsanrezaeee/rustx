@@ -5,10 +5,15 @@
   "scripts": {
     "test:wasm": "node scripts/test-wasm.mjs",
     "test:browser": "node scripts/test-browser.mjs",
-    "test:http": "cargo build -p rustx-cli --locked && node scripts/test-http.mjs"
+    "test:http": "cargo build -p rustx-cli --locked && node scripts/test-http.mjs",
+    "test:host": "node scripts/test-host.mjs",
+    "test:gpu": "node scripts/test-gpu.mjs",
+    "test:probe": "node scripts/compare-probe.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "package": "node scripts/package.mjs"
   },
   "devDependencies": {
-    "playwright": "1.51.1",
-    "sharp": "0.34.5"
+    "playwright": "1.64.1",
+    "sharp": "0.35.5"
   }
 }

@@ -101,8 +101,35 @@ impl CpuRenderer {
         mask: Option<&Mask>,
         alpha: f32,
     ) {
+        if b.node.style.opacity < 1. {
+            let mut layer = Pixmap::new(self.pixmap.width(), self.pixmap.height()).unwrap();
+            std::mem::swap(&mut self.pixmap, &mut layer);
+            self.paint_node(b, text, scale, mask, 1.);
+            std::mem::swap(&mut self.pixmap, &mut layer);
+            self.pixmap.draw_pixmap(
+                0,
+                0,
+                layer.as_ref(),
+                &PixmapPaint {
+                    opacity: (alpha * b.node.style.opacity).clamp(0., 1.),
+                    ..Default::default()
+                },
+                Transform::identity(),
+                None,
+            );
+        } else {
+            self.paint_node(b, text, scale, mask, alpha);
+        }
+    }
+    fn paint_node(
+        &mut self,
+        b: &BoxNode,
+        text: &mut TextEngine,
+        scale: f32,
+        mask: Option<&Mask>,
+        alpha: f32,
+    ) {
         let s = &b.node.style;
-        let alpha = alpha * s.opacity;
         let p = path(b.rect, s.radius, scale);
         let mut paint = Paint::default();
         paint.anti_alias = true;
@@ -127,8 +154,9 @@ impl CpuRenderer {
         }
         if let Some((w, c)) = s.border {
             paint.set_color(color(c, alpha));
+            let border = path(b.rect.inset(-f64::from(w) * 0.5), s.radius, scale);
             self.pixmap.stroke_path(
-                &p,
+                &border,
                 &paint,
                 &Stroke {
                     width: w * scale,
@@ -207,6 +235,7 @@ impl CpuRenderer {
                     image.as_ref(),
                     &PixmapPaint {
                         opacity: alpha,
+                        quality: FilterQuality::Bilinear,
                         ..Default::default()
                     },
                     t,

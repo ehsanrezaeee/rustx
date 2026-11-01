@@ -1,6 +1,6 @@
 //! Native event loop; scoped state remains on the UI thread.
 use crate::{cpu::CpuRenderer, gpu::Gpu, Engine};
-use rustx_core::{HostCommand, HostError, HttpClient, HttpResponse};
+use rustx_core::{HostCommand, HostError, HttpClient, HttpResponse, HOST_PROTOCOL_VERSION};
 use std::{
     collections::HashMap,
     io::Read,
@@ -63,7 +63,7 @@ struct App {
     gpu: Option<Gpu>,
     cpu: Option<Software>,
     proxy: EventLoopProxy<()>,
-    tx: mpsc::Sender<ResultMessage>,
+    tx: mpsc::SyncSender<ResultMessage>,
     rx: mpsc::Receiver<ResultMessage>,
     pending: HashMap<u64, Arc<AtomicBool>>,
     pointer: Point,
@@ -77,11 +77,11 @@ impl App {
     fn network(&mut self) {
         for (id, result) in self.rx.try_iter() {
             self.pending.remove(&id);
-            self.http.complete(id, result);
+            self.http.complete(HOST_PROTOCOL_VERSION, id, result);
         }
         for cmd in self.http.drain() {
             match cmd {
-                HostCommand::Cancel { id } => {
+                HostCommand::Cancel { id, .. } => {
                     if let Some(c) = self.pending.get(&id) {
                         c.store(true, Ordering::Release);
                     }
@@ -89,6 +89,7 @@ impl App {
                 HostCommand::Get(req) => {
                     if self.pending.len() >= 16 {
                         self.http.complete(
+                            HOST_PROTOCOL_VERSION,
                             req.id,
                             Err(HostError::Transport("Too many pending requests".into())),
                         );
@@ -317,7 +318,7 @@ pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String>
     engine.runtime.set_waker(move || {
         let _ = wake.send_event(());
     });
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::sync_channel(16);
     let mut a = App {
         engine,
         http,

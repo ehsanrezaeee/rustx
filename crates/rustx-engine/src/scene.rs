@@ -89,7 +89,7 @@ impl SceneEngine {
                 Affine::IDENTITY,
                 color(c),
                 None,
-                &RoundedRect::from_rect(rect.inset(f64::from(width) * 0.5), f64::from(s.radius)),
+                &RoundedRect::from_rect(rect.inset(-f64::from(width) * 0.5), f64::from(s.radius)),
             );
         }
         if matches!(key.kind, Kind::Text | Kind::Button | Kind::Input) {

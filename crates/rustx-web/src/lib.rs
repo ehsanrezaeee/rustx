@@ -61,17 +61,18 @@ impl WebApp {
         if let Some(b) = &self.engine.boxes {
             walk(b, &mut nodes)
         }
-        serde_json::json!({"nodes":nodes,"counts":self.engine.runtime.counts(),"pending":self.http.pending()}).to_string()
+        serde_json::json!({"nodes":nodes,"counts":self.engine.runtime.counts(),"pending":self.http.pending(),"host":self.http.capabilities(),"queued_commands":self.http.queued()}).to_string()
     }
-    pub fn response(&mut self, id: u64, status: u16, body: Vec<u8>, error: &str) {
+    pub fn response(&mut self, id: u64, status: u16, body: Vec<u8>, error: &str, version: u32) {
         let result = match error {
             "" => Ok(HttpResponse { status, body }),
             "cancelled" => Err(HostError::Cancelled),
             "timeout" => Err(HostError::Timeout),
             "too_large" => Err(HostError::TooLarge),
+            "busy" => Err(HostError::Busy),
             e => Err(HostError::Transport(e.into())),
         };
-        self.http.complete(id, result);
+        self.http.complete(version, id, result);
     }
 }
 #[cfg(target_arch = "wasm32")]

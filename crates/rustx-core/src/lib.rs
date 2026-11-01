@@ -1,5 +1,7 @@
 //! Mount-once components; owned signals and automatically tracked reactive bindings.
+mod host;
 mod style;
+pub use host::*;
 use std::{
     any::{Any, TypeId},
     cell::{Cell, RefCell},
@@ -761,7 +763,7 @@ impl Runtime {
                 id: s.id,
                 role,
                 label: s.label.clone().unwrap_or_else(|| {
-                    if s.kind == Kind::Button {
+                    if matches!(s.kind, Kind::Button | Kind::Text) {
                         s.text_content()
                     } else {
                         s.text.clone()
@@ -826,129 +828,5 @@ impl Runtime {
 impl Drop for Runtime {
     fn drop(&mut self) {
         dispose(&self.inner, &self.root)
-    }
-}
-#[derive(Clone, Debug, serde::Serialize)]
-pub struct HttpRequest {
-    pub id: u64,
-    pub url: String,
-    pub max_bytes: usize,
-    pub timeout_ms: u32,
-}
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum HostError {
-    Unsupported(&'static str),
-    Cancelled,
-    Timeout,
-    TooLarge,
-    Transport(String),
-    Http(u16),
-    Decode(String),
-}
-#[derive(Clone, Debug)]
-pub struct HttpResponse {
-    pub status: u16,
-    pub body: Vec<u8>,
-}
-#[derive(Clone, Debug, serde::Serialize)]
-#[serde(tag = "kind")]
-pub enum HostCommand {
-    Get(HttpRequest),
-    Cancel { id: u64 },
-}
-type Callback = Box<dyn FnOnce(Result<HttpResponse, HostError>)>;
-struct Requests {
-    next: u64,
-    queue: Vec<HostCommand>,
-    pending: HashMap<u64, (Scope, u64, Callback)>,
-}
-#[derive(Clone)]
-pub struct HttpClient(Rc<RefCell<Requests>>);
-impl Default for HttpClient {
-    fn default() -> Self {
-        Self(Rc::new(RefCell::new(Requests {
-            next: 1,
-            queue: vec![],
-            pending: HashMap::new(),
-        })))
-    }
-}
-impl HttpClient {
-    pub fn get(
-        &self,
-        scope: &Scope,
-        url: impl Into<String>,
-        f: impl FnOnce(Result<HttpResponse, HostError>) + 'static,
-    ) -> u64 {
-        let id = {
-            let mut b = self.0.borrow_mut();
-            let id = b.next;
-            assert!(id <= MAX_HOST_ID, "host ID space exhausted");
-            b.next = b.next.checked_add(1).expect("request ID exhausted");
-            if !scope.is_alive() {
-                drop(b);
-                f(Err(HostError::Cancelled));
-                return id;
-            }
-            b.pending.insert(id, (scope.clone(), 0, Box::new(f)));
-            b.queue.push(HostCommand::Get(HttpRequest {
-                id,
-                url: url.into(),
-                max_bytes: 1_048_576,
-                timeout_ms: 10000,
-            }));
-            id
-        };
-        let weak = Rc::downgrade(&self.0);
-        let cleanup = scope.on_cleanup(move || {
-            if let Some(i) = weak.upgrade() {
-                let cb = {
-                    let mut b = i.borrow_mut();
-                    let c = b.pending.remove(&id);
-                    if c.is_some() {
-                        b.queue.push(HostCommand::Cancel { id });
-                    }
-                    c
-                };
-                drop(cb)
-            }
-        });
-        if let Some(v) = self.0.borrow_mut().pending.get_mut(&id) {
-            v.1 = cleanup;
-        }
-        id
-    }
-    pub fn cancel(&self, id: u64) {
-        let cb = {
-            let mut b = self.0.borrow_mut();
-            let cb = b.pending.remove(&id);
-            if cb.is_some() {
-                b.queue.push(HostCommand::Cancel { id });
-            }
-            cb
-        };
-        if let Some((s, c, cb)) = cb {
-            s.remove_cleanup(c);
-            if s.is_alive() {
-                cb(Err(HostError::Cancelled))
-            }
-        }
-    }
-    pub fn complete(&self, id: u64, result: Result<HttpResponse, HostError>) -> bool {
-        let cb = self.0.borrow_mut().pending.remove(&id);
-        if let Some((s, c, cb)) = cb {
-            s.remove_cleanup(c);
-            if s.is_alive() {
-                cb(result);
-                return true;
-            }
-        }
-        false
-    }
-    pub fn drain(&self) -> Vec<HostCommand> {
-        std::mem::take(&mut self.0.borrow_mut().queue)
-    }
-    pub fn pending(&self) -> usize {
-        self.0.borrow().pending.len()
     }
 }
