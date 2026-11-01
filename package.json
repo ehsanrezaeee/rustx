@@ -1,0 +1,14 @@
+{
+  "name": "rustx-stage-01-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:wasm": "node scripts/test-wasm.mjs",
+    "test:browser": "node scripts/test-browser.mjs",
+    "test:http": "cargo build -p rustx-cli --locked && node scripts/test-http.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.51.1",
+    "sharp": "0.34.5"
+  }
+}

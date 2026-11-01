@@ -1,0 +1,21 @@
+[package]
+name = "rustx-lab"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[lib]
+crate-type = ["cdylib", "rlib"]
+[[bin]]
+name = "rustx-lab"
+path = "src/main.rs"
+[dependencies]
+rustx = { path = "../../crates/rustx" }
+rustx-engine = { path = "../../crates/rustx-engine" }
+rustx-web = { path = "../../crates/rustx-web" }
+serde_json = "1"
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.100"
+wasm-bindgen-futures = "=0.4.50"
+[dev-dependencies]
+pollster = "=0.4.0"
+png = "=0.17.16"

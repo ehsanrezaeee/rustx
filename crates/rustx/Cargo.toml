@@ -1,0 +1,11 @@
+[package]
+name = "rustx"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+[dependencies]
+rustx-core = { path = "../rustx-core" }
+rustx-macros = { path = "../rustx-macros" }
+typed-builder = "=0.20.1"
+[dev-dependencies]
+trybuild = "=1.0.115"

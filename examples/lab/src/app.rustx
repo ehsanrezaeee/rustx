@@ -1,0 +1,155 @@
+use rustx::prelude::*;
+use std::{cell::RefCell, rc::Rc};
+const INK: u32 = 0xf1f5ff;
+const MUTED: u32 = 0x95a4bd;
+const GREEN: u32 = 0xb5f36b;
+fn card() -> Style {
+    Style::column()
+        .padding(24.)
+        .gap(14.)
+        .background(0x141e2e)
+        .radius(18.)
+        .border(1., 0x273347)
+}
+fn primary() -> Style {
+    Style::row()
+        .padding(14.)
+        .background(GREEN)
+        .color(0x12210e)
+        .font_size(15.)
+        .radius(10.)
+}
+fn secondary() -> Style {
+    Style::row()
+        .padding(14.)
+        .background(0x253247)
+        .color(INK)
+        .font_size(15.)
+        .radius(10.)
+}
+fn small() -> Style {
+    Style::column().font_size(13.).color(MUTED)
+}
+#[component]
+fn Counter(cx: Scope, name: String, #[prop(default = 0)] initial: i32) -> View {
+    let count = cx.signal(initial);
+    let display = count.clone();
+    let inc = count.clone();
+    let dec = count.clone();
+    rustx! {<Column style={card().width(280.)}><Text style={small()}>{format!("KEYED COMPONENT / {name}")}</Text><Text id={format!("count-{name}")} style={Style::column().font_size(36.).color(INK)}>{move||format!("Count: {}",display.get())}</Text><Row style={Style::row().gap(10.)}><Button id={format!("inc-{name}")} style={primary()} on_click={move|_|{let _=inc.update(|v|*v+=1);}}>{"Increase +"}</Button><Button id={format!("dec-{name}")} style={secondary()} on_click={move|_|{let _=dec.update(|v|*v-=1);}}>{"−"}</Button></Row></Column>}
+}
+#[component]
+fn Foundation(cx: Scope) -> View {
+    let order = cx.signal(vec!["ALPHA".to_string(), "BETA".to_string()]);
+    let visible = cx.signal(true);
+    let input = cx.signal("سلام RustX".to_string());
+    let change = input.clone();
+    let field = input.clone();
+    let echo = input.clone();
+    let flip = order.clone();
+    let show = visible.clone();
+    let label = visible.clone();
+    let memo = input.clone();
+    let length = cx.memo(move || memo.get().chars().count());
+    rustx! {<Column style={Style::column().gap(22.)}><Text style={Style::column().font_size(32.)}>{"Small components. Real Rust."}</Text><Text style={small()}>{"Change a counter, reverse the list, and watch state stay with its key."}</Text><Row style={Style::row().gap(12.).wrap()}><Button id="reverse" style={primary()} on_click={move|_|{let _=flip.update(|v|v.reverse());}}>{"Reverse components"}</Button><Button id="toggle" style={secondary()} on_click={move|_|{let _=show.update(|v|*v=!*v);}}>{move||if label.get(){"Unmount components"}else{"Mount components"}}</Button></Row>
+    {move||if visible.get(){rustx!{<Row style={Style::row().gap(16.).wrap()}>{keyed(order.get(),|n|n.clone(),|name|rustx!{<Counter name={name}/>})}</Row>}}else{rustx!{<Text>{"Disposed. Mount again to create fresh state."}</Text>}}}
+    <Column style={card()}><Text style={Style::column().font_size(20.)}>{"Write in your language."}</Text><Text style={small()}>{"Browser composition events feed the Rust text model. Persian + English are shaped in Rust."}</Text>
+    {move||rustx!{<Input id="name-input" label="Your message" value={field.get()} style={Style::column().padding(14.).height(54.).background(0x0b121d).border(1.,0x456078).radius(10.).font_size(20.)} on_input={{let change=change.clone();move|e:InputEvent|{let _=change.set(e.value);}}}/>}}
+    <Text id="echo" style={Style::column().font_size(24.).color(GREEN)}>{move||echo.get()}</Text><Text id="length" style={small()}>{move||format!("Derived memo: {} Unicode scalars",length.get())}</Text></Column></Column>}
+}
+#[derive(Clone)]
+struct Person {
+    id: u64,
+    name: String,
+    email: String,
+    company: String,
+}
+#[derive(Clone)]
+enum People {
+    Idle,
+    Loading,
+    Ready(Vec<Person>),
+    Failed(String),
+}
+#[component]
+fn PeopleApp(cx: Scope) -> View {
+    let http = cx.context::<HttpClient>().expect("HTTP context");
+    let status = cx.signal(People::Idle);
+    let latest = Rc::new(RefCell::new(None));
+    let start = {
+        let cx = cx.clone();
+        let status = status.clone();
+        let http = http.clone();
+        let latest = latest.clone();
+        move |url: &str| {
+            if let Some(id) = latest.borrow_mut().take() {
+                http.cancel(id);
+            }
+            let _ = status.set(People::Loading);
+            let update = status.clone();
+            let id = http.get(&cx, url, move |result| {
+                let next = match result {
+                    Ok(r) if (200..300).contains(&r.status) => {
+                        match serde_json::from_slice::<serde_json::Value>(&r.body) {
+                            Ok(v) => match v.as_array() {
+                                Some(rows) => People::Ready(
+                                    rows.iter()
+                                        .take(12)
+                                        .filter_map(|u| {
+                                            Some(Person {
+                                                id: u["id"].as_u64()?,
+                                                name: u["name"].as_str()?.into(),
+                                                email: u["email"].as_str()?.into(),
+                                                company: u["company"]["name"]
+                                                    .as_str()
+                                                    .unwrap_or("Independent")
+                                                    .into(),
+                                            })
+                                        })
+                                        .collect(),
+                                ),
+                                None => People::Failed("Expected a JSON array".into()),
+                            },
+                            Err(e) => People::Failed(e.to_string()),
+                        }
+                    }
+                    Ok(r) => People::Failed(format!("HTTP {}", r.status)),
+                    Err(e) => People::Failed(format!("{e:?}")),
+                };
+                let _ = update.set(next);
+            });
+            *latest.borrow_mut() = Some(id);
+        }
+    };
+    let fixture = start.clone();
+    let live = start.clone();
+    let fail = start.clone();
+    let slow = start.clone();
+    let cancel = http.clone();
+    let request = latest.clone();
+    rustx! {<Column style={Style::column().gap(20.)}><Text style={small().color(GREEN)}>{"EXAMPLE 01 / PEOPLE EXPLORER"}</Text><Text style={Style::column().font_size(36.)}>{"Rust UI. Browser networking."}</Text><Text style={small()}>{"A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result."}</Text><Row style={Style::row().gap(10.).wrap()}><Button id="load-fixture" style={primary()} on_click={move|_|fixture("/api/users")}>{"Load local sample"}</Button><Button id="load-live" style={secondary()} on_click={move|_|live("https://jsonplaceholder.typicode.com/users")}>{"Try JSONPlaceholder"}</Button><Button id="load-error" style={secondary()} on_click={move|_|fail("/api/error")}>{"Test error"}</Button><Button id="load-slow" style={secondary()} on_click={move|_|slow("/api/users?delay=1")}>{"Slow request"}</Button><Button id="cancel" style={secondary()} on_click={move|_|{if let Some(id)=request.borrow_mut().take(){cancel.cancel(id);}}}>{"Cancel"}</Button></Row>
+    {move||match status.get(){People::Idle=>rustx!{<Column style={card()}><Text id="api-state">{"Ready when you are. Choose a data source above."}</Text></Column>},People::Loading=>rustx!{<Text id="api-state" style={small().color(GREEN)}>{"Loading people…"}</Text>},People::Failed(error)=>rustx!{<Column style={card().border(1.,0x9f6554)}><Text id="api-state">{format!("Request failed: {error}")}</Text><Text style={small()}>{"Retry either source. The local sample works without external internet."}</Text></Column>},People::Ready(people)=>rustx!{<Column style={Style::column().gap(14.)}><Text id="api-state" style={small().color(GREEN)}>{format!("{} people / request completed",people.len())}</Text><Div style={Style::grid(3).responsive(250.).gap(14.)}>{keyed(people,|p|p.id,|p|rustx!{<Column style={card()}><Text style={small().color(GREEN)}>{format!("PERSON {:02}",p.id)}</Text><Text style={Style::column().font_size(21.)}>{p.name}</Text><Text style={small()}>{p.email}</Text><Text style={small()}>{p.company}</Text></Column>})}</Div></Column>}}}</Column>}
+}
+#[component]
+fn Home(cx: Scope) -> View {
+    let preset = cx.signal(false);
+    let switch = preset.clone();
+    let shown = preset.clone();
+    rustx! {<Column style={Style::column().gap(28.)}>
+    <Text style={small().color(GREEN)}>{"A DIFFERENT WAY TO BUILD INTERFACES"}</Text><Text style={Style::column().font_size(58.).small_font_size(34.).color(INK)}>{"Think in components.\nCreate with Rust."}</Text><Text style={Style::column().font_size(18.).color(MUTED)}>{"A canvas-first UI framework. Familiar composition, typed Rust, and one shared engine for web and desktop."}</Text><Row style={Style::row().gap(12.).wrap()}><Text style={primary()}>{"Rust → WebAssembly → Canvas"}</Text><Text style={secondary()}>{"Stage 1 / experimental"}</Text></Row>
+    <Div style={Style::grid(3).responsive(250.).gap(14.)}><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"01  Compose"}</Text><Text>{"Typed props. Scoped state. JSX-like markup."}</Text><Text style={small()}>{"Keep behavior in Rust and reuse components as crates."}</Text></Column><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"02  Render"}</Text><Text>{"Your UI, owned by the Rust engine."}</Text><Text style={small()}>{"Shared layout and shaped text. Explicit GPU and CPU paths."}</Text></Column><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"03  Connect"}</Text><Text>{"Browser capabilities, typed boundaries."}</Text><Text style={small()}>{"Call HTTP from Rust. Let the host handle Fetch and cancellation."}</Text></Column></Div>
+    <Column style={card().background(0x101927)}><Row style={Style::row().gap(18.).wrap()}><Text style={Style::column().font_size(24.)}>{"The playground"}</Text><Text style={small().color(GREEN)}>{"LIVE, PRECOMPILED COMPONENTS"}</Text></Row><Text style={small()}>{"Switch presets and interact with real Rust state. Arbitrary source compilation is a final-release requirement."}</Text><Button id="preset" style={secondary()} on_click={move|_|{let _=switch.update(|v|*v=!*v);}}>{"Switch example"}</Button>
+    {move||if shown.get(){rustx!{<Column><Text style={small()}>{"rustx! { <Text>{\"سلام RustX\"}</Text> }"}</Text><Text style={Style::column().font_size(32.).color(GREEN)}>{"سلام RustX — Hello, world."}</Text></Column>}}else{rustx!{<Column><Text style={small()}>{"let count = cx.signal(0); // owned by this component"}</Text><Counter name={"PLAYGROUND".into()}/></Column>}}}</Column><Text style={small()}>{"Built with RustX. Canvas visuals · semantic browser bridge · performance claims require measurements."}</Text></Column>}
+}
+#[component]
+pub fn App(cx: Scope) -> View {
+    let page = cx.signal(0);
+    let h = page.clone();
+    let p = page.clone();
+    let l = page.clone();
+    rustx! {<Column style={Style::column().padding(32.).gap(30.)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);}}>{"Runtime lab"}</Button></Row>{move||match page.get(){1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
+}
+pub fn root(cx: Scope, http: HttpClient) -> View {
+    cx.provide(http);
+    rustx! {<App/>}
+}

@@ -1,0 +1,17 @@
+error[E0308]: mismatched types
+ --> tests/ui/wrong_prop.rs:3:37
+  |
+3 | fn main(){let _=rustx!{<Card title={42u32}/>};}
+  |                              -----  ^^^^^ expected `String`, found `u32`
+  |                              |
+  |                              arguments to this method are incorrect
+  |
+note: method defined here
+ --> tests/ui/wrong_prop.rs:2:21
+  |
+2 | #[component]fn Card(title:String)->View{Node::text(title)}
+  |                     ^^^^^-------
+help: try using a conversion method
+  |
+3 | fn main(){let _=rustx!{<Card title={42u32.to_string()}/>};}
+  |                                          ++++++++++++

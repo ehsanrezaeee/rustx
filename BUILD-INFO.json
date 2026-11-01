@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0-stage1-foundation",
+  "date": "2026-11-01",
+  "stage_accepted": false,
+  "rust": "1.90.0",
+  "wasm_bindgen": "0.2.100",
+  "node": "24.22.1",
+  "sharp": "0.34.5",
+  "test_environment": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "gpu_probe": "Mesa llvmpipe software GL; not physical GPU",
+  "identity": "SHA-256 of SOURCE_MANIFEST.sha256 in SOURCE-REVISION.txt",
+  "missing": [
+    "real browser",
+    "real Windows",
+    "physical GPU/presentation",
+    "IME",
+    "screen readers",
+    "host capability/version negotiation"
+  ]
+}

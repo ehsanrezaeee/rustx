@@ -1,0 +1,32 @@
+warning: use of deprecated method `CardPropsBuilder::build`: Missing required field title
+ --> tests/ui/missing_prop.rs:3:17
+  |
+3 | fn main(){let _=rustx!{<Card/>};}
+  |                 ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(deprecated)]` on by default
+  = note: this warning originates in the macro `rustx` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0061]: this method takes 1 argument but 0 arguments were supplied
+ --> tests/ui/missing_prop.rs:3:17
+  |
+3 | fn main(){let _=rustx!{<Card/>};}
+  |                 ^^^^^^^^^^^^^^^ argument #1 of type `CardPropsBuilder_Error_Missing_required_field_title` is missing
+  |
+note: method defined here
+ --> tests/ui/missing_prop.rs:2:1
+  |
+2 | #[component]fn Card(title:String)->View{Node::text(title)}
+  | ^^^^^^^^^^^^
+  = note: this error originates in the macro `rustx` which comes from the expansion of the derive macro `::rustx::__private::typed_builder::TypedBuilder` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unreachable call
+ --> tests/ui/missing_prop.rs:3:25
+  |
+3 | fn main(){let _=rustx!{<Card/>};}
+  |                 --------^^^^---
+  |                 |       |
+  |                 |       unreachable call
+  |                 any code following this expression is unreachable
+  |
+  = note: `#[warn(unreachable_code)]` on by default
