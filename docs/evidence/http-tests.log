@@ -1,0 +1,7 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> test:http
+> cargo build -p rustx-cli --locked && node scripts/test-http.mjs
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+PASS: real Rust HTTP fixture server -> production JS Fetch -> compiled Wasm (success, HTTP 503, cancellation). No browser/CORS claim.

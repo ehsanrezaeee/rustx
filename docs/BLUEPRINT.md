@@ -11,11 +11,11 @@
 
 Delivered: typed component macro, scoped signals/memo/effects/cleanup/context/refs, keyed identity, Rust layout/shaping/scene, CPU and GPU adapters, JS GET/cancel capability bridge, native host, fixture server, build scripts, tests and handoff documents. The app contains a responsive homepage, interactive precompiled playground presets, People Explorer with local/JSONPlaceholder actions, and a keyed counter/Persian input lab.
 
-**Stage 1 is not fully accepted.** Tests of core behavior and actual Wasm execution are recorded in `docs/ACCEPTANCE.md` with logs for this snapshot. Missing real browser, physical GPU, Windows, screen-reader and IME evidence remains unverified/blocked. No speed comparison against React or Go is claimed. Engine PNGs and software graphics probes do not certify browser or device behavior.
+**Stage 1 is not fully accepted.** Tests of core behavior and actual Wasm execution are recorded in `docs/ACCEPTANCE.md` with logs for this snapshot. Actual Chrome CPU/WebGPU presentation and native Apple M3 Metal evidence are now recorded, with keyboard/editing/fixture browser checks and a bounded versioned host contract. Windows, screen-reader and real OS IME evidence remains unverified/blocked. No speed comparison against React or Go is claimed. Engine PNGs and software graphics probes do not certify browser or device behavior.
 
 **Next agent:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/COMPATIBILITY.md`, and `docs/NEXT_AGENT.md`. Replay tests against the supplied source; then close the browser/native rendering and semantic/input feasibility gates. Do not restart the framework or inherit old RustUI readiness percentages. The earliest unmet gate remains Stage 1, not Stage 2.
 
-RX-01 is implemented but needs independent fresh-machine replay. RX-02–05 are verified for their core contracts by the delivered passing tests. The actual Wasm and real local HTTP → JS Fetch → Wasm integration suites also pass; evidence is in the ZIP. RX-06 is partial GET/cancel without full capability/version negotiation. RX-07–09 still need platform acceptance. Later-stage scaffolding is not a completed requirement. The repository ledger provides all 46 row statuses.
+RX-01 is implemented but needs independent fresh-machine replay. RX-02–05 are verified for their core contracts by the delivered passing tests. The actual Wasm and real local HTTP → JS Fetch → Wasm integration suites also pass; current source, logs, browser evidence and prebuilt demo are in the project and full archive. RX-06 now has a verified finite Stage 1 GET/cancel version/capability contract with bounded queues, mismatch rejection and scope disposal tests; the broader Stage 3 service API remains incomplete. RX-07–09 still need Windows/AT/IME platform acceptance. Later-stage scaffolding is not a completed requirement. The repository ledger provides all 46 row statuses.
 
 **New final-release requirements requested by the user:** RX-45 is a polished successful API showcase; RX-46 is a RustX homepage with a real editable Rust compile/run playground. The current preset switcher is explicitly an early demonstration, not completion of RX-46. See Section 13.2.1 for their finish line.
 
@@ -472,7 +472,7 @@ Implement RX-01 through RX-09. Begin with the difficult feasibility checks: GPU/
 
 Deliver a counter, keyed editable list, one HTTP host proof using a local fixture endpoint, and tiny text/input scene. Networking need not have the full Stage 3 API yet; unsupported methods must be explicit. A temporary renderer is allowed only while the final feasibility gate remains open.
 
-**Exit:** scoped state/disposal and key tests pass; the same basic app runs in browser and real Windows; GPU/CPU feasibility is evidenced; a keyboard/screen-reader-accessible button and IME-aware input path are demonstrated. Record unresolved platform limitations as blocked gates. Do not announce Stage 1 complete after cross-compiling an executable that was never run.
+**Exit:** scoped state/disposal and key tests pass; the same basic app runs in browser and real Windows; GPU/CPU feasibility is evidenced; a keyboard/screen-reader-accessible button and IME-aware input path are demonstrated. Record unresolved platform limitations as blocked gates. Current manual tasks and reproducible commands are in `docs/PLATFORM_CHECKS.md`. Do not announce Stage 1 complete after cross-compiling an executable that was never run.
 
 ### Stage 2 — Deliver the shared visual engine
 

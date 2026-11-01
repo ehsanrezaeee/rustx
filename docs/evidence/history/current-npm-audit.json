@@ -1,0 +1,122 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "playwright": {
+      "name": "playwright",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1109208,
+          "name": "playwright",
+          "dependency": "playwright",
+          "title": "Playwright downloads and installs browsers without verifying the authenticity of the SSL certificate",
+          "url": "https://github.com/advisories/GHSA-7mvr-c777-76hp",
+          "severity": "high",
+          "cwe": [
+            "CWE-347"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<1.55.1"
+        }
+      ],
+      "effects": [],
+      "range": "<1.55.1",
+      "nodes": [
+        "node_modules/playwright"
+      ],
+      "fixAvailable": {
+        "name": "playwright",
+        "version": "1.64.1",
+        "isSemVerMajor": false
+      }
+    },
+    "sharp": {
+      "name": "sharp",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1124066,
+          "name": "sharp",
+          "dependency": "sharp",
+          "title": "sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+          "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj",
+          "severity": "high",
+          "cwe": [
+            "CWE-1395"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.35.0"
+        },
+        {
+          "source": 1193725,
+          "name": "sharp",
+          "dependency": "sharp",
+          "title": "sharp: Vulnerabilities in libheif: GHSA-g89c-p67h-r497 and GHSA-2jg2-4ch7-h545",
+          "url": "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c",
+          "severity": "high",
+          "cwe": [
+            "CWE-122"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.35.4"
+        },
+        {
+          "source": 1241331,
+          "name": "sharp",
+          "dependency": "sharp",
+          "title": "sharp : Vulnerability in librsvg dependency CVE-2026-96889",
+          "url": "https://github.com/advisories/GHSA-wq5f-xc86-pv6w",
+          "severity": "high",
+          "cwe": [
+            "CWE-416",
+            "CWE-1395"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<0.35.5"
+        }
+      ],
+      "effects": [],
+      "range": "<=0.35.5-rc.1",
+      "nodes": [
+        "node_modules/sharp"
+      ],
+      "fixAvailable": {
+        "name": "sharp",
+        "version": "0.35.5",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 2,
+      "critical": 0,
+      "total": 2
+    },
+    "dependencies": {
+      "prod": 1,
+      "dev": 33,
+      "optional": 27,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 33
+    }
+  }
+}

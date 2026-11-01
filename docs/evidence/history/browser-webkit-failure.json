@@ -1,0 +1,401 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n",
+  "errors": [],
+  "checks": [
+    "pointer, Enter and Space each activate once",
+    "keyed text/counter state, active input and selection survive reorder"
+  ],
+  "inspection": {
+    "counts": [
+      69,
+      9,
+      11
+    ],
+    "host": {
+      "http_cancel": "supported",
+      "http_get": "supported",
+      "max_requests": 16,
+      "max_response_bytes": 1048576,
+      "timeout_ms": 10000,
+      "version": 1
+    },
+    "nodes": [
+      {
+        "id": null,
+        "node": 0,
+        "rect": [
+          0,
+          0,
+          1200,
+          870
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime labSmall components. Real Rust.Edit a task, change its counter, then reverse the keyed list. State and text stay with each key.Reverse componentsUnmount componentsKEYED COMPONENT / BETACount: 0Increase +−Task BETAKEYED COMPONENT / ALPHACount: 3Increase +−سلام keyed taskWrite in your language.Browser composition events feed the Rust text model. Persian + English are shaped in Rust.سلام RustXسلام RustXDerived memo: 10 Unicode scalars"
+      },
+      {
+        "id": null,
+        "node": 7,
+        "rect": [
+          0,
+          0,
+          1200,
+          870
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime labSmall components. Real Rust.Edit a task, change its counter, then reverse the keyed list. State and text stay with each key.Reverse componentsUnmount componentsKEYED COMPONENT / BETACount: 0Increase +−Task BETAKEYED COMPONENT / ALPHACount: 3Increase +−سلام keyed taskWrite in your language.Browser composition events feed the Rust text model. Persian + English are shaped in Rust.سلام RustXسلام RustXDerived memo: 10 Unicode scalars"
+      },
+      {
+        "id": null,
+        "node": 9,
+        "rect": [
+          32,
+          32,
+          1136,
+          60
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime lab"
+      },
+      {
+        "id": null,
+        "node": 11,
+        "rect": [
+          32,
+          32,
+          110,
+          60
+        ],
+        "text": "rustx /"
+      },
+      {
+        "id": "nav-home",
+        "node": 15,
+        "rect": [
+          154,
+          32,
+          99,
+          60
+        ],
+        "text": "Overview"
+      },
+      {
+        "id": "nav-people",
+        "node": 19,
+        "rect": [
+          265,
+          32,
+          145,
+          60
+        ],
+        "text": "People explorer"
+      },
+      {
+        "id": "nav-lab",
+        "node": 23,
+        "rect": [
+          422,
+          32,
+          119,
+          60
+        ],
+        "text": "Runtime lab"
+      },
+      {
+        "id": null,
+        "node": 173,
+        "rect": [
+          32,
+          122,
+          1136,
+          716
+        ],
+        "text": "Small components. Real Rust.Edit a task, change its counter, then reverse the keyed list. State and text stay with each key.Reverse componentsUnmount componentsKEYED COMPONENT / BETACount: 0Increase +−Task BETAKEYED COMPONENT / ALPHACount: 3Increase +−سلام keyed taskWrite in your language.Browser composition events feed the Rust text model. Persian + English are shaped in Rust.سلام RustXسلام RustXDerived memo: 10 Unicode scalars"
+      },
+      {
+        "id": null,
+        "node": 175,
+        "rect": [
+          32,
+          122,
+          1136,
+          45
+        ],
+        "text": "Small components. Real Rust."
+      },
+      {
+        "id": null,
+        "node": 179,
+        "rect": [
+          32,
+          189,
+          1136,
+          19
+        ],
+        "text": "Edit a task, change its counter, then reverse the keyed list. State and text stay with each key."
+      },
+      {
+        "id": null,
+        "node": 183,
+        "rect": [
+          32,
+          230,
+          1136,
+          49
+        ],
+        "text": "Reverse componentsUnmount components"
+      },
+      {
+        "id": "reverse",
+        "node": 185,
+        "rect": [
+          32,
+          230,
+          186,
+          49
+        ],
+        "text": "Reverse components"
+      },
+      {
+        "id": "toggle",
+        "node": 189,
+        "rect": [
+          230,
+          230,
+          195,
+          49
+        ],
+        "text": "Unmount components"
+      },
+      {
+        "id": null,
+        "node": 199,
+        "rect": [
+          32,
+          301,
+          1136,
+          257
+        ],
+        "text": "KEYED COMPONENT / BETACount: 0Increase +−Task BETAKEYED COMPONENT / ALPHACount: 3Increase +−سلام keyed task"
+      },
+      {
+        "id": null,
+        "node": 239,
+        "rect": [
+          32,
+          301,
+          280,
+          257
+        ],
+        "text": "KEYED COMPONENT / BETACount: 0Increase +−Task BETA"
+      },
+      {
+        "id": null,
+        "node": 241,
+        "rect": [
+          56,
+          325,
+          232,
+          19
+        ],
+        "text": "KEYED COMPONENT / BETA"
+      },
+      {
+        "id": "count-BETA",
+        "node": 245,
+        "rect": [
+          56,
+          358,
+          232,
+          51
+        ],
+        "text": "Count: 0"
+      },
+      {
+        "id": null,
+        "node": 252,
+        "rect": [
+          56,
+          423,
+          232,
+          49
+        ],
+        "text": "Increase +−"
+      },
+      {
+        "id": "inc-BETA",
+        "node": 254,
+        "rect": [
+          56,
+          423,
+          109,
+          49
+        ],
+        "text": "Increase +"
+      },
+      {
+        "id": "dec-BETA",
+        "node": 258,
+        "rect": [
+          175,
+          423,
+          41,
+          49
+        ],
+        "text": "−"
+      },
+      {
+        "id": "edit-BETA",
+        "node": 265,
+        "rect": [
+          56,
+          486,
+          232,
+          48
+        ],
+        "text": "Task BETA"
+      },
+      {
+        "id": null,
+        "node": 207,
+        "rect": [
+          328,
+          301,
+          280,
+          257
+        ],
+        "text": "KEYED COMPONENT / ALPHACount: 3Increase +−سلام keyed task"
+      },
+      {
+        "id": null,
+        "node": 209,
+        "rect": [
+          352,
+          325,
+          232,
+          19
+        ],
+        "text": "KEYED COMPONENT / ALPHA"
+      },
+      {
+        "id": "count-ALPHA",
+        "node": 213,
+        "rect": [
+          352,
+          358,
+          232,
+          51
+        ],
+        "text": "Count: 3"
+      },
+      {
+        "id": null,
+        "node": 220,
+        "rect": [
+          352,
+          423,
+          232,
+          49
+        ],
+        "text": "Increase +−"
+      },
+      {
+        "id": "inc-ALPHA",
+        "node": 222,
+        "rect": [
+          352,
+          423,
+          109,
+          49
+        ],
+        "text": "Increase +"
+      },
+      {
+        "id": "dec-ALPHA",
+        "node": 226,
+        "rect": [
+          471,
+          423,
+          41,
+          49
+        ],
+        "text": "−"
+      },
+      {
+        "id": "edit-ALPHA",
+        "node": 233,
+        "rect": [
+          352,
+          486,
+          232,
+          48
+        ],
+        "text": "سلام keyed task"
+      },
+      {
+        "id": null,
+        "node": 267,
+        "rect": [
+          32,
+          580,
+          1136,
+          258
+        ],
+        "text": "Write in your language.Browser composition events feed the Rust text model. Persian + English are shaped in Rust.سلام RustXسلام RustXDerived memo: 10 Unicode scalars"
+      },
+      {
+        "id": null,
+        "node": 269,
+        "rect": [
+          56,
+          604,
+          1088,
+          28
+        ],
+        "text": "Write in your language."
+      },
+      {
+        "id": null,
+        "node": 273,
+        "rect": [
+          56,
+          646,
+          1088,
+          19
+        ],
+        "text": "Browser composition events feed the Rust text model. Persian + English are shaped in Rust."
+      },
+      {
+        "id": "name-input",
+        "node": 280,
+        "rect": [
+          56,
+          679,
+          1088,
+          54
+        ],
+        "text": "سلام RustX"
+      },
+      {
+        "id": "echo",
+        "node": 282,
+        "rect": [
+          56,
+          747,
+          1088,
+          34
+        ],
+        "text": "سلام RustX"
+      },
+      {
+        "id": "length",
+        "node": 289,
+        "rect": [
+          56,
+          795,
+          1088,
+          19
+        ],
+        "text": "Derived memo: 10 Unicode scalars"
+      }
+    ],
+    "pending": 0,
+    "queued_commands": 0
+  }
+}

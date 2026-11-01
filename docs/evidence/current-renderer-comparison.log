@@ -1,0 +1,17 @@
+{
+  "scene": "render_probe: shaped Persian/English, gradient, translated clip, group opacity and bilinear image",
+  "viewport": [
+    900,
+    450
+  ],
+  "dpr": 1,
+  "thresholds": {
+    "meanAbsoluteRGB": 2,
+    "percentPixelsOver32": 2
+  },
+  "meanAbsoluteRGB": 0.5694576131687242,
+  "maximumChannelDifference": 154,
+  "percentPixelsOver32": 0.5298765432098765,
+  "limitations": "Small native CPU/Metal offscreen feasibility scene. Different text rasterizers; not Windows/browser visual parity, full Stage 2 conformance or performance certification.",
+  "result": "passed"
+}

@@ -1,0 +1,23 @@
+(node:75297) TimeoutNegativeWarning: -0.3049999999930151 is a negative number.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+browserType.launch: Timeout 180000ms exceeded.
+Call log:
+[2m  - <launching> /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_firefoxdev_profile-adZaRc -juggler-pipe -silent[22m
+[2m  - <launched> pid=75298[22m
+[2m  - [pid=75298][err] *** You are running in headless mode.[22m
+[2m  - [pid=75298][err] sandbox_extension_issue_file_to_process failed for /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/plugin-container.app: 1 (Operation not permitted)[22m
+[2m  5 × [pid=75298][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.[22m
+[2m  - [pid=75298][out] Crash Annotation GraphicsCriticalError: |[0][GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt (t=0.375) [GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt[22m
+
+    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-browser.mjs:5:55
+    at async node:internal/modules/esm/loader:643:26 {
+  name: 'TimeoutError'
+}
+
+Node.js v24.18.1
+1
