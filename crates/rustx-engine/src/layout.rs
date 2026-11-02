@@ -1,6 +1,6 @@
 //! Taffy nodes retain runtime identity; only changed styles/content/children invalidate layout.
 use crate::text::TextEngine;
-use rustx_core::{Direction, Display, Kind, NodeId, Snapshot};
+use rustx_core::{Direction, Display, Kind, NodeId, Snapshot, Theme};
 use std::collections::{HashMap, HashSet};
 use taffy::prelude::*;
 use vello::kurbo::{Rect, Vec2};
@@ -29,6 +29,9 @@ impl BoxNode {
 struct TextContext {
     text: String,
     size: f32,
+    align: rustx_core::TextAlign,
+    direction: rustx_core::TextDirection,
+    epoch: u64,
 }
 struct Entry {
     id: taffy::NodeId,
@@ -38,6 +41,8 @@ pub struct LayoutEngine {
     tree: TaffyTree<TextContext>,
     nodes: HashMap<NodeId, Entry>,
     pub changed: usize,
+    pub theme: Theme,
+    pub font_epoch: u64,
 }
 impl Default for LayoutEngine {
     fn default() -> Self {
@@ -47,6 +52,8 @@ impl Default for LayoutEngine {
             tree,
             nodes: HashMap::new(),
             changed: 0,
+            theme: Theme::DARK,
+            font_epoch: 0,
         }
     }
 }
@@ -101,14 +108,30 @@ impl LayoutEngine {
                 FlexWrap::NoWrap
             },
             flex_grow: s.grow,
-            flex_shrink: 0.,
+            flex_shrink: s.shrink,
+            align_items: Some(match s.align {
+                rustx_core::Align::Start => AlignItems::Start,
+                rustx_core::Align::Center => AlignItems::Center,
+                rustx_core::Align::End => AlignItems::End,
+                rustx_core::Align::Stretch => AlignItems::Stretch,
+            }),
+            justify_content: Some(match s.justify {
+                rustx_core::Justify::Start => JustifyContent::Start,
+                rustx_core::Justify::Center => JustifyContent::Center,
+                rustx_core::Justify::End => JustifyContent::End,
+                rustx_core::Justify::SpaceBetween => JustifyContent::SpaceBetween,
+            }),
             size: Size {
                 width: s.width.map(length).unwrap_or(auto()),
                 height: s.height.map(length).unwrap_or(auto()),
             },
             min_size: Size {
-                width: length(0.),
+                width: s.min_width.map(length).unwrap_or(length(0.)),
                 height: length(0.),
+            },
+            max_size: Size {
+                width: s.max_width.map(length).unwrap_or(auto()),
+                height: auto(),
             },
             padding: taffy::Rect {
                 left: length(s.padding),
@@ -139,6 +162,9 @@ impl LayoutEngine {
             matches!(node.kind, Kind::Text | Kind::Button | Kind::Input).then(|| TextContext {
                 text: node.text_content(),
                 size: s.font_size,
+                align: s.text_align,
+                direction: s.text_direction,
+                epoch: self.font_epoch,
             });
         let child_ids: Vec<_> = children(node)
             .iter()
@@ -175,17 +201,13 @@ impl LayoutEngine {
         text: &mut TextEngine,
     ) -> BoxNode {
         let mut responsive = snapshot.clone();
-        fn resolve(n: &mut Snapshot, width: f32) {
-            if width < 600. {
-                if let Some(v) = n.style.small_font_size {
-                    n.style.font_size = v;
-                }
-            }
+        fn resolve(n: &mut Snapshot, width: f32, theme: Theme) {
+            n.style = n.style.resolve(width, theme);
             for c in &mut n.children {
-                resolve(c, width);
+                resolve(c, width, theme);
             }
         }
-        resolve(&mut responsive, width);
+        resolve(&mut responsive, width, self.theme);
         let snapshot = &responsive;
         let mut roots = vec![];
         flatten(snapshot, &mut roots);
@@ -224,7 +246,13 @@ impl LayoutEngine {
                         AvailableSpace::MinContent => 1.,
                         AvailableSpace::MaxContent => 1_000_000.,
                     });
-                    let shaped = text.shape(&context.text, context.size, width);
+                    let shaped = text.shape_with(
+                        &context.text,
+                        context.size,
+                        width,
+                        context.align,
+                        context.direction,
+                    );
                     Size {
                         width: known.width.unwrap_or(shaped.width.ceil()),
                         height: known.height.unwrap_or(shaped.height.ceil()),

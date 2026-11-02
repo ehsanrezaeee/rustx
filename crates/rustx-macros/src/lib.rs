@@ -114,6 +114,10 @@ impl Parse for Markup {
                     "value" if name == "Input" => quote!(value),
                     "label" => quote!(label),
                     "node_ref" => quote!(node_ref),
+                    "role" => quote!(role),
+                    "drawing" if name == "Canvas" => quote!(drawing),
+                    "camera" if name == "Canvas" => quote!(camera),
+                    "on_canvas" if name == "Canvas" => quote!(on_canvas),
                     "src" if name == "Image" => quote!(src),
                     _ => {
                         return Err(syn::Error::new(

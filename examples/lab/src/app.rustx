@@ -1,3 +1,4 @@
+use crate::visual::{VisualEngine, VisualEngineProps};
 use rustx::prelude::*;
 use std::{cell::RefCell, rc::Rc};
 const INK: u32 = 0xf1f5ff;
@@ -150,11 +151,12 @@ fn Home(cx: Scope) -> View {
 }
 #[component]
 pub fn App(cx: Scope) -> View {
-    let page = cx.signal(0);
+    let page = cx.signal(crate::start_page());
     let h = page.clone();
     let p = page.clone();
     let l = page.clone();
-    rustx! {<Column style={Style::column().padding(32.).gap(30.)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);}}>{"Runtime lab"}</Button></Row>{move||match page.get(){1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
+    let v = page.clone();
+    rustx! {<Column style={Style::column().padding(32.).gap(30.).background_token(ColorToken::Background)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);}}>{"Runtime lab"}</Button><Button id="nav-engine" style={secondary()} on_click={move|_|{let _=v.set(3);}}>{"Visual engine"}</Button></Row>{move||match page.get(){3=>rustx!{<VisualEngine/>},1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
 }
 pub fn root(cx: Scope, http: HttpClient) -> View {
     cx.provide(http);

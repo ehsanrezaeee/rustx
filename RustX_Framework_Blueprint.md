@@ -1,23 +1,23 @@
 # RustX — Framework Specification and Build Blueprint
 
-**Specification:** 1.1 · **Implementation update:** 1 November 2026 · **Prepared:** 30 October 2026  
+**Specification:** 1.1 · **Implementation update:** 2 November 2026 · **Prepared:** 30 October 2026
 **Working name:** RustX · **Authoring language:** Rust · **UI syntax:** `rustx! { ... }`  
 **Targets:** browser WebAssembly first; shared native Windows x64 application second  
-**Document status:** implementation contract with Stage 1 foundation source delivered; platform acceptance remains open.
+**Document status:** implementation contract with Stage 2 shared-engine implementation; platform acceptance remains open.
 
-## 0. Current source and continuation — 1 November 2026
+## 0. Current source and continuation — 2 November 2026
 
-`RustX_Stage_01.zip` is the complete Stage 1 foundation source, with a prebuilt browser bundle when the build passes. It does not depend on an earlier ZIP. Application code is `examples/lab/src/app.rustx`, ordinary Rust loaded with `#[path]` and markup inside `rustx!`. There is no separate Rust compiler fork.
+The current runnable project is maintained in local Git on `stage-1-completion`; `main` preserves the original Stage 1 import. The user explicitly authorized proceeding with Stage 2 on this same branch while earlier platform/manual gates remain open. This authorization advances implementation; it does not certify those gates. No new downloadable archive was requested. Application code remains ordinary Rust in `.rustx` modules with markup inside `rustx!`, without a compiler fork.
 
-Delivered: typed component macro, scoped signals/memo/effects/cleanup/context/refs, keyed identity, Rust layout/shaping/scene, CPU and GPU adapters, JS GET/cancel capability bridge, native host, fixture server, build scripts, tests and handoff documents. The app contains a responsive homepage, interactive precompiled playground presets, People Explorer with local/JSONPlaceholder actions, and a keyed counter/Persian input lab.
+**Stage 2 implemented:** typed theme tokens and viewport overrides; retained Taffy measurement/invalidation; shared Persian/English and bundled monochrome emoji shaping; font readiness and UTF-8/UTF-16 cluster metadata; bounded text/glyph/image/scene resource policies; custom retained drawing paths/text/images, affine transforms, rounded clipping and camera-relative culling; fixed-height keyed virtualization; direct GPU presentation, actual device-loss CPU recovery and GPU retry; demand-driven frame/DPR scheduling. The **Visual engine** page uses public Rust APIs for its responsive dashboard, 10,000-object drawing board and 100,000-record explorer. See `docs/STAGE2.md` for the finite API and limits.
 
-**Stage 1 is not fully accepted.** Tests of core behavior and actual Wasm execution are recorded in `docs/ACCEPTANCE.md` with logs for this snapshot. Actual Chrome CPU/WebGPU presentation and native Apple M3 Metal evidence are now recorded, with keyboard/editing/fixture browser checks and a bounded versioned host contract. Windows, screen-reader and real OS IME evidence remains unverified/blocked. No speed comparison against React or Go is claimed. Engine PNGs and software graphics probes do not certify browser or device behavior.
+**Executed evidence:** 27 new Rust regressions plus the inherited workspace/compiler tests; actual rebuilt Wasm; Chrome 156 and Playwright WebKit 27.2 CPU suites; visible Chrome WebGPU on Apple M3, including actual GPUDevice.destroy → CPU → fresh GPU with retained state; matched native CPU/Metal scene comparison; real native Mac window startup in both backends; deterministic HTTP and host regressions. All four Stage 2 integration reports identify the exact same Wasm hash. Preliminary local CPU samples are published as smoke measurements, not performance certification. The current evidence and all 46 requirement states are in `docs/ACCEPTANCE.md`.
 
-**Next agent:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/COMPATIBILITY.md`, and `docs/NEXT_AGENT.md`. Replay tests against the supplied source; then close the browser/native rendering and semantic/input feasibility gates. Do not restart the framework or inherit old RustUI readiness percentages. The earliest unmet gate remains Stage 1, not Stage 2.
+**Stage 1 and Stage 2 are not fully accepted.** Actual Windows execution, Windows/browser parity and the complete real-target support matrix remain unverified. Real OS IME and human screen-reader tasks, actual Safari/mobile, the external clean-machine replay and frozen Android benchmark profile remain open. Known text/style/editor and native editing limits are explicit in the compatibility guide. No universal speed comparison, production readiness or final RX-45/RX-46 completion is claimed.
 
-RX-01 is implemented but needs independent fresh-machine replay. RX-02–05 are verified for their core contracts by the delivered passing tests. The actual Wasm and real local HTTP → JS Fetch → Wasm integration suites also pass; current source, logs, browser evidence and prebuilt demo are in the project and full archive. RX-06 now has a verified finite Stage 1 GET/cancel version/capability contract with bounded queues, mismatch rejection and scope disposal tests; the broader Stage 3 service API remains incomplete. RX-07–09 still need Windows/AT/IME platform acceptance. Later-stage scaffolding is not a completed requirement. The repository ledger provides all 46 row statuses.
+**Continue:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/STAGE2.md`, `docs/COMPATIBILITY.md` and `docs/NEXT_AGENT.md`. Preserve mount-once setup and Rust-owned layout/text/scene. Rebuild Wasm after Rust edits. Verify unavailable platform gates on their actual targets, retaining failures, before accepting a stage.
 
-**New final-release requirements requested by the user:** RX-45 is a polished successful API showcase; RX-46 is a RustX homepage with a real editable Rust compile/run playground. The current preset switcher is explicitly an early demonstration, not completion of RX-46. See Section 13.2.1 for their finish line.
+RX-45 remains the polished successful API showcase. RX-46 remains a homepage with real editable Rust compile/run; the current homepage presets are deliberately precompiled and do not complete that requirement.
 
 ## 1. The product and its finish line
 
@@ -477,6 +477,8 @@ Deliver a counter, keyed editable list, one HTTP host proof using a local fixtur
 ### Stage 2 — Deliver the shared visual engine
 
 Implement RX-10 through RX-18. Integrate production layout, fonts, scene, GPU presentation, CPU fallback, resource lifecycle, culling, virtual lists, camera transforms, and scheduling. Build a responsive dashboard and a drawing-board benchmark using the same public APIs available to application developers.
+
+**Current implementation:** the Visual engine example and shared APIs are implemented and exercised on the recorded Mac/browser paths. See `docs/STAGE2.md` and evidence S2-1–S2-7 in the ledger. Full stage acceptance still requires the exit gate below on the declared target matrix.
 
 **Exit:** browser/native visual parity at matched fonts/viewport/DPI; forced fallback and device-loss recovery; Persian/English mixed text; bounded virtualization; no perpetual idle rendering; measured preliminary performance. Accessibility scaffolding remains active while rendering grows.
 

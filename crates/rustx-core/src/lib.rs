@@ -1,6 +1,8 @@
 //! Mount-once components; owned signals and automatically tracked reactive bindings.
+pub mod drawing;
 mod host;
 mod style;
+mod virtual_list;
 pub use host::*;
 use std::{
     any::{Any, TypeId},
@@ -9,6 +11,7 @@ use std::{
     rc::{Rc, Weak},
 };
 pub use style::*;
+pub use virtual_list::*;
 pub type NodeId = u64;
 pub const MAX_HOST_ID: u64 = 9_007_199_254_740_991;
 #[derive(Clone, Default)]
@@ -37,6 +40,13 @@ pub struct InputEvent {
 }
 #[derive(Clone)]
 pub struct Node {
+    pub role: Option<&'static str>,
+    pub position: Option<(usize, usize)>,
+    pub drawing: Option<Rc<drawing::CanvasScene>>,
+    pub camera: drawing::Camera,
+    pub on_scroll: Option<Rc<dyn Fn(f64)>>,
+    pub on_focus: Option<Rc<dyn Fn()>>,
+    pub on_canvas: Option<Rc<dyn Fn(drawing::CanvasEvent)>>,
     pub node_ref: Option<NodeRef>,
     pub kind: Kind,
     pub key: Option<String>,
@@ -53,6 +63,13 @@ pub struct Node {
 impl Node {
     pub fn new(kind: Kind) -> Self {
         Self {
+            role: None,
+            position: None,
+            drawing: None,
+            camera: Default::default(),
+            on_scroll: None,
+            on_focus: None,
+            on_canvas: None,
             node_ref: None,
             kind,
             key: None,
@@ -84,6 +101,34 @@ impl Node {
             component: Some((name, Rc::new(f))),
             ..Self::new(Kind::Fragment)
         }
+    }
+    pub fn role(mut self, role: &'static str) -> Self {
+        self.role = Some(role);
+        self
+    }
+    pub fn position(mut self, index: usize, total: usize) -> Self {
+        self.position = Some((index, total));
+        self
+    }
+    pub fn drawing(mut self, scene: Rc<drawing::CanvasScene>) -> Self {
+        self.drawing = Some(scene);
+        self
+    }
+    pub fn camera(mut self, camera: drawing::Camera) -> Self {
+        self.camera = camera;
+        self
+    }
+    pub fn on_canvas(mut self, f: impl Fn(drawing::CanvasEvent) + 'static) -> Self {
+        self.on_canvas = Some(Rc::new(f));
+        self
+    }
+    pub fn on_focus(mut self, f: impl Fn() + 'static) -> Self {
+        self.on_focus = Some(Rc::new(f));
+        self
+    }
+    pub fn on_scroll(mut self, f: impl Fn(f64) + 'static) -> Self {
+        self.on_scroll = Some(Rc::new(f));
+        self
     }
     pub fn node_ref(mut self, r: NodeRef) -> Self {
         self.node_ref = Some(r);
@@ -179,6 +224,10 @@ pub fn keyed<T, K: ToString>(
 }
 #[derive(Clone, Debug)]
 pub struct Snapshot {
+    pub role: Option<&'static str>,
+    pub position: Option<(usize, usize)>,
+    pub drawing: Option<Rc<drawing::CanvasScene>>,
+    pub camera: drawing::Camera,
     pub id: u64,
     pub kind: Kind,
     pub text: String,
@@ -206,6 +255,7 @@ impl Snapshot {
 }
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct SemanticNode {
+    pub position: Option<(usize, usize)>,
     pub id: u64,
     pub role: &'static str,
     pub label: String,
@@ -739,12 +789,19 @@ impl Runtime {
             let b = m.borrow();
             Snapshot {
                 id: b.id,
+                role: b.node.role,
+                position: b.node.position,
+                drawing: b.node.drawing.clone(),
+                camera: b.node.camera,
                 kind: b.node.kind,
                 text: b.node.text.clone(),
                 style: b.node.style.clone(),
                 app_id: b.node.id.clone(),
                 label: b.node.label.clone(),
-                interactive: b.node.on_click.is_some() || b.node.on_input.is_some(),
+                interactive: b.node.on_click.is_some()
+                    || b.node.on_input.is_some()
+                    || b.node.drawing.is_some()
+                    || b.node.on_scroll.is_some(),
                 children: b.children.iter().map(snap).collect(),
             }
         }
@@ -752,14 +809,15 @@ impl Runtime {
     }
     pub fn semantics(&self) -> SemanticNode {
         fn sem(s: Snapshot) -> SemanticNode {
-            let role = match s.kind {
+            let role = s.role.unwrap_or(match s.kind {
                 Kind::Button => "button",
                 Kind::Input => "textbox",
                 Kind::Text => "text",
-                Kind::Image => "img",
+                Kind::Image | Kind::Canvas => "img",
                 _ => "group",
-            };
+            });
             SemanticNode {
+                position: s.position,
                 id: s.id,
                 role,
                 label: s.label.clone().unwrap_or_else(|| {
@@ -810,6 +868,60 @@ impl Runtime {
         } else {
             false
         }
+    }
+    pub fn focus(&mut self, id: u64) {
+        fn path(m: &Mount, id: u64, out: &mut Vec<Rc<dyn Fn()>>) -> bool {
+            let b = m.borrow();
+            let before = out.len();
+            if let Some(f) = &b.node.on_focus {
+                out.push(f.clone());
+            }
+            if b.id == id || b.children.iter().any(|c| path(c, id, out)) {
+                return true;
+            }
+            out.truncate(before);
+            false
+        }
+        let mut callbacks = vec![];
+        if path(&self.root, id, &mut callbacks) {
+            for f in callbacks {
+                f();
+            }
+        }
+    }
+    pub fn canvas(&mut self, id: u64, event: drawing::CanvasEvent) -> bool {
+        if let Some(f) = self.find(id).and_then(|n| n.on_canvas) {
+            f(event);
+            true
+        } else {
+            false
+        }
+    }
+    pub fn scroll(&mut self, id: u64, delta: f64) -> bool {
+        if !delta.is_finite() {
+            return false;
+        }
+        fn path(m: &Mount, id: u64, out: &mut Vec<Rc<dyn Fn(f64)>>) -> bool {
+            let b = m.borrow();
+            let before = out.len();
+            if let Some(f) = &b.node.on_scroll {
+                out.push(f.clone());
+            }
+            if b.id == id || b.children.iter().any(|c| path(c, id, out)) {
+                true
+            } else {
+                out.truncate(before);
+                false
+            }
+        }
+        let mut callbacks = vec![];
+        if path(&self.root, id, &mut callbacks) {
+            if let Some(f) = callbacks.last() {
+                f(delta);
+                return true;
+            }
+        }
+        false
     }
     pub fn click_id(&mut self, id: &str) -> bool {
         self.snapshot()

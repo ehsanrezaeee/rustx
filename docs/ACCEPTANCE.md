@@ -1,6 +1,6 @@
-# Acceptance ledger — 1 November 2026
+# Acceptance ledger — 2 November 2026
 
-Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stage 1 is still open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
+Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stage 1 platform/manual gates and Stage 2 full target acceptance remain open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
 
 ## Executed checks
 
@@ -41,6 +41,24 @@ Corrections found by the actual browser runs: empty semantic Text labels; unboun
 - JSONPlaceholder live API success, full visual conformance/device recovery, Windows replay and the exact Android benchmark device remain open.
 - Earlier failures are retained in `history/` for diagnosis; final successful results are named `current-*` and `browser-*.json`.
 
+## Stage 2 execution — 2 November 2026
+
+The user authorized Stage 2 on the same branch without accepting earlier missing platform gates. Exact final integration Wasm SHA-256: `d9ae281bd9f46414a83c3b0de323f07d677fbe90c6c435524760778f94a59243`; all four integration reports agree. Environment remains macOS 27.0.1 arm64 / Apple M3 MacBook Air, 16 GiB RAM, Rust 1.90.0, Node 24.18.1; installed Chrome updated to 156.0.8078.80. The source content manifest and Git revision identify the delivered code; no new archive was requested.
+
+| Evidence | Executed command / result | Limit |
+| --- | --- | --- |
+| S2-1 | `cargo test --workspace --locked` PASS, including **27 new regressions** (10 core, 17 engine), existing runtime/host/compiler fixtures and CPU/ID tests. `stage2-workspace-tests.log`. `cargo fmt --all -- --check` PASS. | Deterministic core/engine contracts on this Mac; does not certify unavailable platforms. |
+| S2-2 | `bash scripts/build-web.sh`, `npm run test:stage2` PASS. `stage2-web-build.log`, `stage2-wasm.json`, `stage2-wasm.log`. Actual Wasm CPU: max **52** materialized rows over 60 large scrolls, retained focus/key identity, theme pixel round-trip, mixed text, camera/picking, cache budgets, DPR/idle, 10 demo mount/unmount cycles returning to baseline `[80,5,4]`. | Node Wasm execution; not a browser/device substitute. |
+| S2-3 | `CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:stage2:browser`; `RUSTX_BROWSER=webkit npm run test:stage2:browser` PASS. `stage2-browser-chromium-cpu.json`, `stage2-browser-webkit-cpu.json`, matching logs/screenshots. | Actual Chrome 156.0.8078.80 / Playwright WebKit 27.2 CPU. Real pointer pick/drag, keyboard camera pan, nested list wheel/focus/ownership, responsive theme/dashboard, 390px/DPR2 and idle. No actual Safari/mobile/IME/AT claim. |
+| S2-4 | `RUSTX_TEST_GPU=1 RUSTX_HEADED=1 CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:stage2:browser` PASS. `stage2-browser-chromium-gpu.json` plus log/screenshots. Normal GPU phase: **64 submissions / 32 canvas textures, zero texture-to-buffer copies, MAP_READ or Canvas2D uploads**. Actual active `GPUDevice.destroy` → real CPU recovery with selected record retained → newly created GPU renders retained state. | Physical Apple Metal 3 browser adapter. Controlled actual device destruction, not a spontaneous driver reset; no native Windows recovery or performance certification. |
+| S2-5 | `cargo run -p rustx-lab --example stage2_probe --locked -- docs/evidence/stage2-probe --gpu`; `npm run test:stage2:probe` PASS. Matched 900×720 DPR1 CPU/Apple M3 Metal fixture: RGB mean **0.387/255**, **0.362%** pixels above channel error 32; frozen limits remain 2/255 and 2%. `stage2-renderer-comparison.json`, probe log/PNGs. | Shared text/emoji, shadow, clip/transform, group/image alpha and custom path/text scene. Different text rasterizers allowed. Full target/feature matrix remains open. |
+| S2-6 | `RUSTX_DEMO=engine RUSTX_SMOKE_FRAMES=2 cargo run -p rustx-lab --bin rustx-lab --locked` and forced CPU both PASS with actual native Mac windows. `stage2-native-*-smoke.log`. `npm run test:http`, `npm run test:host` and inherited Wasm suite also PASS (`stage2-http-tests.log`, `stage2-host-tests.log`, `stage2-legacy-wasm-tests.log`). | Native two-frame startup only; fixture HTTP, not external API/Windows acceptance. |
+| S2-7 | `stage2-wasm.json` retains 121 raw local CPU samples in `stage2-wasm.json`: median **17.416 ms**, p95 **19.354 ms** in the recorded run. | Mixed integration frames/viewport changes, not a frozen benchmark workload, event-to-present estimate, React comparison or release-budget certification. |
+
+Tests exposed and fixed: alpha-premultiplication/image-alpha mismatch, missed image-epoch repaint, nonfinite text coordinates, offscreen shadow culling, wrong path/rounded hits and stroke overhang, nested row scrolling, virtual focus/projection ownership and insufficient control contrast. Font-collection admission rolls back excess faces; browser surface admission reduces DPR before oversized canvas allocation. Stroke joins/caps use the shared round-style contract. See STAGE2.md for the finite API, cache accounting and remaining layout/text/editing limits.
+
+Stage 2 is implemented and exercised on these available paths; acceptance remains unverified for Windows/native cross-target parity/recovery, actual Safari/mobile, background/native DPI matrix, broader text/effect conformance and fixed-hardware performance. Original OS IME/screen-reader gates remain open. Earlier diagnostic failures are retained under `history/stage2`; reports marked passed are final runs.
+
 ## Requirement states
 
 | ID | Status | Evidence / remaining gate |
@@ -54,15 +72,15 @@ Corrections found by the actual browser runs: empty semantic Text labels; unboun
 | RX-07 | blocked | E10/E11 browser counter runs; E13 Mac native startup. Actual Windows execution remains blocked. |
 | RX-08 | in_progress | E11/E12 physical browser WebGPU and native Metal/CPU feasibility; small scene comparison passes. Windows/shared target matrix remains open. |
 | RX-09 | blocked | E10 real browser keyboard, semantic text, editing/focus pass; human screen-reader and OS IME tasks remain open. |
-| RX-10 | in_progress | Typed styles, grid responsiveness and a small font breakpoint; full theme/query contract missing. |
-| RX-11 | in_progress | Taffy integrated; dirty propagation and complete layout fixture suite pending. |
-| RX-12 | in_progress | Persian/English samples shape; font fallback/emoji and full bidi fixtures pending. |
-| RX-13 | in_progress | E12 fixed scene comparison passes after CPU group/filter and shared border fixes; complete Stage 2 backend conformance remains open. |
-| RX-14 | in_progress | E11 real Chrome/Metal presentation API counters show no frame readback in the instrumented run; full native/target trace matrix pending. |
-| RX-15 | in_progress | CPU and initial GPU fallback; device loss/recovery incomplete. |
-| RX-16 | not_started | No acceptance implementation/evidence yet. |
-| RX-17 | not_started | No acceptance implementation/evidence yet. |
-| RX-18 | in_progress | E10/E11 browser idle, resize and DPR 2 checks; background/native DPI/support matrix pending. |
+| RX-10 | implemented_unverified | S2-1–S2-4: typed flex/grid alignment/sizing, theme tokens, bounded viewport overrides and responsive dashboard; full target matrix pending. |
+| RX-11 | implemented_unverified | S2-1/S2-2: retained Taffy IDs, text/font measurement epochs, reflow and bounded invalidation fixtures; cross-target matrix pending. |
+| RX-12 | in_progress | S2-1–S2-5: shared Persian/English/emoji fallback, direction/alignment, clusters/UTF-16 and font readiness; full font/language/ellipsis and editing/conformance contract remains open. |
+| RX-13 | in_progress | S2-1/S2-5: shared path/stroke/image/text, affine camera geometry, clips, opacity/shadow/alpha and matched CPU/Metal fixture; complete backend conformance matrix pending. |
+| RX-14 | implemented_unverified | S2-4: actual direct Chrome/Metal presentation with zero observed normal-path frame readback; native/target trace matrix pending. |
+| RX-15 | implemented_unverified | S2-3/S2-4: actual CPU, initial fallback and real device destruction/recovery/retry with retained state; native Windows/driver-recovery matrix pending. |
+| RX-16 | implemented_unverified | S2-1–S2-4: bounded LRU/payload policies, drawing culling, scoped 100k list, focused-row retention, metadata and lifecycle checks; full resource/device matrix pending. |
+| RX-17 | implemented_unverified | S2-1–S2-4: public retained CanvasScene, paths/transforms, hit tests, camera-relative large coordinates, pointer/keyboard pan/pick and zoom; native interaction matrix pending. |
+| RX-18 | in_progress | S2-2–S2-4: demand-driven idle, resize, viewport/DPR2 and guarded surfaces; hidden/resume/native DPI and platform matrix pending. |
 | RX-19 | in_progress | Click/input dispatch; full capture/bubble/default-action contract missing. |
 | RX-20 | in_progress | Basic focus/scroll/native keyboard; nested/modal/touch matrix missing. |
 | RX-21 | in_progress | Primitive components only; full required library missing. |

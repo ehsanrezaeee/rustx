@@ -1,6 +1,6 @@
-# RustX — Stage 1 foundation
+# RustX — Stage 2 shared visual engine
 
-Rust-authored components, WebAssembly and a Rust-owned canvas engine. This is an experimental foundation, not an accepted Stage 1 or production release. See `docs/BLUEPRINT.md` for the complete contract and `docs/NEXT_AGENT.md` to continue. Stage 1 fixes now include a versioned bounded host contract, keyed editable tasks, corrected semantic labels, stable editing focus and aligned CPU/GPU scene behavior. Actual Windows, screen-reader and OS IME acceptance remain open.
+Rust-authored components, WebAssembly and a Rust-owned canvas engine. Visual engine adds responsive themes, Unicode/emoji fallback, a 10,000-object drawing board and a 100,000-record virtual explorer. Stage 1 platform/manual and Stage 2 full target acceptance remain open. See `docs/BLUEPRINT.md`, `docs/ACCEPTANCE.md` and `docs/STAGE2.md`.
 
 ## Git history and review
 
@@ -12,7 +12,7 @@ git diff main...stage-1-completion
 git status
 ```
 
-The full archive under `releases/` includes source, the prebuilt web demo, logs/screenshots, checksums and `rustx-history.bundle`. To inspect its Git history in a separate directory, run `git clone rustx-history.bundle ../rustx-history`. Regenerate an archive from a clean committed tree with `npm run package`; Node is only packaging/test tooling. Source content identity is recorded by `npm run snapshot` and the source manifest.
+The archives under `releases/` are historical Stage 1 snapshots. This Stage 2 continuation uses the current source and rebuilt `dist/`; no new archive was requested. To inspect its Git history in a separate directory, run `git clone rustx-history.bundle ../rustx-history`. Regenerate an archive from a clean committed tree with `npm run package`; Node is only packaging/test tooling. Source content identity is recorded by `npm run snapshot` and the source manifest.
 
 ## Run the prebuilt demo
 
@@ -24,7 +24,7 @@ cargo run -p rustx-cli --locked -- serve dist 3000
 
 Open **http://127.0.0.1:3000/?renderer=cpu**. The Wasm bundle is included; previewing it needs no Node or Wasm rebuild. First-time Cargo/toolchain setup needs internet. Do not open index.html as a file URL. The fixture server binds loopback and is for development, not production hosting.
 
-Explore **Overview**, **People explorer** and **Runtime lab**. Runtime lab now has editable tasks whose text, counter state and identity survive keyed reorder and reset on unmount. Load the local sample first; JSONPlaceholder makes a real external request and can fail with network/service availability. The homepage playground runs precompiled Rust components. An arbitrary-source editor/compiler is a final-release requirement, not implemented yet.
+Explore **Overview**, **People explorer**, **Runtime lab** and **Visual engine**. The new page supports theme switching, pointer/keyboard drawing gestures, camera controls and virtual-record navigation. Runtime lab now has editable tasks whose text, counter state and identity survive keyed reorder and reset on unmount. Load the local sample first; JSONPlaceholder makes a real external request and can fail with network/service availability. The homepage playground runs precompiled Rust components. An arbitrary-source editor/compiler is a final-release requirement, not implemented yet.
 
 Remove `?renderer=cpu` to try WebGPU with initial CPU fallback. Read the compatibility matrix: compilation does not certify a real browser/GPU/Windows session.
 
@@ -93,6 +93,7 @@ npm ci
 npm run test:host
 npm run test:wasm
 npm run test:http
+npm run test:stage2
 ```
 
 Rebuild Wasm before testing changed Rust. `test:wasm` executes actual compiled Wasm in Node and writes CPU PNG evidence; it is not a browser test. `test:http` also checks the real Rust fixture server → production JS Fetch adapter → compiled Wasm path. With the fixture server running in another terminal:
@@ -112,6 +113,20 @@ cargo run -p rustx-lab --example render_probe --locked -- docs/evidence/current-
 ```
 
 Compare the two outputs with `npm run test:probe` after rendering to `docs/evidence/current-probe`. The second command requires an adapter. Software graphics adapters exercise GPU APIs but do not establish hardware performance or browser presentation.
+
+## Stage 2 checks
+
+With the fixture server running and Wasm rebuilt:
+
+```sh
+CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:stage2:browser
+RUSTX_BROWSER=webkit npm run test:stage2:browser
+RUSTX_TEST_GPU=1 RUSTX_HEADED=1 CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:stage2:browser
+cargo run -p rustx-lab --example stage2_probe --locked -- docs/evidence/stage2-probe --gpu
+npm run test:stage2:probe
+```
+
+The GPU suite destroys the active device, checks CPU recovery with retained state, then retries WebGPU. The native probe compares matched CPU/Metal output; limits are in the ledger. Open the native visual demo directly on this Mac with `RUSTX_DEMO=engine cargo run -p rustx-lab --bin rustx-lab --locked`; add `RUSTX_RENDERER=cpu` for software rendering. Windows uses the same source with documented prerequisites and still needs actual verification.
 
 ## Layout
 

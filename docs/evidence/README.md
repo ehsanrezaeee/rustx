@@ -11,3 +11,5 @@ The final source content identity is in ../../SOURCE-REVISION.txt and ../../SOUR
 - `current-renderer-comparison.json` declares the fixed scene, viewport, tolerance and observed differences. It is a feasibility comparison with differing text rasterizers, not full Stage 2 conformance/performance certification.
 
 No Windows, real OS IME, human screen-reader, mobile-device or actual Safari success is claimed. Follow ../PLATFORM_CHECKS.md to close the remaining Stage 1 gates.
+
+Stage 2 continuation (2 November 2026): `stage2-*` reports/logs/screenshots cover the current engine. The four integration reports record the exact Wasm hash; `stage2-wasm.json` also retains every preliminary frame sample and viewport/DPR. `stage2-probe` contains matched native CPU/Metal images, distinct from browser screenshots. Native smoke logs show two-frame actual Mac Visual engine startup only. `history/stage2` preserves earlier test-helper/input-scaling diagnostic screenshots. S2-1–S2-7 in ACCEPTANCE.md define the claims and remaining target gates. No Stage 2 archive was requested.
