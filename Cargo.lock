@@ -1867,6 +1867,7 @@ version = "0.1.0"
 name = "rustx-core"
 version = "0.1.0"
 dependencies = [
+ "kurbo",
  "serde",
 ]
 

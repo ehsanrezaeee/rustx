@@ -26,15 +26,17 @@ fn main() {
             }
         })
         .collect();
-    e.painter.image(
-        "probe",
-        Image::new(
-            Blob::new(Arc::new(pixels.clone())),
-            ImageFormat::Rgba8,
-            8,
-            8,
-        ),
-    );
+    e.painter
+        .image(
+            "probe",
+            Image::new(
+                Blob::new(Arc::new(pixels.clone())),
+                ImageFormat::Rgba8,
+                8,
+                8,
+            ),
+        )
+        .unwrap();
     e.frame(900., 450., 1.);
     let mut cpu = CpuRenderer::new(900, 450);
     cpu.image("probe", 8, 8, pixels);

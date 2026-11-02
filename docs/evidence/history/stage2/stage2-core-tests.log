@@ -1,0 +1,40 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling vello_shaders v0.5.1
+   Compiling vello v0.5.0
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.80s
+     Running tests/stage2.rs (target/debug/deps/stage2-36a90c02b05662fa)
+
+running 8 tests
+test responsive_queries_are_ordered_and_theme_tokens_resolve ... ok
+test virtual_scroll_clamps_and_ignores_nonfinite_input ... ok
+test drawing_hits_follow_rounded_and_path_geometry_not_only_bounds ... ok
+test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
+test drawing_queries_include_stroke_overhang_and_reject_unsafe_path_bounds ... ok
+test drawing_large_coordinates_and_transformed_topmost_hits_are_stable ... ok
+test spatial_drawing_queries_cull_ten_thousand_shapes_without_reordering ... ok
+test virtual_list_bounds_materialized_scopes_and_retains_focused_state ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-25ea8015feb8123b)
+
+running 14 tests
+test drawing_geometry_rebases_large_coordinates_before_backend_float_conversion ... ok
+test budget_cache_obeys_byte_entry_and_lru_constraints ... ok
+test image_registration_rejects_invalid_sizes_and_removal_invalidates_caches ... ok
+test image_resource_updates_repaint_an_otherwise_idle_engine ... ok
+test layout_alignment_growth_and_width_constraints_are_applied ... ok
+test explicit_text_direction_preserves_trailing_paragraphs ... ok
+test cpu_drawings_honor_canvas_clip_path_fill_and_camera ... ok
+test text_coordinates_remain_finite_for_unbounded_measurement ... ok
+test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
+test layout_reflows_at_breakpoints_and_theme_changes_do_not_remount ... ok
+test retained_layout_avoids_invalidation_for_color_only_updates ... ok
+test font_readiness_invalidates_existing_layout_once ... ok
+test text_direction_alignment_clusters_and_utf16_boundaries_share_the_model ... ok
+test text_cache_reuses_shapes_reflows_and_invalidation_follows_font_readiness ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+

@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-01",
+  "revision": "657bcb8",
+  "source_manifest_sha256": "5cc1dd266e559c1ac9d6d65bdcdaa709368909d12f831a40f81e0ecdcfdf6d76",
+  "os": "macOS 27.0.1 (26A434), aarch64",
+  "rust": "1.90.0",
+  "node": "24.18.1",
+  "workspace_baseline": "PASS: cargo test --workspace --locked; 14 runtime, 4 compile-fail fixtures, 1 host-ID test",
+  "git": "Imported original source on main; Stage 1 work on stage-1-completion",
+  "stage_1_accepted": false
+}

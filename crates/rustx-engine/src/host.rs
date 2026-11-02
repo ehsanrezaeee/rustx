@@ -1,6 +1,6 @@
 //! Native event loop; scoped state remains on the UI thread.
 use crate::{cpu::CpuRenderer, gpu::Gpu, Engine};
-use rustx_core::{HostCommand, HostError, HttpClient, HttpResponse};
+use rustx_core::{HostCommand, HostError, HttpClient, HttpResponse, HOST_PROTOCOL_VERSION};
 use std::{
     collections::HashMap,
     io::Read,
@@ -18,9 +18,6 @@ use winit::{
     keyboard::{Key, NamedKey},
     window::{Window, WindowId},
 };
-pub(crate) fn physical_size(w: &Window) -> winit::dpi::PhysicalSize<u32> {
-    w.inner_size()
-}
 pub fn report_error(s: &str) {
     eprintln!("RustX: {s}");
 }
@@ -41,6 +38,8 @@ impl Software {
     }
     fn draw(&mut self, e: &mut Engine, w: u32, h: u32, dpr: f32) -> Result<(), String> {
         let Some(root) = &e.boxes else { return Ok(()) };
+        self.renderer.sync_images(&e.painter);
+        self.renderer.clear_color = e.layout.theme.background;
         self.renderer.draw(root, &mut e.text, w, h, dpr);
         self.surface
             .resize(w.try_into().unwrap(), h.try_into().unwrap())
@@ -63,7 +62,7 @@ struct App {
     gpu: Option<Gpu>,
     cpu: Option<Software>,
     proxy: EventLoopProxy<()>,
-    tx: mpsc::Sender<ResultMessage>,
+    tx: mpsc::SyncSender<ResultMessage>,
     rx: mpsc::Receiver<ResultMessage>,
     pending: HashMap<u64, Arc<AtomicBool>>,
     pointer: Point,
@@ -77,11 +76,11 @@ impl App {
     fn network(&mut self) {
         for (id, result) in self.rx.try_iter() {
             self.pending.remove(&id);
-            self.http.complete(id, result);
+            self.http.complete(HOST_PROTOCOL_VERSION, id, result);
         }
         for cmd in self.http.drain() {
             match cmd {
-                HostCommand::Cancel { id } => {
+                HostCommand::Cancel { id, .. } => {
                     if let Some(c) = self.pending.get(&id) {
                         c.store(true, Ordering::Release);
                     }
@@ -89,6 +88,7 @@ impl App {
                 HostCommand::Get(req) => {
                     if self.pending.len() >= 16 {
                         self.http.complete(
+                            HOST_PROTOCOL_VERSION,
                             req.id,
                             Err(HostError::Transport("Too many pending requests".into())),
                         );
@@ -219,7 +219,11 @@ impl ApplicationHandler<()> for App {
             WindowEvent::ModifiersChanged(m) => self.shift = m.state().shift_key(),
             WindowEvent::CursorMoved { position, .. } => {
                 self.pointer =
-                    Point::new(position.x / w.scale_factor(), position.y / w.scale_factor())
+                    Point::new(position.x / w.scale_factor(), position.y / w.scale_factor());
+                self.engine.pointer_move(self.pointer);
+                if self.engine.runtime.needs_update() {
+                    w.request_redraw();
+                }
             }
             WindowEvent::Focused(false) | WindowEvent::CursorLeft { .. } => self.engine.cancel(),
             WindowEvent::MouseInput {
@@ -241,7 +245,7 @@ impl ApplicationHandler<()> for App {
                     MouseScrollDelta::LineDelta(_, y) => y as f64 * 40.,
                     MouseScrollDelta::PixelDelta(p) => p.y,
                 };
-                self.engine.scroll(-y);
+                self.engine.scroll_at(self.pointer, -y);
                 w.request_redraw();
             }
             WindowEvent::Ime(Ime::Commit(s)) => {
@@ -271,6 +275,15 @@ impl ApplicationHandler<()> for App {
             WindowEvent::RedrawRequested => {
                 self.network();
                 let size = w.inner_size();
+                if size.width > 8192
+                    || size.height > 8192
+                    || size.width as u64 * size.height as u64 > 16_777_216
+                {
+                    self.failure =
+                        Some("Native surface exceeds the 8192px/16M pixel rendering budget".into());
+                    events.exit();
+                    return;
+                }
                 if size.width == 0 || size.height == 0 {
                     return;
                 }
@@ -288,9 +301,24 @@ impl ApplicationHandler<()> for App {
                 } else {
                     Ok(())
                 };
-                if let Err(e) = r {
-                    self.failure = Some(e);
-                    events.exit();
+                if let Err(error) = r {
+                    if self.gpu.take().is_some() {
+                        report_error(&format!("GPU failed ({error}); recovering through CPU"));
+                        match Software::new(w.clone()).and_then(|mut cpu| {
+                            cpu.draw(&mut self.engine, size.width, size.height, scale as f32)?;
+                            self.cpu = Some(cpu);
+                            Ok(())
+                        }) {
+                            Ok(()) => (),
+                            Err(e) => {
+                                self.failure = Some(e);
+                                events.exit();
+                            }
+                        }
+                    } else {
+                        self.failure = Some(error);
+                        events.exit();
+                    }
                 }
                 self.frames += 1;
                 if self.smoke > 0 {
@@ -317,7 +345,7 @@ pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String>
     engine.runtime.set_waker(move || {
         let _ = wake.send_event(());
     });
-    let (tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::sync_channel(16);
     let mut a = App {
         engine,
         http,

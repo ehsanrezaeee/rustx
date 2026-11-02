@@ -1,0 +1,33 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+browserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -wait-for-browser -foreground -profile /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_firefoxdev_profile-6S94Rq -juggler-pipe -silent
+<launched> pid=76243
+[pid=76243][err] sandbox_extension_issue_file_to_process failed for /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/plugin-container.app: 1 (Operation not permitted)
+[pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.
+[pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.
+[pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.
+[pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.
+[pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.
+[pid=76243][err] [WARN  webrender::device::gl] Missing optimized shader source for gpu_cache_update
+[pid=76243][err] UNSUPPORTED (log once): POSSIBLE ISSUE: unit 1 GLD_TEXTURE_INDEX_2D is unloadable and bound to sampler type (Float) - using zero texture because texture unloadable
+[pid=76243] <process did exit: exitCode=1, signal=null>
+[pid=76243] starting temporary directories cleanup
+Call log:
+[2m  - <launching> /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -wait-for-browser -foreground -profile /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_firefoxdev_profile-6S94Rq -juggler-pipe -silent[22m
+[2m  - <launched> pid=76243[22m
+[2m  - [pid=76243][err] sandbox_extension_issue_file_to_process failed for /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475/firefox/Nightly.app/Contents/MacOS/plugin-container.app: 1 (Operation not permitted)[22m
+[2m  5 × [pid=76243][err] JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 84: Error: Can't find profile directory.[22m
+[2m  - [pid=76243][err] [WARN  webrender::device::gl] Missing optimized shader source for gpu_cache_update[22m
+[2m  - [pid=76243][err] UNSUPPORTED (log once): POSSIBLE ISSUE: unit 1 GLD_TEXTURE_INDEX_2D is unloadable and bound to sampler type (Float) - using zero texture because texture unloadable[22m
+[2m  - [pid=76243] <process did exit: exitCode=1, signal=null>[22m
+[2m  - [pid=76243] starting temporary directories cleanup[22m
+
+    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-browser.mjs:5:55
+    at async node:internal/modules/esm/loader:643:26
+
+Node.js v24.18.1

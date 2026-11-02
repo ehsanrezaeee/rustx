@@ -37,6 +37,8 @@ impl WebApp {
     pub fn frame(&mut self, w: f32, h: f32, dpr: f32) -> bool {
         let dirty = self.engine.frame(w, h, dpr as f64);
         if dirty {
+            self.cpu.sync_images(&self.engine.painter);
+            self.cpu.clear_color = self.engine.layout.theme.background;
             if let Some(b) = &self.engine.boxes {
                 self.cpu.draw(
                     b,
@@ -52,26 +54,52 @@ impl WebApp {
     }
     pub fn inspect(&self) -> String {
         let mut nodes = vec![];
-        fn walk(b: &rustx_engine::layout::BoxNode, nodes: &mut Vec<serde_json::Value>) {
-            nodes.push(serde_json::json!({"id":b.node.app_id,"node":b.node.id,"text":b.node.text_content(),"rect":[b.rect.x0,b.rect.y0,b.rect.width(),b.rect.height()]}));
-            for c in &b.children {
-                walk(c, nodes)
+        fn walk(
+            b: &rustx_engine::layout::BoxNode,
+            nodes: &mut Vec<serde_json::Value>,
+            clip: rustx_engine::vello::kurbo::Rect,
+            scroll: Option<u64>,
+        ) {
+            let local_clip = if b.node.style.clip {
+                clip.intersect(b.rect)
+            } else {
+                clip
+            };
+            let scroll = if b.node.role == Some("list") {
+                Some(b.node.id)
+            } else {
+                scroll
+            };
+            let visible = b.rect.intersect(local_clip);
+            nodes.push(serde_json::json!({"id":b.node.app_id,"node":b.node.id,"kind":format!("{:?}",b.node.kind),"role":b.node.role,"text":b.node.text_content(),"rect":[b.rect.x0,b.rect.y0,b.rect.width(),b.rect.height()],"visible_rect":[visible.x0,visible.y0,visible.width().max(0.),visible.height().max(0.)],"scroll_parent":scroll,"position":b.node.position,"drawing_count":b.node.drawing.as_ref().map_or(0,|d|d.len())}));
+            for child in &b.children {
+                walk(child, nodes, local_clip, scroll);
             }
         }
+        let (w, h) = self.engine.viewport();
         if let Some(b) = &self.engine.boxes {
-            walk(b, &mut nodes)
+            walk(
+                b,
+                &mut nodes,
+                rustx_engine::vello::kurbo::Rect::new(0., 0., w as f64, h as f64),
+                None,
+            );
         }
-        serde_json::json!({"nodes":nodes,"counts":self.engine.runtime.counts(),"pending":self.http.pending()}).to_string()
+        let text_cache = self.engine.text.cache_stats();
+        let resources = self.engine.painter.resource_stats();
+        let glyphs = self.cpu.glyph_stats();
+        serde_json::json!({"nodes":nodes,"counts":self.engine.runtime.counts(),"pending":self.http.pending(),"host":self.http.capabilities(),"queued_commands":self.http.queued(),"theme":format!("{:06x}",self.engine.layout.theme.background),"metrics":{"layout_nodes":self.engine.layout.node_count(),"layout_changed":self.engine.layout.changed,"shapes_visible":self.engine.painter.drawing_visible,"scene_painted":self.engine.painter.painted,"scene_reused":self.engine.painter.reused,"text_shapes":self.engine.text.shape_count,"text_cache_entries":text_cache.0,"text_cache_bytes":text_cache.1,"image_entries":resources.0,"image_bytes":resources.1,"scene_cache_entries":resources.2,"scene_cache_bytes":resources.3,"glyph_entries":glyphs.0,"glyph_bytes":glyphs.1,"cpu_visited":self.cpu.visited,"cpu_culled":self.cpu.culled}}).to_string()
     }
-    pub fn response(&mut self, id: u64, status: u16, body: Vec<u8>, error: &str) {
+    pub fn response(&mut self, id: u64, status: u16, body: Vec<u8>, error: &str, version: u32) {
         let result = match error {
             "" => Ok(HttpResponse { status, body }),
             "cancelled" => Err(HostError::Cancelled),
             "timeout" => Err(HostError::Timeout),
             "too_large" => Err(HostError::TooLarge),
+            "busy" => Err(HostError::Busy),
             e => Err(HostError::Transport(e.into())),
         };
-        self.http.complete(id, result);
+        self.http.complete(version, id, result);
     }
 }
 #[cfg(target_arch = "wasm32")]
@@ -116,16 +144,26 @@ pub mod gpu {
                 renderer,
             })
         }
+        pub fn destroy(&self) {
+            self.context.devices[self.surface.dev_id].device.destroy();
+        }
         pub fn draw(&mut self, e: &Engine, w: u32, h: u32) -> Result<(), String> {
             if self.surface.config.width != w || self.surface.config.height != h {
                 self.context
                     .resize_surface(&mut self.surface, w.max(1), h.max(1));
             }
-            let frame = self
-                .surface
-                .surface
-                .get_current_texture()
-                .map_err(|e| e.to_string())?;
+            let frame = match self.surface.surface.get_current_texture() {
+                Ok(f) => f,
+                Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
+                    self.context
+                        .resize_surface(&mut self.surface, w.max(1), h.max(1));
+                    self.surface
+                        .surface
+                        .get_current_texture()
+                        .map_err(|e| e.to_string())?
+                }
+                Err(e) => return Err(e.to_string()),
+            };
             let d = &self.context.devices[self.surface.dev_id];
             self.renderer
                 .render_to_texture(
@@ -134,7 +172,7 @@ pub mod gpu {
                     &e.scene,
                     &self.surface.target_view,
                     &RenderParams {
-                        base_color: rustx_engine::color(0x0b1018),
+                        base_color: rustx_engine::color(e.layout.theme.background),
                         width: w,
                         height: h,
                         antialiasing_method: AaConfig::Area,

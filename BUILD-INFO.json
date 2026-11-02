@@ -1,20 +1,39 @@
 {
-  "version": "0.1.0-stage1-foundation",
-  "date": "2026-11-01",
+  "version": "0.1.0-stage2-engine",
+  "date": "2026-11-02",
   "stage_accepted": false,
+  "active_stage": 2,
+  "stage_2_started": true,
+  "baseline_git_revision": "657bcb8",
+  "git_branch": "stage-1-completion",
   "rust": "1.90.0",
   "wasm_bindgen": "0.2.100",
-  "node": "24.22.1",
-  "sharp": "0.34.5",
-  "test_environment": "Linux-6.18.57-x86_64-with-glibc2.39",
-  "gpu_probe": "Mesa llvmpipe software GL; not physical GPU",
-  "identity": "SHA-256 of SOURCE_MANIFEST.sha256 in SOURCE-REVISION.txt",
+  "node": "24.18.1",
+  "playwright": "1.64.1",
+  "sharp": "0.35.5",
+  "test_environment": "macOS 27.0.1 (26A434), aarch64, Apple M3 MacBook Air, 16 GiB RAM",
+  "browser_cpu": [
+    "Google Chrome 156.0.8078.80",
+    "Playwright WebKit 27.2"
+  ],
+  "browser_gpu": "Visible Google Chrome 156.0.8078.80; Apple Metal 3; direct presentation, actual device destruction, CPU recovery and fresh GPU retry",
+  "native_probe": "Apple M3 Metal and Rust CPU: matched 900x720 scene, plus two-frame native Visual engine startup",
+  "identity": "SOURCE-REVISION.txt hashes SOURCE_MANIFEST.sha256; archive adds exact GIT-REVISION.txt and ARTIFACT_MANIFEST.sha256",
+  "source_manifest_excludes": [
+    "evidence",
+    "build metadata",
+    "dist",
+    "Git metadata",
+    "caches",
+    "releases"
+  ],
   "missing": [
-    "real browser",
-    "real Windows",
-    "physical GPU/presentation",
-    "IME",
-    "screen readers",
-    "host capability/version negotiation"
-  ]
+    "actual Windows x64 execution and full target parity/recovery/DPI",
+    "human screen-reader and real OS IME tasks",
+    "actual Safari/mobile and usable Firefox session",
+    "full font/style/text/effect conformance",
+    "external clean-machine replay and frozen benchmark hardware/performance certification"
+  ],
+  "stage_2_accepted": false,
+  "wasm_sha256": "d9ae281bd9f46414a83c3b0de323f07d677fbe90c6c435524760778f94a59243"
 }

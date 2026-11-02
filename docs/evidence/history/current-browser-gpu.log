@@ -1,0 +1,32 @@
+{
+  "date": "2026-11-01",
+  "browser": "156.0.8078.74",
+  "platform": "darwin",
+  "arch": "arm64",
+  "viewport": [
+    1200,
+    1000
+  ],
+  "dpr": 1,
+  "checks": [],
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: WebGPU presentation unavailable\n\n'cpu' !== 'gpu'\n"
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: WebGPU presentation unavailable
+
+'cpu' !== 'gpu'
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-gpu.mjs:23:9 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'cpu',
+  expected: 'gpu',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

@@ -111,7 +111,7 @@ fn duplicate_keys() {
 }
 #[test]
 fn disposed_http_completion_rejected() {
-    let h = HttpClient::default();
+    let h = connected_http();
     let c = h.clone();
     let out = Rc::new(RefCell::new(0));
     let log = out.clone();
@@ -125,6 +125,7 @@ fn disposed_http_completion_rejected() {
     drop(rt);
     assert_eq!(h.pending(), 0);
     assert!(!h.complete(
+        HOST_PROTOCOL_VERSION,
         1,
         Ok(HttpResponse {
             status: 200,
@@ -139,7 +140,7 @@ fn disposed_http_completion_rejected() {
 }
 #[test]
 fn cancel_once() {
-    let h = HttpClient::default();
+    let h = connected_http();
     let c = h.clone();
     let calls = Rc::new(RefCell::new(0));
     let log = calls.clone();
@@ -154,6 +155,7 @@ fn cancel_once() {
     h.cancel(1);
     h.cancel(1);
     assert!(!h.complete(
+        HOST_PROTOCOL_VERSION,
         1,
         Ok(HttpResponse {
             status: 200,
@@ -224,11 +226,12 @@ fn completed_requests_release_cleanup() {
         Node::text("")
     });
     let s = h.borrow().clone().unwrap();
-    let c = HttpClient::default();
+    let c = connected_http();
     for _ in 0..100 {
         let id = c.get(&s, "/users", |_| {});
         c.drain();
         c.complete(
+            HOST_PROTOCOL_VERSION,
             id,
             Ok(HttpResponse {
                 status: 200,
@@ -287,4 +290,32 @@ fn imported_reactive_and_initial_props() {
     rt.flush();
     assert_eq!(rt.snapshot().text_content(), "initial 0: 7");
     assert_eq!(rt.counts(), baseline);
+}
+
+fn connected_http() -> HttpClient {
+    let h = HttpClient::default();
+    h.connect(HostCapabilities::get_cancel()).unwrap();
+    h
+}
+
+#[test]
+fn semantic_text_includes_literal_and_reactive_children() {
+    let h = Rc::new(RefCell::new(None));
+    let out = h.clone();
+    let mut rt = Runtime::new(move |cx| {
+        let value = cx.signal("Hello".to_string());
+        *out.borrow_mut() = Some(value.clone());
+        rustx! {<Text id="readout">{move || value.get()}</Text>}
+    });
+    fn label(n: &SemanticNode) -> Option<String> {
+        if n.app_id.as_deref() == Some("readout") {
+            Some(n.label.clone())
+        } else {
+            n.children.iter().find_map(label)
+        }
+    }
+    assert_eq!(label(&rt.semantics()).as_deref(), Some("Hello"));
+    h.borrow().as_ref().unwrap().set("سلام".into()).unwrap();
+    rt.flush();
+    assert_eq!(label(&rt.semantics()).as_deref(), Some("سلام"));
 }

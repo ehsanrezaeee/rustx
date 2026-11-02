@@ -2,3 +2,7 @@
 /node_modules/
 /dist/
 *.log
+!/docs/evidence/*.log
+!/docs/evidence/**/*.log
+/releases/
+.DS_Store

@@ -1,0 +1,250 @@
+{
+  "error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+  "errors": [],
+  "checks": [
+    "pointer, Enter and Space each activate once",
+    "keyed text/counter state, active input and selection survive reorder",
+    "Tab follows reordered committed tree",
+    "unmount disposes keyed text and counter",
+    "browser text editing, retained focus and Rust scroll-to-focus (no OS IME claim)"
+  ],
+  "inspection": {
+    "counts": [
+      38,
+      2,
+      2
+    ],
+    "host": {
+      "http_cancel": "supported",
+      "http_get": "supported",
+      "max_requests": 16,
+      "max_response_bytes": 1048576,
+      "timeout_ms": 10000,
+      "version": 1
+    },
+    "nodes": [
+      {
+        "id": null,
+        "node": 0,
+        "rect": [
+          0,
+          0,
+          1200,
+          476
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime labEXAMPLE 01 / PEOPLE EXPLORERRust UI. Browser networking.A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result.Load local sampleTry JSONPlaceholderTest errorSlow requestCancelRequest failed: Transport(\"Network request failed\")Retry either source. The local sample works without external internet."
+      },
+      {
+        "id": null,
+        "node": 7,
+        "rect": [
+          0,
+          0,
+          1200,
+          476
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime labEXAMPLE 01 / PEOPLE EXPLORERRust UI. Browser networking.A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result.Load local sampleTry JSONPlaceholderTest errorSlow requestCancelRequest failed: Transport(\"Network request failed\")Retry either source. The local sample works without external internet."
+      },
+      {
+        "id": null,
+        "node": 9,
+        "rect": [
+          32,
+          32,
+          1136,
+          60
+        ],
+        "text": "rustx /OverviewPeople explorerRuntime lab"
+      },
+      {
+        "id": null,
+        "node": 11,
+        "rect": [
+          32,
+          32,
+          110,
+          60
+        ],
+        "text": "rustx /"
+      },
+      {
+        "id": "nav-home",
+        "node": 15,
+        "rect": [
+          154,
+          32,
+          99,
+          60
+        ],
+        "text": "Overview"
+      },
+      {
+        "id": "nav-people",
+        "node": 19,
+        "rect": [
+          265,
+          32,
+          145,
+          60
+        ],
+        "text": "People explorer"
+      },
+      {
+        "id": "nav-lab",
+        "node": 23,
+        "rect": [
+          422,
+          32,
+          119,
+          60
+        ],
+        "text": "Runtime lab"
+      },
+      {
+        "id": null,
+        "node": 371,
+        "rect": [
+          32,
+          122,
+          1136,
+          322
+        ],
+        "text": "EXAMPLE 01 / PEOPLE EXPLORERRust UI. Browser networking.A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result.Load local sampleTry JSONPlaceholderTest errorSlow requestCancelRequest failed: Transport(\"Network request failed\")Retry either source. The local sample works without external internet."
+      },
+      {
+        "id": null,
+        "node": 373,
+        "rect": [
+          32,
+          122,
+          1136,
+          19
+        ],
+        "text": "EXAMPLE 01 / PEOPLE EXPLORER"
+      },
+      {
+        "id": null,
+        "node": 377,
+        "rect": [
+          32,
+          161,
+          1136,
+          51
+        ],
+        "text": "Rust UI. Browser networking."
+      },
+      {
+        "id": null,
+        "node": 381,
+        "rect": [
+          32,
+          232,
+          1136,
+          19
+        ],
+        "text": "A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result."
+      },
+      {
+        "id": null,
+        "node": 385,
+        "rect": [
+          32,
+          271,
+          1136,
+          49
+        ],
+        "text": "Load local sampleTry JSONPlaceholderTest errorSlow requestCancel"
+      },
+      {
+        "id": "load-fixture",
+        "node": 387,
+        "rect": [
+          32,
+          271,
+          164,
+          49
+        ],
+        "text": "Load local sample"
+      },
+      {
+        "id": "load-live",
+        "node": 391,
+        "rect": [
+          206,
+          271,
+          180,
+          49
+        ],
+        "text": "Try JSONPlaceholder"
+      },
+      {
+        "id": "load-error",
+        "node": 395,
+        "rect": [
+          396,
+          271,
+          99,
+          49
+        ],
+        "text": "Test error"
+      },
+      {
+        "id": "load-slow",
+        "node": 399,
+        "rect": [
+          505,
+          271,
+          125,
+          49
+        ],
+        "text": "Slow request"
+      },
+      {
+        "id": "cancel",
+        "node": 403,
+        "rect": [
+          640,
+          271,
+          79,
+          49
+        ],
+        "text": "Cancel"
+      },
+      {
+        "id": null,
+        "node": 410,
+        "rect": [
+          32,
+          340,
+          1136,
+          104
+        ],
+        "text": "Request failed: Transport(\"Network request failed\")Retry either source. The local sample works without external internet."
+      },
+      {
+        "id": "api-state",
+        "node": 412,
+        "rect": [
+          56,
+          364,
+          1088,
+          23
+        ],
+        "text": "Request failed: Transport(\"Network request failed\")"
+      },
+      {
+        "id": null,
+        "node": 417,
+        "rect": [
+          56,
+          401,
+          1088,
+          19
+        ],
+        "text": "Retry either source. The local sample works without external internet."
+      }
+    ],
+    "pending": 0,
+    "queued_commands": 0
+  }
+}

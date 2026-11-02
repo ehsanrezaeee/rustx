@@ -1,0 +1,81 @@
+// Stage 2 integration: execute the rebuilt Wasm module and Rust CPU renderer.
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {performance} from 'node:perf_hooks';
+import {HostNetwork} from '../web/services.js';
+const app=await import('../dist/pkg/rustx_lab.js');
+const binary=await fs.readFile(new URL('../dist/pkg/rustx_lab_bg.wasm',import.meta.url));
+await app.default({module_or_path:binary});
+const evidence=new URL('../docs/evidence/',import.meta.url);
+await fs.mkdir(evidence,{recursive:true});
+let width=1200,height=1000,dpr=1;
+const timings=[],checks=[],rawFrames=[];
+const inspection=()=>JSON.parse(app.inspect());
+const node=id=>{const value=inspection().nodes.find(n=>n.id===id);assert(value,`Missing ${id}`);return value;};
+const frame=()=>{const start=performance.now();let changed=false;for(let i=0;i<8;i++){changed=app.frame(width,height,dpr)||changed;if(!app.needs_update())break;}const elapsedMs=performance.now()-start;timings.push(elapsedMs);rawFrames.push({width,height,dpr,elapsedMs,changed});return changed;};
+const click=id=>{app.activate(node(id).node);frame();};
+const rows=()=>inspection().nodes.filter(n=>/^record-\d+$/.test(n.id||''));
+const flatten=(node,out=[])=>{out.push(node);for(const child of node.children)flatten(child,out);return out;};
+const digest=()=>createHash('sha256').update(app.pixels()).digest('hex');
+const report={date:'2026-11-02',target:'actual compiled wasm32 in Node; Rust CPU renderer',node:process.version,platform:process.platform,arch:process.arch,wasmSha256:createHash('sha256').update(binary).digest('hex'),checks,limitations:['No actual browser, Windows, GPU, OS IME, screen-reader or physical mobile claim','Timing samples are local smoke measurements, not frozen-hardware performance certification']};
+try {
+ app.init_app(JSON.stringify(new HostNetwork(()=>{}).capabilities()));frame();
+ const home=inspection().counts;
+ click('nav-engine');
+ assert.match(node('engine-unicode').text,/سلام RustX.*🦀.*🚀/u);
+ assert(rows().length>0&&rows().length<=120);
+ const first=node('record-0').node;
+ const baseline=inspection().counts;
+ click('rows-next');assert.equal(node('record-0').node,first);
+ assert.match(node('row-range').text,/0\.\.41/);
+ checks.push('100,000-record list creates bounded materialized rows and preserves overlapping keyed IDs');
+ click('rows-start');app.focus(node('record-0').node);frame();
+ click('rows-end');assert.equal(node('record-0').node,first);
+ assert(rows().length<=120);
+ assert(node('record-99999'));
+ const semantic=flatten(JSON.parse(app.semantics()));
+ assert(semantic.some(n=>n.role==='listitem'&&n.position?.[0]===100000&&n.position?.[1]===100000));
+ assert(semantic.some(n=>n.role==='list'&&n.label==='100000 records'));
+ click('record-99999');assert.match(node('selected-row').text,/Selected record: 100000/);
+ checks.push('focused offscreen row retention, end-of-list selection and semantic position/total metadata');
+ const listId=semantic.find(n=>n.role==='list').id;
+ let maximumRows=rows().length;
+ for(let i=0;i<60;i++) {
+  assert.equal(app.scroll_node(listId,-40000),true);frame();
+  maximumRows=Math.max(maximumRows,rows().length);
+  assert(rows().length<=120);
+ }
+ click('rows-start');assert.equal(node('record-0').node,first);
+ assert(inspection().counts[0]<=baseline[0]+20);
+ const metrics=inspection().metrics;
+ assert(metrics.text_cache_entries<=512&&metrics.text_cache_bytes<=8*1024*1024);
+ assert(metrics.scene_cache_entries<=4096&&metrics.scene_cache_bytes<=16*1024*1024);
+ assert(metrics.glyph_entries<=2048&&metrics.glyph_bytes<=4*1024*1024);
+ report.cacheMetrics=metrics;
+ checks.push('60 large virtual scroll steps keep row scopes and text/scene/glyph caches within their declared bounds');
+ const camera=node('camera-state').text;
+ click('board-right');assert.notEqual(node('camera-state').text,camera);
+ assert.match(node('camera-state').text,/Camera 120\.0/);
+ click('board-zoom');assert.match(node('camera-state').text,/zoom 1\.25/);
+ click('board-reset');assert.equal(node('camera-state').text,camera);
+ const canvas=node('drawing-board');app.canvas_pick(canvas.node,canvas.rect[0]+20,canvas.rect[1]+15);frame();assert.match(node('board-picked').text,/Selected object: 1/);
+ app.canvas_pan(canvas.node,40,20);frame();assert.match(node('camera-state').text,/Camera -40\.0, -20\.0/);click('board-reset');
+ checks.push('public drawing camera pan/zoom/reset and portable picking/gesture dispatch update the retained scene');
+ const dark=digest();click('theme-toggle');assert.notEqual(digest(),dark);
+ click('theme-toggle');assert.equal(digest(),dark);
+ checks.push('theme tokens update actual Rust CPU pixels and round-trip deterministically');
+ width=390;height=844;frame();
+ assert(inspection().nodes.filter(n=>n.id?.startsWith('nav-')).every(n=>n.rect[0]+n.rect[2]<=391));
+ assert(node('engine-dashboard').rect[2]<=390);
+ width=1200;height=1000;dpr=2;frame();assert.equal(app.pixels().length,width*height*dpr*dpr*4);
+ dpr=1;frame();assert.equal(frame(),false);
+ checks.push('narrow responsive layout, DPR 2 pixel dimensions and idle settle');
+ click('nav-home');assert.deepEqual(inspection().counts,home);
+ for(let i=0;i<10;i++){click('nav-engine');click('rows-end');click('board-zoom');click('nav-home');assert.deepEqual(inspection().counts,home);}
+ checks.push('10 visual-demo mount/unmount cycles return live runtime counts to baseline');
+ report.rawFrameSamples=rawFrames;
+ timings.sort((a,b)=>a-b);
+ Object.assign(report,{result:'passed',maximumMaterializedRows:maximumRows,finalCounts:inspection().counts,frameSamples:{count:timings.length,medianMs:timings[Math.floor(timings.length/2)],p95Ms:timings[Math.floor(timings.length*.95)],maximumMs:timings.at(-1)}});
+} catch(error) {report.result='failed';report.error=String(error);report.inspection=inspection();throw error;}
+finally {await fs.writeFile(new URL('stage2-wasm.json',evidence),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));}
