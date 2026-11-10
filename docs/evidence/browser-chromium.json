@@ -2,7 +2,7 @@
   "result": "passed",
   "date": "2026-11-01",
   "engine": "chromium",
-  "version": "156.0.8078.74",
+  "version": "156.0.8078.80",
   "platform": "darwin",
   "arch": "arm64",
   "backend": "Rust CPU",

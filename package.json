@@ -13,7 +13,9 @@
     "package": "node scripts/package.mjs",
     "test:stage2": "node scripts/test-stage2.mjs",
     "test:stage2:browser": "node scripts/test-stage2-browser.mjs",
-    "test:stage2:probe": "node scripts/compare-stage2-probe.mjs"
+    "test:stage2:probe": "node scripts/compare-stage2-probe.mjs",
+    "test:stage3:browser": "node scripts/test-stage3-browser.mjs",
+    "test:stage3:services": "node scripts/test-stage3-services.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.1",

@@ -1,0 +1,190 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx-macros v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-macros)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+   Compiling rustx-web v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.62s
+     Running unittests src/lib.rs (target/debug/deps/rustx-ce19d83d7a860b42)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile.rs (target/debug/deps/compile-bc333cfa29d899eb)
+
+running 1 test
+   Compiling rustx-macros v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-macros)
+    Checking rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+    Checking rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Checking rustx-tests v0.0.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/target/tests/trybuild/rustx)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.40s
+
+
+test tests/ui/duplicate_alias.rs ... ok
+test tests/ui/missing_prop.rs ... ok
+test tests/ui/nesting.rs ... ok
+test tests/ui/wrong_prop.rs ... ok
+
+
+test compile_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
+
+     Running tests/host.rs (target/debug/deps/host-4686388c2f645406)
+
+running 5 tests
+test handshake_rejects_skew_and_invalid_limits ... ok
+test missing_or_denied_host_never_enqueues_work ... ok
+test reentrant_callbacks_can_start_work_and_small_host_limits_apply ... ok
+test skewed_stale_and_oversized_completions_are_safe ... ok
+test queue_and_scope_cleanup_stay_bounded_under_adversarial_churn ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-8d2a948aecd8c0f6)
+
+running 15 tests
+test cancel_once ... ok
+test default_generic_named_slots ... ok
+test disposed_http_completion_rejected ... ok
+test context_children_fragments ... ok
+test imported_reactive_and_initial_props ... ok
+test node_refs_clear_on_disposal ... ok
+test duplicate_keys - should panic ... ok
+test batches ... ok
+test memo_effect_cleanup ... ok
+test semantic_text_includes_literal_and_reactive_children ... ok
+test setup_mounts_once ... ok
+test stale_dependencies_removed ... ok
+test keyed_state_and_disposal ... ok
+test completed_requests_release_cleanup ... ok
+test effect_cycles_are_bounded - should panic ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-36a90c02b05662fa)
+
+running 10 tests
+test responsive_queries_are_ordered_and_theme_tokens_resolve ... ok
+test drawing_queries_include_stroke_overhang_and_reject_unsafe_path_bounds ... ok
+test drawing_large_coordinates_and_transformed_topmost_hits_are_stable ... ok
+test drawing_hits_follow_rounded_and_path_geometry_not_only_bounds ... ok
+test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
+test virtual_scroll_clamps_and_ignores_nonfinite_input ... ok
+test virtual_scrolling_from_a_row_routes_to_the_owning_list ... ok
+test direct_virtual_offsets_and_invalid_viewports_do_not_overflow ... ok
+test spatial_drawing_queries_cull_ten_thousand_shapes_without_reordering ... ok
+test virtual_list_bounds_materialized_scopes_and_retains_focused_state ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_cli-c4b0170d656997e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_core-611f9f0d745b00db)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-ea2b9ab01b3f5576)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cpu.rs (target/debug/deps/cpu-10558e667ac12c1f)
+
+running 1 test
+test opacity_composites_the_group_once_and_border_stays_inside ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-25ea8015feb8123b)
+
+running 17 tests
+test budget_cache_obeys_byte_entry_and_lru_constraints ... ok
+test drawing_geometry_rebases_large_coordinates_before_backend_float_conversion ... ok
+test image_registration_rejects_invalid_sizes_and_removal_invalidates_caches ... ok
+test image_resource_updates_repaint_an_otherwise_idle_engine ... ok
+test cpu_culling_keeps_visible_shadow_of_an_offscreen_clipped_node ... ok
+test cpu_image_pixels_use_straight_rgba_source_alpha ... ok
+test cpu_image_alpha_multiplier_matches_the_shared_asset_contract ... ok
+test layout_alignment_growth_and_width_constraints_are_applied ... ok
+test cpu_drawings_honor_canvas_clip_path_fill_and_camera ... ok
+test explicit_text_direction_preserves_trailing_paragraphs ... ok
+test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
+test text_coordinates_remain_finite_for_unbounded_measurement ... ok
+test layout_reflows_at_breakpoints_and_theme_changes_do_not_remount ... ok
+test font_readiness_invalidates_existing_layout_once ... ok
+test retained_layout_avoids_invalidation_for_color_only_updates ... ok
+test text_direction_alignment_clusters_and_utf16_boundaries_share_the_model ... ok
+test text_cache_reuses_shapes_reflows_and_invalidation_follows_font_readiness ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_lab-9f07427d3c9cf1bf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_lab-a423ea786e4a7262)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_macros-98ec06a4a8618464)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_web-3209177703cafdb4)
+
+running 1 test
+test host_ids_are_exact ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_macros
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

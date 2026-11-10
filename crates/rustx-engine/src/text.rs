@@ -17,10 +17,18 @@ pub struct GlyphRun {
 #[derive(Clone)]
 pub struct Shaped {
     pub clusters: Vec<GlyphCluster>,
+    pub lines: Vec<TextLine>,
     pub width: f32,
     pub height: f32,
     pub runs: Vec<GlyphRun>,
     pub missing: usize,
+}
+#[derive(Clone)]
+pub struct TextLine {
+    pub start: usize,
+    pub end: usize,
+    pub y: f32,
+    pub height: f32,
 }
 #[derive(Clone, Hash, Eq, PartialEq)]
 struct Key {
@@ -162,6 +170,7 @@ impl TextEngine {
         buffer.shape_until_scroll(&mut self.system, false);
         let mut shaped = Shaped {
             clusters: vec![],
+            lines: vec![],
             width: 0.,
             height: 0.,
             runs: vec![],
@@ -180,6 +189,24 @@ impl TextEngine {
             } else {
                 3
             };
+            shaped.lines.push(TextLine {
+                start: base
+                    + line
+                        .glyphs
+                        .iter()
+                        .map(|glyph| glyph.start.saturating_sub(prefix))
+                        .min()
+                        .unwrap_or(0),
+                end: base
+                    + line
+                        .glyphs
+                        .iter()
+                        .map(|glyph| glyph.end.saturating_sub(prefix))
+                        .max()
+                        .unwrap_or(0),
+                y: line.line_top,
+                height: line.line_height,
+            });
             for g in line.glyphs {
                 shaped.clusters.push(GlyphCluster {
                     start: base + g.start.saturating_sub(prefix),
@@ -232,7 +259,8 @@ impl TextEngine {
                 .iter()
                 .map(|r| r.glyphs.len() * std::mem::size_of::<Glyph>())
                 .sum::<usize>()
-            + shaped.clusters.len() * std::mem::size_of::<GlyphCluster>();
+            + shaped.clusters.len() * std::mem::size_of::<GlyphCluster>()
+            + shaped.lines.len() * std::mem::size_of::<TextLine>();
         let result = Arc::new(shaped);
         self.cache.insert(key, result.clone(), bytes);
         result

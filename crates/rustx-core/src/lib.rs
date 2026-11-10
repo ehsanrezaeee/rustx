@@ -1,5 +1,23 @@
 //! Mount-once components; owned signals and automatically tracked reactive bindings.
+mod assets;
+pub use assets::*;
 pub mod drawing;
+mod errors;
+pub mod events;
+pub mod widgets;
+pub use errors::*;
+pub mod editing;
+pub mod forms;
+mod resources;
+mod router;
+mod services;
+pub use editing::*;
+pub use events::*;
+pub use forms::*;
+pub use resources::*;
+pub use router::*;
+pub use services::*;
+pub use widgets::*;
 mod host;
 mod style;
 mod virtual_list;
@@ -32,14 +50,26 @@ pub struct ClickEvent {
     pub x: f32,
     pub y: f32,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct InputEvent {
     pub target: u64,
     pub value: String,
     pub composing: bool,
 }
+impl std::fmt::Debug for InputEvent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("InputEvent")
+            .field("target", &self.target)
+            .field("value", &"[redacted]")
+            .field("composing", &self.composing)
+            .finish()
+    }
+}
 #[derive(Clone)]
 pub struct Node {
+    pub control: ControlState,
+    pub editing: Option<Editor>,
+    pub listeners: Vec<EventListener>,
     pub role: Option<&'static str>,
     pub position: Option<(usize, usize)>,
     pub drawing: Option<Rc<drawing::CanvasScene>>,
@@ -63,6 +93,9 @@ pub struct Node {
 impl Node {
     pub fn new(kind: Kind) -> Self {
         Self {
+            control: ControlState::default(),
+            editing: None,
+            listeners: vec![],
             role: None,
             position: None,
             drawing: None,
@@ -89,6 +122,30 @@ impl Node {
             text: v.to_string(),
             ..Self::new(Kind::Text)
         }
+    }
+    pub fn editing(mut self, editor: Editor) -> Self {
+        self.control.read_only = editor.snapshot().read_only;
+        if editor.snapshot().password {
+            self.control.input_type = Some("password".into());
+        }
+        self.editing = Some(editor);
+        self
+    }
+    pub fn on_event(mut self, kind: EventKind, f: impl Fn(Event) + 'static) -> Self {
+        self.listeners.push(EventListener {
+            kind,
+            capture: false,
+            callback: Rc::new(f),
+        });
+        self
+    }
+    pub fn on_event_capture(mut self, kind: EventKind, f: impl Fn(Event) + 'static) -> Self {
+        self.listeners.push(EventListener {
+            kind,
+            capture: true,
+            callback: Rc::new(f),
+        });
+        self
     }
     pub fn fragment(children: Vec<View>) -> Self {
         Self {
@@ -224,6 +281,8 @@ pub fn keyed<T, K: ToString>(
 }
 #[derive(Clone, Debug)]
 pub struct Snapshot {
+    pub control: ControlState,
+    pub editing: Option<EditingState>,
     pub role: Option<&'static str>,
     pub position: Option<(usize, usize)>,
     pub drawing: Option<Rc<drawing::CanvasScene>>,
@@ -238,8 +297,20 @@ pub struct Snapshot {
     pub children: Vec<Snapshot>,
 }
 impl Snapshot {
+    pub fn focusable(&self) -> bool {
+        !self.control.disabled
+            && !self.control.hidden
+            && (matches!(self.kind, Kind::Button | Kind::Input | Kind::Canvas)
+                || self.control.editable
+                || self.control.tab_index.is_some()
+                || matches!(self.role, Some("tab" | "radio" | "option" | "menuitem")))
+    }
     pub fn text_content(&self) -> String {
-        let mut s = self.text.clone();
+        let mut s = self
+            .control
+            .value_text
+            .clone()
+            .unwrap_or_else(|| self.text.clone());
         for c in &self.children {
             s.push_str(&c.text_content());
         }
@@ -255,6 +326,8 @@ impl Snapshot {
 }
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct SemanticNode {
+    pub control: ControlState,
+    pub focusable: bool,
     pub position: Option<(usize, usize)>,
     pub id: u64,
     pub role: &'static str,
@@ -554,7 +627,21 @@ fn compatible(a: &Node, b: &Node) -> bool {
             _ => false,
         }
 }
-fn reconcile(i: &Rc<RefCell<Inner>>, old: Option<Mount>, node: Node, parent: Option<u64>) -> Mount {
+fn reconcile(
+    i: &Rc<RefCell<Inner>>,
+    old: Option<Mount>,
+    mut node: Node,
+    parent: Option<u64>,
+) -> Mount {
+    if node.control.selectable {
+        node.control.editable = true;
+        node.control.read_only = true;
+        node.control.multiline = true;
+    }
+    if let Some(editor) = &node.editing {
+        editor.set_read_only(node.control.read_only);
+        let _ = editor.clone().with_password(node.control.password());
+    }
     let old = old.filter(|m| {
         let same = compatible(&m.borrow().node, &node);
         if !same {
@@ -565,6 +652,16 @@ fn reconcile(i: &Rc<RefCell<Inner>>, old: Option<Mount>, node: Node, parent: Opt
     if let Some(m) = old {
         if node.component.is_some() {
             return m;
+        }
+        if (node.kind == Kind::Input || node.control.editable) && node.editing.is_none() {
+            let old = m.borrow();
+            if let Some(editor) = &old.node.editing {
+                if node.text != old.node.text && editor.value() != node.text {
+                    let _ = editor.set_controlled_value(node.text.clone());
+                }
+                node.editing = Some(editor.clone().with_password(node.control.password()));
+                editor.set_read_only(node.control.read_only);
+            }
         }
         {
             let b = m.borrow();
@@ -595,6 +692,13 @@ fn reconcile(i: &Rc<RefCell<Inner>>, old: Option<Mount>, node: Node, parent: Opt
         return m;
     }
     let scope = owner(i, parent);
+    if (node.kind == Kind::Input || node.control.editable) && node.editing.is_none() {
+        node.editing = Some(
+            Editor::new(node.text.clone())
+                .with_password(node.control.password())
+                .with_read_only(node.control.read_only),
+        );
+    }
     let m = Rc::new(RefCell::new(Mounted {
         id: next(i),
         node: node.clone(),
@@ -699,6 +803,8 @@ pub struct Runtime {
     inner: Rc<RefCell<Inner>>,
     root: Mount,
     effect_cascade: usize,
+    pointer_captures: HashMap<u64, NodeId>,
+    model_epoch: u64,
 }
 impl Runtime {
     pub fn new(f: impl Fn(Scope) -> View + 'static) -> Self {
@@ -716,6 +822,8 @@ impl Runtime {
             inner: i,
             root,
             effect_cascade: 0,
+            pointer_captures: HashMap::new(),
+            model_epoch: 0,
         };
         rt.flush();
         rt
@@ -779,6 +887,18 @@ impl Runtime {
         } else {
             self.effect_cascade = 0;
         }
+        if !self.pointer_captures.is_empty() {
+            fn ids(m: &Mount, out: &mut HashSet<NodeId>) {
+                let b = m.borrow();
+                out.insert(b.id);
+                for c in &b.children {
+                    ids(c, out);
+                }
+            }
+            let mut alive = HashSet::new();
+            ids(&self.root, &mut alive);
+            self.pointer_captures.retain(|_, id| alive.contains(id));
+        }
         self.inner.borrow().stats
     }
     pub fn needs_update(&self) -> bool {
@@ -787,36 +907,85 @@ impl Runtime {
     pub fn snapshot(&self) -> Snapshot {
         fn snap(m: &Mount) -> Snapshot {
             let b = m.borrow();
+            let mut children: Vec<_> = b.children.iter().map(snap).collect();
+            if b.node.control.selectable {
+                // Text/Paragraph children are text content, not a second
+                // accessible editing representation. Retain their scopes but
+                // expose a single selected string and Rust layout box.
+                let mut content = b.node.text.clone();
+                for child in &children {
+                    content.push_str(&child.text_content());
+                }
+                if let Some(editor) = &b.node.editing {
+                    if editor.value() != content {
+                        let _ = editor.set_controlled_value(content);
+                    }
+                }
+                children.clear();
+            }
             Snapshot {
+                control: b.node.control.clone(),
+                editing: b.node.editing.as_ref().map(Editor::snapshot),
                 id: b.id,
                 role: b.node.role,
                 position: b.node.position,
                 drawing: b.node.drawing.clone(),
                 camera: b.node.camera,
                 kind: b.node.kind,
-                text: b.node.text.clone(),
+                text: if let Some(e) = &b.node.editing {
+                    e.snapshot().text
+                } else if b.node.control.password() {
+                    "•".repeat(b.node.text.chars().count())
+                } else {
+                    b.node.text.clone()
+                },
                 style: b.node.style.clone(),
                 app_id: b.node.id.clone(),
                 label: b.node.label.clone(),
                 interactive: b.node.on_click.is_some()
                     || b.node.on_input.is_some()
                     || b.node.drawing.is_some()
-                    || b.node.on_scroll.is_some(),
-                children: b.children.iter().map(snap).collect(),
+                    || b.node.on_scroll.is_some()
+                    || b.node.control.editable
+                    || !b.node.listeners.is_empty()
+                    || matches!(b.node.kind, Kind::Button | Kind::Input),
+                children,
             }
         }
         snap(&self.root)
     }
     pub fn semantics(&self) -> SemanticNode {
         fn sem(s: Snapshot) -> SemanticNode {
-            let role = s.role.unwrap_or(match s.kind {
-                Kind::Button => "button",
-                Kind::Input => "textbox",
-                Kind::Text => "text",
-                Kind::Image | Kind::Canvas => "img",
-                _ => "group",
-            });
+            let role = if s.control.selectable {
+                "textbox"
+            } else {
+                s.role.unwrap_or(match s.kind {
+                    Kind::Button => "button",
+                    Kind::Input => "textbox",
+                    Kind::Text => "text",
+                    Kind::Image | Kind::Canvas => "img",
+                    _ => "group",
+                })
+            };
+            let mut control = s.control.clone();
+            if matches!(role, "slider" | "progressbar") && control.value_now.is_none() {
+                control.value_now = s
+                    .text
+                    .trim_end_matches('%')
+                    .parse::<f64>()
+                    .ok()
+                    .filter(|v| v.is_finite());
+            }
+            if control.direction.is_none() {
+                control.direction = match s.style.text_direction {
+                    TextDirection::Auto => None,
+                    TextDirection::LeftToRight => Some("ltr".into()),
+                    TextDirection::RightToLeft => Some("rtl".into()),
+                };
+            }
             SemanticNode {
+                control,
+                focusable: s.focusable(),
                 position: s.position,
                 id: s.id,
                 role,
@@ -827,7 +996,9 @@ impl Runtime {
                         s.text.clone()
                     }
                 }),
-                value: if s.kind == Kind::Input {
+                value: if s.control.password() {
+                    String::new()
+                } else if s.kind == Kind::Input || s.control.editable || s.role == Some("slider") {
                     s.text.clone()
                 } else {
                     String::new()
@@ -849,25 +1020,378 @@ impl Runtime {
         }
         find(&self.root, id)
     }
-    pub fn click(&mut self, id: u64, x: f32, y: f32) -> bool {
-        if let Some(f) = self.find(id).and_then(|n| n.on_click) {
-            f(ClickEvent { target: id, x, y });
-            true
-        } else {
-            false
+    pub fn scope_for_node(&self, id: NodeId) -> Option<Scope> {
+        fn find(m: &Mount, id: NodeId) -> Option<Scope> {
+            let b = m.borrow();
+            if b.id == id {
+                Some(b.scope.clone())
+            } else {
+                b.children.iter().find_map(|c| find(c, id))
+            }
         }
+        find(&self.root, id)
+    }
+    pub fn click(&mut self, id: u64, x: f32, y: f32) -> bool {
+        let mut event = EventData::new(EventKind::Click);
+        event.x = x as f64;
+        event.y = y as f64;
+        self.dispatch(id, event).handled
     }
     pub fn input(&mut self, id: u64, value: String, composing: bool) -> bool {
-        if let Some(f) = self.find(id).and_then(|n| n.on_input) {
-            f(InputEvent {
-                target: id,
-                value,
-                composing,
-            });
-            true
-        } else {
-            false
+        if !self
+            .find(id)
+            .is_some_and(|n| !n.control.disabled && !n.control.read_only)
+        {
+            return false;
         }
+        if let Some(editor) = self.editor(id) {
+            if editor.value() != value {
+                let end = value.encode_utf16().count();
+                if editor.sync(value.clone(), end, end, composing).is_err() {
+                    return false;
+                }
+                self.invalidate_model();
+            }
+        }
+        let mut event = EventData::new(EventKind::Input);
+        event.value = value;
+        event.composing = composing;
+        self.dispatch(id, event).handled
+    }
+    /// The input bridge is the only diagnostic-free path to a password's actual value.
+    pub fn edit_value(&self, id: NodeId) -> Option<String> {
+        let node = self.find(id)?;
+        Some(node.editing.map_or(node.text, |editor| editor.value()))
+    }
+    pub fn editor(&self, id: NodeId) -> Option<Editor> {
+        self.find(id)?.editing
+    }
+    pub fn model_epoch(&self) -> u64 {
+        self.model_epoch
+    }
+    pub fn invalidate_model(&mut self) {
+        self.model_epoch = self.model_epoch.wrapping_add(1);
+    }
+    pub fn edit_sync(
+        &mut self,
+        id: NodeId,
+        value: String,
+        anchor_utf16: usize,
+        focus_utf16: usize,
+        composing: bool,
+    ) -> bool {
+        let Some(node) = self.find(id) else {
+            return false;
+        };
+        if node.control.disabled {
+            return false;
+        }
+        let old = node
+            .editing
+            .as_ref()
+            .map_or_else(|| node.text.clone(), Editor::value);
+        if node.control.read_only && old != value {
+            return false;
+        }
+        if let Some(editor) = node.editing {
+            if editor
+                .sync(value.clone(), anchor_utf16, focus_utf16, composing)
+                .is_err()
+            {
+                return false;
+            }
+        }
+        self.invalidate_model();
+        if old != value {
+            self.input(id, value, composing);
+        }
+        true
+    }
+    pub fn captured_pointer(&self, pointer_id: u64) -> Option<NodeId> {
+        self.pointer_captures
+            .get(&pointer_id)
+            .copied()
+            .filter(|id| self.find(*id).is_some())
+    }
+    pub fn capture_pointer(&mut self, pointer_id: u64, id: NodeId) -> bool {
+        if self.find(id).is_none()
+            || self.pointer_captures.len() >= 64 && !self.pointer_captures.contains_key(&pointer_id)
+        {
+            return false;
+        }
+        self.pointer_captures.insert(pointer_id, id);
+        true
+    }
+    /// Dispatch against a cloned committed path. A handler may update signals without
+    /// changing this event's path; the next commit observes those updates.
+    pub fn dispatch(&mut self, target: NodeId, data: EventData) -> DispatchResult {
+        self.dispatch_with_origins(target, data, &HashMap::new())
+    }
+    pub fn dispatch_with_origins(
+        &mut self,
+        target: NodeId,
+        data: EventData,
+        origins: &HashMap<NodeId, (f64, f64)>,
+    ) -> DispatchResult {
+        if !data.is_valid() {
+            return DispatchResult {
+                default_prevented: true,
+                ..Default::default()
+            };
+        }
+        fn path(m: &Mount, id: NodeId, out: &mut Vec<(NodeId, Node)>) -> bool {
+            let b = m.borrow();
+            let before = out.len();
+            out.push((b.id, b.node.clone()));
+            if b.id == id || b.children.iter().any(|c| path(c, id, out)) {
+                true
+            } else {
+                out.truncate(before);
+                false
+            }
+        }
+        let pointer = matches!(
+            data.kind,
+            EventKind::PointerMove | EventKind::PointerUp | EventKind::PointerCancel
+        );
+        let target = if pointer {
+            self.captured_pointer(data.pointer_id).unwrap_or(target)
+        } else {
+            target
+        };
+        // Terminal events end capture even if the committed target can no
+        // longer receive input (for example after disabling it or opening a
+        // modal). Preserve the captured target for this dispatch first.
+        let pointer_released = matches!(data.kind, EventKind::PointerUp | EventKind::PointerCancel)
+            && self.pointer_captures.remove(&data.pointer_id).is_some();
+        let mut nodes = vec![];
+        if !path(&self.root, target, &mut nodes) {
+            self.pointer_captures.remove(&data.pointer_id);
+            return DispatchResult {
+                pointer_released,
+                ..Default::default()
+            };
+        }
+        fn modal(m: &Mount) -> Option<NodeId> {
+            let b = m.borrow();
+            if b.node.control.hidden {
+                return None;
+            }
+            b.children
+                .iter()
+                .rev()
+                .find_map(modal)
+                .or_else(|| b.node.control.modal.then_some(b.id))
+        }
+        if let Some(modal) = modal(&self.root) {
+            if !nodes.iter().any(|(id, _)| *id == modal)
+                && !matches!(
+                    data.kind,
+                    EventKind::Blur
+                        | EventKind::ResourceError
+                        | EventKind::Resize
+                        | EventKind::PointerCancel
+                )
+            {
+                return DispatchResult {
+                    default_prevented: true,
+                    pointer_released,
+                    ..Default::default()
+                };
+            }
+        }
+        if nodes
+            .iter()
+            .any(|(_, n)| n.control.disabled || n.control.hidden)
+        {
+            return DispatchResult {
+                default_prevented: true,
+                pointer_released,
+                ..Default::default()
+            };
+        }
+        let state = Rc::new(RefCell::new(events::DispatchState::default()));
+        let invoke = |id, node: &Node, capture, phase| {
+            state.borrow_mut().immediate = false;
+            for listener in &node.listeners {
+                if listener.kind == data.kind && listener.capture == capture {
+                    state.borrow_mut().result.handled = true;
+                    let origin = origins.get(&id).copied().unwrap_or((0., 0.));
+                    (listener.callback)(Event {
+                        target,
+                        current_target: id,
+                        phase,
+                        local_x: data.x - origin.0,
+                        local_y: data.y - origin.1,
+                        data: data.clone(),
+                        state: state.clone(),
+                    });
+                    if state.borrow().immediate {
+                        break;
+                    }
+                }
+            }
+        };
+        for (id, node) in nodes.iter().take(nodes.len().saturating_sub(1)) {
+            invoke(*id, node, true, EventPhase::Capture);
+            if state.borrow().stopped {
+                break;
+            }
+        }
+        if !state.borrow().stopped {
+            let (id, node) = nodes.last().unwrap();
+            invoke(*id, node, true, EventPhase::Target);
+            if !state.borrow().immediate {
+                invoke(*id, node, false, EventPhase::Target);
+            }
+        }
+        if !state.borrow().stopped {
+            for (id, node) in nodes.iter().rev().skip(1) {
+                invoke(*id, node, false, EventPhase::Bubble);
+                if state.borrow().stopped {
+                    break;
+                }
+            }
+        }
+        let node = &nodes.last().unwrap().1;
+        if node.control.disabled || node.control.hidden {
+            state.borrow_mut().result.default_prevented = true;
+        }
+        if !state.borrow().result.default_prevented {
+            match data.kind {
+                EventKind::Click => {
+                    if let Some(f) = &node.on_click {
+                        f(ClickEvent {
+                            target,
+                            x: data.x as f32,
+                            y: data.y as f32,
+                        });
+                        state.borrow_mut().result.handled = true;
+                    }
+                    if !node.control.read_only
+                        && matches!(node.role, Some("checkbox" | "switch" | "radio"))
+                    {
+                        if let Some(f) = &node.on_input {
+                            f(InputEvent {
+                                target,
+                                value: if node.role == Some("radio") {
+                                    "true".into()
+                                } else {
+                                    (!node.control.checked.unwrap_or(false)).to_string()
+                                },
+                                composing: false,
+                            });
+                            state.borrow_mut().result.handled = true;
+                        }
+                    }
+                }
+                EventKind::Input if !node.control.read_only => {
+                    if let Some(f) = &node.on_input {
+                        f(InputEvent {
+                            target,
+                            value: data.value.clone(),
+                            composing: data.composing,
+                        });
+                        state.borrow_mut().result.handled = true;
+                    }
+                }
+                EventKind::KeyDown if !data.ctrl && !data.meta && !data.alt && !data.composing => {
+                    let role = node.role.unwrap_or("");
+                    if (data.key == "Enter" || data.key == " ")
+                        && node.kind == Kind::Button
+                        && role != "link"
+                    {
+                        let clicked = self.click(target, data.x as f32, data.y as f32);
+                        let mut s = state.borrow_mut();
+                        s.result.handled |= clicked;
+                        s.result.default_prevented = clicked;
+                    } else if role == "slider" && !node.control.read_only {
+                        let min = node.control.min.unwrap_or(0.);
+                        let max = node.control.max.unwrap_or(100.).max(min);
+                        let step = node.control.step.unwrap_or(1.);
+                        let old: f64 = node.text.parse().unwrap_or(min);
+                        let horizontal = if node.style.text_direction == TextDirection::RightToLeft
+                        {
+                            -step
+                        } else {
+                            step
+                        };
+                        let next = match data.key.as_str() {
+                            "ArrowRight" => Some(old + horizontal),
+                            "ArrowLeft" => Some(old - horizontal),
+                            "ArrowUp" => Some(old + step),
+                            "ArrowDown" => Some(old - step),
+                            "Home" => Some(min),
+                            "End" => Some(max),
+                            "PageUp" => Some(old + step * 10.),
+                            "PageDown" => Some(old - step * 10.),
+                            _ => None,
+                        };
+                        if let (Some(next), Some(f)) = (next, &node.on_input) {
+                            f(InputEvent {
+                                target,
+                                value: next.clamp(min, max).to_string(),
+                                composing: false,
+                            });
+                            let mut s = state.borrow_mut();
+                            s.result.handled = true;
+                            s.result.default_prevented = true;
+                        }
+                    } else if role == "combobox"
+                        && !node.control.options.is_empty()
+                        && !node.control.read_only
+                    {
+                        let choices: Vec<_> = node
+                            .control
+                            .options
+                            .iter()
+                            .filter(|c| !c.disabled)
+                            .collect();
+                        if !choices.is_empty() {
+                            let at = choices
+                                .iter()
+                                .position(|c| c.value == node.text)
+                                .unwrap_or(0);
+                            let next = match data.key.as_str() {
+                                "ArrowDown" => Some((at + 1) % choices.len()),
+                                "ArrowUp" => Some((at + choices.len() - 1) % choices.len()),
+                                "Home" => Some(0),
+                                "End" => Some(choices.len() - 1),
+                                _ => None,
+                            };
+                            if let (Some(next), Some(f)) = (next, &node.on_input) {
+                                f(InputEvent {
+                                    target,
+                                    value: choices[next].value.clone(),
+                                    composing: false,
+                                });
+                                let mut s = state.borrow_mut();
+                                s.result.handled = true;
+                                s.result.default_prevented = true;
+                            }
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        let mut result = state.borrow().result.clone();
+        result.pointer_released |= pointer_released;
+        if let Some(id) = result.pointer_capture {
+            if self.pointer_captures.len() < 64
+                || self.pointer_captures.contains_key(&data.pointer_id)
+            {
+                self.pointer_captures.insert(data.pointer_id, id);
+            } else {
+                result.pointer_capture = None;
+            }
+        }
+        if result.pointer_released
+            || matches!(data.kind, EventKind::PointerUp | EventKind::PointerCancel)
+        {
+            result.pointer_released |= self.pointer_captures.remove(&data.pointer_id).is_some();
+        }
+        result
     }
     pub fn focus(&mut self, id: u64) {
         fn path(m: &Mount, id: u64, out: &mut Vec<Rc<dyn Fn()>>) -> bool {

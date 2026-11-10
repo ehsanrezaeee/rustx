@@ -1,0 +1,6 @@
+
+> test:http
+> cargo build -p rustx-cli --locked && node scripts/test-http.mjs
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+PASS: real Rust HTTP fixture server -> production JS Fetch -> compiled Wasm (success, HTTP 503, cancellation). No browser/CORS claim.

@@ -1,0 +1,13 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.27s
+     Running tests/stage3_assets.rs (target/debug/deps/stage3_assets-45fd9fb502da0f9e)
+
+running 4 tests
+test png_decoder_rejects_malformed_truncated_and_oversized_images ... ok
+test png_decoder_expands_color_alpha_palette_and_sixteen_bit_samples ... ok
+test asset_registry_rejects_resource_kind_changes_without_orphaning_resources ... ok
+test asset_registry_replaces_revisions_removes_images_and_rolls_back_failed_installs ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

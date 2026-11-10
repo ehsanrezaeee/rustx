@@ -135,8 +135,28 @@ fn PeopleApp(cx: Scope) -> View {
     let slow = start.clone();
     let cancel = http.clone();
     let request = latest.clone();
+    let query = cx.signal(String::new());
+    let search = query.clone();
+    let selected = cx.signal(None::<u64>);
+    let services = cx.context::<ServiceClient>().unwrap();
+    let export_scope = cx.clone();
     rustx! {<Column style={Style::column().gap(20.)}><Text style={small().color(GREEN)}>{"EXAMPLE 01 / PEOPLE EXPLORER"}</Text><Text style={Style::column().font_size(36.)}>{"Rust UI. Browser networking."}</Text><Text style={small()}>{"A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result."}</Text><Row style={Style::row().gap(10.).wrap()}><Button id="load-fixture" style={primary()} on_click={move|_|fixture("/api/users")}>{"Load local sample"}</Button><Button id="load-live" style={secondary()} on_click={move|_|live("https://jsonplaceholder.typicode.com/users")}>{"Try JSONPlaceholder"}</Button><Button id="load-error" style={secondary()} on_click={move|_|fail("/api/error")}>{"Test error"}</Button><Button id="load-slow" style={secondary()} on_click={move|_|slow("/api/users?delay=1")}>{"Slow request"}</Button><Button id="cancel" style={secondary()} on_click={move|_|{if let Some(id)=request.borrow_mut().take(){cancel.cancel(id);}}}>{"Cancel"}</Button></Row>
-    {move||match status.get(){People::Idle=>rustx!{<Column style={card()}><Text id="api-state">{"Ready when you are. Choose a data source above."}</Text></Column>},People::Loading=>rustx!{<Text id="api-state" style={small().color(GREEN)}>{"Loading people…"}</Text>},People::Failed(error)=>rustx!{<Column style={card().border(1.,0x9f6554)}><Text id="api-state">{format!("Request failed: {error}")}</Text><Text style={small()}>{"Retry either source. The local sample works without external internet."}</Text></Column>},People::Ready(people)=>rustx!{<Column style={Style::column().gap(14.)}><Text id="api-state" style={small().color(GREEN)}>{format!("{} people / request completed",people.len())}</Text><Div style={Style::grid(3).responsive(250.).gap(14.)}>{keyed(people,|p|p.id,|p|rustx!{<Column style={card()}><Text style={small().color(GREEN)}>{format!("PERSON {:02}",p.id)}</Text><Text style={Style::column().font_size(21.)}>{p.name}</Text><Text style={small()}>{p.email}</Text><Text style={small()}>{p.company}</Text></Column>})}</Div></Column>}}}</Column>}
+    <TextInput id="people-search" label="Search people" on_input={move|e:InputEvent|{let _=search.set(e.value);}}/>
+    {move||match status.get(){People::Idle=>rustx!{<Column style={card()}><Text id="api-state">{"Ready when you are. Choose a data source above."}</Text></Column>},People::Loading=>rustx!{<Text id="api-state" style={small().color(GREEN)}>{"Loading people…"}</Text>},People::Failed(error)=>rustx!{<Column style={card().border(1.,0x9f6554)}><Text id="api-state">{format!("Request failed: {error}")}</Text><Text style={small()}>{"Retry either source. The local sample works without external internet."}</Text></Column>},People::Ready(people)=>{
+        let q=query.get().to_lowercase();let shown:Vec<_>=people.iter().filter(|p|format!("{} {} {}",p.name,p.email,p.company).to_lowercase().contains(&q)).cloned().collect();
+        let mut children=vec![Node::text(format!("{} people / request completed",shown.len())).id("api-state").style(small().color(GREEN))];
+        let select=selected.clone();
+        children.push(Node::new(Kind::Div).style(Style::grid(3).responsive(250.).gap(14.)).children(keyed(shown,|p|p.id,move|p|{
+            let select=select.clone();let id=p.id;
+            Node::new(Kind::Div).style(card()).children(vec![Node::text(format!("PERSON {:02}",p.id)).style(small().color(GREEN)),Node::text(&p.name).style(Style::column().font_size(21.)),Node::text(&p.email).style(small()),Node::text(&p.company).style(small()),Node::widget(Widget::Button).id(format!("person-{}",p.id)).value("View details").on_click(move|_|{let _=select.set(Some(id));})])
+        }).children));
+        if let Some(person)=people.iter().find(|p|Some(p.id)==selected.get()){
+            let text=format!("{}\n{}\n{}",person.name,person.email,person.company);let copied=text.clone();let printed=text.clone();
+            let service=services.clone();let scope=export_scope.clone();let print_service=services.clone();let print_scope=export_scope.clone();
+            children.push(Node::new(Kind::Div).id("person-details").style(card()).children(vec![Node::text(text).id("person-details-text").label("Person details").selectable(true),Node::widget(Widget::Button).id("copy-person").value("Copy details").on_click(move|_|{let _=service.clipboard_write(&scope,copied.clone(),|_|{});}),Node::widget(Widget::Button).id("print-person").value("Print details").on_click(move|_|{let _=print_service.call(&print_scope,ServiceOperation::Print{title:"People Explorer".into(),text:printed.clone()},|_|{});})]));
+        }
+        Node::new(Kind::Div).style(Style::column().gap(14.)).children(children)
+    }}}</Column>}
 }
 #[component]
 fn Home(cx: Scope) -> View {
@@ -152,11 +172,52 @@ fn Home(cx: Scope) -> View {
 #[component]
 pub fn App(cx: Scope) -> View {
     let page = cx.signal(crate::start_page());
+    let router = Router::new(
+        &cx,
+        cx.context::<ServiceClient>().unwrap(),
+        RouteMode::Hash,
+        vec![
+            ("/".into(), 0),
+            ("/people".into(), 1),
+            ("/lab".into(), 2),
+            ("/engine".into(), 3),
+            ("/applications".into(), 4),
+        ],
+    )
+    .expect("route configuration");
+    if crate::start_page() > 0 {
+        let path = match crate::start_page() {
+            3 => "/engine",
+            4 => "/applications",
+            _ => "/",
+        };
+        let _ = router.navigate(path, true);
+    }
+    let current = router.current.clone();
+    let routed = page.clone();
+    cx.effect(move || {
+        match current.get() {
+            RouteState::Found(r) => {
+                let _ = routed.set(r.route);
+            }
+            RouteState::NotFound(p) if !p.is_empty() => {
+                let _ = routed.set(5);
+            }
+            _ => {}
+        }
+        Box::new(|| {})
+    });
+    let hr = router.clone();
+    let pr = router.clone();
+    let lr = router.clone();
+    let vr = router.clone();
+    let ar = router.clone();
     let h = page.clone();
     let p = page.clone();
     let l = page.clone();
     let v = page.clone();
-    rustx! {<Column style={Style::column().padding(32.).gap(30.).background_token(ColorToken::Background)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);}}>{"Runtime lab"}</Button><Button id="nav-engine" style={secondary()} on_click={move|_|{let _=v.set(3);}}>{"Visual engine"}</Button></Row>{move||match page.get(){3=>rustx!{<VisualEngine/>},1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
+    let a = page.clone();
+    rustx! {<Column style={Style::column().padding(32.).gap(30.).background_token(ColorToken::Background)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);let _=hr.navigate("/",false);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);let _=pr.navigate("/people",false);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);let _=lr.navigate("/lab",false);}}>{"Runtime lab"}</Button><Button id="nav-engine" style={secondary()} on_click={move|_|{let _=v.set(3);let _=vr.navigate("/engine",false);}}>{"Visual engine"}</Button><Button id="nav-applications" style={secondary()} on_click={move|_|{let _=a.set(4);let _=ar.navigate("/applications",false);}}>{"Applications"}</Button></Row>{move||match page.get(){5=>Node::text("Page not found. Choose a page above."),4=>Node::component("Applications",crate::applications::application),3=>rustx!{<VisualEngine/>},1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
 }
 pub fn root(cx: Scope, http: HttpClient) -> View {
     cx.provide(http);

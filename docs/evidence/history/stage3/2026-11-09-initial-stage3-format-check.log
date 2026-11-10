@@ -1,0 +1,765 @@
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/stage3_spinner.rs:1:
+ use rustx::*;
+-use std::{cell::RefCell,rc::Rc};
++use std::{cell::RefCell, rc::Rc};
+ 
+ #[test]
+-fn spinner_uses_scoped_timers_and_unmount_cancels_the_pending_tick(){
+-    let services=ServiceClient::default();let tasks=TaskQueue::default();let saved=Rc::new(RefCell::new(None));
+-    let host=services.clone();let scheduler=tasks.clone();let out=saved.clone();
+-    let mut runtime=Runtime::new(move|cx|{
+-        cx.provide(host.clone());cx.provide(scheduler.clone());let visible=cx.signal(true);*out.borrow_mut()=Some(visible.clone());
+-        dynamic(move||if visible.get(){spinner("Loading")}else{Node::text("settled")})
+-    });runtime.flush();tasks.poll();let initial=runtime.snapshot().text_content();
+-    let command=services.drain().into_iter().next().unwrap();assert!(matches!(command.operation,ServiceOperation::Timer{delay_ms:150}));
+-    assert!(services.complete(SERVICE_VERSION,command.id,Ok(ServiceValue::Unit)));tasks.poll();runtime.flush();
+-    assert_ne!(runtime.snapshot().text_content(),initial);let tick=services.drain().into_iter().next().unwrap();
+-    saved.borrow().as_ref().unwrap().set(false).unwrap();runtime.flush();
+-    assert_eq!(tasks.pending(),0);assert_eq!(services.pending(),0);
+-    assert!(!services.complete(SERVICE_VERSION,tick.id,Ok(ServiceValue::Unit)));
+-    assert!(services.drain().iter().any(|c|matches!(c.operation,ServiceOperation::Cancel{resource}if resource==tick.id)));
++fn spinner_uses_scoped_timers_and_unmount_cancels_the_pending_tick() {
++    let services = ServiceClient::default();
++    let tasks = TaskQueue::default();
++    let saved = Rc::new(RefCell::new(None));
++    let host = services.clone();
++    let scheduler = tasks.clone();
++    let out = saved.clone();
++    let mut runtime = Runtime::new(move |cx| {
++        cx.provide(host.clone());
++        cx.provide(scheduler.clone());
++        let visible = cx.signal(true);
++        *out.borrow_mut() = Some(visible.clone());
++        dynamic(move || {
++            if visible.get() {
++                spinner("Loading")
++            } else {
++                Node::text("settled")
++            }
++        })
++    });
++    runtime.flush();
++    tasks.poll();
++    let initial = runtime.snapshot().text_content();
++    let command = services.drain().into_iter().next().unwrap();
++    assert!(matches!(
++        command.operation,
++        ServiceOperation::Timer { delay_ms: 150 }
++    ));
++    assert!(services.complete(SERVICE_VERSION, command.id, Ok(ServiceValue::Unit)));
++    tasks.poll();
++    runtime.flush();
++    assert_ne!(runtime.snapshot().text_content(), initial);
++    let tick = services.drain().into_iter().next().unwrap();
++    saved.borrow().as_ref().unwrap().set(false).unwrap();
++    runtime.flush();
++    assert_eq!(tasks.pending(), 0);
++    assert_eq!(services.pending(), 0);
++    assert!(!services.complete(SERVICE_VERSION, tick.id, Ok(ServiceValue::Unit)));
++    assert!(services
++        .drain()
++        .iter()
++        .any(|c| matches!(c.operation,ServiceOperation::Cancel{resource}if resource==tick.id)));
+ }
+ 
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/editing.rs:284:
+         };
+         if composing {
+             if let Some(before) = &m.composition {
+-                let common_prefix = before.value.chars().zip(m.current.value.chars()).take_while(|(a, b)| a == b).map(|(_, c)| c.len_utf8()).sum::<usize>();
+-                let suffix_limit = before.value.len().min(m.current.value.len()).saturating_sub(common_prefix);
++                let common_prefix = before
++                    .value
++                    .chars()
++                    .zip(m.current.value.chars())
++                    .take_while(|(a, b)| a == b)
++                    .map(|(_, c)| c.len_utf8())
++                    .sum::<usize>();
++                let suffix_limit = before
++                    .value
++                    .len()
++                    .min(m.current.value.len())
++                    .saturating_sub(common_prefix);
+                 let mut suffix_bytes = 0;
+-                for (a, b) in before.value.chars().rev().zip(m.current.value.chars().rev()) {
+-                    if a != b || suffix_bytes + b.len_utf8() > suffix_limit { break; }
++                for (a, b) in before
++                    .value
++                    .chars()
++                    .rev()
++                    .zip(m.current.value.chars().rev())
++                {
++                    if a != b || suffix_bytes + b.len_utf8() > suffix_limit {
++                        break;
++                    }
+                     suffix_bytes += b.len_utf8();
+                 }
+-                m.preedit = Some(Selection { anchor: common_prefix, focus: m.current.value.len() - suffix_bytes });
++                m.preedit = Some(Selection {
++                    anchor: common_prefix,
++                    focus: m.current.value.len() - suffix_bytes,
++                });
+             }
+         }
+         if !composing {
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/errors.rs:51:
+         }
+         Some(error) => {
+             let retry = state.clone();
+-            Node::widget(Widget::Column).role("alert")
++            Node::widget(Widget::Column)
++                .role("alert")
+                 .key("error")
+                 .label("Application error")
+                 .children(vec![
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/host.rs:487:
+     /// Upload progress is deliberately absent: browser Fetch cannot report it uniformly.
+     pub fn multipart(mut self, parts: Vec<MultipartPart>) -> Self {
+         let base = format!("rustx-{:016x}", self.client.0.borrow().next);
+-        let boundary=(0..32).map(|suffix|format!("{base}-{suffix:02x}")).find(|candidate|parts.iter().all(|part|!part.bytes.windows(candidate.len()).any(|bytes|bytes==candidate.as_bytes())));
+-        let Some(boundary)=boundary else{self.invalid=true;return self;};
++        let boundary = (0..32)
++            .map(|suffix| format!("{base}-{suffix:02x}"))
++            .find(|candidate| {
++                parts.iter().all(|part| {
++                    !part
++                        .bytes
++                        .windows(candidate.len())
++                        .any(|bytes| bytes == candidate.as_bytes())
++                })
++            });
++        let Some(boundary) = boundary else {
++            self.invalid = true;
++            return self;
++        };
+         let mut body = vec![];
+         for part in parts {
+             if part.name.is_empty()
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:1:
+ //! Portable, bounded capability calls. Hosts report permission and availability explicitly.
+ use crate::{CapabilityState, Scope, MAX_HOST_ID};
+-use std::{cell::RefCell, collections::{HashMap,BTreeSet}, rc::Rc};
++use std::{
++    cell::RefCell,
++    collections::{BTreeSet, HashMap},
++    rc::Rc,
++};
+ pub const SERVICE_VERSION: u32 = 1;
+ pub const MAX_SERVICE_BYTES: usize = 1_048_576;
+ pub const MAX_SERVICE_CALLS: usize = 32;
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:269:
+                         })
+                     }
+                 }
+-                if inner.pending.len()+inner.cancellations.len() >= caps.max_resources {
++                if inner.pending.len() + inner.cancellations.len() >= caps.max_resources {
+                     return Err(ServiceError::Busy);
+                 }
+             }
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:276:
+-            if inner.pending.len()+inner.cancellations.len() >= MAX_SERVICE_CALLS || inner.queue.len() >= MAX_SERVICE_CALLS {
++            if inner.pending.len() + inner.cancellations.len() >= MAX_SERVICE_CALLS
++                || inner.queue.len() >= MAX_SERVICE_CALLS
++            {
+                 return Err(ServiceError::Busy);
+             }
+             let id = inner.next;
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:314:
+         Ok(id)
+     }
+     pub fn command(&self, operation: ServiceOperation) -> Result<(), ServiceError> {
+-        if let ServiceOperation::Cancel{resource}=&operation{self.cancel(*resource);return Ok(());}
++        if let ServiceOperation::Cancel { resource } = &operation {
++            self.cancel(*resource);
++            return Ok(());
++        }
+         match &operation {
+             ServiceOperation::Cancel { .. } | ServiceOperation::StreamRead { .. } => {}
+             ServiceOperation::SocketSend { bytes, .. } if bytes.len() <= 65_536 => {}
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:323:
+             _ => return Err(ServiceError::Invalid),
+         }
+         let mut inner = self.0.borrow_mut();
+-        let resource=match &operation{ServiceOperation::StreamRead{resource}|ServiceOperation::SocketSend{resource,..}|ServiceOperation::SocketClose{resource,..}=>*resource,_=>return Err(ServiceError::Invalid)};
+-        if !inner.pending.contains_key(&resource){return Err(ServiceError::Invalid);}
++        let resource = match &operation {
++            ServiceOperation::StreamRead { resource }
++            | ServiceOperation::SocketSend { resource, .. }
++            | ServiceOperation::SocketClose { resource, .. } => *resource,
++            _ => return Err(ServiceError::Invalid),
++        };
++        if !inner.pending.contains_key(&resource) {
++            return Err(ServiceError::Invalid);
++        }
+         if inner.queue.len() >= MAX_SERVICE_CALLS {
+             return Err(ServiceError::Busy);
+         }
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:422:
+             (callback, removed)
+         };
+         if let Some(p) = removed {
+-            if p.persistent&&result.is_err(){self.0.borrow_mut().cancellations.insert(id);}
++            if p.persistent && result.is_err() {
++                self.0.borrow_mut().cancellations.insert(id);
++            }
+             p.scope.remove_cleanup(p.cleanup);
+         }
+         callback(result);
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/services.rs:429:
+         true
+     }
+     pub fn drain(&self) -> Vec<ServiceCommand> {
+-        let mut inner=self.0.borrow_mut();
+-        let mut commands=std::mem::take(&mut inner.cancellations).into_iter().map(|resource|ServiceCommand{version:SERVICE_VERSION,id:0,operation:ServiceOperation::Cancel{resource}}).collect::<Vec<_>>();
+-        commands.append(&mut inner.queue);commands
++        let mut inner = self.0.borrow_mut();
++        let mut commands = std::mem::take(&mut inner.cancellations)
++            .into_iter()
++            .map(|resource| ServiceCommand {
++                version: SERVICE_VERSION,
++                id: 0,
++                operation: ServiceOperation::Cancel { resource },
++            })
++            .collect::<Vec<_>>();
++        commands.append(&mut inner.queue);
++        commands
+     }
+     pub fn pending(&self) -> usize {
+         self.0.borrow().pending.len()
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core/src/widgets.rs:594:
+     node
+ }
+ pub fn spinner(label: impl Into<String>) -> View {
+-    let label=label.into();
+-    Node::component("RustX.Spinner",move|cx|{
+-        let frame=cx.signal(0usize);
+-        if let (Some(services),Some(tasks))=(cx.context::<crate::ServiceClient>(),cx.context::<crate::TaskQueue>()) {
+-            let out=frame.clone();let owner=cx.clone();
+-            let _=tasks.spawn(&cx,async move{loop{if services.sleep(&owner,std::time::Duration::from_millis(150)).await.is_err(){break;}if out.update(|v|*v=(*v+1)%4).is_err(){break;}}});
++    let label = label.into();
++    Node::component("RustX.Spinner", move |cx| {
++        let frame = cx.signal(0usize);
++        if let (Some(services), Some(tasks)) = (
++            cx.context::<crate::ServiceClient>(),
++            cx.context::<crate::TaskQueue>(),
++        ) {
++            let out = frame.clone();
++            let owner = cx.clone();
++            let _ = tasks.spawn(&cx, async move {
++                loop {
++                    if services
++                        .sleep(&owner, std::time::Duration::from_millis(150))
++                        .await
++                        .is_err()
++                    {
++                        break;
++                    }
++                    if out.update(|v| *v = (*v + 1) % 4).is_err() {
++                        break;
++                    }
++                }
++            });
+         }
+-        let label=label.clone();dynamic(move||Node::widget(Widget::Spinner).label(&label).value(["|","/","—","\\"][frame.get()]))
++        let label = label.clone();
++        dynamic(move || {
++            Node::widget(Widget::Spinner)
++                .label(&label)
++                .value(["|", "/", "—", "\\"][frame.get()])
++        })
+     })
+ }
+ 
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:8:
+     TreeId, TreeInfo, TreeUpdate,
+ };
+ use rustx_core::{Kind, SemanticNode};
+-use unicode_segmentation::UnicodeSegmentation;
+ use std::{
+     collections::{HashMap, HashSet},
+     sync::{mpsc, Arc, Mutex},
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:15:
+ };
++use unicode_segmentation::UnicodeSegmentation;
+ use winit::{
+     event::WindowEvent,
+     event_loop::{ActiveEventLoop, EventLoopProxy},
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:22:
+ const ROOT: NodeId = NodeId(0);
+ const MAX_QUEUED_ACTIONS: usize = 128;
+ const TEXT_NODE_FLAG: u64 = 1 << 63;
+-fn text_id(owner: u64, line: usize) -> NodeId { NodeId(TEXT_NODE_FLAG | (owner << 10) | line as u64) }
+-fn text_owner(id: NodeId) -> Option<u64> { (id.0 & TEXT_NODE_FLAG != 0).then_some((id.0 & !TEXT_NODE_FLAG) >> 10) }
++fn text_id(owner: u64, line: usize) -> NodeId {
++    NodeId(TEXT_NODE_FLAG | (owner << 10) | line as u64)
++}
++fn text_owner(id: NodeId) -> Option<u64> {
++    (id.0 & TEXT_NODE_FLAG != 0).then_some((id.0 & !TEXT_NODE_FLAG) >> 10)
++}
+ fn text_lines(value: &str) -> Vec<&str> {
+     let mut lines: Vec<_> = value.split_inclusive('\n').collect();
+-    if value.is_empty() || value.ends_with('\n') { lines.push(""); }
++    if value.is_empty() || value.ends_with('\n') {
++        lines.push("");
++    }
+     lines
+ }
+ 
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:256:
+                 accessible.add_action(Action::Collapse);
+             }
+         }
+-        let mut children = node.children.iter().filter(|c| !c.control.hidden).map(|c| NodeId(c.id)).collect::<Vec<_>>();
+-        if let Some(editor) = engine.runtime.editor(node.id).filter(|editor| !editor.is_password()) {
++        let mut children = node
++            .children
++            .iter()
++            .filter(|c| !c.control.hidden)
++            .map(|c| NodeId(c.id))
++            .collect::<Vec<_>>();
++        if let Some(editor) = engine
++            .runtime
++            .editor(node.id)
++            .filter(|editor| !editor.is_password())
++        {
+             let value = editor.value();
+             let lines = text_lines(&value);
+             // Stable synthetic IDs reserve ten bits for line identities. Very
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:264:
+             // long documents keep ValuePattern without claiming TextPattern.
+-            if lines.len() <= 1024 && lines.iter().all(|line| line.graphemes(true).all(|g| g.len() <= u8::MAX as usize)) {
++            if lines.len() <= 1024
++                && lines
++                    .iter()
++                    .all(|line| line.graphemes(true).all(|g| g.len() <= u8::MAX as usize))
++            {
+                 let mut offset = 0;
+                 let selection = editor.selection();
+-                let mut anchor = None; let mut focus = None;
++                let mut anchor = None;
++                let mut focus = None;
+                 for (index, line) in lines.iter().enumerate() {
+                     let run_id = text_id(node.id, index);
+                     let mut run = Node::new(Role::TextRun);
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:272:
+                     run.set_value(line.to_string());
+-                    run.set_character_lengths(line.graphemes(true).map(|g| g.len() as u8).collect::<Vec<_>>());
+-                    let position = |byte: usize| TextPosition { node: run_id, character_index: line[..byte-offset].graphemes(true).count() };
+-                    let within = |byte: usize| byte >= offset && (byte < offset + line.len() || index + 1 == lines.len() && byte == offset + line.len());
+-                    if anchor.is_none() && within(selection.anchor) { anchor = Some(position(selection.anchor)); }
+-                    if focus.is_none() && within(selection.focus) { focus = Some(position(selection.focus)); }
+-                    offset += line.len(); children.push(run_id); nodes.push((run_id, run));
++                    run.set_character_lengths(
++                        line.graphemes(true)
++                            .map(|g| g.len() as u8)
++                            .collect::<Vec<_>>(),
++                    );
++                    let position = |byte: usize| TextPosition {
++                        node: run_id,
++                        character_index: line[..byte - offset].graphemes(true).count(),
++                    };
++                    let within = |byte: usize| {
++                        byte >= offset
++                            && (byte < offset + line.len()
++                                || index + 1 == lines.len() && byte == offset + line.len())
++                    };
++                    if anchor.is_none() && within(selection.anchor) {
++                        anchor = Some(position(selection.anchor));
++                    }
++                    if focus.is_none() && within(selection.focus) {
++                        focus = Some(position(selection.focus));
++                    }
++                    offset += line.len();
++                    children.push(run_id);
++                    nodes.push((run_id, run));
+                 }
+-                if let (Some(anchor), Some(focus)) = (anchor, focus) { accessible.set_text_selection(TextSelection { anchor, focus }); }
++                if let (Some(anchor), Some(focus)) = (anchor, focus) {
++                    accessible.set_text_selection(TextSelection { anchor, focus });
++                }
+                 accessible.add_action(Action::SetTextSelection);
+-                if !node.control.read_only && !node.control.disabled { accessible.add_action(Action::ReplaceSelectedText); }
++                if !node.control.read_only && !node.control.disabled {
++                    accessible.add_action(Action::ReplaceSelectedText);
++                }
+             }
+         }
+         accessible.set_children(children);
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:334:
+         return false;
+     };
+     fn modal(node: &rustx_core::Snapshot) -> Option<&rustx_core::Snapshot> {
+-        if node.control.hidden { return None; }
+-        node.children.iter().rev().find_map(modal).or_else(|| node.control.modal.then_some(node))
++        if node.control.hidden {
++            return None;
++        }
++        node.children
++            .iter()
++            .rev()
++            .find_map(modal)
++            .or_else(|| node.control.modal.then_some(node))
+     }
+-    if modal(&snapshot).is_some_and(|modal| find(modal, id).is_none()) { return false; }
++    if modal(&snapshot).is_some_and(|modal| find(modal, id).is_none()) {
++        return false;
++    }
+     match request.action {
+         Action::Focus | Action::ScrollIntoView if node.focusable() => {
+             engine.focus_node(id);
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:349:
+         {
+             engine.runtime.click(id, 0., 0.)
+         }
+-        Action::SetValue if !node.control.read_only && (node.kind == Kind::Input || node.role == Some("slider")) => {
++        Action::SetValue
++            if !node.control.read_only
++                && (node.kind == Kind::Input || node.role == Some("slider")) =>
++        {
+             let value = match request.data {
+                 Some(ActionData::Value(value)) => value.to_string(),
+                 Some(ActionData::NumericValue(value)) if value.is_finite() => value.to_string(),
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:358:
+             engine.runtime.input(id, value, false)
+         }
+         Action::ReplaceSelectedText if node.kind == Kind::Input && !node.control.read_only => {
+-            let (Some(editor), Some(ActionData::Value(value))) = (engine.runtime.editor(id), request.data) else { return false; };
+-            if editor.insert(&value).is_err() { return false; }
++            let (Some(editor), Some(ActionData::Value(value))) =
++                (engine.runtime.editor(id), request.data)
++            else {
++                return false;
++            };
++            if editor.insert(&value).is_err() {
++                return false;
++            }
+             engine.runtime.invalidate_model();
+             engine.runtime.input(id, editor.value(), false)
+         }
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/accessibility.rs:366:
+         Action::SetTextSelection if node.kind == Kind::Input => {
+-            let (Some(editor), Some(ActionData::SetTextSelection(selection))) = (engine.runtime.editor(id), request.data) else { return false; };
+-            if editor.is_password() { return false; }
+-            let value = editor.value(); let lines = text_lines(&value);
++            let (Some(editor), Some(ActionData::SetTextSelection(selection))) =
++                (engine.runtime.editor(id), request.data)
++            else {
++                return false;
++            };
++            if editor.is_password() {
++                return false;
++            }
++            let value = editor.value();
++            let lines = text_lines(&value);
+             let byte = |position: TextPosition| -> Option<usize> {
+-                if text_owner(position.node) != Some(id) { return None; }
++                if text_owner(position.node) != Some(id) {
++                    return None;
++                }
+                 let line_index = (position.node.0 & 1023) as usize;
+                 let line = lines.get(line_index)?;
+-                let local = if position.character_index == line.graphemes(true).count() {line.len()} else {line.grapheme_indices(true).nth(position.character_index)?.0};
+-                Some(lines[..line_index].iter().map(|line| line.len()).sum::<usize>() + local)
++                let local = if position.character_index == line.graphemes(true).count() {
++                    line.len()
++                } else {
++                    line.grapheme_indices(true).nth(position.character_index)?.0
++                };
++                Some(
++                    lines[..line_index]
++                        .iter()
++                        .map(|line| line.len())
++                        .sum::<usize>()
++                        + local,
++                )
+             };
+-            let (Some(anchor), Some(focus)) = (byte(selection.anchor), byte(selection.focus)) else { return false; };
+-            if editor.select(anchor, focus).is_err() { return false; }
+-            engine.runtime.invalidate_model(); true
++            let (Some(anchor), Some(focus)) = (byte(selection.anchor), byte(selection.focus))
++            else {
++                return false;
++            };
++            if editor.select(anchor, focus).is_err() {
++                return false;
++            }
++            engine.runtime.invalidate_model();
++            true
+         }
+         Action::Increment | Action::Decrement
+             if node.role == Some("slider") && !node.control.read_only =>
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:5:
+ use std::{
+     collections::HashMap,
+     io::{Read, Write},
+-    path::{Path,PathBuf},
++    path::{Path, PathBuf},
+     process::{Command, Stdio},
+     sync::{
+         atomic::{AtomicUsize, Ordering},
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:264:
+     }
+ }
+ fn output(command: Command, input: Option<&[u8]>) -> Result<String, ServiceError> {
+-    output_with_cancel(command,input,false)
++    output_with_cancel(command, input, false)
+ }
+-fn output_with_cancel(mut command:Command,input:Option<&[u8]>,cancelable:bool)->Result<String,ServiceError>{
++fn output_with_cancel(
++    mut command: Command,
++    input: Option<&[u8]>,
++    cancelable: bool,
++) -> Result<String, ServiceError> {
+     command.stdout(Stdio::piped()).stderr(Stdio::piped());
+     if input.is_some() {
+         command.stdin(Stdio::piped());
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:273:
+     }
+-    let mut child = command.spawn().map_err(|error|match error.kind(){std::io::ErrorKind::NotFound=>ServiceError::Unavailable,std::io::ErrorKind::PermissionDenied=>ServiceError::Denied,_=>failed()})?;
+-    let mut stderr=child.stderr.take().ok_or_else(failed)?;
+-    let error_output=std::thread::spawn(move||{let mut bytes=vec![];let _=(&mut stderr).take(4096).read_to_end(&mut bytes);let _=std::io::copy(&mut stderr,&mut std::io::sink());bytes});
++    let mut child = command.spawn().map_err(|error| match error.kind() {
++        std::io::ErrorKind::NotFound => ServiceError::Unavailable,
++        std::io::ErrorKind::PermissionDenied => ServiceError::Denied,
++        _ => failed(),
++    })?;
++    let mut stderr = child.stderr.take().ok_or_else(failed)?;
++    let error_output = std::thread::spawn(move || {
++        let mut bytes = vec![];
++        let _ = (&mut stderr).take(4096).read_to_end(&mut bytes);
++        let _ = std::io::copy(&mut stderr, &mut std::io::sink());
++        bytes
++    });
+     if let Some(input) = input {
+         child
+             .stdin
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:280:
+             .take()
+             .ok_or_else(failed)?
+             .write_all(input)
+-            .map_err(|_| failed()).or_else(|error|{let _=child.kill();let _=child.wait();Err(error)})?;
++            .map_err(|_| failed())
++            .or_else(|error| {
++                let _ = child.kill();
++                let _ = child.wait();
++                Err(error)
++            })?;
+     }
+     let mut bytes = vec![];
+     let read = child
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:292:
+     if read.is_err() || bytes.len() > MAX_SERVICE_BYTES {
+         let _ = child.kill();
+         let _ = child.wait();
+-        let _=error_output.join();
++        let _ = error_output.join();
+         return Err(ServiceError::TooLarge);
+     }
+-    let status=child.wait().map_err(|_|failed())?;
+-    let error=String::from_utf8_lossy(&error_output.join().unwrap_or_default()).to_ascii_lowercase();
++    let status = child.wait().map_err(|_| failed())?;
++    let error =
++        String::from_utf8_lossy(&error_output.join().unwrap_or_default()).to_ascii_lowercase();
+     if !status.success() {
+-        if cancelable&&(error.contains("(-128)")||(cfg!(not(any(target_os="macos",target_os="windows")))&&status.code()==Some(1))){return Err(ServiceError::Cancelled);}
+-        if error.contains("permission denied")||error.contains("not permitted")||error.contains("not authorized")||error.contains("(-1743)")||error.contains("access is denied"){return Err(ServiceError::Denied);}
++        if cancelable
++            && (error.contains("(-128)")
++                || (cfg!(not(any(target_os = "macos", target_os = "windows")))
++                    && status.code() == Some(1)))
++        {
++            return Err(ServiceError::Cancelled);
++        }
++        if error.contains("permission denied")
++            || error.contains("not permitted")
++            || error.contains("not authorized")
++            || error.contains("(-1743)")
++            || error.contains("access is denied")
++        {
++            return Err(ServiceError::Denied);
++        }
+         return Err(failed());
+     }
+     String::from_utf8(bytes).map_err(|_| ServiceError::Invalid)
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:364:
+         c
+     };
+     let _ = name;
+-    let path = output_with_cancel(command, None,true)?;
++    let path = output_with_cancel(command, None, true)?;
+     let path = path.trim();
+     if path.is_empty() {
+         Err(ServiceError::Cancelled)
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:390:
+     Ok(directory.join(format!("{encoded}.json")))
+ }
+ struct TemporaryPath(PathBuf);
+-impl Drop for TemporaryPath{fn drop(&mut self){let _=std::fs::remove_file(&self.0);}}
+-fn storage_lock(path:&Path)->Result<std::fs::File,ServiceError>{
+-    let directory=path.parent().ok_or(ServiceError::Invalid)?;
+-    let file=std::fs::OpenOptions::new().create(true).truncate(false).read(true).write(true).open(directory.join(".lock")).map_err(|_|ServiceError::Denied)?;
+-    file.lock().map_err(|_|failed())?;Ok(file)
++impl Drop for TemporaryPath {
++    fn drop(&mut self) {
++        let _ = std::fs::remove_file(&self.0);
++    }
+ }
+-fn read_bounded(file:std::fs::File,limit:usize)->Result<Vec<u8>,ServiceError>{
+-    if !file.metadata().map_err(|_|failed())?.is_file(){return Err(ServiceError::Invalid);}
+-    let mut bytes=vec![];file.take(limit as u64+1).read_to_end(&mut bytes).map_err(|_|failed())?;
+-    if bytes.len()>limit{return Err(ServiceError::TooLarge);}Ok(bytes)
++fn storage_lock(path: &Path) -> Result<std::fs::File, ServiceError> {
++    let directory = path.parent().ok_or(ServiceError::Invalid)?;
++    let file = std::fs::OpenOptions::new()
++        .create(true)
++        .truncate(false)
++        .read(true)
++        .write(true)
++        .open(directory.join(".lock"))
++        .map_err(|_| ServiceError::Denied)?;
++    file.lock().map_err(|_| failed())?;
++    Ok(file)
+ }
+-fn storage_write(path:&Path,version:u32,value:&str)->Result<(),ServiceError>{
+-    if version==0{return Err(ServiceError::Invalid);}if value.len()>MAX_SERVICE_BYTES{return Err(ServiceError::TooLarge);}
+-    let bytes=serde_json::to_vec(&serde_json::json!({"version":version,"value":value})).map_err(|_|ServiceError::Invalid)?;
+-    let _lock=storage_lock(path)?;let directory=path.parent().ok_or(ServiceError::Invalid)?;
+-    let size=std::fs::read_dir(directory).map_err(|_|ServiceError::Denied)?.filter_map(Result::ok).filter(|entry|entry.path()!=path).filter_map(|entry|entry.metadata().ok()).map(|metadata|metadata.len()).sum::<u64>();
+-    if size+bytes.len()as u64>8*MAX_SERVICE_BYTES as u64{return Err(ServiceError::Quota);}
+-    let nonce=std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_err(|_|failed())?.as_nanos();
+-    let temporary=TemporaryPath(directory.join(format!(".rustx-{}-{nonce}.tmp",std::process::id())));
+-    let mut file=std::fs::OpenOptions::new().write(true).create_new(true).open(&temporary.0).map_err(|_|ServiceError::Denied)?;
+-    file.write_all(&bytes).map_err(|_|failed())?;file.sync_all().map_err(|_|failed())?;drop(file);
+-    std::fs::rename(&temporary.0,path).map_err(|_|ServiceError::Denied)?;Ok(())
++fn read_bounded(file: std::fs::File, limit: usize) -> Result<Vec<u8>, ServiceError> {
++    if !file.metadata().map_err(|_| failed())?.is_file() {
++        return Err(ServiceError::Invalid);
++    }
++    let mut bytes = vec![];
++    file.take(limit as u64 + 1)
++        .read_to_end(&mut bytes)
++        .map_err(|_| failed())?;
++    if bytes.len() > limit {
++        return Err(ServiceError::TooLarge);
++    }
++    Ok(bytes)
+ }
++fn storage_write(path: &Path, version: u32, value: &str) -> Result<(), ServiceError> {
++    if version == 0 {
++        return Err(ServiceError::Invalid);
++    }
++    if value.len() > MAX_SERVICE_BYTES {
++        return Err(ServiceError::TooLarge);
++    }
++    let bytes = serde_json::to_vec(&serde_json::json!({"version":version,"value":value}))
++        .map_err(|_| ServiceError::Invalid)?;
++    let _lock = storage_lock(path)?;
++    let directory = path.parent().ok_or(ServiceError::Invalid)?;
++    let size = std::fs::read_dir(directory)
++        .map_err(|_| ServiceError::Denied)?
++        .filter_map(Result::ok)
++        .filter(|entry| entry.path() != path)
++        .filter_map(|entry| entry.metadata().ok())
++        .map(|metadata| metadata.len())
++        .sum::<u64>();
++    if size + bytes.len() as u64 > 8 * MAX_SERVICE_BYTES as u64 {
++        return Err(ServiceError::Quota);
++    }
++    let nonce = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .map_err(|_| failed())?
++        .as_nanos();
++    let temporary =
++        TemporaryPath(directory.join(format!(".rustx-{}-{nonce}.tmp", std::process::id())));
++    let mut file = std::fs::OpenOptions::new()
++        .write(true)
++        .create_new(true)
++        .open(&temporary.0)
++        .map_err(|_| ServiceError::Denied)?;
++    file.write_all(&bytes).map_err(|_| failed())?;
++    file.sync_all().map_err(|_| failed())?;
++    drop(file);
++    std::fs::rename(&temporary.0, path).map_err(|_| ServiceError::Denied)?;
++    Ok(())
++}
+ fn execute(operation: ServiceOperation) -> Result<ServiceValue, ServiceError> {
+     match operation {
+         ServiceOperation::ClipboardRead => clipboard(true, ""),
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:419:
+         ServiceOperation::ClipboardWrite { text } => clipboard(false, &text),
+         ServiceOperation::StorageGet { key } => {
+             let path = storage_path(&key)?;
+-            let _lock=storage_lock(&path)?;
++            let _lock = storage_lock(&path)?;
+             match std::fs::File::open(path) {
+                 Ok(file) => {
+-                    let bytes=read_bounded(file,MAX_SERVICE_BYTES*6+1024)?;
++                    let bytes = read_bounded(file, MAX_SERVICE_BYTES * 6 + 1024)?;
+                     let value: serde_json::Value =
+                         serde_json::from_slice(&bytes).map_err(|_| ServiceError::Invalid)?;
+-                    let version=u32::try_from(value["version"].as_u64().ok_or(ServiceError::Invalid)?).map_err(|_|ServiceError::Invalid)?;
+-                    let value=value["value"].as_str().ok_or(ServiceError::Invalid)?;
+-                    if version==0{return Err(ServiceError::Invalid);}if value.len()>MAX_SERVICE_BYTES{return Err(ServiceError::TooLarge);}
++                    let version =
++                        u32::try_from(value["version"].as_u64().ok_or(ServiceError::Invalid)?)
++                            .map_err(|_| ServiceError::Invalid)?;
++                    let value = value["value"].as_str().ok_or(ServiceError::Invalid)?;
++                    if version == 0 {
++                        return Err(ServiceError::Invalid);
++                    }
++                    if value.len() > MAX_SERVICE_BYTES {
++                        return Err(ServiceError::TooLarge);
++                    }
+                     Ok(ServiceValue::Storage {
+-                        version,value:value.to_owned(),
++                        version,
++                        value: value.to_owned(),
+                     })
+                 }
+                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(ServiceValue::Missing),
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:442:
+             value,
+         } => {
+             let path = storage_path(&key)?;
+-            storage_write(&path,version,&value)?;
++            storage_write(&path, version, &value)?;
+             Ok(ServiceValue::Unit)
+         }
+         ServiceOperation::StorageRemove { key } => {
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:449:
+-            let path=storage_path(&key)?;let _lock=storage_lock(&path)?;
++            let path = storage_path(&key)?;
++            let _lock = storage_lock(&path)?;
+             match std::fs::remove_file(path) {
+                 Ok(()) => {}
+                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:462:
+                 return Err(ServiceError::Invalid);
+             }
+             let path = choose_file(false, "")?;
+-            let bytes = read_bounded(std::fs::File::open(&path).map_err(|_| ServiceError::Denied)?,max_bytes)?;
++            let bytes = read_bounded(
++                std::fs::File::open(&path).map_err(|_| ServiceError::Denied)?,
++                max_bytes,
++            )?;
+             Ok(ServiceValue::File {
+                 name: path
+                     .file_name()
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:498:
+         .map_err(|_| failed())?
+         .as_nanos();
+     let path = std::env::temp_dir().join(format!("rustx-print-{}-{nonce}.txt", std::process::id()));
+-    let _temporary=TemporaryPath(path.clone());
++    let _temporary = TemporaryPath(path.clone());
+     let mut file = std::fs::OpenOptions::new()
+         .write(true)
+         .create_new(true)
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine/src/host/services.rs:548:
+         c.arg(&path);
+         c
+     };
+-    let result = output_with_cancel(command, None,true);
++    let result = output_with_cancel(command, None, true);
+     let _ = std::fs::remove_file(path);
+     result?;
+     Ok(ServiceValue::Unit)

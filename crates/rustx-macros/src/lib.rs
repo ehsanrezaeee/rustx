@@ -48,7 +48,53 @@ impl Parse for Markup {
         let name = tag.to_string();
         let builtin = matches!(
             name.as_str(),
-            "Div" | "Text" | "Button" | "Image" | "Canvas" | "Input" | "Row" | "Column"
+            "Div"
+                | "Input"
+                | "Box"
+                | "Row"
+                | "Column"
+                | "Grid"
+                | "Stack"
+                | "Spacer"
+                | "Divider"
+                | "ScrollView"
+                | "Text"
+                | "Heading"
+                | "Paragraph"
+                | "Image"
+                | "Icon"
+                | "Button"
+                | "IconButton"
+                | "Link"
+                | "Tabs"
+                | "Menu"
+                | "MenuItem"
+                | "Breadcrumbs"
+                | "Form"
+                | "Label"
+                | "TextInput"
+                | "PasswordInput"
+                | "TextArea"
+                | "Checkbox"
+                | "RadioGroup"
+                | "Switch"
+                | "Select"
+                | "Combobox"
+                | "Slider"
+                | "Dialog"
+                | "Popover"
+                | "Tooltip"
+                | "Alert"
+                | "Toast"
+                | "Progress"
+                | "Spinner"
+                | "List"
+                | "VirtualList"
+                | "Table"
+                | "TableRow"
+                | "TableCell"
+                | "Canvas"
+                | "DrawingSurface"
         );
         if name.chars().next().is_some_and(char::is_lowercase) {
             return Err(syn::Error::new(
@@ -110,11 +156,65 @@ impl Parse for Markup {
                     "style" => quote!(style),
                     "id" => quote!(id),
                     "onClick" | "on_click" => quote!(on_click),
-                    "onInput" | "on_input" if name == "Input" => quote!(on_input),
-                    "value" if name == "Input" => quote!(value),
+                    "onInput" | "on_input" | "on_change" => quote!(on_input),
+                    "value" => quote!(value),
+                    "value_text" => quote!(value_text),
+                    "value_now" => quote!(value_now),
                     "label" => quote!(label),
                     "node_ref" => quote!(node_ref),
                     "role" => quote!(role),
+                    "editing" => quote!(editing),
+                    "control" => quote!(control),
+                    "disabled" => quote!(disabled),
+                    "read_only" => quote!(read_only),
+                    "selectable" => quote!(selectable),
+                    "checked" => quote!(checked),
+                    "selected" => quote!(selected),
+                    "expanded" => quote!(expanded),
+                    "modal" => quote!(modal),
+                    "overlay" => quote!(overlay),
+                    "anchor" => quote!(anchor),
+                    "hidden" => quote!(hidden),
+                    "min" => quote!(min),
+                    "max" => quote!(max),
+                    "step" => quote!(step),
+                    "options" => quote!(options),
+                    "described_by" => quote!(described_by),
+                    "labelled_by" => quote!(labelled_by),
+                    "controls" => quote!(controls),
+                    "tab_index" => quote!(tab_index),
+                    "href" => quote!(href),
+                    "input_type" => quote!(input_type),
+                    "lang" => quote!(lang),
+                    "required" => quote!(required),
+                    "invalid" => quote!(invalid),
+                    "live" => quote!(live),
+                    "level" => quote!(level),
+                    "sort" => quote!(sort),
+                    "on_key_down" => quote!(on_key_down),
+                    "on_key_up" => quote!(on_key_up),
+                    "on_pointer_down" => quote!(on_pointer_down),
+                    "on_pointer_move" => quote!(on_pointer_move),
+                    "on_pointer_up" => quote!(on_pointer_up),
+                    "on_pointer_cancel" => quote!(on_pointer_cancel),
+                    "on_pointer_enter" => quote!(on_pointer_enter),
+                    "on_pointer_leave" => quote!(on_pointer_leave),
+                    "on_before_input" => quote!(on_before_input),
+                    "on_composition_start" => quote!(on_composition_start),
+                    "on_composition_update" => quote!(on_composition_update),
+                    "on_composition_end" => quote!(on_composition_end),
+                    "on_copy" => quote!(on_copy),
+                    "on_cut" => quote!(on_cut),
+                    "on_paste" => quote!(on_paste),
+                    "on_file_drop" => quote!(on_file_drop),
+                    "on_resize" => quote!(on_resize),
+                    "on_resource_error" => quote!(on_resource_error),
+                    "on_submit" => quote!(on_submit),
+                    "on_reset" => quote!(on_reset),
+                    "on_blur" => quote!(on_blur),
+                    "on_wheel" => quote!(on_wheel),
+                    "on_focus" => quote!(on_focus),
+                    "on_scroll" => quote!(on_scroll),
                     "drawing" if name == "Canvas" => quote!(drawing),
                     "camera" if name == "Canvas" => quote!(camera),
                     "on_canvas" if name == "Canvas" => quote!(on_canvas),
@@ -128,17 +228,16 @@ impl Parse for Markup {
                 };
                 setters.push(quote!(.#method(#value)));
             }
-            let kind = if name == "Row" || name == "Column" {
-                format_ident!("Div")
-            } else {
-                tag.clone()
+            let constructor = match name.as_str() {
+                "Div" => quote!(::rustx::Node::new(::rustx::Kind::Div)),
+                "Input" => quote!(::rustx::Node::new(::rustx::Kind::Input)),
+                // Existing primitive tags retain their established default style.
+                "Text" | "Button" | "Image" | "Canvas" => {
+                    quote!(::rustx::Node::new(::rustx::Kind::#tag))
+                }
+                _ => quote!(::rustx::Node::widget(::rustx::Widget::#tag)),
             };
-            let base = if name == "Row" {
-                quote!(.style(::rustx::Style::row()))
-            } else {
-                quote!()
-            };
-            quote!(::rustx::Node::new(::rustx::Kind::#kind) #base #(#setters)* .children(vec![#(#kids),*]))
+            quote!(#constructor #(#setters)* .children(vec![#(#kids),*]))
         } else {
             let props = format_ident!("{}Props", tag);
             let setters = attrs.into_iter().map(|(id, v)| quote!(.#id(#v)));

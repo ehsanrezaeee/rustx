@@ -1,0 +1,31 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> test:wasm
+> node scripts/test-wasm.mjs
+
+{
+  "result": "passed",
+  "target": "actual wasm32 module in Node; CPU rendering; no browser/IME/AT claim",
+  "checks": [
+    "malformed and wide IDs",
+    "home preset state",
+    "key identity",
+    "unmount reset",
+    "Persian input model",
+    "derived memo",
+    "idle scheduling",
+    "HTTP command emission",
+    "JSON success",
+    "HTTP error",
+    "cancel/stale result",
+    "30 route lifecycle cycles",
+    "390px responsive navigation",
+    "production host adapter success/size/timeout/abort"
+  ],
+  "node": "v24.22.1",
+  "finalCounts": [
+    76,
+    3,
+    3
+  ]
+}

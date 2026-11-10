@@ -61,3 +61,23 @@ For browser recovery, observe the real browser device lifecycle in the host, rel
 Consequences: recovery tests must destroy/lose the actual active device and verify preserved state, not merely throw from a mock initializer. A passing browser path does not certify native Windows, driver reset, Safari/mobile or complete resource/performance behavior. Actual evidence is recorded only after execution. Rollback can alter loss observation or the backend recreation policy independently of application/state ownership.
 
 Font provenance: Google Fonts repository revision `6c1dbe27dcf7d817d4b62cec033ba77fa8e2a5ec`, `ofl/notoemoji/NotoEmoji[wght].ttf`, distributed with its SIL Open Font License 1.1 file. DEPENDENCIES.md records exact file hashes and source links.
+
+## ADR-010 — Stage 3 owned application capabilities
+
+Context: applications need editing, forms, routing and asynchronous services while retaining the mount-once model and shared browser/native engine. A broad unbounded host escape hatch would lose cancellation, resource accounting and portable errors. Browser visual controls would also split layout ownership.
+
+Choose committed synchronous capture/target/bubble events; controlled widget state; a shared grapheme-aware Editor with bounded history; and field/form generation tickets for asynchronous validation/submission. Browser/native hosts project the same semantics and use platform input only as a bridge. Password values are explicitly redacted from diagnostic/semantic projections. Rust paints control state and editing decorations in both renderers.
+
+Extend the existing HTTP API compatibly with builders/futures and versioned capability/operation envelopes. Scope cleanup cancels requests, tasks, streams, sockets and timers; generations reject stale completions. Query deduplication and cache observers have explicit bounds; mutation replay and reconnect remain application policies. Use explicit native adapters and reported OS utility availability instead of an embedded browser or Python. Storage migrations remain Rust functions. Assets use validated logical IDs, revisioned URLs and bounded shared PNG/font decoding.
+
+Consequences: hosts and Wasm must be rebuilt and shipped together. Capabilities can fail or be unavailable; permissions are determined by actual operations. Native cancellation can suppress a result before a blocking OS/I/O operation exits. All finite limits are documented in STAGE3.md and STAGE3_SERVICES.md. Dependencies are pinned in Cargo.lock, including unicode-segmentation 1.13.3, AccessKit 0.25.1/accesskit_winit 0.34.1, tungstenite 0.28.0 and png 0.17.16. Local source/contract tests and actual browser/native runs are separate evidence; real IME/AT/Windows acceptance remains explicit. Rollback requires reverting each Rust protocol and its host adapter together; the retained runtime and renderer boundaries remain reusable.
+
+## ADR-011 — Synchronize handled editing keys before browser selection events
+
+Context: a browser can queue selection events between a handled Rust key action and the next animation frame. Reflecting only a committed scene snapshot lets the input bridge send its previous value/caret back into Rust and undo a newer key action. A deterministic End → queued selection → Backspace regression reproduced this without any OS IME claim.
+
+Options: wait a frame after each key, ignore all browser selection events, or synchronize the live Rust editor immediately. Choose a narrow `edit_selection` host export alongside `edit_value`; after a handled key, update the existing input's value and UTF-16 selection synchronously. The next browser selection event then observes the current model. Keep composition handling and ordinary platform selection events active; no DOM measurement or visible layout is introduced.
+
+Consequences: the input bridge and Wasm export change together. Rust still owns text/selection and the next frame paints that state. Chrome and WebKit regression tasks exercise ordering separately from real OS IME acceptance. Rollback must replace the immediate synchronization with an equally ordered bridge; adding test sleeps would conceal the race.
+
+Ordinary Text/Paragraph nodes can explicitly opt into a retained read-only selection model with `.selectable(true)`. Keep their Rust text kind and geometry; expose one read-only multiline platform bridge, and flatten text children only in that projection to prevent duplicate accessible content. Default text does not enter the Tab order. Native pointer selection uses the same shaped clusters; clipboard uses the selected Rust string and readonly text does not enable IME. This supplies selectable ordinary content without making every label an editable field or moving visible text layout to the browser.

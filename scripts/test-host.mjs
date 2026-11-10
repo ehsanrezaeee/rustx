@@ -23,3 +23,4 @@ const disposing=new HostNetwork((...args)=>calls.push(args),pendingFetch,'http:/
 const job=disposing.request(command(1));disposing.dispose();await job;
 await disposing.request(command(2));assert.equal(calls.length,0);assert.equal(disposing.active.size,0);
 console.log('PASS: JS protocol/capabilities, malformed IDs/versions/limits/batches, concurrency bound, duplicate rejection, cancellation and disposal. Fake Fetch contract tests only.');
+await import('./test-host-events.mjs');

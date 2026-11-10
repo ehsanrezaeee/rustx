@@ -1,5 +1,7 @@
 #[path = "app.rustx"]
 mod app;
+#[path = "applications.rustx"]
+pub mod applications;
 #[path = "visual.rustx"]
 pub mod visual;
 use rustx::prelude::*;
@@ -7,6 +9,10 @@ pub fn start_page() -> i32 {
     #[cfg(not(target_arch = "wasm32"))]
     if std::env::var("RUSTX_DEMO").as_deref() == Ok("engine") {
         return 3;
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    if std::env::var("RUSTX_DEMO").as_deref() == Ok("applications") {
+        return 4;
     }
     0
 }
@@ -16,11 +22,22 @@ pub fn engine() -> (rustx_engine::Engine, HttpClient) {
 pub fn engine_with_host(
     capabilities: HostCapabilities,
 ) -> Result<(rustx_engine::Engine, HttpClient), HostError> {
+    engine_with_environment(capabilities, ServiceClient::default(), TaskQueue::default())
+}
+pub fn engine_with_environment(
+    capabilities: HostCapabilities,
+    services: ServiceClient,
+    tasks: TaskQueue,
+) -> Result<(rustx_engine::Engine, HttpClient), HostError> {
     let h = HttpClient::default();
     h.connect(capabilities)?;
     let client = h.clone();
     Ok((
-        rustx_engine::Engine::new(move |cx| app::root(cx, client.clone())),
+        rustx_engine::Engine::new(move |cx| {
+            cx.provide(services.clone());
+            cx.provide(tasks.clone());
+            app::root(cx, client.clone())
+        }),
         h,
     ))
 }
@@ -35,10 +52,15 @@ mod browser {
     pub fn init_app(capabilities: &str) -> Result<(), JsValue> {
         let capabilities = serde_json::from_str(capabilities)
             .map_err(|e| JsValue::from_str(&format!("Invalid host report: {e}")))?;
-        let (e, h) = engine_with_host(capabilities)
+        let services = ServiceClient::default();
+        let tasks = TaskQueue::default();
+        let (e, h) = engine_with_environment(capabilities, services.clone(), tasks.clone())
             .map_err(|e| JsValue::from_str(&format!("Host handshake failed: {e:?}")))?;
         GPU.with(|g| g.replace(None));
-        APP.with(|a| a.replace(Some(WebApp::new(e, h))));
+        let mut app = WebApp::new(e, h);
+        app.services = services;
+        app.tasks = tasks;
+        APP.with(|a| a.replace(Some(app)));
         Ok(())
     }
     #[wasm_bindgen]
@@ -196,8 +218,7 @@ mod browser {
                 .as_mut()
                 .unwrap()
                 .engine
-                .runtime
-                .click(id, 0., 0.);
+                .dispatch(id, EventData::new(EventKind::Click));
         });
     }
     #[wasm_bindgen]
@@ -222,6 +243,126 @@ mod browser {
         });
     }
     #[wasm_bindgen]
+    pub fn dispatch(id: f64, event: &str) -> String {
+        let Some(id) = rustx_web::host_id(id) else {
+            return "{}".into();
+        };
+        let Ok(event) = serde_json::from_str::<EventData>(event) else {
+            return "{}".into();
+        };
+        APP.with(|a| {
+            let mut a = a.borrow_mut();
+            let a = a.as_mut().unwrap();
+            let result = a.engine.dispatch(id, event);
+            a.engine.invalidate();
+            a.tasks.poll();
+            serde_json::to_string(&result).unwrap()
+        })
+    }
+    #[wasm_bindgen]
+    pub fn edit_sync(id: f64, value: String, anchor: u32, focus: u32, composing: bool) -> bool {
+        let Some(id) = rustx_web::host_id(id) else {
+            return false;
+        };
+        APP.with(|a| {
+            let mut a = a.borrow_mut();
+            let a = a.as_mut().unwrap();
+            let changed =
+                a.engine
+                    .runtime
+                    .edit_sync(id, value, anchor as usize, focus as usize, composing);
+            // Keep committed hit-test geometry until the next frame. The model
+            // epoch already requests layout; clearing boxes here would lose
+            // pointer selection moves arriving before that frame.
+            a.engine.invalidate();
+            changed
+        })
+    }
+    #[wasm_bindgen]
+    pub fn edit_value(id: f64) -> String {
+        let Some(id) = rustx_web::host_id(id) else {
+            return String::new();
+        };
+        APP.with(|a| {
+            a.borrow()
+                .as_ref()
+                .unwrap()
+                .engine
+                .runtime
+                .edit_value(id)
+                .unwrap_or_default()
+        })
+    }
+    /// Read the live input model after a synchronous editing default. Layout
+    /// inspection is a committed-frame snapshot and can still hold the prior
+    /// caret until the next render.
+    #[wasm_bindgen]
+    pub fn edit_selection(id: f64) -> String {
+        let Some(id) = rustx_web::host_id(id) else {
+            return "null".into();
+        };
+        APP.with(|a| {
+            let a = a.borrow();
+            let selection = a
+                .as_ref()
+                .unwrap()
+                .engine
+                .runtime
+                .editor(id)
+                .map(|editor| editor.selection_utf16());
+            serde_json::to_string(&selection).unwrap()
+        })
+    }
+    #[wasm_bindgen]
+    pub fn key_event(id: f64, key: &str, shift: bool, ctrl: bool, alt: bool, meta: bool) -> bool {
+        let Some(id) = rustx_web::host_id(id) else {
+            return false;
+        };
+        APP.with(|a| {
+            let mut a = a.borrow_mut();
+            let a = a.as_mut().unwrap();
+            let handled = a.engine.key_target(id, key, shift, ctrl, alt, meta);
+            a.tasks.poll();
+            handled
+        })
+    }
+    #[wasm_bindgen]
+    pub fn blur(id: f64) {
+        let Some(id) = rustx_web::host_id(id) else {
+            return;
+        };
+        APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.blur_node(id));
+    }
+    #[wasm_bindgen]
+    pub fn service_commands() -> String {
+        APP.with(|a| {
+            let a = a.borrow();
+            let a = a.as_ref().unwrap();
+            a.tasks.poll();
+            serde_json::to_string(&a.services.drain()).unwrap()
+        })
+    }
+    #[wasm_bindgen]
+    pub fn service_response(version: u32, id: f64, result: &str) -> bool {
+        let Some(id) = rustx_web::host_id(id) else {
+            return false;
+        };
+        APP.with(|a| {
+            let a = a.borrow();
+            let a = a.as_ref().unwrap();
+            let accepted = a.services.complete_json(version, id, result);
+            a.tasks.poll();
+            accepted
+        })
+    }
+    #[wasm_bindgen]
+    pub fn service_capabilities(report: &str) -> Result<(), JsValue> {
+        let report = serde_json::from_str(report)
+            .map_err(|_| JsValue::from_str("Invalid service report"))?;
+        APP.with(|a| a.borrow().as_ref().unwrap().services.connect(report))
+            .map_err(|_| JsValue::from_str("Service handshake failed"))
+    }
+    #[wasm_bindgen]
     pub fn scroll(dy: f64) {
         APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.scroll(dy));
     }
@@ -240,6 +381,43 @@ mod browser {
                 .unwrap()
                 .response(id, status, body, &error, version)
         });
+    }
+    #[wasm_bindgen]
+    pub fn response_meta(
+        id: f64,
+        status: u16,
+        body: Vec<u8>,
+        error: String,
+        version: u32,
+        headers: &str,
+    ) -> bool {
+        let Some(id) = rustx_web::host_id(id) else {
+            return false;
+        };
+        let headers = serde_json::from_str::<Vec<(String, String)>>(headers).unwrap_or_default();
+        APP.with(|a| {
+            let mut a = a.borrow_mut();
+            let a = a.as_mut().unwrap();
+            let accepted = a.response_with_headers(id, status, body, headers, &error, version);
+            a.tasks.poll();
+            accepted
+        })
+    }
+    #[wasm_bindgen]
+    pub fn host_event(event: &str) -> String {
+        if event.len() > 65536 {
+            return "{}".into();
+        }
+        let Ok(event) = serde_json::from_str::<EventData>(event) else {
+            return "{}".into();
+        };
+        APP.with(|a| {
+            let mut a = a.borrow_mut();
+            let a = a.as_mut().unwrap();
+            let result = a.engine.host_event(event);
+            a.tasks.poll();
+            serde_json::to_string(&result).unwrap()
+        })
     }
     #[wasm_bindgen]
     pub fn needs_update() -> bool {

@@ -1,0 +1,41 @@
+Removing unused browser at /Users/ehsan-mac/Library/Caches/ms-playwright/chromium-1161
+Removing unused browser at /Users/ehsan-mac/Library/Caches/ms-playwright/chromium_headless_shell-1161
+Removing unused browser at /Users/ehsan-mac/Library/Caches/ms-playwright/ffmpeg-1011
+Removing unused browser at /Users/ehsan-mac/Library/Caches/ms-playwright/firefox-1475
+Removing unused browser at /Users/ehsan-mac/Library/Caches/ms-playwright/webkit-2140
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip[22m
+Error: Download failed: server returned code 403 body '<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>We're sorry, but this service is not available in your location</Details></Error>'. URL: https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip
+    at IncomingMessage.handleError (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33897:23)
+    at IncomingMessage.emit (node:events:521:24)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip[22m
+Error: Download failed: server returned code 403 body '<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>We're sorry, but this service is not available in your location</Details></Error>'. URL: https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip
+    at IncomingMessage.handleError (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33897:23)
+    at IncomingMessage.emit (node:events:521:24)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip[22m
+Error: Download failed: server returned code 403 body '<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>We're sorry, but this service is not available in your location</Details></Error>'. URL: https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip
+    at IncomingMessage.handleError (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33897:23)
+    at IncomingMessage.emit (node:events:521:24)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip[22m
+Error: Download failed: server returned code 403 body '<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>We're sorry, but this service is not available in your location</Details></Error>'. URL: https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip
+    at IncomingMessage.handleError (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33897:23)
+    at IncomingMessage.emit (node:events:521:24)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip[22m
+Error: Download failed: server returned code 403 body '<?xml version='1.0' encoding='UTF-8'?><Error><Code>AccessDenied</Code><Message>Access denied.</Message><Details>We're sorry, but this service is not available in your location</Details></Error>'. URL: https://cdn.playwright.dev/builds/cft/156.0.8078.4/mac-arm64/chrome-mac-arm64.zip
+    at IncomingMessage.handleError (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33897:23)
+    at IncomingMessage.emit (node:events:521:24)
+    at endReadableNT (node:internal/streams/readable:1729:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Failed to install browsers
+Error: Failed to download Chrome for Testing 156.0.8078.4 (playwright chromium v1248), caused by
+Error: Download failure, code=1
+    at ChildProcess.<anonymous> (/Users/ehsan-mac/Downloads/rustx-stage-01/node_modules/playwright-core/lib/coreBundle.js:33774:32)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)

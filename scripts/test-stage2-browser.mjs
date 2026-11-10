@@ -6,7 +6,7 @@ import {chromium,webkit,firefox} from 'playwright';
 const engine=process.env.RUSTX_BROWSER||'chromium';
 const gpu=process.env.RUSTX_TEST_GPU==='1';
 if(gpu&&engine!=='chromium')throw new Error('The instrumented GPU test currently targets Chromium.');
-const report={date:'2026-11-02',engine,backend:gpu?'WebGPU with loss/retry':'Rust CPU',platform:process.platform,arch:process.arch,checks:[],limitations:['No Windows, actual Safari, physical mobile, OS IME or screen-reader acceptance','API counters and local samples are not full platform/performance certification']};
+const report={date:new Date().toISOString(),engine,backend:gpu?'WebGPU with loss/retry':'Rust CPU',platform:process.platform,arch:process.arch,checks:[],limitations:['No Windows, actual Safari, physical mobile, OS IME or screen-reader acceptance','API counters and local samples are not full platform/performance certification']};
 const evidence=new URL('../docs/evidence/',import.meta.url);
 await fs.mkdir(evidence,{recursive:true});
 const suffix=`${engine}-${gpu?'gpu':'cpu'}`;

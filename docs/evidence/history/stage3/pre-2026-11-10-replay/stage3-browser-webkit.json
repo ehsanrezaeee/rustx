@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-09T15:31:22.010Z",
+  "engine": "webkit",
+  "checks": [
+    "hash deep link mounts the public Rust application",
+    "queued selection events cannot overwrite consecutive Rust keyboard edits before a visual frame (synthetic event ordering regression)",
+    "controlled fields, dirty/errors, UTF16/grapheme editing, Rust undo and password diagnostic redaction",
+    "checkbox Space activates exactly once; slider keys and Rust-painted select popup work",
+    "modal focus trap, Escape restoration and validated submission",
+    "actual IndexedDB draft persistence and stale asynchronous name-validation rejection",
+    "query cache refresh and recoverable subtree retry",
+    "real fixture HTTP JSON POST, multipart upload, pull streaming and WebSocket echo through compiled Rust",
+    "actual file chooser import and named download without password export"
+  ],
+  "limitations": [
+    "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
+  ],
+  "version": "27.2",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(pointerDetails.includes('Ada'))\n",
+  "pageErrors": []
+}

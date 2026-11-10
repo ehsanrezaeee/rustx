@@ -1,0 +1,17 @@
+   Compiling naga v24.0.0
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+   Compiling wgpu-hal v24.0.4
+   Compiling wgpu-core v24.0.5
+   Compiling wgpu v24.0.5
+   Compiling vello v0.5.0
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx-web v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.73s
+     Running `target/debug/rustx-lab`
+2026-11-09 18:36:15.306 rustx-lab[57788:595792] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-09 18:36:15.475 rustx-lab[57788:595883] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-09 18:36:15.475 rustx-lab[57788:595792] Error received in message reply handler: Connection invalid
+
+Sandbox run did not produce smoke-frame exit; terminated its own rustx-lab process after macOS service connection errors. This is not successful native startup evidence.

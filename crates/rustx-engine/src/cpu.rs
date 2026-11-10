@@ -17,6 +17,9 @@ pub struct CpuRenderer {
 }
 fn path(rect: vello::kurbo::Rect, radius: f32, scale: f32) -> Path {
     let p = RoundedRect::from_rect(rect, radius as f64).to_path(0.1);
+    geometry_path(&p, scale)
+}
+fn geometry_path(p: &vello::kurbo::BezPath, scale: f32) -> Path {
     let mut b = PathBuilder::new();
     for e in p.elements() {
         match e {
@@ -85,6 +88,35 @@ impl CpuRenderer {
                 Transform::identity(),
                 None,
             );
+        }
+    }
+    pub fn editing(&mut self, root: &BoxNode, id: Option<u64>, text: &mut TextEngine, scale: f32) {
+        fn find(b: &BoxNode, id: u64) -> Option<&BoxNode> {
+            if b.node.id == id {
+                Some(b)
+            } else {
+                b.children.iter().find_map(|c| find(c, id))
+            }
+        }
+        if let Some(b) = id.and_then(|id| find(root, id)) {
+            let mut clip = Mask::new(self.pixmap.width(), self.pixmap.height()).unwrap();
+            clip.fill_path(
+                &path(b.rect, b.node.style.radius, scale),
+                FillRule::Winding,
+                true,
+                Transform::identity(),
+            );
+            for (rect, ink, alpha) in crate::editing::decorations(b, text) {
+                let mut paint = Paint::default();
+                paint.set_color(color(ink, alpha));
+                self.pixmap.fill_path(
+                    &path(rect, 0., scale),
+                    &paint,
+                    FillRule::Winding,
+                    Transform::identity(),
+                    Some(&clip),
+                );
+            }
         }
     }
     pub fn sync_images(&mut self, scene: &crate::scene::SceneEngine) {
@@ -267,17 +299,18 @@ impl CpuRenderer {
         };
         let child_mask = clip.as_ref().or(mask);
         if matches!(b.node.kind, Kind::Text | Kind::Button | Kind::Input) {
+            let label_inset = crate::controls::label_inset(&b.node);
             let shaped = text.shape_with(
                 &b.node.text_content(),
                 s.font_size,
-                (b.rect.width() as f32 - 2. * s.padding).max(1.),
+                (b.rect.width() as f32 - 2. * s.padding - label_inset).max(1.),
                 s.text_align,
                 s.text_direction,
             );
             self.paint_text(
                 &shaped,
                 vello::kurbo::Affine::translate((
-                    b.rect.x0 + s.padding as f64,
+                    b.rect.x0 + f64::from(s.padding + label_inset),
                     b.rect.y0 + s.padding as f64,
                 )),
                 s.color,
@@ -306,6 +339,17 @@ impl CpuRenderer {
                     child_mask,
                 );
             }
+        }
+        for (rect, ink) in crate::controls::decorations(b) {
+            let mut control_paint = Paint::default();
+            control_paint.set_color(color(ink, alpha));
+            self.pixmap.fill_path(
+                &geometry_path(&rect, scale),
+                &control_paint,
+                FillRule::Winding,
+                Transform::identity(),
+                child_mask,
+            );
         }
         if b.node.kind == Kind::Canvas {
             let mut canvas_clip = Mask::new(self.pixmap.width(), self.pixmap.height()).unwrap();

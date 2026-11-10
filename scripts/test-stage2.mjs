@@ -18,7 +18,7 @@ const click=id=>{app.activate(node(id).node);frame();};
 const rows=()=>inspection().nodes.filter(n=>/^record-\d+$/.test(n.id||''));
 const flatten=(node,out=[])=>{out.push(node);for(const child of node.children)flatten(child,out);return out;};
 const digest=()=>createHash('sha256').update(app.pixels()).digest('hex');
-const report={date:'2026-11-02',target:'actual compiled wasm32 in Node; Rust CPU renderer',node:process.version,platform:process.platform,arch:process.arch,wasmSha256:createHash('sha256').update(binary).digest('hex'),checks,limitations:['No actual browser, Windows, GPU, OS IME, screen-reader or physical mobile claim','Timing samples are local smoke measurements, not frozen-hardware performance certification']};
+const report={date:new Date().toISOString(),target:'actual compiled wasm32 in Node; Rust CPU renderer',node:process.version,platform:process.platform,arch:process.arch,wasmSha256:createHash('sha256').update(binary).digest('hex'),checks,limitations:['No actual browser, Windows, GPU, OS IME, screen-reader or physical mobile claim','Timing samples are local smoke measurements, not frozen-hardware performance certification']};
 try {
  app.init_app(JSON.stringify(new HostNetwork(()=>{}).capabilities()));frame();
  const home=inspection().counts;

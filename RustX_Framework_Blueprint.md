@@ -1,23 +1,21 @@
 # RustX — Framework Specification and Build Blueprint
 
-**Specification:** 1.1 · **Implementation update:** 2 November 2026 · **Prepared:** 30 October 2026
+**Specification:** 1.1 · **Implementation update:** 10 November 2026 · **Prepared:** 30 October 2026
 **Working name:** RustX · **Authoring language:** Rust · **UI syntax:** `rustx! { ... }`  
 **Targets:** browser WebAssembly first; shared native Windows x64 application second  
-**Document status:** implementation contract with Stage 2 shared-engine implementation; platform acceptance remains open.
+**Document status:** implementation contract with Stage 3 application implementation; platform acceptance remains open.
 
-## 0. Current source and continuation — 2 November 2026
+## 0. Current source and continuation — 10 November 2026
 
-The current runnable project is maintained in local Git on `stage-1-completion`; `main` preserves the original Stage 1 import. The user explicitly authorized proceeding with Stage 2 on this same branch while earlier platform/manual gates remain open. This authorization advances implementation; it does not certify those gates. No new downloadable archive was requested. Application code remains ordinary Rust in `.rustx` modules with markup inside `rustx!`, without a compiler fork.
+The user explicitly requested Stage 3 on branch `stage-3`. This continues the existing framework and does not accept inherited Stage 1/2 platform gates. Application setup remains mount-once; Rust owns retained layout, text, editing and scene. The complete workspace, locks, scripts, tests and rebuilt `dist/` are delivered together.
 
-**Stage 2 implemented:** typed theme tokens and viewport overrides; retained Taffy measurement/invalidation; shared Persian/English and bundled monochrome emoji shaping; font readiness and UTF-8/UTF-16 cluster metadata; bounded text/glyph/image/scene resource policies; custom retained drawing paths/text/images, affine transforms, rounded clipping and camera-relative culling; fixed-height keyed virtualization; direct GPU presentation, actual device-loss CPU recovery and GPU retry; demand-driven frame/DPR scheduling. The **Visual engine** page uses public Rust APIs for its responsive dashboard, 10,000-object drawing board and 100,000-record explorer. See `docs/STAGE2.md` for the finite API and limits.
+**Stage 3 implementation:** typed capture/target/bubble events and cancellable defaults, pointer capture, bounded drop metadata, resize/scroll/resource notifications, keyboard/modal/nested scrolling; finite widget vocabulary and stateful tabs/select/combobox/overlay/table helpers; grapheme/UTF-16/bidi editing, Unicode word/shaped vertical movement, opt-in ordinary text selection, composition and bounded undo; scoped forms and stale-safe async validation/submission; expanded browser semantics and native AccessKit projection; all-method HTTP/futures/cancellation, multipart, pull streams, WebSocket, query cache/mutations, typed routes/history/hash, storage/migrations, files/clipboard/scheduling/print, logical revisioned assets with shared bounded PNG/font loading, and recoverable errors. The Applications dashboard exercises these public APIs; People adds search/details/copy/print, and the drawing board adds object editing/export. Final review also fixes joined-grapheme composition carets, async validation preserving synchronous errors, and asset-kind resource ownership. Delivery regression evidence and remaining gates are in `docs/ACCEPTANCE.md`. See `docs/STAGE3.md` and `docs/STAGE3_SERVICES.md` for finite APIs and resource limits.
 
-**Executed evidence:** 27 new Rust regressions plus the inherited workspace/compiler tests; actual rebuilt Wasm; Chrome 156 and Playwright WebKit 27.2 CPU suites; visible Chrome WebGPU on Apple M3, including actual GPUDevice.destroy → CPU → fresh GPU with retained state; matched native CPU/Metal scene comparison; real native Mac window startup in both backends; deterministic HTTP and host regressions. All four Stage 2 integration reports identify the exact same Wasm hash. Preliminary local CPU samples are published as smoke measurements, not performance certification. The current evidence and all 46 requirement states are in `docs/ACCEPTANCE.md`.
+**Stage 2 remains present:** responsive typed themes, retained Taffy layout, shared Unicode/monochrome emoji shaping, bounded caches, camera-relative custom drawing, fixed-height virtualization, direct GPU presentation, CPU recovery/retry and demand-driven scheduling. Its recorded execution is retained in the evidence ledger.
 
-**Stage 1 and Stage 2 are not fully accepted.** Actual Windows execution, Windows/browser parity and the complete real-target support matrix remain unverified. Real OS IME and human screen-reader tasks, actual Safari/mobile, the external clean-machine replay and frozen Android benchmark profile remain open. Known text/style/editor and native editing limits are explicit in the compatibility guide. No universal speed comparison, production readiness or final RX-45/RX-46 completion is claimed.
+**Acceptance remains open.** Native Mac checks and browser automation cannot certify Windows execution, Windows UI Automation, real OS IME, human screen-reader tasks, actual Safari/mobile, or complete renderer/performance parity. Use `docs/ACCEPTANCE.md` for actual command results and exact artifact hashes. Stage 3 implementation is not a claim that all required platform/manual tasks passed. Stage 4 editor/tooling/release and RX-45/RX-46 final successful examples remain separate.
 
-**Continue:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/STAGE2.md`, `docs/COMPATIBILITY.md` and `docs/NEXT_AGENT.md`. Preserve mount-once setup and Rust-owned layout/text/scene. Rebuild Wasm after Rust edits. Verify unavailable platform gates on their actual targets, retaining failures, before accepting a stage.
-
-RX-45 remains the polished successful API showcase. RX-46 remains a homepage with real editable Rust compile/run; the current homepage presets are deliberately precompiled and do not complete that requirement.
+**Continue:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/STAGE3.md`, `docs/COMPATIBILITY.md` and `docs/NEXT_AGENT.md`. Stay on `stage-3` unless instructed otherwise. Rebuild Wasm after Rust edits, preserve failures, and exercise unavailable targets on the actual platforms before accepting them.
 
 ## 1. The product and its finish line
 
@@ -485,6 +483,8 @@ Implement RX-10 through RX-18. Integrate production layout, fonts, scene, GPU pr
 ### Stage 3 — Deliver usable applications
 
 Implement RX-19 through RX-32. Complete the finite widget library, events, editing, accessible semantics, forms, services, routing, errors, and reference applications. Verify input/semantics continuously rather than deferring all screen-reader work to the last day.
+
+**Current implementation:** the shared Applications dashboard and Stage 3 APIs are present on `stage-3`. Detailed APIs and limits are in `docs/STAGE3.md`; executed evidence and open manual/target tasks are in `docs/ACCEPTANCE.md`.
 
 **Exit:** a user completes the reference form, navigates the virtual collection, opens/closes dialogs, loads/cancels data, and edits the drawing board with pointer and keyboard. Required screen-reader tasks pass. Async races, network failures, denied capabilities, and repeated disposal behave correctly on both targets.
 

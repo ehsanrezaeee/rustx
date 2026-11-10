@@ -1,0 +1,5 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running `target/debug/rustx-lab`
+
+Command: RUSTX_DEMO=applications RUSTX_RENDERER=cpu RUSTX_SMOKE_FRAMES=2 cargo run -p rustx-lab --bin rustx-lab --locked
+Actual macOS process exit: 0 after requested two smoke frames. Window startup only; no full native interaction, Windows, OS IME or screen-reader claim.

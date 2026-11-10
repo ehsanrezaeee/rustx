@@ -1,7 +1,7 @@
 //! Portable retained drawing data. Backend geometry is derived from these values.
 use kurbo::{BezPath, Rect, RoundedRect, Shape, Stroke, StrokeOpts};
 use std::collections::{HashMap, HashSet};
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct Bounds {
     pub x0: f64,
     pub y0: f64,
@@ -37,7 +37,7 @@ impl Bounds {
             && self.height() > 0.
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct Transform(pub [f64; 6]);
 impl Default for Transform {
     fn default() -> Self {
@@ -82,7 +82,7 @@ impl Transform {
         }
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize)]
 pub struct Camera {
     pub x: f64,
     pub y: f64,
@@ -123,7 +123,7 @@ impl Camera {
         ((x - self.x) * self.zoom, (y - self.y) * self.zoom)
     }
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub enum PathSegment {
     Move(f64, f64),
     Line(f64, f64),
@@ -131,7 +131,7 @@ pub enum PathSegment {
     Cubic(f64, f64, f64, f64, f64, f64),
     Close,
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub enum Primitive {
     Rect {
         radius: f64,
@@ -148,7 +148,7 @@ pub enum Primitive {
         key: String,
     },
 }
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, serde::Serialize)]
 pub struct DrawShape {
     pub id: u64,
     pub bounds: Bounds,
@@ -304,8 +304,24 @@ impl CanvasScene {
             large,
         })
     }
+    pub fn export_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(&serde_json::json!({"version":1,"shapes":self.shapes}))
+    }
     pub fn len(&self) -> usize {
         self.shapes.len()
+    }
+    /// Return a new retained scene with one object's world translation changed.
+    pub fn translate_shape(&self, id: u64, dx: f64, dy: f64) -> Result<Self, &'static str> {
+        if !dx.is_finite() || !dy.is_finite() {
+            return Err("invalid translation");
+        }
+        let mut shapes = self.shapes.clone();
+        let Some(shape) = shapes.iter_mut().find(|shape| shape.id == id) else {
+            return Err("unknown shape");
+        };
+        shape.transform.0[4] += dx;
+        shape.transform.0[5] += dy;
+        Self::new(shapes)
     }
     pub fn is_empty(&self) -> bool {
         self.shapes.is_empty()
