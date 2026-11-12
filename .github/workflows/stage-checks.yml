@@ -1,0 +1,120 @@
+name: RustX stage checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    name: Contracts (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Pinned Rust and web prerequisites
+        run: |
+          rustup toolchain install 1.90.0 --profile minimal --component rustfmt --target wasm32-unknown-unknown
+          cargo install wasm-bindgen-cli --version 0.2.100 --locked
+          npm ci
+      - name: Stages 1–3 deterministic contracts and Stage 4 formatting
+        run: |
+          set -o pipefail
+          cargo test --workspace --locked 2>&1 | tee workspace-tests.log
+          cargo fmt --all -- --check
+          npm run format:check
+      - name: Rebuilt Wasm and scoped host contracts
+        run: |
+          bash scripts/build-web.sh
+          npm run test:host
+          npm run test:wasm
+          npm run test:stage2
+          RUSTX_TEST_PORT=3001 npm run test:http
+          npm run test:stage3:services
+      - name: Actual Windows native CPU startup and package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:RUSTX_DEMO = 'applications'
+          $env:RUSTX_SMOKE_FRAMES = '2'
+          $env:RUSTX_RENDERER = 'cpu'
+          cargo run -p rustx-lab --bin rustx-lab --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Actual Windows CPU startup failed' }
+          $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+          Import-Module (Join-Path $vs 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')
+          Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
+          ./scripts/build-windows.ps1
+          & ./releases/rustx-0.1.0-windows-x64/rustx-lab.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Packaged Windows CPU startup failed' }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: contracts-${{ matrix.os }}
+          path: |
+            workspace-tests.log
+            docs/evidence/*.json
+            releases/rustx-0.1.0-windows-x64*
+
+  browsers:
+    name: Browser stages 1–4 (CPU, Linux Chromium)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Pinned toolchain and real browser
+        run: |
+          rustup toolchain install 1.90.0 --profile minimal --component rustfmt --target wasm32-unknown-unknown
+          cargo install wasm-bindgen-cli --version 0.2.100 --locked
+          npm ci
+          npx playwright install --with-deps chromium
+          bash scripts/build-web.sh
+      - name: Sequential browser and standalone CLI tasks
+        run: |
+          target/debug/rustx serve dist 3000 > browser-server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          npm run test:browser
+          npm run test:stage2:browser
+          npm run test:stage3:browser
+          npm run test:stage4:cli
+          target/debug/rustx build --target web --release --out dist-release
+          target/debug/rustx serve dist-release 3011 > production-server.log 2>&1 &
+          production=$!
+          trap 'kill "$server" "$production" 2>/dev/null || true' EXIT
+          npm run test:stage4:deploy
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: linux-browser-evidence
+          path: |
+            browser-server.log
+            production-server.log
+            docs/evidence/*.json
+            docs/evidence/*chromium*.png

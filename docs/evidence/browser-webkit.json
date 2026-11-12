@@ -1,11 +1,12 @@
 {
   "result": "passed",
-  "date": "2026-11-01",
+  "date": "2026-11-12T16:01:18.936Z",
   "engine": "webkit",
   "version": "27.2",
   "platform": "darwin",
   "arch": "arm64",
   "backend": "Rust CPU",
+  "wasmSha256": "0d00b7999818e3cb7f7511a3ac62b742e318cf2006aaad5e87e1beb7df6d6579",
   "checks": [
     "pointer, Enter and Space each activate once",
     "keyed text/counter state, active input and selection survive reorder",

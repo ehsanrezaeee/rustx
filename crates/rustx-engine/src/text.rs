@@ -1,8 +1,9 @@
 //! Shared Unicode shaping with bundled fonts and bounded shaped-run caching.
 use crate::cache::BudgetCache;
 use cosmic_text::{fontdb, Attrs, Buffer, Family, FontSystem, Metrics, Shaping};
-use rustx_core::{TextAlign, TextDirection};
+use rustx_core::{Snapshot, Style, TextAlign, TextDirection, Typography};
 use std::{collections::HashMap, sync::Arc};
+use unicode_segmentation::UnicodeSegmentation;
 use vello::{
     kurbo::Affine,
     peniko::{Blob, Color, Fill, Font},
@@ -37,6 +38,10 @@ struct Key {
     width: u32,
     align: u8,
     direction: u8,
+    family: Option<String>,
+    weight: u16,
+    line_height: u32,
+    max_lines: Option<u16>,
 }
 pub struct TextEngine {
     system: FontSystem,
@@ -114,6 +119,61 @@ impl TextEngine {
         align: TextAlign,
         direction: TextDirection,
     ) -> Arc<Shaped> {
+        self.shape_with_typography(text, size, width, align, direction, &Typography::default())
+    }
+
+    pub fn node_typography(node: &Snapshot) -> Typography {
+        let mut typography = node.style.typography.clone();
+        if node.editing.is_some() {
+            typography.max_lines = None;
+        }
+        typography
+    }
+
+    pub fn shape_node(&mut self, node: &Snapshot, width: f32) -> Arc<Shaped> {
+        self.shape_with_typography(
+            &node.text_content(),
+            node.style.font_size,
+            width,
+            node.style.text_align,
+            node.style.text_direction,
+            &Self::node_typography(node),
+        )
+    }
+
+    pub fn shape_styled(&mut self, text: &str, width: f32, style: &Style) -> Arc<Shaped> {
+        self.shape_with_typography(
+            text,
+            style.font_size,
+            width,
+            style.text_align,
+            style.text_direction,
+            &style.typography,
+        )
+    }
+
+    pub fn shape_editing(&mut self, text: &str, width: f32, style: &Style) -> Arc<Shaped> {
+        let mut typography = style.typography.clone();
+        typography.max_lines = None;
+        self.shape_with_typography(
+            text,
+            style.font_size,
+            width,
+            style.text_align,
+            style.text_direction,
+            &typography,
+        )
+    }
+
+    pub fn shape_with_typography(
+        &mut self,
+        text: &str,
+        size: f32,
+        width: f32,
+        align: TextAlign,
+        direction: TextDirection,
+        typography: &Typography,
+    ) -> Arc<Shaped> {
         let size = if size.is_finite() {
             size.clamp(1., 256.)
         } else {
@@ -130,11 +190,16 @@ impl TextEngine {
             width: width.to_bits(),
             align: align as u8,
             direction: direction as u8,
+            family: typography.family.clone(),
+            weight: typography.weight,
+            line_height: typography.line_height.unwrap_or(size * 1.4).to_bits(),
+            max_lines: typography.max_lines,
         };
         if let Some(run) = self.cache.get(&key) {
             return run.clone();
         }
-        let mut buffer = Buffer::new(&mut self.system, Metrics::new(size, size * 1.4));
+        let line_height = typography.line_height.unwrap_or(size * 1.4).max(1.);
+        let mut buffer = Buffer::new(&mut self.system, Metrics::new(size, line_height));
         buffer.set_size(&mut self.system, Some(width), None);
         let directed = match direction {
             TextDirection::Auto => text.to_owned(),
@@ -157,7 +222,14 @@ impl TextEngine {
         buffer.set_text(
             &mut self.system,
             &directed,
-            &Attrs::new().family(Family::SansSerif),
+            &Attrs::new()
+                .family(
+                    typography
+                        .family
+                        .as_deref()
+                        .map_or(Family::SansSerif, Family::Name),
+                )
+                .weight(cosmic_text::Weight(typography.weight)),
             Shaping::Advanced,
         );
         for line in &mut buffer.lines {
@@ -252,8 +324,73 @@ impl TextEngine {
                 }
             }
         }
+        if let Some(limit) = typography.max_lines.map(usize::from) {
+            if shaped.lines.len() > limit || shaped.width > width + 0.01 {
+                // Search grapheme boundaries, never split UTF-8, combining marks or
+                // emoji. Candidate shaping uses exactly the same font/layout path.
+                let mut ordinary = typography.clone();
+                ordinary.max_lines = None;
+                let end = shaped
+                    .lines
+                    .get(limit.saturating_sub(1))
+                    .map_or(text.len(), |line| line.end.min(text.len()));
+                let boundaries = text
+                    .grapheme_indices(true)
+                    .map(|(byte, _)| byte)
+                    .chain(std::iter::once(text.len()))
+                    .filter(|byte| *byte <= end)
+                    .collect::<Vec<_>>();
+                let mut low = 0;
+                let mut high = boundaries.len();
+                let mut best = 0;
+                while low < high {
+                    let middle = (low + high) / 2;
+                    let prefix = text[..boundaries[middle]].trim_end();
+                    let candidate = self.shape_with_typography(
+                        &format!("{prefix}…"),
+                        size,
+                        width,
+                        align,
+                        direction,
+                        &ordinary,
+                    );
+                    if candidate.lines.len() <= limit && candidate.width <= width + 0.01 {
+                        best = prefix.len();
+                        low = middle + 1;
+                    } else {
+                        high = middle;
+                    }
+                }
+                let candidate = self.shape_with_typography(
+                    &format!("{}…", &text[..best]),
+                    size,
+                    width,
+                    align,
+                    direction,
+                    &ordinary,
+                );
+                shaped = (*candidate).clone();
+                // The painted ellipsis represents the hidden source suffix. The
+                // semantic text remains complete, and editor nodes are not elided.
+                for cluster in &mut shaped.clusters {
+                    if cluster.end > best {
+                        cluster.start = best;
+                        cluster.end = text.len();
+                    }
+                }
+                for line in &mut shaped.lines {
+                    line.start = line.start.min(best);
+                    line.end = if line.end > best {
+                        text.len()
+                    } else {
+                        line.end
+                    };
+                }
+            }
+        }
         self.shape_count += 1;
         let bytes = key.text.len()
+            + key.family.as_ref().map_or(0, String::len)
             + shaped
                 .runs
                 .iter()

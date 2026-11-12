@@ -6,7 +6,12 @@ import { HostNetwork, HostServices } from '../web/services.js';
 const port = Number(process.env.RUSTX_SERVICE_PORT || 3017),
   base = `http://127.0.0.1:${port}`;
 const server = spawn(
-  fileURLToPath(new URL('../target/debug/rustx-cli', import.meta.url)),
+  fileURLToPath(
+    new URL(
+      `../target/debug/rustx-cli${process.platform === 'win32' ? '.exe' : ''}`,
+      import.meta.url,
+    ),
+  ),
   ['serve', 'dist', String(port)],
   { cwd: new URL('../', import.meta.url), stdio: ['ignore', 'pipe', 'pipe'] },
 );

@@ -1,6 +1,7 @@
 // Real Chromium presentation, API instrumentation, and initial-adapter-failure path.
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { chromium } from 'playwright';
 const browser = await chromium.launch({
   headless: process.env.RUSTX_HEADED !== '1',
@@ -10,7 +11,7 @@ const browser = await chromium.launch({
 const evidence = new URL('../docs/evidence/', import.meta.url),
   errors = [];
 const report = {
-  date: '2026-11-01',
+  date: new Date().toISOString(),
   browser: browser.version(),
   platform: process.platform,
   arch: process.arch,
@@ -79,6 +80,15 @@ try {
     }
   });
   await page.goto((process.env.RUSTX_URL || 'http://127.0.0.1:3000') + '/');
+  report.wasmSha256 = createHash('sha256')
+    .update(
+      await (
+        await page.request.get(
+          (process.env.RUSTX_URL || 'http://127.0.0.1:3000') + '/pkg/rustx_lab_bg.wasm',
+        )
+      ).body(),
+    )
+    .digest('hex');
   await page.waitForFunction(() => window.rustx?.draws() > 0, null, { timeout: 60000 });
   assert.equal(
     await page.evaluate(() => window.rustx.renderer()),

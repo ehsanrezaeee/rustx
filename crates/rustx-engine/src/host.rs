@@ -242,12 +242,9 @@ impl App {
                 if let Some(b) = self.engine.boxes.as_ref().and_then(|b| find(b, id)) {
                     if let Some(editor) = &b.node.editing {
                         let style = &b.node.style;
-                        let shaped = self.engine.text.shape_with(
-                            &b.node.text_content(),
-                            style.font_size,
-                            (b.rect.width() as f32 - 2. * style.padding).max(1.),
-                            style.text_align,
-                            style.text_direction,
+                        let shaped = self.engine.text.shape_node(
+                            &b.node,
+                            (b.rect.width() as f32 - style.padding_horizontal()).max(1.),
                         );
                         let caret = crate::editing::caret_rect(
                             &shaped,
@@ -256,8 +253,8 @@ impl App {
                         );
                         w.set_ime_cursor_area(
                             winit::dpi::LogicalPosition::new(
-                                b.rect.x0 + style.padding as f64 + caret.x0,
-                                b.rect.y0 + style.padding as f64 + caret.y0
+                                b.rect.x0 + style.padding_left() as f64 + caret.x0,
+                                b.rect.y0 + style.padding_top() as f64 + caret.y0
                                     - f64::from(editor.scroll_y),
                             ),
                             winit::dpi::LogicalSize::new(caret.width(), caret.height()),

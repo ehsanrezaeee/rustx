@@ -300,18 +300,15 @@ impl CpuRenderer {
         let child_mask = clip.as_ref().or(mask);
         if matches!(b.node.kind, Kind::Text | Kind::Button | Kind::Input) {
             let label_inset = crate::controls::label_inset(&b.node);
-            let shaped = text.shape_with(
-                &b.node.text_content(),
-                s.font_size,
-                (b.rect.width() as f32 - 2. * s.padding - label_inset).max(1.),
-                s.text_align,
-                s.text_direction,
+            let shaped = text.shape_node(
+                &b.node,
+                (b.rect.width() as f32 - s.padding_horizontal() - label_inset).max(1.),
             );
             self.paint_text(
                 &shaped,
                 vello::kurbo::Affine::translate((
-                    b.rect.x0 + f64::from(s.padding + label_inset),
-                    b.rect.y0 + s.padding as f64
+                    b.rect.x0 + f64::from(s.padding_left() + label_inset),
+                    b.rect.y0 + s.padding_top() as f64
                         - f64::from(b.node.editing.as_ref().map_or(0., |e| e.scroll_y)),
                 )),
                 s.color,

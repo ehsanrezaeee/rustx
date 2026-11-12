@@ -1,17 +1,18 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 const root = process.cwd(),
-  cli = path.join(root, 'target/debug/rustx'),
-  base = await fs.mkdtemp('/private/tmp/rustx-stage4-cli-'),
+  cli = path.join(root, 'target/debug', process.platform === 'win32' ? 'rustx.exe' : 'rustx'),
+  base = await fs.mkdtemp(path.join(os.tmpdir(), 'rustx-stage4-cli-')),
   project = path.join(base, 'sample');
 const report = {
   date: new Date().toISOString(),
   checks: [],
   limitations: [
-    'Cached pinned dependencies/toolchain on this Mac; not a clean Windows/first-ever-download installation',
+    "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation",
   ],
 };
 const env = { ...process.env, CARGO_TARGET_DIR: path.join(root, 'target') };
@@ -44,7 +45,10 @@ try {
   browser = await chromium.launch({
     headless: process.env.RUSTX_HEADED !== '1',
     executablePath:
-      process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      process.env.CHROME_PATH ||
+      (process.platform === 'darwin'
+        ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        : undefined),
   });
   const page = await browser.newPage();
   await page.goto('http://127.0.0.1:3010/?renderer=cpu');

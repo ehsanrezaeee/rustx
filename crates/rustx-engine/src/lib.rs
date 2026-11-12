@@ -391,15 +391,13 @@ impl Engine {
         }
         let content = &b.node.text;
         let style = &b.node.style;
-        let shaped = self.text.shape_with(
+        let shaped = self.text.shape_editing(
             content,
-            style.font_size,
-            (b.rect.width() as f32 - 2. * style.padding).max(1.),
-            style.text_align,
-            style.text_direction,
+            (b.rect.width() as f32 - style.padding_horizontal()).max(1.),
+            style,
         );
-        let x = point.x - b.rect.x0 - f64::from(style.padding);
-        let y = point.y - b.rect.y0 - f64::from(style.padding)
+        let x = point.x - b.rect.x0 - f64::from(style.padding_left());
+        let y = point.y - b.rect.y0 - f64::from(style.padding_top())
             + f64::from(b.node.editing.as_ref().map_or(0., |e| e.scroll_y));
         Some((editor, crate::editing::hit_offset(&shaped, content, x, y)))
     }
@@ -413,7 +411,7 @@ impl Engine {
     ) {
         fn width(b: &BoxNode, id: NodeId) -> Option<f32> {
             if b.node.id == id {
-                Some(b.rect.width() as f32 - 2. * b.node.style.padding)
+                Some(b.rect.width() as f32 - b.node.style.padding_horizontal())
             } else {
                 b.children.iter().find_map(|child| width(child, id))
             }
@@ -425,13 +423,7 @@ impl Engine {
             .unwrap_or(400.)
             .max(1.);
         let style = &node.style;
-        let shaped = self.text.shape_with(
-            &node.text,
-            style.font_size,
-            width,
-            style.text_align,
-            style.text_direction,
-        );
+        let shaped = self.text.shape_editing(&node.text, width, style);
         let selection = editor.selection();
         let caret = crate::editing::caret_rect(&shaped, selection.focus, style.font_size);
         let x = self
@@ -616,14 +608,12 @@ impl Engine {
             if let Some(state) = &mut boxes.node.editing {
                 if let Some(editor) = runtime.editor(boxes.node.id) {
                     let s = &boxes.node.style;
-                    let shaped = text.shape_with(
+                    let shaped = text.shape_editing(
                         &boxes.node.text,
-                        s.font_size,
-                        (boxes.rect.width() as f32 - 2. * s.padding).max(1.),
-                        s.text_align,
-                        s.text_direction,
+                        (boxes.rect.width() as f32 - s.padding_horizontal()).max(1.),
+                        s,
                     );
-                    let height = (boxes.rect.height() as f32 - 2. * s.padding).max(1.);
+                    let height = (boxes.rect.height() as f32 - s.padding_vertical()).max(1.);
                     let changed = focus == Some(boxes.node.id)
                         && *revision != Some((boxes.node.id, state.revision));
                     let caret = changed.then(|| {
@@ -1092,7 +1082,10 @@ impl Engine {
                             .and_then(|b| {
                                 fn find(b: &BoxNode, id: NodeId) -> Option<f32> {
                                     if b.node.id == id {
-                                        Some(b.rect.width() as f32 - 2. * b.node.style.padding)
+                                        Some(
+                                            b.rect.width() as f32
+                                                - b.node.style.padding_horizontal(),
+                                        )
                                     } else {
                                         b.children.iter().find_map(|c| find(c, id))
                                     }
@@ -1100,13 +1093,9 @@ impl Engine {
                                 find(b, id)
                             })
                             .unwrap_or(400.);
-                        let shaped = self.text.shape_with(
-                            &node.text,
-                            node.style.font_size,
-                            width.max(1.),
-                            node.style.text_align,
-                            node.style.text_direction,
-                        );
+                        let shaped =
+                            self.text
+                                .shape_editing(&node.text, width.max(1.), &node.style);
                         let mut stops = vec![];
                         for c in &shaped.clusters {
                             stops.push((c.y, c.x, if c.rtl { c.end } else { c.start }));

@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
 if (-not $IsWindows -and $env:OS -ne 'Windows_NT') { throw 'Actual Windows required' }
 $env:RUSTFLAGS = '-C target-feature=+crt-static'
-cargo test --workspace --locked
+cargo test --workspace --locked --target x86_64-pc-windows-msvc
 if ($LASTEXITCODE -ne 0) { throw 'Windows tests failed' }
 cargo build -p rustx-cli -p rustx-lab --bins --release --locked --target x86_64-pc-windows-msvc
 if ($LASTEXITCODE -ne 0) { throw 'Native build failed; install pinned Rust and MSVC C++ tools.' }

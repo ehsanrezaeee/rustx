@@ -99,6 +99,7 @@ struct TextContext {
     size: f32,
     align: rustx_core::TextAlign,
     direction: rustx_core::TextDirection,
+    typography: rustx_core::Typography,
     epoch: u64,
 }
 struct Entry {
@@ -166,18 +167,41 @@ impl LayoutEngine {
     ) -> taffy::NodeId {
         seen.insert(node.id);
         let s = &node.style;
+        let padding = s.padding_insets();
+        let margin = s.margin_insets();
+        let dimension = |legacy: Option<f32>, value: rustx_core::Length| match legacy {
+            Some(value) => length(value),
+            None => match value {
+                rustx_core::Length::Auto => auto(),
+                rustx_core::Length::Px(value) => length(value.max(0.)),
+                rustx_core::Length::Percent(value) => percent(value.max(0.) / 100.),
+            },
+        };
+        let offset = |value: rustx_core::Length| -> LengthPercentageAuto {
+            match value {
+                rustx_core::Length::Auto => auto(),
+                rustx_core::Length::Px(value) => length(value),
+                rustx_core::Length::Percent(value) => percent(value / 100.),
+            }
+        };
         let label_inset = crate::controls::label_inset(node);
         let columns = if s.min_column > 0. {
-            (((width - 2. * s.padding + s.gap) / (s.min_column + s.gap)).floor() as u16)
+            (((width - s.padding_horizontal() + s.gap) / (s.min_column + s.gap)).floor() as u16)
                 .clamp(1, s.columns)
         } else {
             s.columns
         };
         let style = taffy::Style {
-            position: if node.control.overlay {
+            position: if node.control.overlay || s.position == rustx_core::Position::Absolute {
                 Position::Absolute
             } else {
                 Position::Relative
+            },
+            inset: taffy::Rect {
+                top: offset(s.inset[0]),
+                right: offset(s.inset[1]),
+                bottom: offset(s.inset[2]),
+                left: offset(s.inset[3]),
             },
             display: match s.display {
                 Display::Flex => taffy::Display::Flex,
@@ -209,20 +233,20 @@ impl LayoutEngine {
                 rustx_core::Justify::SpaceBetween => JustifyContent::SpaceBetween,
             }),
             size: Size {
-                width: s.width.map(length).unwrap_or(auto()),
-                height: s.height.map(length).unwrap_or(auto()),
+                width: dimension(s.width, s.width_length),
+                height: dimension(s.height, s.height_length),
             },
             min_size: Size {
                 width: length(s.min_width.unwrap_or(0.).max(if label_inset > 0. {
-                    s.padding * 2. + label_inset
+                    s.padding_horizontal() + label_inset
                 } else {
                     0.
                 })),
-                height: length(if label_inset > 0. {
-                    s.padding * 2. + 18.
+                height: length(s.min_height.unwrap_or(0.).max(if label_inset > 0. {
+                    s.padding_vertical() + 18.
                 } else {
                     0.
-                }),
+                })),
             },
             max_size: Size {
                 width: s
@@ -230,13 +254,19 @@ impl LayoutEngine {
                     .or_else(|| node.control.overlay.then_some((width - 16.).max(1.)))
                     .map(length)
                     .unwrap_or(auto()),
-                height: auto(),
+                height: s.max_height.map(length).unwrap_or(auto()),
             },
             padding: taffy::Rect {
-                left: length(s.padding + label_inset),
-                right: length(s.padding),
-                top: length(s.padding),
-                bottom: length(s.padding),
+                left: length(padding.left + label_inset),
+                right: length(padding.right),
+                top: length(padding.top),
+                bottom: length(padding.bottom),
+            },
+            margin: taffy::Rect {
+                left: length(margin.left),
+                right: length(margin.right),
+                top: length(margin.top),
+                bottom: length(margin.bottom),
             },
             gap: Size {
                 width: length(s.gap),
@@ -265,6 +295,7 @@ impl LayoutEngine {
                 size: s.font_size,
                 align: s.text_align,
                 direction: s.text_direction,
+                typography: TextEngine::node_typography(node),
                 epoch: self.font_epoch,
             });
         let child_ids: Vec<_> = children(node)
@@ -272,7 +303,10 @@ impl LayoutEngine {
             .map(|c| {
                 self.sync(
                     c,
-                    s.width.unwrap_or(width) - 2. * s.padding,
+                    s.width
+                        .or_else(|| s.width_length.resolve(width))
+                        .unwrap_or(width)
+                        - s.padding_horizontal(),
                     seen,
                     node.control.stack,
                 )
@@ -384,12 +418,13 @@ impl LayoutEngine {
                         AvailableSpace::MaxContent => 1_000_000.,
                     });
                     let started = self.diagnostics.then(crate::diagnostics::now);
-                    let shaped = text.shape_with(
+                    let shaped = text.shape_with_typography(
                         &context.text,
                         context.size,
                         width,
                         context.align,
                         context.direction,
+                        &context.typography,
                     );
                     if let Some(started) = started {
                         if let Some(node) = measured_nodes.get(&id) {
@@ -416,6 +451,15 @@ impl LayoutEngine {
         let l = self.tree.layout(self.nodes[&node.id].id).unwrap();
         let x = x + f64::from(l.location.x + node.style.translate.0);
         let y = y + f64::from(l.location.y + node.style.translate.1);
+        let mut children = children(node)
+            .iter()
+            .map(|child| self.output(child, x, y))
+            .collect::<Vec<_>>();
+        // Paint and hit testing share this order; runtime ownership and Tab order
+        // retain their original construction order. Overlay layers remain on top.
+        if children.iter().any(|child| child.node.style.z_index != 0) {
+            children.sort_by_key(|child| (child.node.control.overlay, child.node.style.z_index));
+        }
         BoxNode {
             node: node.clone(),
             rect: Rect::new(
@@ -424,10 +468,7 @@ impl LayoutEngine {
                 x + f64::from(l.size.width),
                 y + f64::from(l.size.height),
             ),
-            children: children(node)
-                .iter()
-                .map(|c| self.output(c, x, y))
-                .collect(),
+            children,
         }
     }
 }

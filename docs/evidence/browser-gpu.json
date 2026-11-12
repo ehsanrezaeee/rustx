@@ -1,6 +1,6 @@
 {
   "date": "2026-11-01",
-  "browser": "156.0.8078.74",
+  "browser": "157.0.8103.40",
   "platform": "darwin",
   "arch": "arm64",
   "viewport": [
@@ -16,8 +16,8 @@
   "presentation": {
     "textureCopiesToCPU": 0,
     "mapReads": 0,
-    "submits": 8,
-    "presents": 4,
+    "submits": 12,
+    "presents": 6,
     "cpuPixelTransfers": 0,
     "adapters": [
       {

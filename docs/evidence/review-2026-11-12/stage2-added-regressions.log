@@ -1,0 +1,13 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.03s
+     Running tests/stage2_contracts.rs (target/debug/deps/stage2_contracts-5b6d7b59d4be26d4)
+
+running 4 tests
+test percentages_constraints_and_physical_logical_spacing_share_retained_layout ... ok
+test absolute_percent_offsets_and_z_order_agree_between_pixels_and_hit_testing ... ok
+test editing_never_elides_text_and_asymmetric_padding_is_shared_with_painted_caret ... ok
+test typography_cache_line_height_and_grapheme_ellipsis_keep_original_source_offsets ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+

@@ -148,19 +148,17 @@ impl SceneEngine {
             );
         }
         if matches!(key.kind, Kind::Text | Kind::Button | Kind::Input) {
-            let shaped = text.shape_with(
+            let shaped = text.shape_styled(
                 &key.text,
-                s.font_size,
-                (rect.width() as f32 - 2. * s.padding - key.label_inset).max(1.),
-                s.text_align,
-                s.text_direction,
+                (rect.width() as f32 - s.padding_horizontal() - key.label_inset).max(1.),
+                s,
             );
             TextEngine::paint(
                 &mut own,
                 &shaped,
                 Affine::translate((
-                    f64::from(s.padding + key.label_inset),
-                    f64::from(s.padding - key.text_scroll),
+                    f64::from(s.padding_left() + key.label_inset),
+                    f64::from(s.padding_top() - key.text_scroll),
                 )),
                 color(s.color),
             );
@@ -243,7 +241,11 @@ impl SceneEngine {
                 b.node.text.clone()
             };
             let key = PaintKey {
-                style: s.clone(),
+                style: {
+                    let mut style = s.clone();
+                    style.typography = TextEngine::node_typography(&b.node);
+                    style
+                },
                 text: content,
                 size: (b.rect.width(), b.rect.height()),
                 kind: b.node.kind,

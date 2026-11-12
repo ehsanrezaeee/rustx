@@ -100,16 +100,13 @@ pub fn decorations(b: &BoxNode, text: &mut TextEngine) -> Vec<(Rect, u32, f32)> 
         return vec![];
     };
     let s = &b.node.style;
-    let shaped = text.shape_with(
-        &b.node.text_content(),
-        s.font_size,
-        (b.rect.width() as f32 - 2. * s.padding).max(1.),
-        s.text_align,
-        s.text_direction,
+    let shaped = text.shape_node(
+        &b.node,
+        (b.rect.width() as f32 - s.padding_horizontal()).max(1.),
     );
     let offset = vello::kurbo::Vec2::new(
-        b.rect.x0 + s.padding as f64,
-        b.rect.y0 + s.padding as f64 - f64::from(editor.scroll_y),
+        b.rect.x0 + s.padding_left() as f64,
+        b.rect.y0 + s.padding_top() as f64 - f64::from(editor.scroll_y),
     );
     let mut rects = selection_rects(&shaped, editor.selection.anchor, editor.selection.focus)
         .into_iter()
