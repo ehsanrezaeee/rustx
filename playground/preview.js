@@ -40,7 +40,21 @@ function call(method, ...args) {
 const app = {
   dispatch: (id, data) => {
     call('dispatch', id, data);
-    return '{}';
+    // The worker cannot cancel a browser default after the native event returns.
+    // Rust owns Button Enter/Space activation, so synchronously suppress the
+    // matching native click while preserving typed key dispatch in the worker.
+    const event = JSON.parse(data);
+    const node = state?.inspection.nodes.find((node) => node.node === id);
+    const activation =
+      event.kind === 'key_down' &&
+      !event.ctrl &&
+      !event.meta &&
+      !event.alt &&
+      !event.composing &&
+      (event.key === 'Enter' || event.key === ' ') &&
+      node?.kind === 'Button' &&
+      node.role !== 'link';
+    return JSON.stringify({ default_prevented: activation, handled: activation });
   },
   activate: (id) => call('activate', id),
   focus: (id) => call('focus', id),

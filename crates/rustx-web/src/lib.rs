@@ -82,6 +82,7 @@ impl WebApp {
             };
             let visible = b.rect.intersect(local_clip);
             nodes.push(serde_json::json!({
+                "paint_order": nodes.len(),
                 "source": b.node.source,
                 "owner": b.node.owner,
                 "component": b.node.component,
@@ -112,6 +113,22 @@ impl WebApp {
                 None,
             );
         }
+        // Semantic controls follow logical construction/Tab order, while their
+        // transparent hit surfaces use the Rust paint order for overlap picking.
+        fn logical(node: &rustx_core::Snapshot, order: &mut std::collections::HashMap<u64, usize>) {
+            order.insert(node.id, order.len());
+            for child in &node.children {
+                logical(child, order);
+            }
+        }
+        let mut order = std::collections::HashMap::new();
+        logical(&self.engine.runtime.snapshot(), &mut order);
+        nodes.sort_by_key(|node| {
+            order
+                .get(&node["node"].as_u64().unwrap())
+                .copied()
+                .unwrap_or(0)
+        });
         let text_cache = self.engine.text.cache_stats();
         let resources = self.engine.painter.resource_stats();
         let glyphs = self.cpu.glyph_stats();

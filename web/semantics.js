@@ -392,6 +392,7 @@ export class SemanticProjection {
         top: `${y}px`,
         width: `${Math.max(1, w)}px`,
         height: `${Math.max(1, h)}px`,
+        zIndex: String(g.paint_order ?? 0),
         pointerEvents: n.focusable || ['list', 'dialog'].includes(n.role) ? 'auto' : 'none',
         clipPath:
           vw > 0 && vh > 0

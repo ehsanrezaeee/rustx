@@ -1,0 +1,36 @@
+
+> test:stage4:browser
+> node scripts/test-stage4-browser.mjs
+
+{
+  "date": "2026-11-12T16:34:42.788Z",
+  "engine": "chromium",
+  "checks": [
+    "edited source is compiled to real interactive Wasm; counter changes 7 to 8 inside opaque script-only iframe; parent DOM and storage denied",
+    "independently compiled API template fetches real loopback fixture through restricted worker host"
+  ],
+  "limitations": [
+    "Automated browser keyboard only; no human screen-reader or OS IME task",
+    "WebKit is not actual Safari/iOS; no physical mobile or Windows evidence",
+    "Loopback compiler isolation and runtime limits are not a public security certification"
+  ],
+  "version": "157.0.8103.40",
+  "wasmSha256": "d9fbccc5882f5f899f2efbf54a1f4d03233b6c080806ed14d53252c1f7706378",
+  "result": "failed",
+  "error": "Error: locator.waitFor: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible\u001b[22m\n"
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Target page, context or browser has been closed
+Call log:
+[2m  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible[22m
+
+    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-browser.mjs:138:66 {
+  log: [
+    "  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible"
+  ]
+}
+
+Node.js v24.18.1

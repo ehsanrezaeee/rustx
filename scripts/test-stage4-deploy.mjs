@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import http from 'node:http';
+import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 import { chromium, webkit } from 'playwright';
 import { compressedShellBytes, measureColdStartup } from './measure-startup.mjs';
 const base = process.env.RUSTX_URL || 'http://127.0.0.1:3011',
@@ -8,6 +10,37 @@ const base = process.env.RUSTX_URL || 'http://127.0.0.1:3011',
   root = process.env.RUSTX_DIST || 'dist-release',
   file = `docs/evidence/stage4-deploy-${engine}.json`;
 let browser;
+// Node 24.18 Fetch asserts on a valid large Brotli Connection: close response.
+// Use raw HTTP plus explicit decoding for representation integrity. The real
+// browser Fetch/Brotli path is verified by the cold/offline tasks below.
+const representation = (file, accept) =>
+  new Promise((resolve, reject) => {
+    const request = http.get(
+      base + '/' + file,
+      { headers: { 'accept-encoding': accept } },
+      (response) => {
+        const chunks = [];
+        response.on('error', reject);
+        response.on('data', (chunk) => chunks.push(chunk));
+        response.on('end', () => {
+          try {
+            const encoding = response.headers['content-encoding'] || null;
+            const bytes = Buffer.concat(chunks);
+            const decoded =
+              encoding === 'br'
+                ? brotliDecompressSync(bytes)
+                : encoding === 'gzip'
+                  ? gunzipSync(bytes)
+                  : bytes;
+            resolve({ encoding, bytes: decoded });
+          } catch (error) {
+            reject(error);
+          }
+        });
+      },
+    );
+    request.on('error', reject);
+  });
 const report = {
   date: new Date().toISOString(),
   engine,
@@ -38,14 +71,9 @@ try {
     ['br;q=0.2, gzip;q=1', 'gzip'],
     ['br;q=0, gzip;q=0', null],
   ]) {
-    const response = await fetch(base + '/' + wasm, { headers: { 'accept-encoding': accept } });
-    assert.equal(response.headers.get('content-encoding'), encoding);
-    assert.equal(
-      createHash('sha256')
-        .update(Buffer.from(await response.arrayBuffer()))
-        .digest('hex'),
-      manifest.files[wasm],
-    );
+    const response = await representation(wasm, accept);
+    assert.equal(response.encoding, encoding);
+    assert.equal(createHash('sha256').update(response.bytes).digest('hex'), manifest.files[wasm]);
   }
   const res = await fetch(base + '/' + wasm, { headers: { 'accept-encoding': 'gzip' } });
   assert.equal(res.headers.get('content-type'), 'application/wasm');

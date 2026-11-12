@@ -1,9 +1,9 @@
 {
-  "date": "2026-11-12T11:23:54.403Z",
-  "cargoLockSha256": "af9dae3fdad79fa9cf88e5fb6a0bfcf8cdf45ee7b22624d2e0f98fa8d3ad42c6",
+  "date": "2026-11-12T16:26:31.507Z",
+  "cargoLockSha256": "e155dfa8f3ef7441034d05cebca38ae70aef6f83c0bdd1c1a490eb4417117120",
   "provider": "https://api.osv.dev/v1/querybatch",
-  "queried": 381,
-  "completedQueries": 381,
+  "queried": 385,
+  "completedQueries": 385,
   "findings": [
     {
       "name": "paste",
@@ -90,9 +90,9 @@
           "ecosystem_specific": {
             "affected_functions": null,
             "affects": {
+              "arch": [],
               "functions": [],
-              "os": [],
-              "arch": []
+              "os": []
             }
           },
           "database_specific": {

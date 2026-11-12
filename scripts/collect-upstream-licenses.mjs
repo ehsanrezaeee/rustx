@@ -1,8 +1,23 @@
 // Recover notices omitted from crate archives, pinned to each archive's own VCS commit.
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 const inventory = JSON.parse(await fs.readFile('docs/evidence/stage4-licenses.json')),
-  metadata = JSON.parse(await fs.readFile('.rustx/cargo-metadata.json'));
+  metadata = JSON.parse(
+    execFileSync('cargo', ['metadata', '--format-version', '1', '--locked'], {
+      encoding: 'utf8',
+      maxBuffer: 32 * 1024 * 1024,
+    }),
+  );
+if (
+  inventory.cargoLockSha256 !==
+  createHash('sha256')
+    .update(await fs.readFile('Cargo.lock'))
+    .digest('hex')
+) {
+  throw Error('License inventory is stale; run scripts/audit-dependencies.mjs first');
+}
 const cache = new Map();
 async function retrieve(repo, commit) {
   const key = repo + '@' + commit;

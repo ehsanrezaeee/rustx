@@ -1,0 +1,41 @@
+2026-11-12T16:33:48.6927846Z     ],
+2026-11-12T16:33:48.6928056Z     "medianMs": 2650.6409649999987,
+2026-11-12T16:33:48.6928308Z     "p95Ms": 2673.8956590000016,
+2026-11-12T16:33:48.6928539Z     "budgetMs": 3000,
+2026-11-12T16:33:48.6928804Z     "passed": true,
+2026-11-12T16:33:48.6929424Z     "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+2026-11-12T16:33:48.6930475Z     "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+2026-11-12T16:33:48.6931155Z   },
+2026-11-12T16:33:48.6931397Z   "result": "passed"
+2026-11-12T16:33:48.6931680Z }
+2026-11-12T16:33:48.8926202Z     Finished `release` profile [optimized] target(s) in 0.12s
+2026-11-12T16:34:07.7940549Z Built /home/runner/work/rustx/rustx/dist-release (8fa2bb4e75c09450f49324dab72f04000e6e8dd6483f66b53d1740e4f026367f)
+2026-11-12T16:34:07.8710128Z 
+2026-11-12T16:34:07.8710696Z > test:stage4:deploy
+2026-11-12T16:34:07.8711066Z > node scripts/test-stage4-deploy.mjs
+2026-11-12T16:34:07.8711244Z 
+2026-11-12T16:34:08.3451794Z node:internal/assert/utils:77
+2026-11-12T16:34:08.3452604Z     throw err;
+2026-11-12T16:34:08.3453457Z     ^
+2026-11-12T16:34:08.3453600Z 
+2026-11-12T16:34:08.3453868Z AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+2026-11-12T16:34:08.3454133Z 
+2026-11-12T16:34:08.3454219Z   assert(!this.paused)
+2026-11-12T16:34:08.3454345Z 
+2026-11-12T16:34:08.3454558Z     at Parser.finish (node:internal/deps/undici/undici:7433:9)
+2026-11-12T16:34:08.3454947Z     at Socket.onHttpSocketEnd (node:internal/deps/undici/undici:7872:34)
+2026-11-12T16:34:08.3455277Z     at Socket.emit (node:events:526:24)
+2026-11-12T16:34:08.3455581Z     at endReadableNT (node:internal/streams/readable:1783:12)
+2026-11-12T16:34:08.3456023Z     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-11-12T16:34:08.3456382Z   generatedMessage: true,
+2026-11-12T16:34:08.3456581Z   code: 'ERR_ASSERTION',
+2026-11-12T16:34:08.3456768Z   actual: false,
+2026-11-12T16:34:08.3456933Z   expected: true,
+2026-11-12T16:34:08.3457105Z   operator: '==',
+2026-11-12T16:34:08.3457269Z   diff: 'simple'
+2026-11-12T16:34:08.3457440Z }
+2026-11-12T16:34:08.3457520Z 
+2026-11-12T16:34:08.3457600Z Node.js v24.22.2
+2026-11-12T16:34:08.3845496Z ##[error]Process completed with exit code 1.
+2026-11-12T16:34:08.3921773Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-12T16:34:08.3922127Z with:

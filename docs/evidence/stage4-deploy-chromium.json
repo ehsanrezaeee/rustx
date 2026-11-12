@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T16:18:56.492Z",
+  "date": "2026-11-12T16:28:51.541Z",
   "engine": "chromium",
   "checks": [
     "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
@@ -15,26 +15,35 @@
   "version": "157.0.8103.40",
   "coldStartup": {
     "rawMs": [
-      3159.3095000000003,
-      3159.476917,
-      3163.0623750000004,
-      3154.8274999999994,
-      3158.372541999999
+      3194.643625,
+      3206.895042,
+      3190.8547080000008,
+      3188.0605830000004,
+      3183.0421670000014
     ],
-    "medianMs": 3159.3095000000003,
-    "p95Ms": 3163.0623750000004,
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 3190.8547080000008,
+    "p95Ms": 3206.895042,
     "budgetMs": 3000,
     "passed": false,
     "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
     "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
   },
-  "coldStartupMs": 3163.0623750000004,
+  "coldStartupMs": 3206.895042,
   "coldDesktopGate": false,
   "offlineApi": {
     "text": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns.",
     "label": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns."
   },
-  "compressedInitialBytes": 3206931,
+  "compressedInitialBytes": 2777673,
+  "compression": "br",
+  "gzipInitialBytes": 3206931,
   "transferScope": "Complete reference dashboard; standalone counter is measured by test:stage4:cli",
   "transferGates": {
     "dashboard5MiB": true

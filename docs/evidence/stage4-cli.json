@@ -1,31 +1,39 @@
 {
-  "date": "2026-11-12T16:19:16.150Z",
+  "date": "2026-11-12T16:29:12.860Z",
   "checks": [
     "embedded SDK creates independent vendored project from unrelated directory",
-    "new, doctor, formatter, locked check/test and standalone web build",
-    "real source edit rebuilds Wasm and reloads browser with matching output",
-    "real Cargo error overlay and recovery after source correction"
+    "new, doctor, formatter, locked check/test and standalone web build"
   ],
   "limitations": [
     "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation"
   ],
-  "counterCompressedBytes": 3059552,
+  "counterCompressedBytes": 2658027,
+  "counterCompression": "br",
+  "counterGzipBytes": 3059555,
   "counterTransferGate": true,
-  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-JwoNtM/sample",
+  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample",
   "counterColdStartup": {
     "rawMs": [
-      3181.7323749999996,
-      3167.5462079999998,
-      3166.136292000003,
-      3166.0627909999967,
-      3163.321125000002
+      2659.8449159999946,
+      2662.7438330000004,
+      2660.458332999995,
+      2661.0111250000045,
+      2659.743291999999
     ],
-    "medianMs": 3166.136292000003,
-    "p95Ms": 3181.7323749999996,
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 2660.458332999995,
+    "p95Ms": 2662.7438330000004,
     "budgetMs": 3000,
-    "passed": false,
+    "passed": true,
     "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
     "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
   },
-  "result": "passed"
+  "result": "failed",
+  "error": "Error: page.waitForFunction: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-0PcwT6 --remote-debugging-pipe --no-startup-window\n<launched> pid=16878\n[pid=16878][err] Trying to load the allocator multiple times. This is *not* supported.\n[pid=16878][err] [16884:2294008:1112/200011.060868:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.061040:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200011.064393:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.064460:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200011.064588:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.064639:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.822268:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.822328:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.822550:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.822584:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.826581:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.826674:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613127:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613185:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613551:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613598:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613691:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613729:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.377587:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.377645:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.378199:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.378242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.380993:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.381041:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.157146:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.157200:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.160044:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.160107:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.160242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.160282:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.518257:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.518318:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.518663:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.518704:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.520286:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.520367:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670"
 }

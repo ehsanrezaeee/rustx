@@ -1,6 +1,6 @@
 {
-  "date": "2026-11-12T11:23:54.401Z",
-  "cargoLockSha256": "af9dae3fdad79fa9cf88e5fb6a0bfcf8cdf45ee7b22624d2e0f98fa8d3ad42c6",
+  "date": "2026-11-12T16:26:31.504Z",
+  "cargoLockSha256": "e155dfa8f3ef7441034d05cebca38ae70aef6f83c0bdd1c1a490eb4417117120",
   "packages": [
     {
       "name": "accesskit",
@@ -150,6 +150,33 @@
         "adler2-2.0.1/LICENSE-0BSD",
         "adler2-2.0.1/LICENSE-APACHE",
         "adler2-2.0.1/LICENSE-MIT"
+      ]
+    },
+    {
+      "name": "alloc-no-stdlib",
+      "version": "2.0.4",
+      "license": "BSD-3-Clause",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "repository": "https://github.com/dropbox/rust-alloc-no-stdlib",
+      "license_files": [
+        "alloc-no-stdlib-2.0.4/LICENSE"
+      ]
+    },
+    {
+      "name": "alloc-stdlib",
+      "version": "0.2.4",
+      "license": "BSD-3-Clause",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "repository": "https://github.com/dropbox/rust-alloc-no-stdlib",
+      "license_files": [
+        "alloc-stdlib-0.2.4/LICENSE"
+      ],
+      "upstream_notices": [
+        {
+          "file": "alloc-stdlib-0.2.4/LICENSE",
+          "url": "https://raw.githubusercontent.com/dropbox/rust-alloc-no-stdlib/ae42d22078b98549e987d2f03d12df7b984fde47/LICENSE",
+          "vcs_commit": "ae42d22078b98549e987d2f03d12df7b984fde47"
+        }
       ]
     },
     {
@@ -351,6 +378,26 @@
           "url": "https://raw.githubusercontent.com/madsmtm/objc2/4fc083f1c6d6784577e38b0ee8dbd344481e2fd2/LICENSE.txt",
           "vcs_commit": "4fc083f1c6d6784577e38b0ee8dbd344481e2fd2"
         }
+      ]
+    },
+    {
+      "name": "brotli",
+      "version": "8.0.2",
+      "license": "BSD-3-Clause AND MIT",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "repository": "https://github.com/dropbox/rust-brotli",
+      "license_files": [
+        "brotli-8.0.2/LICENSE.MIT"
+      ]
+    },
+    {
+      "name": "brotli-decompressor",
+      "version": "5.0.3",
+      "license": "BSD-3-Clause/MIT",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "repository": "https://github.com/dropbox/rust-brotli-decompressor",
+      "license_files": [
+        "brotli-decompressor-5.0.3/LICENSE"
       ]
     },
     {
@@ -1770,18 +1817,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/rust-windowing/android-ndk-rs",
       "license_files": [
-        "ndk-context-0.1.1/LICENSE-APACHE",
-        "ndk-context-0.1.1/LICENSE-MIT"
+        "ndk-context-0.1.1/LICENSE-MIT",
+        "ndk-context-0.1.1/LICENSE-APACHE"
       ],
       "upstream_notices": [
         {
-          "file": "ndk-context-0.1.1/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/rust-windowing/android-ndk-rs/10f2ba388fca20f7349996ebae26ccda7a6fda5c/LICENSE-APACHE",
+          "file": "ndk-context-0.1.1/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/rust-windowing/android-ndk-rs/10f2ba388fca20f7349996ebae26ccda7a6fda5c/LICENSE-MIT",
           "vcs_commit": "10f2ba388fca20f7349996ebae26ccda7a6fda5c"
         },
         {
-          "file": "ndk-context-0.1.1/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/rust-windowing/android-ndk-rs/10f2ba388fca20f7349996ebae26ccda7a6fda5c/LICENSE-MIT",
+          "file": "ndk-context-0.1.1/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/rust-windowing/android-ndk-rs/10f2ba388fca20f7349996ebae26ccda7a6fda5c/LICENSE-APACHE",
           "vcs_commit": "10f2ba388fca20f7349996ebae26ccda7a6fda5c"
         }
       ]
@@ -1793,18 +1840,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/rust-mobile/ndk",
       "license_files": [
-        "ndk-sys-0.5.0+25.2.9519653/LICENSE-APACHE",
-        "ndk-sys-0.5.0+25.2.9519653/LICENSE-MIT"
+        "ndk-sys-0.5.0+25.2.9519653/LICENSE-MIT",
+        "ndk-sys-0.5.0+25.2.9519653/LICENSE-APACHE"
       ],
       "upstream_notices": [
         {
-          "file": "ndk-sys-0.5.0+25.2.9519653/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/f414cabc12211ebcba4edb3da90950967d4a1933/LICENSE-APACHE",
+          "file": "ndk-sys-0.5.0+25.2.9519653/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/f414cabc12211ebcba4edb3da90950967d4a1933/LICENSE-MIT",
           "vcs_commit": "f414cabc12211ebcba4edb3da90950967d4a1933"
         },
         {
-          "file": "ndk-sys-0.5.0+25.2.9519653/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/f414cabc12211ebcba4edb3da90950967d4a1933/LICENSE-MIT",
+          "file": "ndk-sys-0.5.0+25.2.9519653/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/f414cabc12211ebcba4edb3da90950967d4a1933/LICENSE-APACHE",
           "vcs_commit": "f414cabc12211ebcba4edb3da90950967d4a1933"
         }
       ]
@@ -2401,18 +2448,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/aclysma/profiling",
       "license_files": [
-        "profiling-1.0.18/LICENSE-APACHE",
-        "profiling-1.0.18/LICENSE-MIT"
+        "profiling-1.0.18/LICENSE-MIT",
+        "profiling-1.0.18/LICENSE-APACHE"
       ],
       "upstream_notices": [
         {
-          "file": "profiling-1.0.18/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/aclysma/profiling/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-APACHE",
+          "file": "profiling-1.0.18/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/aclysma/profiling/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-MIT",
           "vcs_commit": "8271551172eb6fa4cba47369aedd93790c623df9"
         },
         {
-          "file": "profiling-1.0.18/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/aclysma/profiling/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-MIT",
+          "file": "profiling-1.0.18/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/aclysma/profiling/8271551172eb6fa4cba47369aedd93790c623df9/LICENSE-APACHE",
           "vcs_commit": "8271551172eb6fa4cba47369aedd93790c623df9"
         }
       ]

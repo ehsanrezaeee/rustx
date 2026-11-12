@@ -114,6 +114,33 @@ try {
   report.checks.push(
     'independently compiled API template fetches real loopback fixture through restricted worker host',
   );
+  await page.getByTestId('playground-source').fill(`use rustx::prelude::*;
+pub fn app(cx: Scope) -> View {
+    let count = cx.signal(0);
+    let shown = count.clone();
+    let front = count.clone();
+    rustx! {
+        <Column style={Style::column().width(300.).height(180.)}>
+            <Text id="result">{move || format!("{}", shown.get())}</Text>
+            <Button id="front" style={Style::row().absolute().left(Length::Px(20.)).top(Length::Px(60.)).width(160.).height(44.).z_index(5)} on_click={move |_| { let _ = front.update(|n| *n += 1); }}>"Front"</Button>
+            <Button id="back" style={Style::row().absolute().left(Length::Px(20.)).top(Length::Px(60.)).width(160.).height(44.).z_index(1)} on_click={move |_| { let _ = count.update(|n| *n += 100); }}>"Back"</Button>
+        </Column>
+    }
+}`);
+  await click('playground-run');
+  await page.waitForSelector('#rustx-compiled-output[data-ready=true]');
+  await frame.getByTestId('front').click();
+  await frame.getByTestId('result').filter({ hasText: /^1$/ }).waitFor();
+  await frame.getByTestId('front').focus();
+  await frame.getByTestId('front').press('Tab');
+  assert(await frame.getByTestId('back').evaluate((element) => element === document.activeElement));
+  await frame.getByTestId('back').press('Enter');
+  await frame.getByTestId('result').filter({ hasText: /^101$/ }).waitFor();
+  await frame.getByTestId('back').press('Space');
+  await frame.getByTestId('result').filter({ hasText: /^201$/ }).waitFor();
+  report.checks.push(
+    'compiled absolute/z-index controls share Rust paint/pointer order while retaining logical Tab order',
+  );
   await page
     .getByTestId('playground-source')
     .fill('use rustx::prelude::*;\npub fn app(_:Scope)->View {let n:u32="wrong";Node::text(n)}');
