@@ -1,3 +1,6 @@
+mod export;
+pub use rustx_core as core;
+pub use rustx_engine as engine;
 pub fn host_id(value: f64) -> Option<u64> {
     (value.is_finite()
         && value >= 1.
@@ -78,7 +81,24 @@ impl WebApp {
                 scroll
             };
             let visible = b.rect.intersect(local_clip);
-            nodes.push(serde_json::json!({"id":b.node.app_id,"node":b.node.id,"kind":format!("{:?}",b.node.kind),"role":b.node.role,"text":b.node.text_content(),"editing":b.node.editing,"rect":[b.rect.x0,b.rect.y0,b.rect.width(),b.rect.height()],"visible_rect":[visible.x0,visible.y0,visible.width().max(0.),visible.height().max(0.)],"scroll_parent":scroll,"position":b.node.position,"drawing_count":b.node.drawing.as_ref().map_or(0,|d|d.len())}));
+            nodes.push(serde_json::json!({
+                "source": b.node.source,
+                "owner": b.node.owner,
+                "component": b.node.component,
+                "id": b.node.app_id,
+                "node": b.node.id,
+                "kind": format!("{:?}", b.node.kind),
+                "role": b.node.role,
+                "text": b.node.text_content(),
+                "editing": b.node.editing,
+                "rect": [b.rect.x0, b.rect.y0, b.rect.width(), b.rect.height()],
+                "visible_rect": [
+                    visible.x0, visible.y0, visible.width().max(0.), visible.height().max(0.),
+                ],
+                "scroll_parent": scroll,
+                "position": b.node.position,
+                "drawing_count": b.node.drawing.as_ref().map_or(0, |drawing| drawing.len()),
+            }));
             for child in &b.children {
                 walk(child, nodes, local_clip, scroll);
             }
@@ -95,7 +115,38 @@ impl WebApp {
         let text_cache = self.engine.text.cache_stats();
         let resources = self.engine.painter.resource_stats();
         let glyphs = self.cpu.glyph_stats();
-        serde_json::json!({"nodes":nodes,"focused":self.engine.focused_node(),"service_pending":self.services.pending(),"services":self.services.capabilities(),"tasks":self.tasks.pending(),"counts":self.engine.runtime.counts(),"pending":self.http.pending(),"host":self.http.capabilities(),"queued_commands":self.http.queued(),"theme":format!("{:06x}",self.engine.layout.theme.background),"metrics":{"layout_nodes":self.engine.layout.node_count(),"layout_changed":self.engine.layout.changed,"shapes_visible":self.engine.painter.drawing_visible,"scene_painted":self.engine.painter.painted,"scene_reused":self.engine.painter.reused,"text_shapes":self.engine.text.shape_count,"text_cache_entries":text_cache.0,"text_cache_bytes":text_cache.1,"image_entries":resources.0,"image_bytes":resources.1,"scene_cache_entries":resources.2,"scene_cache_bytes":resources.3,"glyph_entries":glyphs.0,"glyph_bytes":glyphs.1,"cpu_visited":self.cpu.visited,"cpu_culled":self.cpu.culled}}).to_string()
+        serde_json::json!({
+            "owners": self.engine.runtime.ownership(),
+            "nodes": nodes,
+            "focused": self.engine.focused_node(),
+            "service_pending": self.services.pending(),
+            "services": self.services.capabilities(),
+            "tasks": self.tasks.pending(),
+            "counts": self.engine.runtime.counts(),
+            "pending": self.http.pending(),
+            "host": self.http.capabilities(),
+            "queued_commands": self.http.queued(),
+            "theme": format!("{:06x}", self.engine.layout.theme.background),
+            "metrics": {
+                "layout_nodes": self.engine.layout.node_count(),
+                "layout_changed": self.engine.layout.changed,
+                "shapes_visible": self.engine.painter.drawing_visible,
+                "scene_painted": self.engine.painter.painted,
+                "scene_reused": self.engine.painter.reused,
+                "text_shapes": self.engine.text.shape_count,
+                "text_cache_entries": text_cache.0,
+                "text_cache_bytes": text_cache.1,
+                "image_entries": resources.0,
+                "image_bytes": resources.1,
+                "scene_cache_entries": resources.2,
+                "scene_cache_bytes": resources.3,
+                "glyph_entries": glyphs.0,
+                "glyph_bytes": glyphs.1,
+                "cpu_visited": self.cpu.visited,
+                "cpu_culled": self.cpu.culled,
+            },
+        })
+        .to_string()
     }
     pub fn response(&mut self, id: u64, status: u16, body: Vec<u8>, error: &str, version: u32) {
         self.response_with_headers(id, status, body, vec![], error, version);

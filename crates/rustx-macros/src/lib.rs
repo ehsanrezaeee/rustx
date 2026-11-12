@@ -251,6 +251,7 @@ impl Parse for Markup {
         if let Some(key) = key {
             result = quote!({let __rustx_key=(#key).to_string();(#result).key(__rustx_key)});
         }
+        result = quote::quote_spanned!(tag.span()=> (#result).source(file!(), line!(), column!()));
         Ok(Self(result))
     }
 }

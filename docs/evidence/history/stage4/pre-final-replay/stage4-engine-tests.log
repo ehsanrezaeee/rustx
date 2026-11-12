@@ -1,0 +1,10 @@
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.63s
+     Running tests/stage4_diagnostics_editing.rs (target/debug/deps/stage4_diagnostics_editing-20c2ec597c95ec9a)
+
+running 2 tests
+test diagnostics_are_opt_in_bounded_redacted_and_source_linked ... ok
+test multiline_viewport_reveals_caret_scrolls_and_invalidates_both_scene_and_pixels ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+

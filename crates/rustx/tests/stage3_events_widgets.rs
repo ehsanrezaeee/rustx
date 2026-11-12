@@ -289,9 +289,38 @@ fn table_sort_and_selection_remain_keyed_and_controlled() {
 
 #[test]
 fn full_widget_markup_and_typed_semantics_are_available() {
-    let rt = Runtime::new(
-        |_| rustx! {<Column><Heading level={1}>"Heading"</Heading><Checkbox checked={true} disabled={false}>"Consent"</Checkbox><PasswordInput value="secret"/><TextArea value="lines"/><Slider value="5" min={0.} max={10.}/><Select options={vec![Choice::new("one","One")]} value="one"/><Dialog modal={true} label="Dialog"><Button>"Close"</Button></Dialog><Table><TableRow><TableCell>"Cell"</TableCell></TableRow></Table><Alert>"Alert"</Alert><Progress value="50"/></Column>},
-    );
+    let rt = Runtime::new(|_| {
+        rustx! {
+            <Column>
+                <Heading level={ 1 }>
+                    "Heading"
+                </Heading>
+                <Checkbox checked={ true } disabled={ false }>
+                    "Consent"
+                </Checkbox>
+                <PasswordInput value="secret" />
+                <TextArea value="lines" />
+                <Slider value="5" min={ 0. } max={ 10. } />
+                <Select options={ vec![Choice::new("one", "One")] } value="one" />
+                <Dialog modal={ true } label="Dialog">
+                    <Button>
+                        "Close"
+                    </Button>
+                </Dialog>
+                <Table>
+                    <TableRow>
+                        <TableCell>
+                            "Cell"
+                        </TableCell>
+                    </TableRow>
+                </Table>
+                <Alert>
+                    "Alert"
+                </Alert>
+                <Progress value="50" />
+            </Column>
+        }
+    });
     fn roles(n: &SemanticNode, out: &mut Vec<&'static str>) {
         out.push(n.role);
         for c in &n.children {
@@ -324,7 +353,11 @@ fn ordinary_paragraph_selection_is_readonly_keyed_and_reactive_without_duplicate
     let mut rt = Runtime::new(move |cx| {
         let text = cx.signal("A🌍 سلام".to_owned());
         *out.borrow_mut() = Some(text.clone());
-        rustx! { <Paragraph id="copyable" selectable={true}>{move || text.get()}</Paragraph> }
+        rustx! {
+            <Paragraph id="copyable" selectable={ true }>
+                { move || text.get() }
+            </Paragraph>
+        }
     });
     let snapshot = rt.snapshot();
     let text = snapshot.find("copyable").unwrap();

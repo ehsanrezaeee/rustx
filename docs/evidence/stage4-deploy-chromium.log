@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-12T11:28:36.999Z",
+  "engine": "chromium",
+  "checks": [
+    "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
+    "production disables devtools/API; cold navigation to usable semantic control measured"
+  ],
+  "limitations": [
+    "Loopback delivery; no public HTTPS deployment",
+    "Offline application shell preserves no implicit API cache",
+    "Network throttling estimates navigation to usable frame; no physical scanout measurement"
+  ],
+  "build": "f2c9775d14d11705a0ff75e5612a8e97c8c8015908b813b8209c764f8a2f0351",
+  "version": "157.0.8103.40",
+  "coldStartupMs": 3733,
+  "coldDesktopGate": false,
+  "result": "failed",
+  "error": "TimeoutError: page.waitForFunction: Timeout 15000ms exceeded."
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.waitForFunction: Timeout 15000ms exceeded.
+    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-deploy.mjs:8:558 {
+  log: [],
+  name: 'TimeoutError'
+}
+
+Node.js v24.18.1

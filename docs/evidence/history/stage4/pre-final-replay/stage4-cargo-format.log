@@ -1,0 +1,133 @@
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/runtime.rs:38:
+     let mut rt = Runtime::new(move |cx| {
+         let s = cx.signal(vec!["a".to_string(), "b".to_string()]);
+         *out.borrow_mut() = Some(s.clone());
+-        dynamic(move || keyed(s.get(), |n| n.clone(), |name| rustx! {
+-            <Item name={name}/>
+-        }))
++        dynamic(move || {
++            keyed(
++                s.get(),
++                |n| n.clone(),
++                |name| {
++                    rustx! {
++                        <Item name={name}/>
++                    }
++                },
++            )
++        })
+     });
+     rt.click_id("a");
+     rt.flush();
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/runtime.rs:235:
+             Node::fragment(children),
+         ])
+     }
+-    let rt = Runtime::new(|_| rustx! {
+-        <Panel value={42u32} header={Node::text("header:")}/>
++    let rt = Runtime::new(|_| {
++        rustx! {
++            <Panel value={42u32} header={Node::text("header:")}/>
++        }
+     });
+     assert_eq!(rt.snapshot().text_content(), "header:42:7");
+ }
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/runtime.rs:270:
+ fn node_refs_clear_on_disposal() {
+     let r = NodeRef::default();
+     let copy = r.clone();
+-    let rt = Runtime::new(move |_| rustx! {
+-        <Text node_ref={copy.clone()}>
+-            {"hello"}
+-        </Text>
++    let rt = Runtime::new(move |_| {
++        rustx! {
++            <Text node_ref={copy.clone()}>
++                {"hello"}
++            </Text>
++        }
+     });
+     assert!(r.get().is_some());
+     drop(rt);
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/runtime.rs:313:
+     let mut rt = Runtime::new(move |cx| {
+         let c = cx.signal(0);
+         *out.borrow_mut() = Some(c.clone());
+-        dynamic(
+-            move || rustx! {
++        dynamic(move || {
++            rustx! {
+                 <Readout value={c.clone()} prefix={format!("initial {}: ",c.get())}/>
+-            },
+-        )
++            }
++        })
+     });
+     let baseline = rt.counts();
+     h.borrow().as_ref().unwrap().set(7).unwrap();
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/stage3_events_widgets.rs:289:
+ 
+ #[test]
+ fn full_widget_markup_and_typed_semantics_are_available() {
+-    let rt = Runtime::new(
+-        |_| rustx! {
++    let rt = Runtime::new(|_| {
++        rustx! {
+             <Column>
+                 <Heading level={1}>
+                     "Heading"
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx/tests/stage3_events_widgets.rs:319:
+                 </Alert>
+                 <Progress value="50"/>
+             </Column>
+-        },
+-    );
++        }
++    });
+     fn roles(n: &SemanticNode, out: &mut Vec<&'static str>) {
+         out.push(n.role);
+         for c in &n.children {
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab/examples/render_probe.rs:14:
+ fn main() {
+     let out = std::env::args().nth(1).unwrap_or("docs/evidence".into());
+     std::fs::create_dir_all(&out).unwrap();
+-    let mut e = Engine::new(
+-        |_| rustx! {
++    let mut e = Engine::new(|_| {
++        rustx! {
+             <Div style={Style::column().padding(30.).gap(20.).background(0x172033)}>
+                 <Text style={Style::column().font_size(30.)}>
+                     {"RustX rendering probe — سلام دنیا"}
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab/examples/render_probe.rs:29:
+                 </Div>
+                 <Image src="probe" style={Style::column().width(180.).height(140.).radius(20.)}/>
+             </Div>
+-        },
+-    );
++        }
++    });
+     let pixels: Vec<u8> = (0..64)
+         .flat_map(|i| {
+             if (i / 8 + i % 8) % 2 == 0 {
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab/examples/stage2_probe.rs:14:
+ fn main() {
+     let out = std::env::args().nth(1).unwrap_or("docs/evidence".into());
+     std::fs::create_dir_all(&out).unwrap();
+-    let mut e = Engine::new(
+-        |_| rustx! {
++    let mut e = Engine::new(|_| {
++        rustx! {
+             <Div style={Style::column().padding(30.).gap(20.).background(0x172033)}>
+                 <Text style={Style::column().font_size(30.)}>
+                     {"RustX Stage 2 — سلام دنیا 🦀 🚀"}
+Diff in /Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab/examples/stage2_probe.rs:30:
+                 <Image src="probe" style={Style::column().width(180.).height(120.).radius(20.).opacity(0.65)}/>
+                 <Canvas drawing={rustx_lab::visual::conformance_scene()} style={Style::column().height(200.).clip().radius(16.).background(0x0b1018)}/>
+             </Div>
+-        },
+-    );
++        }
++    });
+     let pixels: Vec<u8> = (0..64)
+         .flat_map(|i| {
+             if (i / 8 + i % 8) % 2 == 0 {

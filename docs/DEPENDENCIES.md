@@ -41,3 +41,11 @@ This is monochrome outline fallback, not a claim of complete color emoji or ever
 Stage 2 promotes the already locked kurbo 0.11.3 geometry library to a direct core dependency for path winding/stroke hit tests, reusing established geometry calculations.
 
 Stage 3 adds typed Serde/serde_json service envelopes, versioned storage values and JSON response decoding. Exact direct/transitive dependency resolutions remain in Cargo.lock. AccessKit integration source and successful compilation do not establish Windows UI Automation or screen-reader task success. Native clipboard/file/print adapters use explicitly detected OS utilities rather than adding a Python or browser runtime dependency.
+
+## Stage 4 candidate — 12 November 2026
+
+The CLI adds pinned flate2 1.1.10, sha2 0.10.9, getrandom 0.3.4 and libc 0.2.190 for compressed distribution, content identity, unguessable local jobs and OS isolation/resource accounting. syn/proc-macro2/quote reuse the compiler's parser ecosystem. The compatible rustix lock update is 1.1.6. Cargo.lock remains authoritative.
+
+Contributor formatting uses exact Prettier 3.6.2 alongside Rust 1.90.0 rustfmt and the RustX macro formatter. Prettier, Playwright and sharp are optional Node tooling; they are not RustX application build/runtime dependencies. Python and Docker are not project build/runtime dependencies.
+
+See stage4/SECURITY.md and evidence/stage4-{cargo-audit,npm-audit,licenses}.json for actual query identities, advisories, SPDX inventory, copied/pinned-upstream notices and missing-copy records. Remaining maintenance advisories and missing license copies are open release gates; no full transitive safety/license certification is claimed.

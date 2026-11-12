@@ -1,6 +1,6 @@
-# Acceptance ledger — 10 November 2026
+# Acceptance ledger — 12 November 2026
 
-Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stages 1–3 platform/manual acceptance remains open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
+Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stages 1–4 full platform/manual/release acceptance remains open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
 
 ## Executed checks
 
@@ -40,7 +40,7 @@ Corrections found by the actual browser runs: empty semantic Text labels; unboun
 - No human screen-reader or real OS IME task completed. Stage 3 implements Rust-painted caret/selection/preedit and grapheme/undo/composition editing, but their actual IME/assistive-technology target acceptance remains open. Follow PLATFORM_CHECKS.md before accepting RX-09.
 - Firefox 135/157 failed to start with profile/sandbox errors on this host, in headless and attempted visible runs. Retain `current-browser-firefox.log` and `history/` logs; no Firefox pass is claimed. Playwright WebKit does not certify Safari, iOS or Android.
 - The pinned Chromium download returned a regional CDN 403 (`current-browser-install.log`); the final Chromium suite used the already installed Chrome. This is a download limitation, not a passing bundled-Chromium result.
-- JSONPlaceholder live API success, full visual conformance/device recovery, Windows replay and the exact Android benchmark device remain open.
+- Live JSONPlaceholder browser success is now recorded in S4-4 below. Full cross-target visual/device recovery, Windows replay, human flagship tasks and the exact Android benchmark device remain open.
 - Earlier failures are retained in `history/` for diagnosis; final successful results are named `current-*` and `browser-*.json`.
 
 ## Stage 2 execution — 2 November 2026
@@ -78,6 +78,29 @@ Delivery review fixed a missing direct PNG lock dependency and unexported asset 
 
 Stage 3 implementation delivery does not close its full exit gate: real Windows browser/native forms and services, NVDA/UI Automation, VoiceOver with actual Safari, real Persian/English OS IME, physical mobile keyboards/touch/AT, full native permissions/printer behavior and cross-target renderer/DPI/recovery still require actual target evidence. Stage 4 tooling/release and RX-45/RX-46 final successful examples remain separate.
 
+## Stage 4 implementation candidate — 12 November 2026
+
+The complete candidate continues `stage-4` from `0fdf4ca`, including the inherited uncommitted Stage 4 implementation and the requested readability/delivery pass. Environment: Apple M3 MacBook Air, 16 GiB, macOS 27.0.1 (26A434), arm64; Rust 1.90.0; wasm-bindgen 0.2.100; Node 24.18.1; Playwright 1.64.1; installed Chrome 157.0.8103.40; WebKit 27.2; VS Code 1.146.0 and rust-analyzer 0.3.3113. Seven final Stage 2/3/4 browser reports identify Wasm SHA-256 `0d00b7999818e3cb7f7511a3ac62b742e318cf2006aaad5e87e1beb7df6d6579`. The separate instrumented benchmark module and all delivered payload hashes are recorded in BUILD-INFO.json. Final content identity is SOURCE-REVISION.txt; the ZIP adds its exact commit and payload manifest.
+
+| Evidence | Executed command / result | Limit |
+| --- | --- | --- |
+| S4-1 | `cargo test --workspace --locked` PASS: **128 tests**, zero failures, one ignored native fixture separately exercised. `cargo fmt --all -- --check` and `npm run format:check` PASS. `stage4-final-workspace-tests.log`, `stage4-final-rustfmt.log`, `stage4-final-format-check.log`. | Actual Mac contracts and four expected compiler-error fixtures. Formatting includes RustX expression blocks/closures/nested macros, comments/multiline literals and idempotence; intentionally malformed UI fixtures stay excluded. No platform/manual certification. |
+| S4-2 | Final CLI/web/production/benchmark builds, clean `npm ci`, `test:host`, `test:wasm` and `test:stage2` PASS. `stage4-final-*-build.log`, `stage4-final-npm-ci.log`, `stage4-final-host-tests.log`, `stage4-final-wasm-tests.log`, `stage4-final-stage2-wasm.log`. | Rebuilt Wasm; Node and injected host contracts are separate from actual browser evidence. Normal applications do not require Node/Python/Docker. |
+| S4-3 | `test:stage4:cli` PASS: independent vendored project outside the checkout, doctor/fmt/check/test/build, actual edited-source rebuild/reload and real Cargo error/recovery. `test:editor` PASS in actual VS Code: component/prop completion, original-source definition, formatting and E0308 source diagnostics. `stage4-cli.json`, `stage4-editor.json`, final CLI/editor logs. | This machine's pinned dependency/toolchain cache, not a first-ever download or independent Windows/new-developer usability task. Editor tools run only in trusted workspaces. |
+| S4-4 | `test:stage4:compiler`, then `test:stage4:browser` in Chrome and WebKit PASS. `stage4-compiler.json`, `stage4-browser-{chromium,webkit}.json`, final logs and wide/390px screenshots. | Real rustc/bindgen, changed interactive Wasm, source-linked error/reset/cancel, runtime watchdog, distinct visitor jobs, API template and denied parent DOM/storage. Real compiler denies host files/other job source/HOME and native JS snippet publication. Actual JSONPlaceholder returns ten typed people in both engines; fixture loading/search/details/empty/malformed/503/timeout/cancel/offline/retry and inspector/source/profile tasks pass. Local Mac sandbox evidence, not hosted-tenant security, human AT, OS IME or device certification. |
+| S4-5 | `test:stage3:browser` in Chrome/WebKit and `test:stage2:browser` in both CPU engines plus visible physical GPU Chrome PASS. `stage4-final-stage{2,3}-browser-*.log` and corresponding JSON. | Actual forms/editing/dialog/storage/files/services/history/drawing/virtualization/idle regression replay. Normal Metal GPU phase: **80 submissions / 40 canvas textures**, zero observed texture-to-buffer copies, MAP_READ or CPU uploads. Actual device destruction recovers to CPU and a new GPU renders retained state. Not Windows, driver reset, Safari, human AT or real OS IME. |
+| S4-6 | `test:http`, `test:stage3:services`, explicit ignored native pull-stream/socket fixture and default/CPU Applications native two-frame startup PASS. `stage4-final-{http-tests,services,native-services,native-gpu-smoke,native-cpu-smoke}.log`. | Real loopback networking and actual native Mac windows. Clipboard denial injection remains labelled. Startup does not establish native Windows/AT/permission/printer/complete interaction behavior. |
+| S4-7 | Production `test:stage4:deploy` PASS functionally in Chrome/WebKit: asset SHA-256, hash names, Wasm MIME, gzip, cache/ETag/404, CSP/nosniff, disabled developer API, offline nested shell launch, honest API failure and online reload. `stage4-deploy-{chromium,webkit}.json` and final logs. | Loopback, no public HTTPS deployment. API responses are not cached. Cold-start/transfer observations retain the unchanged budgets separately; a functional pass does not certify performance. |
+| S4-8 | Corrected visible-board GPU/CPU benchmark and lifecycle results are recorded in `stage4-budgets-{gpu,cpu}.json` and `stage4-final-budgets-*.log`; exact outcomes are summarized below. | Earlier zero-visible-shape timing is invalid drawing evidence and retained under history. rAF intervals and synthetic event-to-next-frame estimates are not physical scanout. Missing mobile/iOS/Windows/equivalent baseline runs keep performance acceptance open. |
+| S4-9 | Complete locked Cargo registry OSV query: **381/381** packages; rustix fixed to 1.1.6. Four remaining maintenance findings concern paste/rustybuzz/two ttf-parser versions. Final npm audit: **zero vulnerabilities**. Inventory includes 388 Cargo packages and available copied/upstream-pinned notices; seven missing license-copy records remain. `stage4-{cargo-audit,npm-audit,licenses}.json`. | Known-advisory query and finite unsafe/host review in stage4/SECURITY.md; not a complete dependency safety/license audit. Findings remain release gates. |
+| S4-10 | Complete versioned source/artifact delivery, self-contained CLI crate verification, Mac CLI, VSIX, three prebuilt web bundles, notices, source/Git identity and payload checksums. `stage4-final-cli-package.log`, BUILD-INFO.json, SOURCE-REVISION.txt and archive ARTIFACT_MANIFEST.sha256. | Locally runnable candidate. Windows packaging source/manual workflow is included, but no verified Windows executable or public deployment is claimed. Independent clean-target/manual acceptance remains open. |
+
+Delivery regressions fixed: real VS Code completion used a CLI option that current validation rejected; the floating inspector intercepted a form's pointer target; missing compiler-bridge precaching could prevent offline shell startup; markup closures/blocks and long properties stayed compressed. The formatter now delegates expression formatting to pinned Rustfmt and verifies structural token preservation, including literal contents/comments. Static previews stop development polling when no dev manifest exists. Before-fix failures and earlier report versions remain under `evidence/history/stage4/`; the interrupted browser-process run is retained and the sequential replay passes. Original Stage 3 report snapshots before this replay are in `history/stage4/pre-readable-delivery/`. A blocked network-only Cargo package attempt was retained; the locked offline package and verification build succeeded using the cached dependencies.
+
+The corrected desktop run has **140 visible shapes** from the 10,000-object board. GPU rAF p95 is **16.8 ms**, failing the unchanged **16.7 ms** budget. CPU rAF p95 is **16.8 ms**, reported separately without a GPU-speed promise. Input estimates are **33.4 ms GPU / 34.4 ms CPU**. After 100 measured route/request cycles, warmed runtime owner/signal/observer counts return to **[89, 7, 5]**; live allocations change **+0.785% GPU / -0.001% CPU**, within 10%, and idle draw/submission counts settle. These counts are not a complete driver/listener/process-memory audit. The full demo shell is **3,202,009 compressed bytes**: below 5 MiB but above the 3 MiB counter ceiling; this full-demo measurement does not substitute for an independently measured standalone counter. The isolated Chrome cold-load observation is **3659 ms**, failing 3 seconds at the configured 10 Mbps/100 ms RTT. One cold-load observation is not the required five-sample/device certification. Failed budgets remain open.
+
+**Not accepted:** Stage 4's exit requires every v1 row. Actual Windows distribution/UIA/NVDA, VoiceOver with branded Safari, real Persian/English OS IME, physical mobile keyboards/touch/AT, complete cross-target conformance/services/DPI/recovery, clean external-machine tutorial/install, remaining supply-chain review and the full frozen performance/comparison matrix remain required. No missing target was replaced by a mock, compilation, WebKit or a desktop narrow screenshot.
+
 ## Requirement states
 
 | ID | Status | Evidence / remaining gate |
@@ -114,20 +137,20 @@ Stage 3 implementation delivery does not close its full exit gate: real Windows 
 | RX-30 | implemented_unverified | S3-1/S3-3: typed storage/migrations/files/clipboard, explicit denial/quota/cleanup, logical revisioned assets/PNG decode; actual native permission/dialog matrix pending. |
 | RX-31 | implemented_unverified | S3-4: Rust search/selection, actual Chromium clipboard readback, actual browser printable text export; native/screen-reader/physical printer matrix pending. |
 | RX-32 | implemented_unverified | S3-4: actual recoverable subtree retry; fatal host reload UI implemented. Complete native/browser failure matrix pending. |
-| RX-33 | in_progress | .rustx module inclusion works; editor/formatter parity missing. |
-| RX-34 | in_progress | serve command supplied; project generation/doctor/reload commands missing. |
-| RX-35 | in_progress | JSON node/count/semantic inspector; profiler/event tracing missing. |
-| RX-36 | in_progress | Prebuilt web bundle and MIME fixture server; offline/cache/deep-links pending. |
-| RX-37 | in_progress | Windows build script; no exercised native distribution. |
-| RX-38 | not_started | No acceptance implementation/evidence yet. |
-| RX-39 | not_started | No acceptance implementation/evidence yet. |
-| RX-40 | in_progress | 100 request cleanup checks and 30 route cycles; full memory/GPU suite pending. |
-| RX-41 | in_progress | E14 test dependency advisories fixed; npm audit reports zero. Full Cargo/transitive license/unsafe/security/CSP audit pending. |
-| RX-42 | in_progress | README/current handoff; complete public tutorial/migration guide pending. |
-| RX-43 | in_progress | Shared-source demo; cross-target behavior matrix pending. |
-| RX-44 | in_progress | Current source/bundle/checksums/evidence; final release package pending. |
-| RX-45 | in_progress | People Explorer fixture path verified; actual public API/browser/native/search/details/all-state gates pending. |
-| RX-46 | in_progress | Homepage/preset interactions verified; editable Rust compile/run playground pending. |
+| RX-33 | implemented_unverified | S4-1/S4-3: .rs/.rustx compiler/formatter/editor completion/navigation/source diagnostics pass on actual Mac VS Code; broader editor/target and new-developer parity tasks pending. |
+| RX-34 | implemented_unverified | S4-3: embedded SDK, new/doctor/check/fmt/test/build/dev and real source rebuild/error/recovery pass outside checkout; first-download/Windows/clean-machine replay pending. |
+| RX-35 | implemented_unverified | S4-4: actual inspector/source/owner/layout/semantics, bounded CPU profiles/text hotspots/event paths and production-off defaults; complete target/manual diagnostic tasks pending. |
+| RX-36 | implemented_unverified | S4-7: actual hashed manifest/MIME/gzip/cache/CSP/deep-link/offline launch and honest API failure in Chrome/WebKit; public HTTPS/multi-version/target rollout pending. |
+| RX-37 | blocked | Windows x64/MSVC package script and pinned-action manual workflow supplied; no actual Windows runner, verified executable, DLL/clean-machine launch or UIA/IME tasks. |
+| RX-38 | in_progress | Named task/version/backend/manual-gap matrix supplied in stage4/SUPPORT.md; Firefox/actual Safari/previous-major/physical Android/iOS/Windows support gates remain unverified. |
+| RX-39 | in_progress | S4-7/S4-8 retain transfer/cold/frame/input/allocation results and failures with unchanged thresholds; original zero-visible-shape run is invalid drawing evidence. Required device/physical-presentation/comparative matrix remains open. |
+| RX-40 | implemented_unverified | S4-8: actual opt-in allocator/live-resource/capacity accounting and 100 route/request cycles; GPU recovery replay S4-5. Full device/driver/memory matrix pending. |
+| RX-41 | in_progress | S4-9: complete OSV query, rustix fix, npm zero, copied/pinned-upstream notices, finite unsafe/default-CSP/privacy/isolation review. Four maintenance findings and seven missing license copies remain release gates. |
+| RX-42 | implemented_unverified | README/tutorial/migration/CLI/API/deployment/security/support/handoff supplied; automated CLI/editor walkthrough passes. Independent new-developer and Windows tutorial tasks pending. |
+| RX-43 | implemented_unverified | S4-4–S4-6: shared-source browser flagship/forms/engine suites and native Mac startup/services; full Windows/browser/native end-to-end behavior matrix pending. |
+| RX-44 | implemented_unverified | S4-10: complete versioned source/tools/web bundles/notices/evidence/Git/checksum package; clean external-machine replay and verified native Windows distribution pending. |
+| RX-45 | implemented_unverified | S4-4: live JSONPlaceholder in real Chrome/WebKit plus deterministic complete state/search/details/keyboard/responsive tasks; human screen-reader and shared-source Windows acceptance pending. |
+| RX-46 | implemented_unverified | S4-4: RustX homepage/source editor and actual isolated edit/compile/run/errors/reset/templates/cancel/runtime watchdog/visitor jobs in Chrome/WebKit; human AT/mobile/target and hosted-isolation review remain open. |
 
 ## Stage 1 manual gates
 

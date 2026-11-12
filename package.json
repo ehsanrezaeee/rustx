@@ -15,10 +15,21 @@
     "test:stage2:browser": "node scripts/test-stage2-browser.mjs",
     "test:stage2:probe": "node scripts/compare-stage2-probe.mjs",
     "test:stage3:browser": "node scripts/test-stage3-browser.mjs",
-    "test:stage3:services": "node scripts/test-stage3-services.mjs"
+    "test:stage3:services": "node scripts/test-stage3-services.mjs",
+    "test:stage4:compiler": "node scripts/test-stage4-compiler.mjs",
+    "test:stage4:browser": "node scripts/test-stage4-browser.mjs",
+    "test:stage4:cli": "node scripts/test-stage4-cli.mjs",
+    "test:stage4:deploy": "node scripts/test-stage4-deploy.mjs",
+    "test:stage4:budgets": "node scripts/test-stage4-budgets.mjs",
+    "test:editor": "node scripts/test-editor.mjs",
+    "package:editor": "node scripts/package-editor.mjs",
+    "audit:dependencies": "node scripts/audit-dependencies.mjs && node scripts/collect-upstream-licenses.mjs",
+    "format": "cargo run -p rustx-cli --locked -- fmt && prettier --write \"web/**/*.{js,html,css}\" \"playground/**/*.{js,html}\" \"scripts/*.mjs\" \"editors/vscode/**/*.{cjs,json}\" package.json .prettierrc.json \"crates/rustx-cli/templates/*.html\"",
+    "format:check": "cargo run -p rustx-cli --locked -- fmt --check && prettier --check \"web/**/*.{js,html,css}\" \"playground/**/*.{js,html}\" \"scripts/*.mjs\" \"editors/vscode/**/*.{cjs,json}\" package.json .prettierrc.json \"crates/rustx-cli/templates/*.html\""
   },
   "devDependencies": {
     "playwright": "1.64.1",
+    "prettier": "3.6.2",
     "sharp": "0.35.5"
   }
 }

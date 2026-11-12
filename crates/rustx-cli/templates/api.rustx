@@ -1,0 +1,48 @@
+use rustx::prelude::*;
+
+pub fn app(cx: Scope) -> View {
+    let http = cx.context::<HttpClient>().unwrap();
+    let result = cx.signal("Ready to load people".to_string());
+    let shown = result.clone();
+    let scope = cx.clone();
+    rustx! {
+        <Column style={ Style::column().padding(24.).gap(16.) }>
+            <Heading>
+                "People API template"
+            </Heading>
+            <Button
+                style={
+                    Style::row()
+                        .width(180.)
+                        .height(44.)
+                        .padding(12.)
+                        .background(0xb5f36b)
+                        .color(0x10151e)
+                        .radius(8.)
+                }
+                id="load"
+                on_click={
+                    move |_| {
+                        let output = result.clone();
+                        let _ = output.set("Loading…".into());
+                        http.get(&scope, "/api/users", move |response| {
+                            let message = match response {
+                                Ok(r) => match r.json::<Vec<serde_json::Value>>() {
+                                    Ok(people) => format!("Loaded {} people", people.len()),
+                                    Err(_) => "Decode error".into(),
+                                },
+                                Err(_) => "Network unavailable. Retry.".into(),
+                            };
+                            let _ = output.set(message);
+                        });
+                    }
+                }
+            >
+                "Load people"
+            </Button>
+            <Text id="result">
+                { move || shown.get() }
+            </Text>
+        </Column>
+    }
+}

@@ -1,21 +1,21 @@
 # RustX — Framework Specification and Build Blueprint
 
-**Specification:** 1.1 · **Implementation update:** 10 November 2026 · **Prepared:** 30 October 2026
+**Specification:** 1.1 · **Implementation update:** 12 November 2026 · **Prepared:** 30 October 2026
 **Working name:** RustX · **Authoring language:** Rust · **UI syntax:** `rustx! { ... }`  
 **Targets:** browser WebAssembly first; shared native Windows x64 application second  
-**Document status:** implementation contract with Stage 3 application implementation; platform acceptance remains open.
+**Document status:** implementation contract with the Stage 4 delivery candidate; full v1 acceptance remains open.
 
-## 0. Current source and continuation — 10 November 2026
+## 0. Current source and continuation — 12 November 2026
 
-The user explicitly requested Stage 3 on branch `stage-3`. This continues the existing framework and does not accept inherited Stage 1/2 platform gates. Application setup remains mount-once; Rust owns retained layout, text, editing and scene. The complete workspace, locks, scripts, tests and rebuilt `dist/` are delivered together.
+The user requested continued Stage 4 work and a full delivery with readable, consistently indented code. Work is on `stage-4`, continuing `0fdf4ca` and the existing Stage 1–3 implementation. Application setup remains mount-once; Rust owns retained layout, text, editing and scene.
 
-**Stage 3 implementation:** typed capture/target/bubble events and cancellable defaults, pointer capture, bounded drop metadata, resize/scroll/resource notifications, keyboard/modal/nested scrolling; finite widget vocabulary and stateful tabs/select/combobox/overlay/table helpers; grapheme/UTF-16/bidi editing, Unicode word/shaped vertical movement, opt-in ordinary text selection, composition and bounded undo; scoped forms and stale-safe async validation/submission; expanded browser semantics and native AccessKit projection; all-method HTTP/futures/cancellation, multipart, pull streams, WebSocket, query cache/mutations, typed routes/history/hash, storage/migrations, files/clipboard/scheduling/print, logical revisioned assets with shared bounded PNG/font loading, and recoverable errors. The Applications dashboard exercises these public APIs; People adds search/details/copy/print, and the drawing board adds object editing/export. Final review also fixes joined-grapheme composition carets, async validation preserving synchronous errors, and asset-kind resource ownership. Delivery regression evidence and remaining gates are in `docs/ACCEPTANCE.md`. See `docs/STAGE3.md` and `docs/STAGE3_SERVICES.md` for finite APIs and resource limits.
+**Stage 4 candidate:** self-contained CLI/SDK scaffolding, doctor/check/fmt/test/build/dev/reload; Rust/RustX formatting and VS Code completion/navigation/source diagnostics; bounded owner/layout/semantics inspection, CPU profiles and event tracing; hashed web assets, gzip/MIME/CSP/deep links and offline shell; Windows packaging source/workflow; support, security, performance, deployment and tutorial records; expanded People failure states and live public API; and an editable-source playground that runs real isolated rustc and executes the resulting Wasm in an opaque worker/frame. Readability covers Rust, markup expression groups, browser hosts, scripts, editor code and templates, with repeatable formatting checks. See docs/STAGE4.md for finite contracts and limits.
 
-**Stage 2 remains present:** responsive typed themes, retained Taffy layout, shared Unicode/monochrome emoji shaping, bounded caches, camera-relative custom drawing, fixed-height virtualization, direct GPU presentation, CPU recovery/retry and demand-driven scheduling. Its recorded execution is retained in the evidence ledger.
+**Stages 1–3 remain present:** scoped reactive identity/lifecycles; shared Taffy/text/CPU/GPU engine, themes, drawing and virtualization; typed events, widgets, Unicode editing/forms, semantics, bounded networking/services/resources/routes/assets and recoverable errors. Their inherited target/manual gates remain open. Source, locks, fixtures, tests, evidence, notices, tools and prebuilt browser bundles are delivered together.
 
-**Acceptance remains open.** Native Mac checks and browser automation cannot certify Windows execution, Windows UI Automation, real OS IME, human screen-reader tasks, actual Safari/mobile, or complete renderer/performance parity. Use `docs/ACCEPTANCE.md` for actual command results and exact artifact hashes. Stage 3 implementation is not a claim that all required platform/manual tasks passed. Stage 4 editor/tooling/release and RX-45/RX-46 final successful examples remain separate.
+**Acceptance remains open.** The Stage 4 exit requires all v1 register rows and cannot be certified on this Mac alone. Real Windows/native distribution and UI Automation, human NVDA/VoiceOver and real OS IME, physical Android/iOS/Safari, clean external-machine replay, complete cross-target conformance, performance budgets/comparative baselines and remaining supply-chain findings are still gates. Earlier offscreen board timing is not drawing performance evidence. Actual commands, hashes, retained failures and limits are in docs/ACCEPTANCE.md and BUILD-INFO.json. No unavailable target is inferred from mocks or compilation, and no public compiler/deployment has been published.
 
-**Continue:** read `AGENTS.md`, `docs/STATUS.md`, `docs/ACCEPTANCE.md`, `docs/STAGE3.md`, `docs/COMPATIBILITY.md` and `docs/NEXT_AGENT.md`. Stay on `stage-3` unless instructed otherwise. Rebuild Wasm after Rust edits, preserve failures, and exercise unavailable targets on the actual platforms before accepting them.
+**Continue:** read AGENTS.md, docs/STATUS.md, docs/ACCEPTANCE.md, docs/STAGE4.md and docs/NEXT_AGENT.md. Stay on `stage-4` unless instructed otherwise. Rebuild CLI/Wasm after relevant source changes, preserve failures, and complete real target/manual gates before declaring Stage 4 or v1 accepted.
 
 ## 1. The product and its finish line
 
@@ -492,6 +492,8 @@ Implement RX-19 through RX-32. Complete the finite widget library, events, editi
 
 Implement RX-33 through RX-46. Finish `.rustx` tooling, templates, CLI, diagnostics, release builds, deployment docs, editor integration, inspector, public docs, platform verification, and performance certification.
 
+**Current implementation:** the candidate is supplied on `stage-4`, with readable source and a complete runnable package. See `docs/STAGE4.md` for tooling/playground/distribution contracts and `docs/ACCEPTANCE.md` for executed checks, failed budgets, dependency findings and unavailable platform/manual tasks. Implementation delivery does not close this exit gate.
+
 **Exit:** all required register rows verified; all v1 gates pass; release candidate installed and used from a clean environment; reusable source and runnable browser/Windows distributions delivered. State-preserving hot reload, full React compatibility, and every browser feature are not conditions of this release.
 
 ### Delivery package after every stage
@@ -563,7 +565,7 @@ Maintain separate columns for GPU backend, fallback, IME, accessibility, clipboa
 
 ## 14. Tooling and distribution contract
 
-These commands are **interfaces to implement**, not commands currently available:
+These CLI interfaces are implemented in the Stage 4 candidate; actual target acceptance remains in the ledger:
 
 ```bash
 rustx new my-app

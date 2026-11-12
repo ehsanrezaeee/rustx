@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>RustX Inspector</title>
+  <link rel="stylesheet" href="/inspector.css" />
+  <h1>RustX Inspector</h1>
+  <p>
+    Development only. Select a node to highlight Rust geometry. Sensitive values are redacted by
+    Rust.
+  </p>
+  <button id="refresh">Refresh</button>
+  <button id="profile">Capture profile</button>
+  <div id="status" role="status"></div>
+  <main>
+    <section>
+      <h2>Components and layout</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Node</th>
+            <th>Owner</th>
+            <th>Source</th>
+            <th>Rectangle</th>
+          </tr>
+        </thead>
+        <tbody id="tree"></tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Runtime, timings and events</h2>
+      <pre id="details"></pre>
+    </section>
+  </main>
+  <script type="module" src="/inspector.js"></script>
+</html>

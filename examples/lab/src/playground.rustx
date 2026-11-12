@@ -1,0 +1,344 @@
+use rustx::prelude::*;
+use std::time::Duration;
+#[derive(Clone)]
+pub struct CompilerEndpoint(pub Signal<String>);
+fn button() -> Style {
+    Style::row()
+        .padding(12.)
+        .height(44.)
+        .background(0x1b283a)
+        .border(1., 0x52647b)
+        .radius(8.)
+}
+const COUNTER: &str = include_str!("../../../crates/rustx-cli/templates/counter.rustx");
+const API: &str = include_str!("../../../crates/rustx-cli/templates/api.rustx");
+async fn compile(
+    cx: Scope,
+    http: HttpClient,
+    services: ServiceClient,
+    endpoint: String,
+    source: String,
+    generation: Signal<u64>,
+    ticket: u64,
+    feedback: Signal<String>,
+    preview: Signal<String>,
+    error: Signal<Option<(usize, usize)>>,
+) -> Result<(), String> {
+    let response = http
+        .request("POST", format!("{endpoint}/compile"))
+        .json(&serde_json::json!({"source":source}))
+        .send(&cx)
+        .await
+        .map_err(|e| format!("Compiler unavailable: {e:?}"))?
+        .error_for_status()
+        .map_err(|e| format!("Compiler unavailable or busy: {e:?}"))?;
+    let job = response
+        .json::<serde_json::Value>()
+        .map_err(|_| "Invalid compiler response")?;
+    let id = job["id"].as_str().ok_or("Compiler returned no job")?;
+    let url = format!("{endpoint}/jobs/{id}");
+    for _ in 0..160 {
+        if generation.get() != ticket {
+            let _ = http.request("DELETE", &url).send(&cx).await;
+            return Ok(());
+        }
+        services
+            .sleep(&cx, Duration::from_millis(250))
+            .await
+            .map_err(|_| "Compiler polling cancelled")?;
+        let response = http
+            .request("GET", &url)
+            .send(&cx)
+            .await
+            .map_err(|_| "Compiler connection interrupted")?
+            .error_for_status()
+            .map_err(|_| "Compiler job expired")?;
+        let state = response
+            .json::<serde_json::Value>()
+            .map_err(|_| "Invalid compiler result")?;
+        if generation.get() != ticket {
+            let _ = http.request("DELETE", &url).send(&cx).await;
+            return Ok(());
+        }
+        match state["status"].as_str().unwrap_or("error") {
+            "compiling" => {}
+            "ready" => {
+                let _ = preview.set(
+                    state["preview"]
+                        .as_str()
+                        .ok_or("Compiler returned no preview")?
+                        .into(),
+                );
+                let _ = feedback.set(
+                    "Compiled Rust successfully. The isolated application is running below.".into(),
+                );
+                return Ok(());
+            }
+            "compile_error" => {
+                let mut messages = vec![];
+                if let Some(diagnostics) = state["diagnostics"].as_array() {
+                    for diagnostic in diagnostics {
+                        if diagnostic["level"] != "error" {
+                            continue;
+                        }
+                        let span = diagnostic["spans"].as_array().and_then(|s| {
+                            s.iter()
+                                .find(|s| s["is_primary"] == true && s["file_name"] == "main.rustx")
+                        });
+                        if let Some(span) = span {
+                            let line = span["line_start"].as_u64().unwrap_or(1) as usize;
+                            let column = span["column_start"].as_u64().unwrap_or(1) as usize;
+                            if error.get().is_none() {
+                                let _ = error.set(Some((line, column)));
+                            }
+                            messages.push(format!(
+                                "main.rustx:{line}:{column}: {}",
+                                diagnostic["message"].as_str().unwrap_or("Compile error")
+                            ));
+                        } else {
+                            messages.push(
+                                diagnostic["message"]
+                                    .as_str()
+                                    .unwrap_or("Compile error")
+                                    .to_owned(),
+                            );
+                        }
+                    }
+                }
+                return Err(if messages.is_empty() {
+                    "Rust compilation failed".into()
+                } else {
+                    messages.join("\n")
+                });
+            }
+            "cancelled" => return Ok(()),
+            _ => {
+                return Err(state["message"]
+                    .as_str()
+                    .unwrap_or("Compiler failed")
+                    .to_owned())
+            }
+        }
+    }
+    let _ = http.request("DELETE", &url).send(&cx).await;
+    Err("Compiler timed out".into())
+}
+pub fn application(cx: Scope) -> View {
+    let source = cx.signal(COUNTER.to_owned());
+    let editor = Editor::new(COUNTER);
+    let feedback = cx.signal(
+        "Edit Rust source, then choose Compile and run. The compiler is a separate local service."
+            .to_owned(),
+    );
+    let preview = cx.signal(String::new());
+    let generation = cx.signal(0u64);
+    let error = cx.signal(None::<(usize, usize)>);
+    let endpoint = cx.context::<CompilerEndpoint>().unwrap().0;
+    let http = cx.context::<HttpClient>().unwrap();
+    let services = cx.context::<ServiceClient>().unwrap();
+    let tasks = cx.context::<TaskQueue>().unwrap();
+    let reset = {
+        let source = source.clone();
+        let editor = editor.clone();
+        let feedback = feedback.clone();
+        let preview = preview.clone();
+        let generation = generation.clone();
+        let error = error.clone();
+        move |template: &str| {
+            let _ = generation.update(|g| *g += 1);
+            let _ = source.set(template.into());
+            let _ = editor.set_value(template);
+            let _ = preview.set(String::new());
+            let _ = error.set(None);
+            let _ = feedback.set("Source reset. Compile to see this version.".into());
+        }
+    };
+    let counter = reset.clone();
+    let api = reset.clone();
+    let restore = reset;
+    let start = {
+        let source = source.clone();
+        let feedback = feedback.clone();
+        let preview = preview.clone();
+        let generation = generation.clone();
+        let error = error.clone();
+        let cx = cx.clone();
+        move |_: ClickEvent| {
+            let origin = endpoint.get();
+            if origin.is_empty() {
+                let _ = feedback.set(
+                    concat!(
+                        "Compiler unavailable. Start `rustx playground --port 3002` ",
+                        "and build the app with --compiler-url http://127.0.0.1:3002."
+                    )
+                    .into(),
+                );
+                return;
+            }
+            let text = source.get();
+            if text.len() > 32768 {
+                let _ = feedback.set("Source exceeds the 32 KiB compilation limit.".into());
+                return;
+            }
+            let _ = generation.update(|g| *g += 1);
+            let ticket = generation.get();
+            let _ = error.set(None);
+            let _ = preview.set(String::new());
+            let _ = feedback.set("Compiling Rust…".into());
+            let cx = cx.clone();
+            let h = http.clone();
+            let s = services.clone();
+            let f = feedback.clone();
+            let p = preview.clone();
+            let e = error.clone();
+            let g = generation.clone();
+            let _ = tasks.spawn(&cx.clone(), async move {
+                let result =
+                    compile(cx, h, s, origin, text, g.clone(), ticket, f.clone(), p, e).await;
+                if g.peek().ok() == Some(ticket) {
+                    if let Err(message) = result {
+                        let _ = f.set(message);
+                    }
+                }
+            });
+        }
+    };
+    let cancel = {
+        let generation = generation.clone();
+        let feedback = feedback.clone();
+        let preview = preview.clone();
+        move |_: ClickEvent| {
+            let _ = generation.update(|g| *g += 1);
+            let _ = preview.set(String::new());
+            let _ = feedback.set("Cancelled. You can edit and retry.".into());
+        }
+    };
+    let go = {
+        let feedback = feedback.clone();
+        let editor = editor.clone();
+        let error = error.clone();
+        let source = source.clone();
+        move |_: ClickEvent| {
+            if let Some((line, column)) = error.get() {
+                let text = source.get();
+                let prefix = text
+                    .split_inclusive('\n')
+                    .take(line.saturating_sub(1))
+                    .map(str::len)
+                    .sum::<usize>();
+                let offset = prefix
+                    + text[prefix.min(text.len())..]
+                        .chars()
+                        .take(column.saturating_sub(1))
+                        .map(char::len_utf8)
+                        .sum::<usize>();
+                let _ = editor.select(offset.min(text.len()), offset.min(text.len()));
+                let _ = feedback.set(format!("Selected main.rustx:{line}:{column}"));
+            }
+        }
+    };
+    let scroll_tick = cx.signal(0u64);
+    let field = {
+        let scroll_tick = scroll_tick.clone();
+        let source = source.clone();
+        let editor = editor.clone();
+        dynamic(move || {
+            let _ = scroll_tick.get();
+            let tick = scroll_tick.clone();
+            let scroll = editor.clone();
+            let update = source.clone();
+            Node::widget(Widget::TextArea)
+                .id("playground-source")
+                .label("Rust source, main.rustx")
+                .value(source.get())
+                .editing(editor.clone())
+                .style(
+                    Style::column()
+                        .height(460.)
+                        .font_size(14.)
+                        .padding(12.)
+                        .background(0x101927)
+                        .border(1., 0x52647b)
+                        .clip(),
+                )
+                .on_input(move |e| {
+                    let _ = update.set(e.value);
+                })
+                .on_wheel(move |event| {
+                    if scroll.scroll_by(event.data.delta_y as f32) {
+                        event.prevent_default();
+                        let _ = tick.update(|n| *n += 1);
+                    }
+                })
+        })
+    };
+    let output = {
+        let preview = preview.clone();
+        let feedback = feedback.clone();
+        dynamic(move || {
+            let failure = feedback.clone();
+            Node::widget(Widget::Box)
+                .id("playground-surface")
+                .tab_index(0)
+                .label("Compiled application output")
+                .value(preview.get())
+                .style(
+                    Style::column()
+                        .height(420.)
+                        .background(0x101927)
+                        .border(1., 0x52647b),
+                )
+                .on_input(move |event| {
+                    let _ = failure.set(format!(
+                        "Runtime error: {}",
+                        event.value.chars().take(1000).collect::<String>()
+                    ));
+                })
+        })
+    };
+    rustx! {
+        <Column style={ Style::column().gap(16.) }>
+            <Heading level={ 1 }>
+                "The RustX playground"
+            </Heading>
+            <Text>
+                "Edit real Rust, compile it to WebAssembly, and run it in an isolated worker. Only the public fixture API is available to compiled examples."
+            </Text>
+            <Row style={ Style::row().gap(10.).wrap() }>
+                <Button
+                    style={ button() }
+                    id="template-counter"
+                    on_click={ move |_| counter(COUNTER) }
+                >
+                    "Counter template"
+                </Button>
+                <Button style={ button() } id="template-api" on_click={ move |_| api(API) }>
+                    "API template"
+                </Button>
+                <Button
+                    style={ button() }
+                    id="playground-reset"
+                    on_click={ move |_| restore(COUNTER) }
+                >
+                    "Reset source"
+                </Button>
+            </Row>
+            { field }
+            <Row style={ Style::row().gap(10.).wrap() }>
+                <Button style={ button() } id="playground-run" on_click={ start }>
+                    "Compile and run"
+                </Button>
+                <Button style={ button() } id="playground-cancel" on_click={ cancel }>
+                    "Cancel"
+                </Button>
+                <Button style={ button() } id="playground-go-error" on_click={ go }>
+                    "Go to error"
+                </Button>
+            </Row>
+            <Text id="compiler-feedback" role="status" selectable={ true }>
+                { move || feedback.get() }
+            </Text>
+            { output }
+        </Column>
+    }
+}

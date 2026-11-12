@@ -1,0 +1,35 @@
+use rustx::prelude::*;
+
+pub fn app(cx: Scope) -> View {
+    let count = cx.signal(0);
+    let shown = count.clone();
+    rustx! {
+        <Column style={ Style::column().padding(32.).gap(16.) }>
+            <Heading>
+                "Hello from RustX"
+            </Heading>
+            <Text id="count">
+                { move || format!("Count: {}", shown.get()) }
+            </Text>
+            <Button
+                style={
+                    Style::row()
+                        .width(180.)
+                        .height(44.)
+                        .padding(12.)
+                        .background(0xb5f36b)
+                        .color(0x10151e)
+                        .radius(8.)
+                }
+                id="increase"
+                on_click={
+                    move |_| {
+                        let _ = count.update(|n| *n += 1);
+                    }
+                }
+            >
+                "Increase"
+            </Button>
+        </Column>
+    }
+}

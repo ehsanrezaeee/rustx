@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-12T11:10:38.193Z",
+  "engine": "chromium",
+  "checks": [
+    "edited source is compiled to real interactive Wasm; counter changes 7 to 8 inside opaque script-only iframe; parent DOM and storage denied",
+    "independently compiled API template fetches real loopback fixture through restricted worker host",
+    "actual rustc type error and Go to error select the original main.rustx source",
+    "reset restores source; cancelling actual compilation rejects late preview",
+    "infinite visitor Rust loop is stopped by frame watchdog; main editor stays interactive",
+    "network-unavailable compiler is explicit and another visitor receives its own compiled state/job",
+    "People actual fixture loading/success/search/keyboard details/empty/malformed/HTTP503/timeout/cancel/offline/retry",
+    "actual public JSONPlaceholder browser fetch returns 10 typed people"
+  ],
+  "limitations": [
+    "Automated browser keyboard only; no human screen-reader or OS IME task",
+    "WebKit is not actual Safari/iOS; no physical mobile or Windows evidence",
+    "Loopback compiler isolation and runtime limits are not a public security certification"
+  ],
+  "version": "157.0.8103.40",
+  "wasmSha256": "315edea9604caf3fe423fda87333284305b6a5970ff871c2b31c2e21a899f533",
+  "liveApi": {
+    "result": "passed",
+    "url": "https://jsonplaceholder.typicode.com/users",
+    "state": "10 people / request completed"
+  },
+  "result": "failed",
+  "error": "Error: page.screenshot: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-PIfziM --remote-debugging-pipe --no-startup-window\n<launched> pid=50976\n[pid=50976][err] Trying to load the allocator multiple times. This is *not* supported.\n[pid=50976][err] [50981:1779524:1112/144038.520485:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779580:1112/144038.520706:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779524:1112/144038.522905:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779580:1112/144038.522951:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779524:1112/144038.523369:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779580:1112/144038.523429:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779524:1112/144100.306422:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=50976][err] [50981:1779580:1112/144100.306473:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+}

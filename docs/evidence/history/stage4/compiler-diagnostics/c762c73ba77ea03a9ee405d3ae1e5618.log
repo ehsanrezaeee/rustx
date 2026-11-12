@@ -1,0 +1,3 @@
+error: duplicate string enums:
+AuxStringEnum { name: "OrientationLockType", comments: "The `OrientationLockType` enum.\n\n*This API requires the following crate features to be activated: `OrientationLockType`*", variant_values: ["any", "natural", "landscape", "portrait", "portrait-primary", "portrait-secondary", "landscape-primary", "landscape-secondary"], generate_typescript: true }
+AuxStringEnum { name: "OrientationLockType", comments: "The `OrientationLockType` enum.\n\n*This API requires the following crate features to be activated: `OrientationLockType`*", variant_values: ["any", "natural", "landscape", "portrait", "portrait-primary", "portrait-secondary", "landscape-primary", "landscape-secondary"], generate_typescript: true }

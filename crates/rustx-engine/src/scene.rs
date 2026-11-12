@@ -14,6 +14,7 @@ struct PaintKey {
     size: (f64, f64),
     kind: Kind,
     label_inset: f32,
+    text_scroll: f32,
     epoch: u64,
 }
 struct Cached {
@@ -157,7 +158,10 @@ impl SceneEngine {
             TextEngine::paint(
                 &mut own,
                 &shaped,
-                Affine::translate((f64::from(s.padding + key.label_inset), f64::from(s.padding))),
+                Affine::translate((
+                    f64::from(s.padding + key.label_inset),
+                    f64::from(s.padding - key.text_scroll),
+                )),
                 color(s.color),
             );
         }
@@ -244,6 +248,7 @@ impl SceneEngine {
                 size: (b.rect.width(), b.rect.height()),
                 kind: b.node.kind,
                 label_inset: crate::controls::label_inset(&b.node),
+                text_scroll: b.node.editing.as_ref().map_or(0., |e| e.scroll_y),
                 epoch: if matches!(b.node.kind, Kind::Text | Kind::Input | Kind::Button) {
                     text.epoch
                 } else if b.node.kind == Kind::Image {

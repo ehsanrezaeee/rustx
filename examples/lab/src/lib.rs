@@ -1,7 +1,13 @@
 #[path = "app.rustx"]
 mod app;
+#[cfg(feature = "instrumentation")]
+#[global_allocator]
+static ALLOCATOR: rustx::allocation::CountingAllocator<std::alloc::System> =
+    rustx::allocation::CountingAllocator(std::alloc::System);
 #[path = "applications.rustx"]
 pub mod applications;
+#[path = "playground.rustx"]
+pub mod playground;
 #[path = "visual.rustx"]
 pub mod visual;
 use rustx::prelude::*;
@@ -34,6 +40,8 @@ pub fn engine_with_environment(
     let client = h.clone();
     Ok((
         rustx_engine::Engine::new(move |cx| {
+            let endpoint = cx.signal(String::new());
+            cx.provide(playground::CompilerEndpoint(endpoint));
             cx.provide(services.clone());
             cx.provide(tasks.clone());
             app::root(cx, client.clone())
@@ -197,6 +205,41 @@ mod browser {
     #[wasm_bindgen]
     pub fn pixels() -> Vec<u8> {
         APP.with(|a| a.borrow().as_ref().unwrap().cpu.pixmap.data().to_vec())
+    }
+    #[wasm_bindgen]
+    pub fn set_diagnostics(enabled: bool) {
+        APP.with(|a| {
+            a.borrow_mut()
+                .as_mut()
+                .unwrap()
+                .engine
+                .diagnostics
+                .enable(enabled)
+        });
+    }
+    #[wasm_bindgen]
+    pub fn configure_playground(origin: &str) {
+        APP.with(|a| {
+            let a = a.borrow();
+            let a = a.as_ref().unwrap();
+            if let Some(scope) = a
+                .engine
+                .runtime
+                .scope_for_node(a.engine.runtime.snapshot().id)
+            {
+                if let Some(config) = scope.context::<crate::playground::CompilerEndpoint>() {
+                    let _ = config.0.set(origin.to_owned());
+                }
+            }
+        });
+    }
+    #[wasm_bindgen]
+    pub fn allocations() -> String {
+        serde_json::to_string(&rustx::allocation::stats()).unwrap()
+    }
+    #[wasm_bindgen]
+    pub fn profile() -> String {
+        APP.with(|a| a.borrow().as_ref().unwrap().engine.diagnostics.json())
     }
     #[wasm_bindgen]
     pub fn inspect() -> String {

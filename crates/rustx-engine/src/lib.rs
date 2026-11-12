@@ -5,6 +5,7 @@ pub mod assets;
 pub mod cache;
 pub mod controls;
 pub mod cpu;
+pub mod diagnostics;
 pub mod drawing;
 pub mod editing;
 pub mod gpu;
@@ -29,6 +30,7 @@ pub fn color(rgb: u32) -> Color {
     Color::from_rgb8((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
 }
 pub struct Engine {
+    pub diagnostics: diagnostics::Diagnostics,
     pub runtime: Runtime,
     pub layout: LayoutEngine,
     pub text: TextEngine,
@@ -56,6 +58,7 @@ pub struct Engine {
     restore_focus: Option<NodeId>,
     text_drag: Option<(u64, NodeId, usize)>,
     preferred_caret_x: Option<(NodeId, f64, usize)>,
+    editor_revision: Option<(NodeId, u64)>,
     theme: rustx_core::Signal<rustx_core::Theme>,
 }
 impl Engine {
@@ -70,6 +73,7 @@ impl Engine {
         });
         let theme = saved.borrow().clone().unwrap();
         Self {
+            diagnostics: diagnostics::Diagnostics::default(),
             runtime,
             theme,
             layout: LayoutEngine::default(),
@@ -98,6 +102,7 @@ impl Engine {
             restore_focus: None,
             text_drag: None,
             preferred_caret_x: None,
+            editor_revision: None,
         }
     }
     pub fn canvas_event(&mut self, id: NodeId, event: rustx_core::drawing::CanvasEvent) -> bool {
@@ -301,6 +306,32 @@ impl Engine {
                 }
             }
         }
+        if self.diagnostics.enabled {
+            fn path(s: &rustx_core::Snapshot, id: NodeId, out: &mut Vec<NodeId>) -> bool {
+                let n = out.len();
+                out.push(s.id);
+                if s.id == id || s.children.iter().any(|c| path(c, id, out)) {
+                    true
+                } else {
+                    out.truncate(n);
+                    false
+                }
+            }
+            let target = if matches!(
+                kind,
+                rustx_core::EventKind::PointerMove
+                    | rustx_core::EventKind::PointerUp
+                    | rustx_core::EventKind::PointerCancel
+            ) {
+                captured.unwrap_or(id)
+            } else {
+                id
+            };
+            let mut nodes = vec![];
+            path(&self.runtime.snapshot(), target, &mut nodes);
+            nodes.truncate(128);
+            self.diagnostics.event(kind, target, nodes, &result);
+        }
         self.dirty = true;
         result
     }
@@ -368,7 +399,8 @@ impl Engine {
             style.text_direction,
         );
         let x = point.x - b.rect.x0 - f64::from(style.padding);
-        let y = point.y - b.rect.y0 - f64::from(style.padding);
+        let y = point.y - b.rect.y0 - f64::from(style.padding)
+            + f64::from(b.node.editing.as_ref().map_or(0., |e| e.scroll_y));
         Some((editor, crate::editing::hit_offset(&shaped, content, x, y)))
     }
     fn move_vertical(
@@ -424,6 +456,11 @@ impl Engine {
         self.dirty = true;
     }
     pub fn frame(&mut self, width: f32, height: f32, scale: f64) -> bool {
+        let started = if self.diagnostics.enabled {
+            diagnostics::now()
+        } else {
+            0.
+        };
         if !width.is_finite()
             || !height.is_finite()
             || !scale.is_finite()
@@ -451,6 +488,11 @@ impl Engine {
         let model_changed = self.model_epoch != self.runtime.model_epoch();
         self.model_epoch = self.runtime.model_epoch();
         let snapshot = self.runtime.snapshot();
+        let committed = if self.diagnostics.enabled {
+            diagnostics::now()
+        } else {
+            0.
+        };
         fn accepts_focus(s: &rustx_core::Snapshot, id: NodeId) -> bool {
             if s.id == id {
                 s.focusable()
@@ -514,7 +556,32 @@ impl Engine {
             || commit.components_rendered > 0
             || model_changed
             || font_changed;
+        let mut reasons = Vec::new();
+        if self.diagnostics.enabled {
+            if self.size != (width, height) {
+                reasons.push("viewport");
+            }
+            if self.scale != scale {
+                reasons.push("scale");
+            }
+            if model_changed {
+                reasons.push("model");
+            }
+            if font_changed {
+                reasons.push("fonts");
+            }
+            if resources_changed {
+                reasons.push("assets");
+            }
+            if commit.components_rendered > 0 {
+                reasons.push("components");
+            }
+            if self.dirty {
+                reasons.push("paint");
+            }
+        }
         if layout_changed {
+            self.layout.diagnostics = self.diagnostics.enabled;
             self.boxes = Some(
                 self.layout
                     .compute(&snapshot, width, height, &mut self.text),
@@ -524,6 +591,11 @@ impl Engine {
         if !self.dirty && !layout_changed && !resources_changed && self.scale == scale {
             return false;
         }
+        let laid_out = if self.diagnostics.enabled {
+            diagnostics::now()
+        } else {
+            0.
+        };
         self.size = (width, height);
         self.scale = scale;
         self.dirty = false;
@@ -534,6 +606,49 @@ impl Engine {
         root.scroll_translate(Vec2::new(0., self.applied_scroll - self.scroll));
         root.position_overlays(width as f64, height as f64);
         self.applied_scroll = self.scroll;
+        fn viewports(
+            boxes: &mut BoxNode,
+            text: &mut TextEngine,
+            runtime: &Runtime,
+            focus: Option<NodeId>,
+            revision: &mut Option<(NodeId, u64)>,
+        ) {
+            if let Some(state) = &mut boxes.node.editing {
+                if let Some(editor) = runtime.editor(boxes.node.id) {
+                    let s = &boxes.node.style;
+                    let shaped = text.shape_with(
+                        &boxes.node.text,
+                        s.font_size,
+                        (boxes.rect.width() as f32 - 2. * s.padding).max(1.),
+                        s.text_align,
+                        s.text_direction,
+                    );
+                    let height = (boxes.rect.height() as f32 - 2. * s.padding).max(1.);
+                    let changed = focus == Some(boxes.node.id)
+                        && *revision != Some((boxes.node.id, state.revision));
+                    let caret = changed.then(|| {
+                        let c =
+                            crate::editing::caret_rect(&shaped, state.selection.focus, s.font_size);
+                        (c.y0 as f32, c.y1 as f32)
+                    });
+                    state.scroll_y =
+                        editor.viewport((shaped.height - height).max(0.), caret, height);
+                    if focus == Some(boxes.node.id) {
+                        *revision = Some((boxes.node.id, state.revision));
+                    }
+                }
+            }
+            for child in &mut boxes.children {
+                viewports(child, text, runtime, focus, revision);
+            }
+        }
+        viewports(
+            root,
+            &mut self.text,
+            &self.runtime,
+            self.focus,
+            &mut self.editor_revision,
+        );
         let logical = self.painter.build(
             root,
             &mut self.text,
@@ -578,6 +693,20 @@ impl Engine {
             let mut event = rustx_core::EventData::new(rustx_core::EventKind::Scroll);
             event.delta_y = delta;
             self.runtime.dispatch(id, event);
+        }
+        if self.diagnostics.enabled {
+            self.diagnostics.frame(
+                committed - started,
+                laid_out - committed,
+                diagnostics::now() - laid_out,
+                reasons,
+                self.layout.changed,
+                if layout_changed {
+                    self.layout.measurements.clone()
+                } else {
+                    vec![]
+                },
+            );
         }
         true
     }

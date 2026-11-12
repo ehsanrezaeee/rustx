@@ -111,6 +111,8 @@ pub struct LayoutEngine {
     pub changed: usize,
     pub theme: Theme,
     pub font_epoch: u64,
+    pub diagnostics: bool,
+    pub measurements: Vec<serde_json::Value>,
 }
 impl Default for LayoutEngine {
     fn default() -> Self {
@@ -122,6 +124,8 @@ impl Default for LayoutEngine {
             changed: 0,
             theme: Theme::DARK,
             font_epoch: 0,
+            diagnostics: false,
+            measurements: vec![],
         }
     }
 }
@@ -353,6 +357,16 @@ impl LayoutEngine {
             let e = self.nodes.remove(&id).unwrap();
             let _ = self.tree.remove(e.id);
         }
+        self.measurements.clear();
+        let measured_nodes = if self.diagnostics {
+            self.nodes
+                .iter()
+                .map(|(node, entry)| (entry.id, *node))
+                .collect::<HashMap<_, _>>()
+        } else {
+            HashMap::new()
+        };
+        let mut timings = HashMap::<NodeId, (f64, usize)>::new();
         self.tree
             .compute_layout_with_measure(
                 id,
@@ -360,7 +374,7 @@ impl LayoutEngine {
                     width: AvailableSpace::Definite(width),
                     height: AvailableSpace::Definite(height),
                 },
-                |known, available, _, context, _| {
+                |known, available, id, context, _| {
                     let Some(context) = context else {
                         return Size::ZERO;
                     };
@@ -369,6 +383,7 @@ impl LayoutEngine {
                         AvailableSpace::MinContent => 1.,
                         AvailableSpace::MaxContent => 1_000_000.,
                     });
+                    let started = self.diagnostics.then(crate::diagnostics::now);
                     let shaped = text.shape_with(
                         &context.text,
                         context.size,
@@ -376,6 +391,13 @@ impl LayoutEngine {
                         context.align,
                         context.direction,
                     );
+                    if let Some(started) = started {
+                        if let Some(node) = measured_nodes.get(&id) {
+                            let entry = timings.entry(*node).or_default();
+                            entry.0 += (crate::diagnostics::now() - started).max(0.);
+                            entry.1 += 1;
+                        }
+                    }
                     Size {
                         width: known.width.unwrap_or(shaped.width.ceil()),
                         height: known.height.unwrap_or(shaped.height.ceil()),
@@ -383,6 +405,9 @@ impl LayoutEngine {
                 },
             )
             .unwrap();
+        let mut timings = timings.into_iter().collect::<Vec<_>>();
+        timings.sort_by(|a, b| b.1 .0.total_cmp(&a.1 .0));
+        self.measurements=timings.into_iter().take(32).map(|(node,(ms,calls))|serde_json::json!({"node":node,"text_measure_ms":ms,"calls":calls})).collect();
         let mut output = self.output(&root, 0., 0.);
         output.position_overlays(width as f64, height as f64);
         output

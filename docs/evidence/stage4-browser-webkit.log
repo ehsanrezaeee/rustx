@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-12T11:29:10.461Z",
+  "engine": "webkit",
+  "checks": [
+    "edited source is compiled to real interactive Wasm; counter changes 7 to 8 inside opaque script-only iframe; parent DOM and storage denied",
+    "independently compiled API template fetches real loopback fixture through restricted worker host",
+    "actual rustc type error and Go to error select the original main.rustx source",
+    "reset restores source; cancelling actual compilation rejects late preview",
+    "infinite visitor Rust loop is stopped by frame watchdog; main editor stays interactive",
+    "network-unavailable compiler is explicit and another visitor receives its own compiled state/job",
+    "People actual fixture loading/success/search/keyboard details/empty/malformed/HTTP503/timeout/cancel/offline/retry",
+    "actual public JSONPlaceholder browser fetch returns 10 typed people",
+    "390px navigation/People/playground reflow and Rust-owned multiline source scrolling/caret reveal",
+    "actual inspector source links/ownership/rect highlight, event paths, invalidation and per-node text measurement timings"
+  ],
+  "limitations": [
+    "Automated browser keyboard only; no human screen-reader or OS IME task",
+    "WebKit is not actual Safari/iOS; no physical mobile or Windows evidence",
+    "Loopback compiler isolation and runtime limits are not a public security certification"
+  ],
+  "version": "27.2",
+  "wasmSha256": "f8516d41c3c06d0fcd12c02aed68ebc655aca79fabf8a98128564322a4092d56",
+  "liveApi": {
+    "result": "passed",
+    "url": "https://jsonplaceholder.typicode.com/users",
+    "state": "10 people / request completed"
+  },
+  "profiler": {
+    "frames": 87,
+    "hotspots": [
+      {
+        "calls": 8,
+        "node": 1059,
+        "text_measure_ms": 0
+      },
+      {
+        "calls": 4,
+        "node": 1035,
+        "text_measure_ms": 0
+      },
+      {
+        "calls": 3,
+        "node": 1188,
+        "text_measure_ms": 0
+      },
+      {
+        "calls": 4,
+        "node": 1010,
+        "text_measure_ms": 0
+      },
+      {
+        "calls": 4,
+        "node": 1035,
+        "text_measure_ms": 0
+      }
+    ]
+  },
+  "result": "passed"
+}

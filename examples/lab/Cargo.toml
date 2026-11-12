@@ -3,6 +3,8 @@ name = "rustx-lab"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+[features]
+instrumentation = []
 [lib]
 crate-type = ["cdylib", "rlib"]
 [[bin]]

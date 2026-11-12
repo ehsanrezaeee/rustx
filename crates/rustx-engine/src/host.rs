@@ -257,7 +257,8 @@ impl App {
                         w.set_ime_cursor_area(
                             winit::dpi::LogicalPosition::new(
                                 b.rect.x0 + style.padding as f64 + caret.x0,
-                                b.rect.y0 + style.padding as f64 + caret.y0,
+                                b.rect.y0 + style.padding as f64 + caret.y0
+                                    - f64::from(editor.scroll_y),
                             ),
                             winit::dpi::LogicalSize::new(caret.width(), caret.height()),
                         );

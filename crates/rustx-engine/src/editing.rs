@@ -107,8 +107,10 @@ pub fn decorations(b: &BoxNode, text: &mut TextEngine) -> Vec<(Rect, u32, f32)> 
         s.text_align,
         s.text_direction,
     );
-    let offset =
-        vello::kurbo::Vec2::new(b.rect.x0 + s.padding as f64, b.rect.y0 + s.padding as f64);
+    let offset = vello::kurbo::Vec2::new(
+        b.rect.x0 + s.padding as f64,
+        b.rect.y0 + s.padding as f64 - f64::from(editor.scroll_y),
+    );
     let mut rects = selection_rects(&shaped, editor.selection.anchor, editor.selection.focus)
         .into_iter()
         .map(|r| (r + offset, 0x78b4ff, 0.35))

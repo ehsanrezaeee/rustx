@@ -4,7 +4,23 @@ use std::{cell::RefCell, rc::Rc};
 fn Item(cx: Scope, name: String) -> View {
     let value = cx.signal(0);
     let shown = value.clone();
-    rustx! {<Div><Button id={name.clone()} on_click={move |_|{value.update(|v|*v+=1).unwrap();}}>{name}</Button><Text>{move||shown.get().to_string()}</Text></Div>}
+    rustx! {
+        <Div>
+            <Button
+                id={ name.clone() }
+                on_click={
+                    move |_| {
+                        value.update(|v| *v += 1).unwrap();
+                    }
+                }
+            >
+                { name }
+            </Button>
+            <Text>
+                { move || shown.get().to_string() }
+            </Text>
+        </Div>
+    }
 }
 #[test]
 fn setup_mounts_once() {
@@ -29,7 +45,17 @@ fn keyed_state_and_disposal() {
     let mut rt = Runtime::new(move |cx| {
         let s = cx.signal(vec!["a".to_string(), "b".to_string()]);
         *out.borrow_mut() = Some(s.clone());
-        dynamic(move || keyed(s.get(), |n| n.clone(), |name| rustx! {<Item name={name}/>}))
+        dynamic(move || {
+            keyed(
+                s.get(),
+                |n| n.clone(),
+                |name| {
+                    rustx! {
+                        <Item name={ name } />
+                    }
+                },
+            )
+        })
     });
     rt.click_id("a");
     rt.flush();
@@ -175,7 +201,15 @@ fn context_children_fragments() {
     }
     let rt = Runtime::new(|cx| {
         cx.provide(42u32);
-        rustx! {<><Card><Text>{"child"}</Text></Card></>}
+        rustx! {
+            <>
+                <Card>
+                    <Text>
+                        { "child" }
+                    </Text>
+                </Card>
+            </>
+        }
     });
     assert_eq!(rt.snapshot().text_content(), "child");
 }
@@ -216,7 +250,11 @@ fn default_generic_named_slots() {
             Node::fragment(children),
         ])
     }
-    let rt = Runtime::new(|_| rustx! {<Panel value={42u32} header={Node::text("header:")}/>});
+    let rt = Runtime::new(|_| {
+        rustx! {
+            <Panel value={ 42u32 } header={ Node::text("header:") } />
+        }
+    });
     assert_eq!(rt.snapshot().text_content(), "header:42:7");
 }
 #[test]
@@ -249,7 +287,13 @@ fn completed_requests_release_cleanup() {
 fn node_refs_clear_on_disposal() {
     let r = NodeRef::default();
     let copy = r.clone();
-    let rt = Runtime::new(move |_| rustx! {<Text node_ref={copy.clone()}>{"hello"}</Text>});
+    let rt = Runtime::new(move |_| {
+        rustx! {
+            <Text node_ref={ copy.clone() }>
+                { "hello" }
+            </Text>
+        }
+    });
     assert!(r.get().is_some());
     drop(rt);
     assert_eq!(r.get(), None);
@@ -273,7 +317,11 @@ mod imported {
     use rustx::prelude::*;
     #[component]
     pub fn Readout(value: Signal<i32>, prefix: String) -> View {
-        rustx! {<Text>{move||format!("{prefix}{}",value.get())}</Text>}
+        rustx! {
+            <Text>
+                { move || format!("{prefix}{}", value.get()) }
+            </Text>
+        }
     }
 }
 #[test]
@@ -284,9 +332,11 @@ fn imported_reactive_and_initial_props() {
     let mut rt = Runtime::new(move |cx| {
         let c = cx.signal(0);
         *out.borrow_mut() = Some(c.clone());
-        dynamic(
-            move || rustx! {<Readout value={c.clone()} prefix={format!("initial {}: ",c.get())}/>},
-        )
+        dynamic(move || {
+            rustx! {
+                <Readout value={ c.clone() } prefix={ format!("initial {}: ", c.get()) } />
+            }
+        })
     });
     let baseline = rt.counts();
     h.borrow().as_ref().unwrap().set(7).unwrap();
@@ -308,7 +358,11 @@ fn semantic_text_includes_literal_and_reactive_children() {
     let mut rt = Runtime::new(move |cx| {
         let value = cx.signal("Hello".to_string());
         *out.borrow_mut() = Some(value.clone());
-        rustx! {<Text id="readout">{move || value.get()}</Text>}
+        rustx! {
+            <Text id="readout">
+                { move || value.get() }
+            </Text>
+        }
     });
     fn label(n: &SemanticNode) -> Option<String> {
         if n.app_id.as_deref() == Some("readout") {

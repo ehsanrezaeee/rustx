@@ -1,0 +1,7 @@
+   Compiling rustx-macros v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-macros)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+   Compiling rustx-web v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.81s
+     Running `target/debug/rustx-lab`

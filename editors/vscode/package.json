@@ -1,0 +1,57 @@
+{
+  "name": "rustx",
+  "displayName": "RustX",
+  "publisher": "rustx-local",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters"
+  ],
+  "description": "RustX markup formatting, component/prop completion and source diagnostics alongside rust-analyzer.",
+  "main": "./extension.cjs",
+  "activationEvents": [
+    "onLanguage:rust"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "rust",
+        "extensions": [
+          ".rustx"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "rustx.check",
+        "title": "RustX: Check project"
+      },
+      {
+        "command": "rustx.format",
+        "title": "RustX: Format source"
+      }
+    ],
+    "configuration": {
+      "title": "RustX",
+      "properties": {
+        "rustx.path": {
+          "type": "string",
+          "default": "rustx",
+          "description": "Path to the pinned RustX CLI."
+        }
+      }
+    }
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    },
+    "virtualWorkspaces": false
+  },
+  "extensionDependencies": [
+    "rust-lang.rust-analyzer"
+  ]
+}

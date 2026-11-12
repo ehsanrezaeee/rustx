@@ -47,6 +47,7 @@ pub enum MoveDirection {
 /// projected onto bullet graphemes; actual values require an explicit `value()`.
 #[derive(Clone, Debug, Serialize)]
 pub struct EditingState {
+    pub scroll_y: f32,
     pub text: String,
     pub selection: Selection,
     pub anchor_utf16: usize,
@@ -68,6 +69,8 @@ impl Checkpoint {
     }
 }
 struct Model {
+    scroll_y: f32,
+    scroll_limit: f32,
     current: Checkpoint,
     composition: Option<Checkpoint>,
     preedit: Option<Selection>,
@@ -153,6 +156,8 @@ impl Editor {
             password: false,
             read_only: false,
             revision: 0,
+            scroll_y: 0.,
+            scroll_limit: 0.,
         }))))
     }
     pub fn with_password(self, password: bool) -> Self {
@@ -210,6 +215,7 @@ impl Editor {
             }
         };
         EditingState {
+            scroll_y: m.scroll_y,
             text: if m.password {
                 "•".repeat(m.current.value.graphemes(true).count())
             } else {
@@ -236,6 +242,35 @@ impl Editor {
         };
         m.revision += 1;
         Ok(())
+    }
+    pub fn scroll_y(&self) -> f32 {
+        self.0.borrow().scroll_y
+    }
+    pub fn scroll_by(&self, delta: f32) -> bool {
+        if !delta.is_finite() {
+            return false;
+        }
+        let mut model = self.0.borrow_mut();
+        let next = (model.scroll_y + delta).clamp(0., model.scroll_limit);
+        if next == model.scroll_y {
+            return false;
+        }
+        model.scroll_y = next;
+        true
+    }
+    /// Renderer-supplied text bounds and optional caret reveal, never DOM measurement.
+    pub fn viewport(&self, limit: f32, caret: Option<(f32, f32)>, height: f32) -> f32 {
+        let mut model = self.0.borrow_mut();
+        model.scroll_limit = if limit.is_finite() { limit.max(0.) } else { 0. };
+        model.scroll_y = model.scroll_y.clamp(0., model.scroll_limit);
+        if let Some((top, bottom)) = caret {
+            if top < model.scroll_y {
+                model.scroll_y = top.max(0.);
+            } else if bottom > model.scroll_y + height {
+                model.scroll_y = (bottom - height).clamp(0., model.scroll_limit);
+            }
+        }
+        model.scroll_y
     }
     pub fn select_utf16(&self, anchor: usize, focus: usize) -> Result<(), EditError> {
         let value = self.value();

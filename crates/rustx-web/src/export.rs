@@ -1,0 +1,438 @@
+//! Shared portable application bootstrap used by CLI-created projects.
+#[macro_export]
+macro_rules! export_app {
+    ($root:path) => {
+        #[cfg(target_arch = "wasm32")]
+        pub mod browser {
+            use std::cell::RefCell;
+            use wasm_bindgen::prelude::*;
+            use $crate::core::*;
+            use $crate::{gpu::WebGpu, WebApp};
+            thread_local! {
+                static APP: RefCell<Option<WebApp>> = const { RefCell::new(None) };
+                static GPU: RefCell<Option<WebGpu>> = const { RefCell::new(None) };
+            }
+            #[wasm_bindgen]
+            pub fn init_app(capabilities: &str) -> Result<(), JsValue> {
+                let capabilities = serde_json::from_str(capabilities)
+                    .map_err(|e| JsValue::from_str(&format!("Invalid host report: {e}")))?;
+                let services = ServiceClient::default();
+                let tasks = TaskQueue::default();
+                let h = HttpClient::default();
+                h.connect(capabilities)
+                    .map_err(|e| JsValue::from_str(&format!("Host handshake failed: {e:?}")))?;
+                let http = h.clone();
+                let svc = services.clone();
+                let queue = tasks.clone();
+                let e = $crate::engine::Engine::new(move |cx| {
+                    cx.provide(http.clone());
+                    cx.provide(svc.clone());
+                    cx.provide(queue.clone());
+                    $root(cx)
+                });
+                GPU.with(|g| g.replace(None));
+                let mut app = WebApp::new(e, h);
+                app.services = services;
+                app.tasks = tasks;
+                APP.with(|a| a.replace(Some(app)));
+                Ok(())
+            }
+            #[wasm_bindgen]
+            pub async fn init_gpu(canvas: $crate::HtmlCanvasElement) -> Result<(), JsValue> {
+                let gpu = WebGpu::new(canvas)
+                    .await
+                    .map_err(|e| JsValue::from_str(&e))?;
+                GPU.with(|g| g.replace(Some(gpu)));
+                Ok(())
+            }
+            #[wasm_bindgen]
+            pub fn frame(w: f32, h: f32, dpr: f32) -> Result<bool, JsValue> {
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    GPU.with(|g| {
+                        let mut g = g.borrow_mut();
+                        if let Some(g) = g.as_mut() {
+                            let dirty = a.engine.frame(w, h, dpr as f64);
+                            if dirty {
+                                g.draw(
+                                    &a.engine,
+                                    (w * dpr).round().max(1.) as u32,
+                                    (h * dpr).round().max(1.) as u32,
+                                )
+                                .map_err(|e| JsValue::from_str(&e))?;
+                            }
+                            Ok(dirty)
+                        } else {
+                            Ok(a.frame(w, h, dpr))
+                        }
+                    })
+                })
+            }
+            #[wasm_bindgen]
+            pub fn drop_gpu() {
+                GPU.with(|g| g.replace(None));
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.invalidate());
+            }
+            #[wasm_bindgen]
+            pub fn invalidate() {
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.invalidate());
+            }
+            #[wasm_bindgen]
+            pub fn destroy_gpu() {
+                GPU.with(|g| {
+                    if let Some(g) = g.borrow().as_ref() {
+                        g.destroy();
+                    }
+                });
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.invalidate());
+            }
+            #[wasm_bindgen]
+            pub fn set_theme(light: bool) {
+                APP.with(|a| {
+                    a.borrow_mut().as_mut().unwrap().engine.set_theme(if light {
+                        Theme::LIGHT
+                    } else {
+                        Theme::DARK
+                    })
+                });
+            }
+            #[wasm_bindgen]
+            pub fn canvas_pan(id: f64, dx: f64, dy: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                if !dx.is_finite() || !dy.is_finite() {
+                    return;
+                }
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .engine
+                        .canvas_event(id, rustx::drawing::CanvasEvent::Pan { dx, dy });
+                });
+            }
+            #[wasm_bindgen]
+            pub fn canvas_zoom(id: f64, x: f64, y: f64, factor: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let e = &mut a.as_mut().unwrap().engine;
+                    if let Some(rect) = e.canvas_at(id) {
+                        e.canvas_event(
+                            id,
+                            rustx::drawing::CanvasEvent::Zoom {
+                                x: x - rect.x0,
+                                y: y - rect.y0,
+                                factor,
+                            },
+                        );
+                    }
+                });
+            }
+            #[wasm_bindgen]
+            pub fn canvas_pick(id: f64, x: f64, y: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let e = &mut a.as_mut().unwrap().engine;
+                    if let Some(rect) = e.canvas_at(id) {
+                        if rect.contains(rustx_engine::vello::kurbo::Point::new(x, y)) {
+                            e.canvas_event(
+                                id,
+                                rustx::drawing::CanvasEvent::Pick {
+                                    x: x - rect.x0,
+                                    y: y - rect.y0,
+                                },
+                            );
+                        }
+                    }
+                });
+            }
+            #[wasm_bindgen]
+            pub fn scroll_node(id: f64, dy: f64) -> bool {
+                let Some(id) = $crate::host_id(id) else {
+                    return false;
+                };
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .engine
+                        .runtime
+                        .scroll(id, dy)
+                })
+            }
+            #[wasm_bindgen]
+            pub fn pixels() -> Vec<u8> {
+                APP.with(|a| a.borrow().as_ref().unwrap().cpu.pixmap.data().to_vec())
+            }
+            #[wasm_bindgen]
+            pub fn set_diagnostics(enabled: bool) {
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .engine
+                        .diagnostics
+                        .enable(enabled)
+                });
+            }
+            #[wasm_bindgen]
+            pub fn profile() -> String {
+                APP.with(|a| a.borrow().as_ref().unwrap().engine.diagnostics.json())
+            }
+            #[wasm_bindgen]
+            pub fn inspect() -> String {
+                APP.with(|a| a.borrow().as_ref().unwrap().inspect())
+            }
+            #[wasm_bindgen]
+            pub fn semantics() -> String {
+                APP.with(|a| {
+                    serde_json::to_string(&a.borrow().as_ref().unwrap().engine.runtime.semantics())
+                        .unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn activate(id: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .engine
+                        .dispatch(id, EventData::new(EventKind::Click));
+                });
+            }
+            #[wasm_bindgen]
+            pub fn focus(id: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.focus_node(id));
+            }
+            #[wasm_bindgen]
+            pub fn input(id: f64, value: String, composing: bool) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .engine
+                        .runtime
+                        .input(id, value, composing);
+                });
+            }
+            #[wasm_bindgen]
+            pub fn dispatch(id: f64, event: &str) -> String {
+                let Some(id) = $crate::host_id(id) else {
+                    return "{}".into();
+                };
+                let Ok(event) = serde_json::from_str::<EventData>(event) else {
+                    return "{}".into();
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    let result = a.engine.dispatch(id, event);
+                    a.engine.invalidate();
+                    a.tasks.poll();
+                    serde_json::to_string(&result).unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn edit_sync(
+                id: f64,
+                value: String,
+                anchor: u32,
+                focus: u32,
+                composing: bool,
+            ) -> bool {
+                let Some(id) = $crate::host_id(id) else {
+                    return false;
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    let changed = a.engine.runtime.edit_sync(
+                        id,
+                        value,
+                        anchor as usize,
+                        focus as usize,
+                        composing,
+                    );
+                    // Keep committed hit-test geometry until the next frame. The model
+                    // epoch already requests layout; clearing boxes here would lose
+                    // pointer selection moves arriving before that frame.
+                    a.engine.invalidate();
+                    changed
+                })
+            }
+            #[wasm_bindgen]
+            pub fn edit_value(id: f64) -> String {
+                let Some(id) = $crate::host_id(id) else {
+                    return String::new();
+                };
+                APP.with(|a| {
+                    a.borrow()
+                        .as_ref()
+                        .unwrap()
+                        .engine
+                        .runtime
+                        .edit_value(id)
+                        .unwrap_or_default()
+                })
+            }
+            /// Read the live input model after a synchronous editing default. Layout
+            /// inspection is a committed-frame snapshot and can still hold the prior
+            /// caret until the next render.
+            #[wasm_bindgen]
+            pub fn edit_selection(id: f64) -> String {
+                let Some(id) = $crate::host_id(id) else {
+                    return "null".into();
+                };
+                APP.with(|a| {
+                    let a = a.borrow();
+                    let selection = a
+                        .as_ref()
+                        .unwrap()
+                        .engine
+                        .runtime
+                        .editor(id)
+                        .map(|editor| editor.selection_utf16());
+                    serde_json::to_string(&selection).unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn key_event(
+                id: f64,
+                key: &str,
+                shift: bool,
+                ctrl: bool,
+                alt: bool,
+                meta: bool,
+            ) -> bool {
+                let Some(id) = $crate::host_id(id) else {
+                    return false;
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    let handled = a.engine.key_target(id, key, shift, ctrl, alt, meta);
+                    a.tasks.poll();
+                    handled
+                })
+            }
+            #[wasm_bindgen]
+            pub fn blur(id: f64) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.blur_node(id));
+            }
+            #[wasm_bindgen]
+            pub fn service_commands() -> String {
+                APP.with(|a| {
+                    let a = a.borrow();
+                    let a = a.as_ref().unwrap();
+                    a.tasks.poll();
+                    serde_json::to_string(&a.services.drain()).unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn service_response(version: u32, id: f64, result: &str) -> bool {
+                let Some(id) = $crate::host_id(id) else {
+                    return false;
+                };
+                APP.with(|a| {
+                    let a = a.borrow();
+                    let a = a.as_ref().unwrap();
+                    let accepted = a.services.complete_json(version, id, result);
+                    a.tasks.poll();
+                    accepted
+                })
+            }
+            #[wasm_bindgen]
+            pub fn service_capabilities(report: &str) -> Result<(), JsValue> {
+                let report = serde_json::from_str(report)
+                    .map_err(|_| JsValue::from_str("Invalid service report"))?;
+                APP.with(|a| a.borrow().as_ref().unwrap().services.connect(report))
+                    .map_err(|_| JsValue::from_str("Service handshake failed"))
+            }
+            #[wasm_bindgen]
+            pub fn scroll(dy: f64) {
+                APP.with(|a| a.borrow_mut().as_mut().unwrap().engine.scroll(dy));
+            }
+            #[wasm_bindgen]
+            pub fn commands() -> String {
+                APP.with(|a| {
+                    serde_json::to_string(&a.borrow().as_ref().unwrap().http.drain()).unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn response(id: f64, status: u16, body: Vec<u8>, error: String, version: u32) {
+                let Some(id) = $crate::host_id(id) else {
+                    return;
+                };
+                APP.with(|a| {
+                    a.borrow_mut()
+                        .as_mut()
+                        .unwrap()
+                        .response(id, status, body, &error, version)
+                });
+            }
+            #[wasm_bindgen]
+            pub fn response_meta(
+                id: f64,
+                status: u16,
+                body: Vec<u8>,
+                error: String,
+                version: u32,
+                headers: &str,
+            ) -> bool {
+                let Some(id) = $crate::host_id(id) else {
+                    return false;
+                };
+                let headers =
+                    serde_json::from_str::<Vec<(String, String)>>(headers).unwrap_or_default();
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    let accepted =
+                        a.response_with_headers(id, status, body, headers, &error, version);
+                    a.tasks.poll();
+                    accepted
+                })
+            }
+            #[wasm_bindgen]
+            pub fn host_event(event: &str) -> String {
+                if event.len() > 65536 {
+                    return "{}".into();
+                }
+                let Ok(event) = serde_json::from_str::<EventData>(event) else {
+                    return "{}".into();
+                };
+                APP.with(|a| {
+                    let mut a = a.borrow_mut();
+                    let a = a.as_mut().unwrap();
+                    let result = a.engine.host_event(event);
+                    a.tasks.poll();
+                    serde_json::to_string(&result).unwrap()
+                })
+            }
+            #[wasm_bindgen]
+            pub fn needs_update() -> bool {
+                APP.with(|a| a.borrow().as_ref().unwrap().engine.runtime.needs_update())
+            }
+        }
+    };
+}

@@ -1,0 +1,33 @@
+# Stage 4 candidate — tooling and delivery
+
+12 November 2026, branch `stage-4`, starting at `0fdf4ca`. This is the implementation/delivery candidate for RX-33–RX-46. It does **not** certify the Stage 4 exit gate: that gate requires every v1 row, actual Windows/native distribution, physical mobile/Safari, OS IME, human assistive-technology tasks and the full frozen performance matrix. The authoritative outcomes and hashes are in [ACCEPTANCE.md](ACCEPTANCE.md) and BUILD-INFO.json.
+
+## Authoring and installed CLI
+
+The CLI carries a complete source SDK, so `rustx new` works outside the checkout. A generated app vendors the public crates, browser bridge, fonts/notices and lockfile; it does not reference the original machine's path. No Node, Python, Docker or browser runtime is required by normal Rust/native development. Web builds require pinned Rust 1.90.0, wasm32-unknown-unknown and wasm-bindgen CLI 0.2.100. Registry access is needed on a machine without the locked dependency cache.
+
+`new`, `doctor`, `dev`, `check`, `fmt`, `test`, `build`, `serve`, `symbols` and the separate `playground` service are implemented. Unknown/missing/duplicate options fail. `dev` watches Rust/markup/config/host source, rebuilds, reloads the browser and displays actual Cargo errors while retaining the last working bundle. Native development rebuilds/restarts its process. Browser reload resets state. Output replacement is restricted to project children carrying a RustX bundle marker; symlink/parent traversal is rejected.
+
+`.rs` and `.rustx` use the same Rust module/compiler path. `rustx fmt` runs pinned rustfmt and formats the structural markup token ranges. It retains Rust expression groups, literals, Unicode and comments, and rejects token-changing edits. Rustfmt formats expression groups, including closures and nested RustX macros. Long tags split into indented properties; raw/multiline literal contents and comments are preserved. Structural token checks run after trusted Rustfmt formatting. `npm run format:check` also checks host/scripts/editor HTML/CSS/JavaScript/JSON with pinned Prettier. `tests/ui` intentionally invalid compiler fixtures are excluded. The CLI compatibility binary `rustx-cli` remains available.
+
+The VS Code extension uses Rust's language ID and rust-analyzer. RustX supplies formatter, tag/typed prop completions, definition navigation and the **RustX: Check project** command that maps real Cargo diagnostics to original sources. Macro completions are finite source-derived suggestions; rustc remains the type checker. Automatic invocation is limited to trusted workspaces. Install the supplied local VSIX using `code --install-extension releases/rustx-editor-0.1.0.vsix`. Exact actual editor/extension versions and smoke tasks are in `evidence/stage4-editor.json`.
+
+## Inspection and privacy
+
+`rustx dev` or explicit `build --devtools` enables a separate developer inspector. The visual app still uses Rust layout/text/pixels; HTML inspector controls are an explicit developer tool. Open it with `window.rustx.openInspector()` in the browser console, or add `&inspector=1` to the URL for an explicit floating launcher. The launcher is hidden by default so it cannot cover application controls. Static previews stop reload polling when no development manifest exists. It shows node source and VS Code links, owner/component IDs, scope signal/subscription counts, layout/visible rectangles, semantic state, caches/resources and highlight geometry. Signals are counted without exposing their values.
+
+Profiles retain at most 120 frame samples and 256 event traces. Rust samples report reactive/layout/scene CPU timings, invalidation reasons and the 32 costliest text-measurement nodes per layout; node IDs link back to source. Host frame samples include CPU upload cost. Event traces contain committed paths/cancellation flags and redact typed key characters. Passwords, request contents and source editor values do not enter event traces. These are CPU observations, not GPU timing queries or physical presentation measurements. Node inspection intentionally shows ordinary non-password app text in an explicitly enabled developer build.
+
+Default production builds do not install inspector files/buttons or `window.rustx`, do not enable Rust diagnostics, and omit development source-root paths. `--benchmark --instrument` is a separate lab configuration: it exposes only a minimal benchmark adapter and allocator counts; the profiler stays disabled. It is not the production default. Live allocations and Wasm committed capacity are reported separately.
+
+## Release and support
+
+[stage4/DEPLOYMENT.md](stage4/DEPLOYMENT.md) documents hashed web assets, CSP, gzip, offline behavior and atomic deployment. [stage4/PLAYGROUND.md](stage4/PLAYGROUND.md) documents the actual local compiler and its limits. [stage4/SUPPORT.md](stage4/SUPPORT.md) separates tested paths from missing target/manual evidence. [stage4/SECURITY.md](stage4/SECURITY.md) records advisories, licenses and unsafe boundaries. [TUTORIAL.md](TUTORIAL.md) covers new project authoring and migration.
+
+`scripts/build-windows.ps1` and a manually triggered pinned-action workflow prepare an x64/MSVC candidate with static CRT, embedded fonts, notices, DLL dependency output and checksums. They have not executed on this Mac. A CI file or cross-compile is not a Windows distribution acceptance result. Clean-Windows launch, CPU/GPU/DPI, services, UIA/NVDA and IME remain required; no fabricated Windows executable is included.
+
+`npm run snapshot` identifies reusable source content. `npm run package` requires a committed, clean tree, validates source and bundle identities, and creates a complete versioned ZIP with source, lockfiles, CLI/editor packages, prebuilt browser distributions, tests/evidence, notices, Git history and payload checksums. Build/dependency/compiler caches and credentials are excluded. The archive's GIT-REVISION.txt is the exact delivery commit.
+
+## Replay
+
+Use the commands in NEXT_AGENT.md. Stage 4 tests are `test:stage4:cli`, `test:editor`, `test:stage4:compiler`, `test:stage4:browser`, `test:stage4:deploy` and `test:stage4:budgets`. Compiler and browser compiler-load tests must run **sequentially** because they share the two-job service quota. Actual browser tests need loopback/window/network permission in restricted environments. Preserve failures in `evidence/history/stage4` and identify the exact Wasm for each run. Earlier source/version runs are historical evidence, not passes for a later artifact.

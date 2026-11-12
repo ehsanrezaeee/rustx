@@ -311,7 +311,8 @@ impl CpuRenderer {
                 &shaped,
                 vello::kurbo::Affine::translate((
                     b.rect.x0 + f64::from(s.padding + label_inset),
-                    b.rect.y0 + s.padding as f64,
+                    b.rect.y0 + s.padding as f64
+                        - f64::from(b.node.editing.as_ref().map_or(0., |e| e.scroll_y)),
                 )),
                 s.color,
                 child_mask,
