@@ -1,0 +1,28 @@
+{
+  "result": "passed",
+  "target": "actual wasm32 module in Node; CPU rendering; no browser/IME/AT claim",
+  "checks": [
+    "version/capability handshake and stale envelope rejection",
+    "keyed editable text identity/reset",
+    "malformed and wide IDs",
+    "home preset state",
+    "key identity",
+    "unmount reset",
+    "Persian input model",
+    "derived memo",
+    "idle scheduling",
+    "HTTP command emission",
+    "JSON success",
+    "HTTP error",
+    "cancel/stale result",
+    "30 route lifecycle cycles",
+    "390px responsive navigation",
+    "production host adapter success/size/timeout/abort"
+  ],
+  "node": "v24.18.1",
+  "finalCounts": [
+    82,
+    6,
+    5
+  ]
+}

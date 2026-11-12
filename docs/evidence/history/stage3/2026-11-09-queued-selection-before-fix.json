@@ -1,0 +1,12 @@
+{
+  "result": "failed",
+  "expected": "A👩‍👩‍👧‍👦é سلا",
+  "actual": {
+    "value": "A👩‍👩‍👧‍👦é سلام",
+    "selection": [
+      0,
+      0
+    ]
+  },
+  "limit": "Synthetic queued selection/key events in actual Chrome with compiled Rust; not OS IME evidence"
+}

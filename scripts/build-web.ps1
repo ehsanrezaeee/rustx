@@ -12,5 +12,5 @@ if ($LASTEXITCODE -ne 0) { throw 'Wasm build failed' }
 New-Item -ItemType Directory -Force dist/pkg | Out-Null
 wasm-bindgen target/wasm32-unknown-unknown/release/rustx_lab.wasm --target web --out-dir dist/pkg
 if ($LASTEXITCODE -ne 0) { throw 'Bindings generation failed' }
-Copy-Item web/index.html,web/host.js,web/services.js dist/
+Copy-Item web/index.html,web/host.js,web/services.js,web/semantics.js dist/
 Write-Host 'Built dist/. Run: cargo run -p rustx-cli --locked -- serve dist 3000'

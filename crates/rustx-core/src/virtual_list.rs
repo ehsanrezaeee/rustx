@@ -113,7 +113,7 @@ pub fn virtual_list(state: VirtualListState, render: impl Fn(usize) -> View + 's
                 ),
             );
         }
-        Node::new(Kind::Div)
+        let mut node = Node::new(Kind::Div)
             .role("list")
             .label(format!("{} records", state.count))
             .style(Style::column().gap(0.).height(state.height).clip())
@@ -128,6 +128,8 @@ pub fn virtual_list(state: VirtualListState, render: impl Fn(usize) -> View + 's
                         .height((state.count as f32 * state.row_height).max(1.))
                         .translate(0., -state.effective_offset() as f32),
                 )
-                .children(children)])
+                .children(children)]);
+        node.control.scroll_offset = Some(state.effective_offset());
+        node
     })
 }

@@ -12,6 +12,10 @@ Rust is pinned to 1.90.0; Cargo.lock and package-lock.json are delivered. Use Ca
 | tiny-skia / fontdue | 0.11.4 / 0.9.3 | CPU rendering |
 | winit / softbuffer | 0.30.12 / 0.4.6 | Native window/presentation |
 | ureq | 2.12.1 | Native HTTP |
+| tungstenite | 0.28.0 | Bounded native ws/wss adapter and local WebSocket fixture server; rustls TLS for clients |
+| AccessKit / accesskit_winit | 0.25.1 / 0.34.1 | Native semantic projection and Windows UI Automation adapter source |
+| unicode-segmentation | 1.13.3 | Grapheme-aware portable editing |
+| png | 0.17.16 | Bounded shared PNG asset decoding; expands palette/grayscale/16-bit input to RGBA8 |
 | typed-builder / trybuild | 0.20.1 / 1.0.115 | Props/compiler tests |
 | sharp / Playwright | 0.35.5 / 1.64.1 | Test PNGs/browser automation |
 | DejaVu Sans | Embedded asset | See assets/FONT-LICENSE.txt |
@@ -35,3 +39,5 @@ The font is copied from the official [Google Fonts Noto Emoji directory at the p
 This is monochrome outline fallback, not a claim of complete color emoji or every emoji sequence. Shared shaping chooses each run's font; CPU rasterization uses the same font identity rather than treating fallback glyph IDs as DejaVu glyph IDs. The SIL license and copyright notice travel with the source/assets. Stage 2 does not introduce a new Cargo dependency for this font.
 
 Stage 2 promotes the already locked kurbo 0.11.3 geometry library to a direct core dependency for path winding/stroke hit tests, reusing established geometry calculations.
+
+Stage 3 adds typed Serde/serde_json service envelopes, versioned storage values and JSON response decoding. Exact direct/transitive dependency resolutions remain in Cargo.lock. AccessKit integration source and successful compilation do not establish Windows UI Automation or screen-reader task success. Native clipboard/file/print adapters use explicitly detected OS utilities rather than adding a Python or browser runtime dependency.

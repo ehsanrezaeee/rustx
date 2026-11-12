@@ -1,0 +1,22 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.61s
+     Running tests/editing_forms.rs (target/debug/deps/editing_forms-1a5321d34b1b8ece)
+
+running 1 test
+
+thread 'composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text' panicked at crates/rustx/tests/editing_forms.rs:146:9:
+assertion `left == right` failed
+  left: Selection { anchor: 1, focus: 1 }
+ right: Selection { anchor: 3, focus: 3 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text ... FAILED
+
+failures:
+
+failures:
+    composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p rustx --test editing_forms`

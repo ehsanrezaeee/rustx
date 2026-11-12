@@ -1,8 +1,10 @@
-# Acceptance ledger — 2 November 2026
+# Acceptance ledger — 10 November 2026
 
-Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stage 1 platform/manual gates and Stage 2 full target acceptance remain open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
+Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stages 1–3 platform/manual acceptance remains open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
 
 ## Executed checks
+
+Documentation addition, 10 November 2026: `node scripts/create-flow-guide.mjs` generated the six-page [visual flow PDF](visual-guide/rustx-app-flow.pdf) and HTML/SVG source using local Chrome. All six page layouts passed overflow/footer checks and the page contact sheet was visually reviewed. Artifact hashes and limits are in `evidence/visual-guide.json`. This was a documentation export; no new application/platform/performance pass is claimed and the runtime/built demo were not changed.
 
 | Evidence | Command | Actual result and limit |
 | --- | --- | --- |
@@ -35,7 +37,7 @@ Corrections found by the actual browser runs: empty semantic Text labels; unboun
 ## Missing platform evidence
 
 - No actual Windows machine/session was exercised, and no Windows binary is included. Native Mac window startup does not close RX-07.
-- No human screen-reader or real OS IME task completed. Rust-painted caret/selection/preedit and full editing remain incomplete. Follow PLATFORM_CHECKS.md before accepting RX-09.
+- No human screen-reader or real OS IME task completed. Stage 3 implements Rust-painted caret/selection/preedit and grapheme/undo/composition editing, but their actual IME/assistive-technology target acceptance remains open. Follow PLATFORM_CHECKS.md before accepting RX-09.
 - Firefox 135/157 failed to start with profile/sandbox errors on this host, in headless and attempted visible runs. Retain `current-browser-firefox.log` and `history/` logs; no Firefox pass is claimed. Playwright WebKit does not certify Safari, iOS or Android.
 - The pinned Chromium download returned a regional CDN 403 (`current-browser-install.log`); the final Chromium suite used the already installed Chrome. This is a download limitation, not a passing bundled-Chromium result.
 - JSONPlaceholder live API success, full visual conformance/device recovery, Windows replay and the exact Android benchmark device remain open.
@@ -59,6 +61,23 @@ Tests exposed and fixed: alpha-premultiplication/image-alpha mismatch, missed im
 
 Stage 2 is implemented and exercised on these available paths; acceptance remains unverified for Windows/native cross-target parity/recovery, actual Safari/mobile, background/native DPI matrix, broader text/effect conformance and fixed-hardware performance. Original OS IME/screen-reader gates remain open. Earlier diagnostic failures are retained under `history/stage2`; reports marked passed are final runs.
 
+## Stage 3 delivery — 10 November 2026
+
+Stage 3 implementation is delivered on `stage-3`, preserving the mount-once runtime and Rust-owned layout, text, editing and scene. The Applications dashboard uses the public forms/widgets/services; People exposes search/details/copy/print and the drawing board supports editing/export. Environment: macOS 27.0.1 (26A434), arm64 Apple M3 MacBook Air, Rust 1.90.0, Node 24.18.1, installed Chrome 157.0.8103.40 and Playwright WebKit 27.2. Source content is identified by SOURCE-REVISION.txt; BUILD-INFO.json identifies the rebuilt browser artifacts. The delivered archive adds its exact commit and payload checksums. All five final Stage 3/engine browser reports identify Wasm SHA-256 `ab207951fc412b9ec041b319a9aae7acbf3143ede855fc27be7093a8344fd86b`; prior runs remain under `history/stage3/pre-2026-11-10-replay/`.
+
+| Evidence | Executed command / result | Limit |
+| --- | --- | --- |
+| S3-1 | `cargo test --workspace --locked` PASS: **120 tests**, zero failures, one ignored native networking fixture; four expected compiler-error cases also pass. `cargo fmt --all -- --check` PASS. `stage3-final-workspace-tests.log`, `stage3-final-format-check.log`. | Deterministic Mac core/engine contracts, including committed event paths/cancellation, capture disposal, widget state, grapheme/UTF-16/composition/undo, forms/validation, query races, routing, assets and native semantic projection. Does not certify Windows, OS IME or AT tasks. |
+| S3-2 | `bash scripts/build-web.sh`, `npm ci`, `npm run test:host`, `npm run test:wasm`, `npm run test:stage2` PASS. `stage3-final-web-build.log`, `stage3-final-npm-ci.log`, `stage3-final-host-tests.log`, `stage3-final-inherited-wasm.log`, `stage3-final-stage2-wasm.log` and `stage2-wasm.json`. | Actual rebuilt Wasm/CPU in Node; injected host contracts remain distinct from real browser/network evidence. Local frame samples are not frozen performance acceptance. |
+| S3-3 | `RUSTX_TEST_PORT=3001 npm run test:http`, `npm run test:stage3:services` PASS. `stage3-final-http-tests.log`, `stage3-final-services.log`. | Actual loopback Rust server → production Fetch/WebSocket adapters; methods/headers/body, streaming pull, echo/close/cleanup, timers/cancel. Clipboard denial is an explicitly injected contract test. No external API/CORS/native Windows claim. |
+| S3-4 | `CHROME_PATH='…/Google Chrome' npm run test:stage3:browser`, `RUSTX_BROWSER=webkit npm run test:stage3:browser` PASS. `stage3-browser-{chromium,webkit}.json` and `stage3-final-browser-*.log`/1200px/390px screenshots. | Actual browser forms, dirty/errors/validation/stale results, password redaction, UTF-16/grapheme/undo and queued-selection ordering, modal focus/Escape, IndexedDB drafts, JSON/multipart/stream/socket, file chooser/download, recoverable subtree retry, search/details/printable export, history/reload, drawing edit/10,000-object CSV export, narrow layout and idle. Chromium additionally verifies real clipboard write/readback. Text injection/ordering regressions are not OS IME; printable text is not a physical printer task; WebKit is not Safari. |
+| S3-5 | `npm run test:stage2:browser` PASS in Chrome and WebKit CPU; visible Chrome `RUSTX_TEST_GPU=1 RUSTX_HEADED=1` PASS. `stage3-final-stage2-browser-*.log`, `stage2-browser-{chromium-cpu,webkit-cpu,chromium-gpu}.json`. | Actual pointer/keyboard camera, bounded/focus-retaining virtual collection, nested wheel/resize/DPR/idle. Physical Apple Metal 3 direct browser presentation observes 80 submissions / 40 canvas textures and zero texture-to-buffer copies, MAP_READ or CPU uploads in the normal GPU phase. Actual `GPUDevice.destroy` recovers to CPU with retained state, then a fresh GPU device renders. No Windows/driver-reset/full conformance/performance claim. |
+| S3-6 | `cargo test -p rustx-engine --locked actual_native_pull_stream_and_socket_echo -- --ignored --nocapture` PASS. Applications `RUSTX_SMOKE_FRAMES=2` native runs PASS with the default renderer and forced CPU. `stage3-final-native-services.log`, `stage3-final-native-gpu-smoke.log`, `stage3-final-native-cpu-smoke.log`. | Actual native Mac loopback stream/socket and two-frame native windows, on final source. Startup is not full native interaction, UIA, IME or Windows evidence. |
+
+Delivery review fixed a missing direct PNG lock dependency and unexported asset modules, joined-grapheme caret/undo/read-only edge cases, controlled combobox synchronization/disabled-option navigation, terminal pointer-capture release after disabling/hiding/modal changes, native history-mode navigation, and stale browser selection events overwriting newer Rust keyboard edits before the next frame. Regression failures and sandbox limitations are retained under `evidence/history/stage3/`. Earlier Stage 2 reports are preserved in `history/stage3/pre-delivery/` before replay against the new Wasm. The final 10 November review adds regressions for composition joining combining marks, regional indicators and ZWJ emoji; successful async validation preserving field/form-level synchronous errors; and logical asset kinds rejecting changes without orphaning renderer resources. `stage3-final-editing-tests.log` and `stage3-delivery-assets.log` record focused passes; before-fix failures are retained under `history/stage3/`. Repeated packaging clears its generated directory/archive so old payloads and manifests cannot invalidate checksums. Source/build metadata is refreshed for Stage 3. No unavailable platform was substituted with a mock or compile-only pass.
+
+Stage 3 implementation delivery does not close its full exit gate: real Windows browser/native forms and services, NVDA/UI Automation, VoiceOver with actual Safari, real Persian/English OS IME, physical mobile keyboards/touch/AT, full native permissions/printer behavior and cross-target renderer/DPI/recovery still require actual target evidence. Stage 4 tooling/release and RX-45/RX-46 final successful examples remain separate.
+
 ## Requirement states
 
 | ID | Status | Evidence / remaining gate |
@@ -81,20 +100,20 @@ Stage 2 is implemented and exercised on these available paths; acceptance remain
 | RX-16 | implemented_unverified | S2-1–S2-4: bounded LRU/payload policies, drawing culling, scoped 100k list, focused-row retention, metadata and lifecycle checks; full resource/device matrix pending. |
 | RX-17 | implemented_unverified | S2-1–S2-4: public retained CanvasScene, paths/transforms, hit tests, camera-relative large coordinates, pointer/keyboard pan/pick and zoom; native interaction matrix pending. |
 | RX-18 | in_progress | S2-2–S2-4: demand-driven idle, resize, viewport/DPR2 and guarded surfaces; hidden/resume/native DPI and platform matrix pending. |
-| RX-19 | in_progress | Click/input dispatch; full capture/bubble/default-action contract missing. |
-| RX-20 | in_progress | Basic focus/scroll/native keyboard; nested/modal/touch matrix missing. |
-| RX-21 | in_progress | Primitive components only; full required library missing. |
-| RX-22 | in_progress | Whole-string model/composition forwarding; visible caret/selection/undo/grapheme editing incomplete. |
-| RX-23 | not_started | No acceptance implementation/evidence yet. |
-| RX-24 | in_progress | Semantic projection source; real screen-reader tasks missing. |
-| RX-25 | not_started | No acceptance implementation/evidence yet. |
-| RX-26 | in_progress | E4 real fixture HTTP success/503/cancel; full browser/native/race matrix and API pending. |
-| RX-27 | not_started | No acceptance implementation/evidence yet. |
-| RX-28 | not_started | No acceptance implementation/evidence yet. |
-| RX-29 | not_started | No acceptance implementation/evidence yet. |
-| RX-30 | not_started | No acceptance implementation/evidence yet. |
-| RX-31 | not_started | No acceptance implementation/evidence yet. |
-| RX-32 | in_progress | Demo error states and fatal host message; complete recovery flows pending. |
+| RX-19 | implemented_unverified | S3-1: committed capture/target/bubble/default actions, pointer ownership/release and cancellation regressions; complete browser/native target replay pending. |
+| RX-20 | implemented_unverified | S3-1/S3-4/S3-5: modal/keyboard/slider/nested-scroll/capture behavior; physical touch/mobile and Windows task matrix pending. |
+| RX-21 | implemented_unverified | S3-1: finite widget vocabulary, composed controls, semantic/interaction fixtures; full real-target per-widget tasks pending. |
+| RX-22 | implemented_unverified | S3-1: grapheme/UTF-16/bidi selection, Rust caret/preedit, undo/redo/read-only; real OS IME, autofill/mobile and full target matrix pending. |
+| RX-23 | implemented_unverified | S3-1/S3-4: dirty/touched/reset/errors/controlledness, owner/generation-safe async validation/submission; Windows/AT/mobile target form tasks pending. |
+| RX-24 | blocked | Browser semantic/input projection implemented with relationships, modal/focus and password redaction; human screen-reader tasks remain unexecuted. |
+| RX-25 | blocked | S3-1 native AccessKit projection/action source and fixtures; actual Windows UIA/NVDA form completion unavailable. |
+| RX-26 | implemented_unverified | S3-1–S3-3: methods/headers/body/futures, timeout/status/decode/size/cancel/stale disposal; full browser/native target and public API matrix pending. |
+| RX-27 | implemented_unverified | S3-1/S3-3/S3-6: multipart, actual pull streams/WebSocket, size/backpressure/close/disposal; full target/adverse network matrix pending. |
+| RX-28 | implemented_unverified | S3-1: bounded query deduplication, observers/invalidation/refetch, mutations and stale/disposal tests; full real-target tasks pending. |
+| RX-29 | implemented_unverified | S3-1/S3-4: typed Unicode params/query/fragment, guard/history/hash and native push/replace/back/forward; real browser deep-link/reload/Back. Complete target URL task matrix pending. |
+| RX-30 | implemented_unverified | S3-1/S3-3: typed storage/migrations/files/clipboard, explicit denial/quota/cleanup, logical revisioned assets/PNG decode; actual native permission/dialog matrix pending. |
+| RX-31 | implemented_unverified | S3-4: Rust search/selection, actual Chromium clipboard readback, actual browser printable text export; native/screen-reader/physical printer matrix pending. |
+| RX-32 | implemented_unverified | S3-4: actual recoverable subtree retry; fatal host reload UI implemented. Complete native/browser failure matrix pending. |
 | RX-33 | in_progress | .rustx module inclusion works; editor/formatter parity missing. |
 | RX-34 | in_progress | serve command supplied; project generation/doctor/reload commands missing. |
 | RX-35 | in_progress | JSON node/count/semantic inspector; profiler/event tracing missing. |

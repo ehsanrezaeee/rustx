@@ -1,0 +1,42 @@
+   Compiling serde_core v1.0.229
+   Compiling bitflags v2.13.2
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling rustix v1.1.5
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling gpu-alloc-types v0.3.1
+   Compiling rustix v0.38.44
+   Compiling wgpu-types v24.0.0
+   Compiling gpu-alloc v0.6.2
+   Compiling gpu-descriptor v0.3.2
+   Compiling xkbcommon-dl v0.4.2
+   Compiling rustx-core v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-core)
+   Compiling rustybuzz v0.14.1
+   Compiling naga v24.0.0
+   Compiling rustx v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx)
+   Compiling cosmic-text v0.14.2
+   Compiling gethostname v1.1.0
+   Compiling wayland-backend v0.3.17
+   Compiling polling v3.11.0
+   Compiling x11rb v0.13.2
+   Compiling wayland-client v0.31.15
+   Compiling drm-ffi v0.8.0
+   Compiling drm v0.12.0
+   Compiling calloop v0.13.0
+   Compiling winit v0.30.12
+   Compiling softbuffer v0.4.6
+   Compiling wgpu-hal v24.0.4
+   Compiling wgpu-core v24.0.5
+   Compiling wgpu v24.0.5
+   Compiling vello v0.5.0
+   Compiling rustx-engine v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx-web v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/examples/lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.09s
+     Running `target/debug/examples/render_probe docs/evidence --gpu`
+CPU shared scene rendered
+error: XDG_RUNTIME_DIR is invalid or not set in the environment.
+Adapter: AdapterInfo { name: "llvmpipe (LLVM 20.1.2, 256 bits)", vendor: 65541, device: 0, device_type: Cpu, driver: "", driver_info: "4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.2", backend: Gl }
+Initialising in parallel using 6 threads
+Offscreen Vello probe passed; not hardware/browser presentation certification

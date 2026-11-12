@@ -1,6 +1,10 @@
 //! Native event loop; scoped state remains on the UI thread.
+mod services;
 use crate::{cpu::CpuRenderer, gpu::Gpu, Engine};
-use rustx_core::{HostCommand, HostError, HttpClient, HttpResponse, HOST_PROTOCOL_VERSION};
+use rustx_core::{
+    HostCommand, HostError, HttpClient, HttpResponse, ServiceClient, TaskQueue,
+    HOST_PROTOCOL_VERSION,
+};
 use std::{
     collections::HashMap,
     io::Read,
@@ -20,6 +24,21 @@ use winit::{
 };
 pub fn report_error(s: &str) {
     eprintln!("RustX: {s}");
+}
+fn transport_error(error: &(dyn std::error::Error + 'static)) -> HostError {
+    let mut cause = Some(error);
+    while let Some(error) = cause {
+        if let Some(io) = error.downcast_ref::<std::io::Error>() {
+            if matches!(
+                io.kind(),
+                std::io::ErrorKind::TimedOut | std::io::ErrorKind::WouldBlock
+            ) {
+                return HostError::Timeout;
+            }
+        }
+        cause = error.source();
+    }
+    HostError::Transport("Network request failed".into())
 }
 struct Software {
     renderer: CpuRenderer,
@@ -41,6 +60,9 @@ impl Software {
         self.renderer.sync_images(&e.painter);
         self.renderer.clear_color = e.layout.theme.background;
         self.renderer.draw(root, &mut e.text, w, h, dpr);
+        self.renderer.focus(root, e.focused_node(), dpr);
+        self.renderer
+            .editing(root, e.focused_node(), &mut e.text, dpr);
         self.surface
             .resize(w.try_into().unwrap(), h.try_into().unwrap())
             .map_err(|e| e.to_string())?;
@@ -58,6 +80,9 @@ type ResultMessage = (u64, Result<HttpResponse, HostError>);
 struct App {
     engine: Engine,
     http: HttpClient,
+    services: ServiceClient,
+    native_services: services::NativeServices,
+    tasks: TaskQueue,
     window: Option<Arc<Window>>,
     gpu: Option<Gpu>,
     cpu: Option<Software>,
@@ -66,17 +91,60 @@ struct App {
     rx: mpsc::Receiver<ResultMessage>,
     pending: HashMap<u64, Arc<AtomicBool>>,
     pointer: Point,
+    touch: Option<(u64, Point, bool)>,
     shift: bool,
+    ctrl: bool,
+    alt: bool,
+    meta: bool,
     active_input: Option<u64>,
     frames: u32,
     smoke: u32,
     failure: Option<String>,
+    accessibility: Option<crate::accessibility::NativeAccessibility>,
 }
 impl App {
+    fn resource_failure(
+        &mut self,
+        source: rustx_core::ResourceSource,
+        code: &str,
+        status: Option<u16>,
+    ) {
+        let mut event = rustx_core::EventData::new(rustx_core::EventKind::ResourceError);
+        event.resource_error = Some(rustx_core::ResourceFailure {
+            source,
+            code: code.into(),
+            status,
+        });
+        self.engine.host_event(event);
+    }
     fn network(&mut self) {
+        if let Some(accessibility) = &mut self.accessibility {
+            accessibility.dispatch_actions(&mut self.engine);
+        }
+        for failure in self.native_services.pump(&self.services, &self.proxy) {
+            let mut event = rustx_core::EventData::new(rustx_core::EventKind::ResourceError);
+            event.resource_error = Some(failure);
+            self.engine.host_event(event);
+        }
         for (id, result) in self.rx.try_iter() {
             self.pending.remove(&id);
-            self.http.complete(HOST_PROTOCOL_VERSION, id, result);
+            let failure = match &result {
+                Err(HostError::Cancelled) => None,
+                Err(HostError::Timeout) => Some(("timeout", None)),
+                Err(HostError::TooLarge) => Some(("too_large", None)),
+                Err(_) => Some(("transport", None)),
+                _ => None,
+            };
+            let accepted = self.http.complete(HOST_PROTOCOL_VERSION, id, result);
+            if let Some((code, status)) = failure.filter(|_| accepted) {
+                let mut event = rustx_core::EventData::new(rustx_core::EventKind::ResourceError);
+                event.resource_error = Some(rustx_core::ResourceFailure {
+                    source: rustx_core::ResourceSource::Http,
+                    code: code.into(),
+                    status,
+                });
+                self.engine.host_event(event);
+            }
         }
         for cmd in self.http.drain() {
             match cmd {
@@ -85,7 +153,7 @@ impl App {
                         c.store(true, Ordering::Release);
                     }
                 }
-                HostCommand::Get(req) => {
+                HostCommand::Get(req) | HostCommand::Request(req) => {
                     if self.pending.len() >= 16 {
                         self.http.complete(
                             HOST_PROTOCOL_VERSION,
@@ -108,24 +176,41 @@ impl App {
                             let agent = ureq::AgentBuilder::new()
                                 .timeout(std::time::Duration::from_millis(req.timeout_ms as u64))
                                 .build();
-                            let r = match agent.get(&url).call() {
+                            let mut request = agent.request(&req.method, &url);
+                            for (name, value) in &req.headers {
+                                request = request.set(name, value);
+                            }
+                            let r = match if req.body.is_empty() {
+                                request.call()
+                            } else {
+                                request.send_bytes(&req.body)
+                            } {
                                 Ok(r) => r,
                                 Err(ureq::Error::Status(_, r)) => r,
-                                Err(e) => return Err(HostError::Transport(e.to_string())),
+                                Err(e) => return Err(transport_error(&e)),
                             };
                             let status = r.status();
+                            let headers = r
+                                .headers_names()
+                                .into_iter()
+                                .filter_map(|name| r.header(&name).map(|v| (name, v.to_owned())))
+                                .collect();
                             let mut body = vec![];
                             r.into_reader()
                                 .take(req.max_bytes as u64 + 1)
                                 .read_to_end(&mut body)
-                                .map_err(|e| HostError::Transport(e.to_string()))?;
+                                .map_err(|e| transport_error(&e))?;
                             if body.len() > req.max_bytes {
                                 return Err(HostError::TooLarge);
                             }
                             if cancel.load(Ordering::Acquire) {
                                 return Err(HostError::Cancelled);
                             }
-                            Ok(HttpResponse { status, body })
+                            Ok(HttpResponse {
+                                status,
+                                headers,
+                                body,
+                            })
                         })();
                         let _ = tx.send((req.id, result));
                         let _ = wake.send_event(());
@@ -133,36 +218,52 @@ impl App {
                 }
             }
         }
+        self.tasks.poll();
     }
     fn focus_input(&mut self) {
-        fn input(n: &rustx_core::Snapshot, id: u64) -> bool {
-            (n.id == id && n.kind == rustx_core::Kind::Input)
-                || n.children.iter().any(|c| input(c, id))
-        }
         self.active_input = self
             .engine
             .focused_node()
-            .filter(|id| input(&self.engine.runtime.snapshot(), *id));
+            .filter(|id| self.engine.runtime.editor(*id).is_some());
         if let Some(w) = &self.window {
-            w.set_ime_allowed(self.active_input.is_some());
-        }
-    }
-    fn edit(&mut self, text: &str, delete: bool) {
-        let Some(id) = self.active_input else { return };
-        fn value(n: &rustx_core::Snapshot, id: u64) -> Option<String> {
-            if n.id == id {
-                Some(n.text.clone())
-            } else {
-                n.children.iter().find_map(|c| value(c, id))
+            w.set_ime_allowed(
+                self.active_input
+                    .and_then(|id| self.engine.runtime.editor(id))
+                    .is_some_and(|editor| !editor.is_read_only()),
+            );
+            if let Some(id) = self.active_input {
+                fn find(b: &crate::layout::BoxNode, id: u64) -> Option<&crate::layout::BoxNode> {
+                    if b.node.id == id {
+                        Some(b)
+                    } else {
+                        b.children.iter().find_map(|b| find(b, id))
+                    }
+                }
+                if let Some(b) = self.engine.boxes.as_ref().and_then(|b| find(b, id)) {
+                    if let Some(editor) = &b.node.editing {
+                        let style = &b.node.style;
+                        let shaped = self.engine.text.shape_with(
+                            &b.node.text_content(),
+                            style.font_size,
+                            (b.rect.width() as f32 - 2. * style.padding).max(1.),
+                            style.text_align,
+                            style.text_direction,
+                        );
+                        let caret = crate::editing::caret_rect(
+                            &shaped,
+                            editor.selection.focus,
+                            style.font_size,
+                        );
+                        w.set_ime_cursor_area(
+                            winit::dpi::LogicalPosition::new(
+                                b.rect.x0 + style.padding as f64 + caret.x0,
+                                b.rect.y0 + style.padding as f64 + caret.y0,
+                            ),
+                            winit::dpi::LogicalSize::new(caret.width(), caret.height()),
+                        );
+                    }
+                }
             }
-        }
-        if let Some(mut v) = value(&self.engine.runtime.snapshot(), id) {
-            if delete {
-                v.pop();
-            } else {
-                v.push_str(text);
-            }
-            self.engine.runtime.input(id, v, false);
         }
     }
 }
@@ -173,7 +274,8 @@ impl ApplicationHandler<()> for App {
         }
         let w = match events.create_window(
             Window::default_attributes()
-                .with_title("RustX / Stage 1")
+                .with_title("RustX / Stage 3")
+                .with_visible(false)
                 .with_inner_size(LogicalSize::new(1150., 900.)),
         ) {
             Ok(w) => Arc::new(w),
@@ -183,10 +285,23 @@ impl ApplicationHandler<()> for App {
                 return;
             }
         };
+        self.accessibility = Some(crate::accessibility::NativeAccessibility::new(
+            events,
+            &w,
+            self.proxy.clone(),
+        ));
+        w.set_visible(true);
         if std::env::var("RUSTX_RENDERER").as_deref() != Ok("cpu") {
             match pollster::block_on(Gpu::new(w.clone())) {
                 Ok(g) => self.gpu = Some(g),
-                Err(e) => report_error(&format!("GPU failed ({e}); trying CPU")),
+                Err(e) => {
+                    self.resource_failure(
+                        rustx_core::ResourceSource::Renderer,
+                        "gpu_init_failed",
+                        None,
+                    );
+                    report_error(&format!("GPU failed ({e}); trying CPU"));
+                }
             }
         }
         if self.gpu.is_none() {
@@ -210,22 +325,112 @@ impl ApplicationHandler<()> for App {
     }
     fn window_event(&mut self, events: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         let Some(w) = self.window.clone() else { return };
+        if let Some(accessibility) = &mut self.accessibility {
+            accessibility.process_event(&w, &event);
+        }
         match event {
             WindowEvent::CloseRequested => events.exit(),
             WindowEvent::Resized(_) | WindowEvent::ScaleFactorChanged { .. } => {
+                let size = w.inner_size();
+                let scale = w.scale_factor();
+                let mut event = rustx_core::EventData::new(rustx_core::EventKind::Resize);
+                event.width = size.width as f64 / scale;
+                event.height = size.height as f64 / scale;
+                event.scale = scale;
+                self.engine.host_event(event);
                 self.engine.invalidate();
                 w.request_redraw();
             }
-            WindowEvent::ModifiersChanged(m) => self.shift = m.state().shift_key(),
+            WindowEvent::DroppedFile(path) => {
+                if let Some(name) = path.file_name() {
+                    let metadata = rustx_core::DroppedFileMetadata {
+                        name: name.to_string_lossy().into_owned(),
+                        mime: None,
+                        size: std::fs::metadata(&path).ok().map(|metadata| metadata.len()),
+                    };
+                    let mut event = rustx_core::EventData::new(rustx_core::EventKind::FileDrop);
+                    event.x = self.pointer.x;
+                    event.y = self.pointer.y;
+                    event.files.push(metadata);
+                    self.engine.host_event(event);
+                    self.network();
+                    w.request_redraw();
+                }
+            }
+            WindowEvent::ModifiersChanged(m) => {
+                self.shift = m.state().shift_key();
+                self.ctrl = m.state().control_key();
+                self.alt = m.state().alt_key();
+                self.meta = m.state().super_key();
+            }
             WindowEvent::CursorMoved { position, .. } => {
                 self.pointer =
                     Point::new(position.x / w.scale_factor(), position.y / w.scale_factor());
                 self.engine.pointer_move(self.pointer);
-                if self.engine.runtime.needs_update() {
+                if self.engine.runtime.needs_update()
+                    || self.engine.runtime.captured_pointer(0).is_some()
+                {
                     w.request_redraw();
                 }
             }
-            WindowEvent::Focused(false) | WindowEvent::CursorLeft { .. } => self.engine.cancel(),
+            WindowEvent::Focused(false) | WindowEvent::CursorLeft { .. } => {
+                self.engine.cancel();
+                if let Some(id) = self.active_input {
+                    if let Some(editor) = self.engine.runtime.editor(id) {
+                        editor.composition_cancel();
+                        self.engine.runtime.invalidate_model();
+                        self.engine.invalidate();
+                    }
+                }
+            }
+            WindowEvent::Touch(touch) => {
+                let point = Point::new(
+                    touch.location.x / w.scale_factor(),
+                    touch.location.y / w.scale_factor(),
+                );
+                match touch.phase {
+                    winit::event::TouchPhase::Started if self.touch.is_none() => {
+                        self.touch = Some((touch.id, point, false));
+                        self.pointer = point;
+                        self.engine.pointer_down(point);
+                        self.focus_input();
+                    }
+                    winit::event::TouchPhase::Moved => {
+                        if let Some((id, last, dragged)) = self.touch {
+                            if id == touch.id {
+                                let dy = point.y - last.y;
+                                let changed = dragged || point.distance(last) > 2.;
+                                if self
+                                    .engine
+                                    .focused_node()
+                                    .is_some_and(|id| self.engine.canvas_at(id).is_some())
+                                {
+                                    self.engine.pointer_move(point);
+                                } else if changed {
+                                    self.engine.cancel();
+                                    self.engine.scroll_at(point, -dy);
+                                }
+                                self.touch = Some((id, point, changed));
+                            }
+                        }
+                    }
+                    winit::event::TouchPhase::Ended => {
+                        if self.touch.is_some_and(|(id, _, _)| id == touch.id) {
+                            self.touch = None;
+                            self.engine.pointer_up(point);
+                        }
+                    }
+                    winit::event::TouchPhase::Cancelled => {
+                        if self.touch.is_some_and(|(id, _, _)| id == touch.id) {
+                            self.touch = None;
+                            self.engine.cancel();
+                        }
+                    }
+                    _ => {}
+                }
+                self.network();
+                w.request_redraw();
+            }
             WindowEvent::MouseInput {
                 state,
                 button: MouseButton::Left,
@@ -249,28 +454,88 @@ impl ApplicationHandler<()> for App {
                 w.request_redraw();
             }
             WindowEvent::Ime(Ime::Commit(s)) => {
-                self.edit(&s, false);
+                if let Some(id) = self.active_input {
+                    if let Some(editor) = self.engine.runtime.editor(id) {
+                        editor.composition_cancel();
+                    }
+                }
+                self.engine.insert_text(&s);
                 w.request_redraw();
             }
-            WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
-                match event.logical_key {
-                    Key::Named(NamedKey::Tab) => {
-                        self.engine.tab(self.shift);
-                        self.focus_input();
+            WindowEvent::Ime(Ime::Preedit(s, _)) => {
+                if let Some(id) = self.active_input {
+                    if let Some(editor) = self.engine.runtime.editor(id) {
+                        let _ = editor.composition_update(&s);
+                        self.engine.runtime.invalidate_model();
+                        self.engine.invalidate();
                     }
-                    Key::Named(NamedKey::Backspace) if self.active_input.is_some() => {
-                        self.edit("", true)
-                    }
-                    Key::Named(NamedKey::Enter | NamedKey::Space)
-                        if self.active_input.is_none() =>
-                    {
-                        self.engine.activate()
-                    }
-                    Key::Character(ref s) if self.active_input.is_some() => self.edit(s, false),
-                    _ => (),
                 }
+                w.request_redraw();
+            }
+            WindowEvent::Ime(Ime::Disabled) => {
+                if let Some(id) = self.active_input {
+                    if let Some(editor) = self.engine.runtime.editor(id) {
+                        editor.composition_cancel();
+                        self.engine.runtime.invalidate_model();
+                        self.engine.invalidate();
+                    }
+                }
+            }
+            WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
+                let key = match &event.logical_key {
+                    Key::Named(NamedKey::Space) => " ".to_owned(),
+                    Key::Named(n) => format!("{n:?}"),
+                    Key::Character(s) => s.to_string(),
+                    _ => String::new(),
+                };
+                let handled = self
+                    .engine
+                    .key(&key, self.shift, self.ctrl, self.alt, self.meta);
+                if !handled && (self.ctrl || self.meta) && !self.alt {
+                    if let Some(id) = self.active_input {
+                        if let Some(editor) = self.engine.runtime.editor(id) {
+                            match key.to_lowercase().as_str() {
+                                "c" => {
+                                    if let Ok(text) = editor.copy() {
+                                        let _ = services::clipboard(false, &text);
+                                    }
+                                }
+                                "x" => {
+                                    if let Ok(text) = editor.copy() {
+                                        if services::clipboard(false, &text).is_ok() {
+                                            let _ = editor.cut();
+                                            self.engine.runtime.input(id, editor.value(), false);
+                                            self.engine.runtime.invalidate_model();
+                                            self.engine.invalidate();
+                                        }
+                                    }
+                                }
+                                "v" => {
+                                    if let Ok(rustx_core::ServiceValue::Text { text }) =
+                                        services::clipboard(true, "")
+                                    {
+                                        self.engine.insert_text(&text);
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                }
+                self.focus_input();
                 self.network();
                 w.request_redraw();
+            }
+            WindowEvent::KeyboardInput { event, .. } => {
+                if let Some(id) = self.engine.focused_node() {
+                    let mut data = rustx_core::EventData::new(rustx_core::EventKind::KeyUp);
+                    data.key = match event.logical_key {
+                        Key::Named(n) => format!("{n:?}"),
+                        Key::Character(s) => s.to_string(),
+                        _ => String::new(),
+                    };
+                    self.engine.runtime.dispatch(id, data);
+                }
             }
             WindowEvent::RedrawRequested => {
                 self.network();
@@ -293,6 +558,10 @@ impl ApplicationHandler<()> for App {
                     (size.height as f64 / scale) as f32,
                     scale,
                 );
+                self.focus_input();
+                if let Some(accessibility) = &mut self.accessibility {
+                    accessibility.update(&self.engine);
+                }
                 let r = if let Some(g) = &mut self.gpu {
                     g.resize(size);
                     g.draw(&self.engine)
@@ -302,6 +571,11 @@ impl ApplicationHandler<()> for App {
                     Ok(())
                 };
                 if let Err(error) = r {
+                    self.resource_failure(
+                        rustx_core::ResourceSource::Renderer,
+                        "presentation_failed",
+                        None,
+                    );
                     if self.gpu.take().is_some() {
                         report_error(&format!("GPU failed ({error}); recovering through CPU"));
                         match Software::new(w.clone()).and_then(|mut cpu| {
@@ -335,7 +609,20 @@ impl ApplicationHandler<()> for App {
         }
     }
 }
-pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String> {
+pub fn run_with_http(engine: Engine, http: HttpClient) -> Result<(), String> {
+    run_with_services(engine, http, ServiceClient::default(), TaskQueue::default())
+}
+pub fn run_with_services(
+    mut engine: Engine,
+    http: HttpClient,
+    services: ServiceClient,
+    tasks: TaskQueue,
+) -> Result<(), String> {
+    if services.capabilities().is_none() {
+        services
+            .connect(services::NativeServices::capabilities())
+            .map_err(|_| "Native service handshake failed")?;
+    }
     let events = EventLoop::<()>::with_user_event()
         .build()
         .map_err(|e| e.to_string())?;
@@ -349,6 +636,9 @@ pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String>
     let mut a = App {
         engine,
         http,
+        services,
+        native_services: services::NativeServices::default(),
+        tasks,
         window: None,
         gpu: None,
         cpu: None,
@@ -357,7 +647,11 @@ pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String>
         rx,
         pending: HashMap::new(),
         pointer: Point::ZERO,
+        touch: None,
         shift: false,
+        ctrl: false,
+        alt: false,
+        meta: false,
         active_input: None,
         frames: 0,
         smoke: std::env::var("RUSTX_SMOKE_FRAMES")
@@ -365,6 +659,7 @@ pub fn run_with_http(mut engine: Engine, http: HttpClient) -> Result<(), String>
             .and_then(|v| v.parse().ok())
             .unwrap_or(0),
         failure: None,
+        accessibility: None,
     };
     events.run_app(&mut a).map_err(|e| e.to_string())?;
     for c in a.pending.values() {

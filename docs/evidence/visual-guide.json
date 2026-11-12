@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-10",
+  "kind": "documentation export",
+  "command": "node scripts/create-flow-guide.mjs",
+  "pages": 6,
+  "checks": [
+    "Six HTML page containers: no vertical overflow or notes/footer overlap",
+    "All six pages visually reviewed via contact sheet",
+    "Rendering comparison page individually visually reviewed"
+  ],
+  "initial_failure": "Sandboxed Chrome launch aborted; export succeeded with approved execution outside sandbox",
+  "limits": "No application behavior, hardware performance, Windows, OS IME or assistive technology acceptance inferred.",
+  "sha256": {
+    "docs/visual-guide/rustx-app-flow.pdf": "c80a17e68baf947541cd76aa27225665b9dd15c508e3691a375c6d5c44f68f1c",
+    "docs/visual-guide/rustx-app-flow.html": "e690345dabc00c541e3127f01e755d0374ac7f2e6818c3a8ab2ca402d6d51a57",
+    "docs/visual-guide/rendering-preview.png": "192243bd305374521ea64050e54b1535b2eeca99415b2e965823cc168299c210",
+    "docs/visual-guide/all-pages-preview.png": "9327b7db1b8ef0151b767ec0745e5b711c898084726734b844876e58a222c3df"
+  }
+}

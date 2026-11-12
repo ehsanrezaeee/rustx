@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-09T15:20:03.180Z",
+  "engine": "chromium",
+  "backend": "WebGPU with loss/retry",
+  "platform": "darwin",
+  "arch": "arm64",
+  "checks": [
+    "responsive dashboard and mixed Persian/English/emoji semantic text exist in the actual browser",
+    "public theme control round-trips the Rust theme",
+    "10,000-object drawing scene is culled; camera buttons, real pointer pick/drag and keyboard pan work",
+    "virtual window retains the actual focused row and node identity, with bounded materialization and list position/ownership metadata",
+    "wheel over a row routes to the nested Rust virtual list",
+    "390px responsive navigation/dashboard reflow and wide resize",
+    "actual GPUDevice.destroy triggers CPU recovery without remounting application state, then a fresh GPU device renders the retained scene",
+    "settled application has no repeated presented frames",
+    "DPR 2 allocates the expected physical canvas dimensions"
+  ],
+  "limitations": [
+    "No Windows, actual Safari, physical mobile, OS IME or screen-reader acceptance",
+    "API counters and local samples are not full platform/performance certification"
+  ],
+  "version": "156.0.8078.80",
+  "wasmSha256": "9b10368dcea719c11949f348a9d1f3016b5f5301dcf0df73b6547e36d93be12f",
+  "drawingVisible": 133,
+  "normalGpuPresentation": {
+    "textureToBuffer": 0,
+    "readMaps": 0,
+    "submits": 80,
+    "presents": 40,
+    "cpuTransfers": 0,
+    "adapters": [
+      {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      }
+    ]
+  },
+  "result": "passed",
+  "finalMetrics": {
+    "cpu_culled": 1,
+    "cpu_visited": 48,
+    "glyph_bytes": 32548,
+    "glyph_entries": 175,
+    "image_bytes": 0,
+    "image_entries": 0,
+    "layout_changed": 3,
+    "layout_nodes": 152,
+    "scene_cache_bytes": 52131,
+    "scene_cache_entries": 48,
+    "scene_painted": 0,
+    "scene_reused": 39,
+    "shapes_visible": 133,
+    "text_cache_bytes": 526983,
+    "text_cache_entries": 469,
+    "text_shapes": 469
+  }
+}

@@ -24,6 +24,74 @@ impl BoxNode {
             c.translate(offset);
         }
     }
+    pub fn scroll_translate(&mut self, offset: Vec2) {
+        if self.node.control.overlay {
+            return;
+        }
+        self.rect = self.rect + offset;
+        for child in &mut self.children {
+            child.scroll_translate(offset);
+        }
+    }
+    pub fn position_overlays(&mut self, width: f64, height: f64) {
+        fn index(b: &BoxNode, anchors: &mut HashMap<String, Rect>) {
+            if let Some(id) = &b.node.app_id {
+                anchors.insert(id.clone(), b.rect);
+            }
+            for child in &b.children {
+                index(child, anchors);
+            }
+        }
+        let mut anchors = HashMap::new();
+        index(self, &mut anchors);
+        for layer in &mut self.children {
+            if !layer.node.control.overlay {
+                continue;
+            }
+            let target = if layer.node.control.modal {
+                Some((
+                    ((width - layer.rect.width()) * 0.5).max(8.),
+                    ((height - layer.rect.height()) * 0.5).max(8.),
+                ))
+            } else {
+                layer
+                    .node
+                    .control
+                    .anchor
+                    .as_ref()
+                    .and_then(|id| anchors.get(id))
+                    .map(|anchor| {
+                        (
+                            anchor
+                                .x0
+                                .clamp(8., (width - layer.rect.width() - 8.).max(8.)),
+                            (if anchor.y1 + layer.rect.height() + 4. <= height {
+                                anchor.y1 + 4.
+                            } else {
+                                (anchor.y0 - layer.rect.height() - 4.).max(8.)
+                            })
+                            .clamp(8., (height - layer.rect.height() - 8.).max(8.)),
+                        )
+                    })
+                    .or_else(|| {
+                        Some((
+                            layer
+                                .rect
+                                .x0
+                                .clamp(8., (width - layer.rect.width() - 8.).max(8.)),
+                            layer
+                                .rect
+                                .y0
+                                .clamp(8., (height - layer.rect.height() - 8.).max(8.)),
+                        ))
+                    })
+            };
+            if let Some((x, y)) = target {
+                layer.translate(Vec2::new(x - layer.rect.x0, y - layer.rect.y0));
+                index(layer, &mut anchors);
+            }
+        }
+    }
 }
 #[derive(Clone, PartialEq)]
 struct TextContext {
@@ -58,6 +126,9 @@ impl Default for LayoutEngine {
     }
 }
 fn flatten(n: &Snapshot, out: &mut Vec<Snapshot>) {
+    if n.control.hidden {
+        return;
+    }
     if n.kind == Kind::Fragment {
         for c in &n.children {
             flatten(c, out)
@@ -82,9 +153,16 @@ impl LayoutEngine {
     pub fn node_count(&self) -> usize {
         self.nodes.len()
     }
-    fn sync(&mut self, node: &Snapshot, width: f32, seen: &mut HashSet<NodeId>) -> taffy::NodeId {
+    fn sync(
+        &mut self,
+        node: &Snapshot,
+        width: f32,
+        seen: &mut HashSet<NodeId>,
+        stack_cell: bool,
+    ) -> taffy::NodeId {
         seen.insert(node.id);
         let s = &node.style;
+        let label_inset = crate::controls::label_inset(node);
         let columns = if s.min_column > 0. {
             (((width - 2. * s.padding + s.gap) / (s.min_column + s.gap)).floor() as u16)
                 .clamp(1, s.columns)
@@ -92,6 +170,11 @@ impl LayoutEngine {
             s.columns
         };
         let style = taffy::Style {
+            position: if node.control.overlay {
+                Position::Absolute
+            } else {
+                Position::Relative
+            },
             display: match s.display {
                 Display::Flex => taffy::Display::Flex,
                 Display::Grid => taffy::Display::Grid,
@@ -126,15 +209,27 @@ impl LayoutEngine {
                 height: s.height.map(length).unwrap_or(auto()),
             },
             min_size: Size {
-                width: s.min_width.map(length).unwrap_or(length(0.)),
-                height: length(0.),
+                width: length(s.min_width.unwrap_or(0.).max(if label_inset > 0. {
+                    s.padding * 2. + label_inset
+                } else {
+                    0.
+                })),
+                height: length(if label_inset > 0. {
+                    s.padding * 2. + 18.
+                } else {
+                    0.
+                }),
             },
             max_size: Size {
-                width: s.max_width.map(length).unwrap_or(auto()),
+                width: s
+                    .max_width
+                    .or_else(|| node.control.overlay.then_some((width - 16.).max(1.)))
+                    .map(length)
+                    .unwrap_or(auto()),
                 height: auto(),
             },
             padding: taffy::Rect {
-                left: length(s.padding),
+                left: length(s.padding + label_inset),
                 right: length(s.padding),
                 top: length(s.padding),
                 bottom: length(s.padding),
@@ -144,6 +239,8 @@ impl LayoutEngine {
                 height: length(s.gap),
             },
             grid_template_columns: vec![fr(1.); usize::from(columns)],
+            grid_row: if stack_cell { line(1) } else { auto() },
+            grid_column: if stack_cell { line(1) } else { auto() },
             overflow: taffy::Point {
                 x: if s.clip {
                     taffy::Overflow::Hidden
@@ -168,7 +265,14 @@ impl LayoutEngine {
             });
         let child_ids: Vec<_> = children(node)
             .iter()
-            .map(|c| self.sync(c, s.width.unwrap_or(width) - 2. * s.padding, seen))
+            .map(|c| {
+                self.sync(
+                    c,
+                    s.width.unwrap_or(width) - 2. * s.padding,
+                    seen,
+                    node.control.stack,
+                )
+            })
             .collect();
         if let Some(e) = self.nodes.get_mut(&node.id) {
             if self.tree.style(e.id).unwrap() != &style {
@@ -217,9 +321,28 @@ impl LayoutEngine {
         root.text.clear();
         root.children = roots;
         root.style = rustx_core::Style::column().gap(0.).width(width);
+        // Overlay geometry is measured against the viewport, not a clipped or
+        // narrow logical parent. Runtime/semantic ownership stays untouched.
+        fn detach(node: &mut Snapshot, layers: &mut Vec<Snapshot>) {
+            let mut retained = vec![];
+            for mut child in std::mem::take(&mut node.children) {
+                let mut nested = vec![];
+                detach(&mut child, &mut nested);
+                if child.control.overlay {
+                    layers.push(child);
+                } else {
+                    retained.push(child);
+                }
+                layers.extend(nested);
+            }
+            node.children = retained;
+        }
+        let mut layers = vec![];
+        detach(&mut root, &mut layers);
+        root.children.extend(layers);
         self.changed = 0;
         let mut seen = HashSet::new();
-        let id = self.sync(&root, width, &mut seen);
+        let id = self.sync(&root, width, &mut seen, false);
         let stale: Vec<_> = self
             .nodes
             .keys()
@@ -260,7 +383,9 @@ impl LayoutEngine {
                 },
             )
             .unwrap();
-        self.output(&root, 0., 0.)
+        let mut output = self.output(&root, 0., 0.);
+        output.position_overlays(width as f64, height as f64);
+        output
     }
     fn output(&self, node: &Snapshot, x: f64, y: f64) -> BoxNode {
         let l = self.tree.layout(self.nodes[&node.id].id).unwrap();

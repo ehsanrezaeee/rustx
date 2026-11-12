@@ -1,0 +1,145 @@
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx-web v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.41s
+     Running unittests src/lib.rs (target/debug/deps/rustx-e2dc756807843b49)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile.rs (target/debug/deps/compile-ac0583e3330fe559)
+
+running 1 test
+    Checking rustx-tests v0.0.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/target/tests/trybuild/rustx)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+
+
+test tests/ui/duplicate_alias.rs ... ok
+test tests/ui/missing_prop.rs ... ok
+test tests/ui/nesting.rs ... ok
+test tests/ui/wrong_prop.rs ... ok
+
+
+test compile_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/host.rs (target/debug/deps/host-5402a0f92102459f)
+
+running 5 tests
+test handshake_rejects_skew_and_invalid_limits ... ok
+test missing_or_denied_host_never_enqueues_work ... ok
+test reentrant_callbacks_can_start_work_and_small_host_limits_apply ... ok
+test skewed_stale_and_oversized_completions_are_safe ... ok
+test queue_and_scope_cleanup_stay_bounded_under_adversarial_churn ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-20b997de9ac98f8e)
+
+running 15 tests
+test disposed_http_completion_rejected ... ok
+test cancel_once ... ok
+test default_generic_named_slots ... ok
+test context_children_fragments ... ok
+test batches ... ok
+test imported_reactive_and_initial_props ... ok
+test duplicate_keys - should panic ... ok
+test node_refs_clear_on_disposal ... ok
+test completed_requests_release_cleanup ... ok
+test semantic_text_includes_literal_and_reactive_children ... ok
+test stale_dependencies_removed ... ok
+test memo_effect_cleanup ... ok
+test setup_mounts_once ... ok
+test keyed_state_and_disposal ... ok
+test effect_cycles_are_bounded - should panic ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_cli-c4b0170d656997e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_core-809e0069c47ef9b3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-a3cf3a6e3ed9f5da)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cpu.rs (target/debug/deps/cpu-90c968cc4c9da22c)
+
+running 1 test
+test opacity_composites_the_group_once_and_border_stays_inside ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_lab-e90184ca6f3cdc97)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_lab-23f3481a2f7b521d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_macros-98ec06a4a8618464)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_web-8864e8b02060d418)
+
+running 1 test
+test host_ids_are_exact ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_macros
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

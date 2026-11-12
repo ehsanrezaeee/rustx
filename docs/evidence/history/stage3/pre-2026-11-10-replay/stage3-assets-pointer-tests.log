@@ -1,0 +1,18 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.46s
+     Running tests/stage3_assets.rs (target/debug/deps/stage3_assets-7a1302c62e60f8f2)
+
+running 2 tests
+test asset_manifest_rejects_ambiguous_names_and_versions_fetch_urls ... ok
+test asset_load_preserves_identity_bounds_payload_and_cancels_on_disposal ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage3_pointer_capture.rs (target/debug/deps/stage3_pointer_capture-61415d39dd5cd14f)
+
+running 1 test
+test terminal_pointer_events_release_capture_when_target_becomes_ineligible ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

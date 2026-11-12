@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import {chromium,firefox,webkit} from 'playwright';
 const name=process.env.RUSTX_BROWSER||'chromium';
 const browser=await ({chromium,firefox,webkit}[name]).launch({headless:process.env.RUSTX_HEADED!=='1',...(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH}:{})});
@@ -61,7 +62,8 @@ try {
  await top();assert.equal(await page.getByTestId('name-input').evaluate(el=>el===document.activeElement),true);
  checks.push('390px viewport, DPR 2 sizing and scrolling away from a focused editor; no mobile-device claim');
  assert.deepEqual(errors,[]);
- const report={result:'passed',date:'2026-11-01',engine:name,version:browser.version(),platform:process.platform,arch:process.arch,backend:'Rust CPU',checks,limitations:['No real OS IME, screen reader, Windows or mobile-device tasks']};
+ const wasm=await page.request.get((process.env.RUSTX_URL||'http://127.0.0.1:3000')+'/pkg/rustx_lab_bg.wasm');assert(wasm.ok());
+ const report={result:'passed',date:new Date().toISOString(),engine:name,version:browser.version(),platform:process.platform,arch:process.arch,backend:'Rust CPU',wasmSha256:createHash('sha256').update(await wasm.body()).digest('hex'),checks,limitations:['No real OS IME, screen reader, Windows or mobile-device tasks']};
  await fs.writeFile(new URL(`browser-${name}.json`,evidence),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));
 } catch(error) {
  if(page){await page.screenshot({path:new URL(`browser-${name}-failure.png`,evidence).pathname}).catch(()=>{});await fs.writeFile(new URL(`browser-${name}-failure.json`,evidence),JSON.stringify({error:String(error),errors,checks,inspection:await page.evaluate(()=>window.rustx?.inspect()).catch(()=>null)},null,2));}

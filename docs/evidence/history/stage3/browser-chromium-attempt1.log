@@ -1,0 +1,38 @@
+
+> test:stage3:browser
+> node scripts/test-stage3-browser.mjs
+
+{
+  "date": "2026-11-06",
+  "engine": "chromium",
+  "checks": [
+    "hash deep link mounts the public Rust application",
+    "controlled fields, dirty/errors, UTF16/grapheme editing, Rust undo and password diagnostic redaction",
+    "checkbox Space activates exactly once; slider keys and Rust-painted select popup work"
+  ],
+  "limitations": [
+    "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
+  ],
+  "version": "156.0.8078.80",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n",
+  "pageErrors": []
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+0 !== 1
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage3-browser.mjs:29:39 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 1,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

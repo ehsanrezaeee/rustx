@@ -1,0 +1,335 @@
+   Compiling cfg-if v1.0.5
+   Compiling cfg_aliases v0.2.2
+   Compiling libc v0.2.190
+   Compiling log v0.4.34
+   Compiling smallvec v1.16.3
+   Compiling once_cell v1.21.4
+   Compiling syn v3.0.9
+   Compiling bitflags v2.13.2
+   Compiling libloading v0.8.9
+   Compiling stable_deref_trait v1.2.1
+   Compiling arrayvec v0.7.8
+   Compiling shlex v2.0.1
+   Compiling pkg-config v0.3.34
+   Compiling find-msvc-tools v0.1.14
+   Compiling rustversion v1.0.23
+   Compiling equivalent v1.0.3
+   Compiling autocfg v1.5.1
+   Compiling thiserror v2.0.21
+   Compiling cc v1.8.0
+   Compiling heck v0.5.0
+   Compiling hashbrown v0.17.1
+   Compiling unicode-width v0.1.14
+   Compiling num-traits v0.2.19
+   Compiling rustix v1.1.5
+   Compiling rustc-hash v1.1.0
+   Compiling codespan-reporting v0.11.1
+   Compiling strum_macros v0.26.4
+   Compiling unicode-xid v0.2.6
+   Compiling hexf-parse v0.2.1
+   Compiling indexmap v2.14.2
+   Compiling linux-raw-sys v0.12.1
+   Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling parking_lot_core v0.9.12
+   Compiling utf_types v1.0.0
+   Compiling simd-adler32 v0.3.10
+   Compiling rustix v0.38.44
+   Compiling utf8_iter v1.1.0
+   Compiling scopeguard v1.2.0
+   Compiling icu_normalizer_data v2.4.0
+   Compiling foldhash v0.1.5
+   Compiling crc32fast v1.5.2
+   Compiling adler2 v2.0.1
+   Compiling icu_properties_data v2.4.0
+   Compiling allocator-api2 v0.2.21
+   Compiling lock_api v0.4.14
+   Compiling dlib v0.5.3
+   Compiling ring v0.17.14
+   Compiling naga v24.0.0
+   Compiling hashbrown v0.15.5
+   Compiling linux-raw-sys v0.4.15
+   Compiling khronos-egl v6.0.0
+   Compiling version_check v0.9.5
+   Compiling synstructure v0.14.0
+   Compiling ash v0.38.0+1.3.281
+   Compiling bit-vec v0.8.0
+   Compiling zeroize v1.9.1
+   Compiling strum v0.26.3
+   Compiling raw-window-handle v0.6.2
+   Compiling rustls-pki-types v1.15.1
+   Compiling bit-set v0.8.0
+   Compiling slotmap v1.1.1
+   Compiling parking_lot v0.12.5
+   Compiling miniz_oxide v0.9.1
+   Compiling wayland-sys v0.31.11
+   Compiling gpu-descriptor-types v0.2.0
+   Compiling gpu-alloc-types v0.3.1
+   Compiling spirv v0.3.0+sdk-1.3.268.0
+   Compiling wgpu-hal v24.0.4
+   Compiling bytemuck_derive v1.12.1
+   Compiling zerofrom-derive v0.1.8
+   Compiling yoke-derive v0.8.4
+   Compiling zerovec-derive v0.11.7
+   Compiling zerofrom v0.1.8
+   Compiling displaydoc v0.2.7
+   Compiling yoke v0.8.4
+   Compiling serde_derive v1.0.229
+   Compiling bytemuck v1.25.2
+   Compiling thiserror-impl v2.0.21
+   Compiling zerotrie v0.2.5
+   Compiling zerovec v0.11.9
+   Compiling font-types v0.9.0
+   Compiling drm-sys v0.7.0
+   Compiling read-fonts v0.33.1
+   Compiling font-types v0.12.6
+   Compiling flate2 v1.1.10
+   Compiling tinystr v0.8.5
+   Compiling icu_locale_core v2.4.0
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.4.0
+   Compiling gpu-alloc v0.6.2
+   Compiling gpu-descriptor v0.3.2
+   Compiling icu_provider v2.4.0
+   Compiling icu_normalizer v2.4.0
+   Compiling icu_properties v2.4.0
+   Compiling serde v1.0.229
+   Compiling rustx-core v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-core)
+   Compiling wayland-backend v0.3.17
+   Compiling getrandom v0.2.17
+   Compiling ordered-float v4.6.0
+   Compiling euclid v0.22.14
+   Compiling kurbo v0.11.3
+   Compiling wgpu-types v24.0.0
+   Compiling wgpu-core v24.0.5
+   Compiling linux-raw-sys v0.6.5
+   Compiling linebender_resource_handle v0.1.1
+   Compiling thiserror v1.0.69
+   Compiling percent-encoding v2.3.2
+   Compiling untrusted v0.9.0
+   Compiling drm-fourcc v2.2.0
+   Compiling renderdoc-sys v1.1.0
+   Compiling libm v0.2.16
+   Compiling svg_fmt v0.4.5
+   Compiling memchr v2.8.3
+   Compiling tracing-core v0.1.36
+   Compiling litrs v1.0.1
+   Compiling profiling v1.0.18
+   Compiling as-raw-xcb-connection v1.0.1
+   Compiling color v0.3.3
+   Compiling pin-project-lite v0.2.17
+   Compiling glow v0.16.0
+   Compiling tracing v0.1.44
+   Compiling document-features v0.2.12
+   Compiling quick-xml v0.41.0
+   Compiling peniko v0.4.1
+   Compiling guillotiere v0.6.2
+   Compiling idna_adapter v1.2.2
+   Compiling gethostname v1.1.0
+   Compiling read-fonts v0.41.0
+   Compiling miniz_oxide v0.8.9
+   Compiling skrifa v0.35.0
+   Compiling fdeflate v0.3.7
+   Compiling memmap2 v0.9.11
+   Compiling x11-dl v2.21.0
+   Compiling tiny-xlib v0.2.5
+   Compiling thiserror-impl v1.0.69
+   Compiling wgpu v24.0.5
+   Compiling ttf-parser v0.21.1
+   Compiling scoped-tls v1.0.1
+   Compiling downcast-rs v1.2.1
+   Compiling x11rb-protocol v0.13.2
+   Compiling vello_shaders v0.5.1
+   Compiling rustls v0.23.46
+   Compiling wayland-client v0.31.15
+   Compiling bitflags v1.3.2
+   Compiling png v0.17.16
+   Compiling vello_encoding v0.5.1
+   Compiling rustls-webpki v0.103.16
+   Compiling idna v1.1.0
+   Compiling skrifa v0.44.0
+   Compiling drm-ffi v0.8.0
+   Compiling wayland-scanner v0.31.11
+   Compiling form_urlencoded v1.2.2
+   Compiling polling v3.11.0
+   Compiling read-fonts v0.29.3
+   Compiling webpki-roots v1.0.11
+   Compiling winit v0.30.12
+   Compiling softbuffer v0.4.6
+   Compiling xkeysym v0.2.1
+   Compiling unicode-script v0.5.8
+   Compiling futures-core v0.3.34
+   Compiling smol_str v0.2.2
+   Compiling zeno v0.3.3
+   Compiling strict-num v0.1.1
+   Compiling ctor v0.10.1
+   Compiling unicode-ccc v0.2.0
+   Compiling ttf-parser v0.20.0
+   Compiling unicode-bidi-mirroring v0.2.0
+   Compiling arrayref v0.3.9
+   Compiling yazi v0.2.1
+   Compiling unicode-properties v0.1.4
+   Compiling tinyvec v1.13.3
+   Compiling subtle v2.6.1
+   Compiling static_assertions v1.1.0
+   Compiling slab v0.4.12
+   Compiling calloop v0.13.0
+   Compiling swash v0.2.10
+   Compiling rustybuzz v0.14.1
+   Compiling fontdb v0.16.2
+   Compiling tiny-skia-path v0.11.4
+   Compiling futures-intrusive v0.5.0
+   Compiling x11rb v0.13.2
+   Compiling skrifa v0.31.3
+   Compiling xkbcommon-dl v0.4.2
+   Compiling webpki-roots v0.26.11
+   Compiling url v2.5.8
+   Compiling drm v0.12.0
+   Compiling cursor-icon v1.2.0
+   Compiling self_cell v1.3.0
+   Compiling sys-locale v0.3.2
+   Compiling rangemap v1.8.0
+   Compiling dpi v0.1.2
+   Compiling unicode-segmentation v1.13.3
+   Compiling unicode-bidi v0.3.18
+   Compiling grid v0.15.0
+   Compiling unicode-linebreak v0.1.5
+   Compiling fastrand v2.5.0
+   Compiling base64 v0.22.1
+   Compiling cosmic-text v0.14.2
+   Compiling ureq v2.12.1
+   Compiling vello v0.5.0
+   Compiling taffy v0.7.7
+   Compiling tiny-skia v0.11.4
+   Compiling fontdue v0.9.3
+   Compiling pollster v0.4.0
+   Compiling rustx v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx)
+   Compiling trybuild v1.0.115
+   Compiling rustx-macros v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-macros)
+   Compiling rustx-cli v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-cli)
+   Compiling rustx-engine v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx-web v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/examples/lab)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.03s
+     Running unittests src/lib.rs (target/debug/deps/rustx-d0ce52ec68e0f9b1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile.rs (target/debug/deps/compile-75959f54f4145c45)
+
+running 1 test
+    Checking rustx-tests v0.0.0 (/workspace/scratch/c35b86874bf8/rustx-stage-01/target/tests/trybuild/rustx)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+
+
+test tests/ui/duplicate_alias.rs ... ok
+test tests/ui/missing_prop.rs ... ok
+test tests/ui/nesting.rs ... ok
+test tests/ui/wrong_prop.rs ... ok
+
+
+test compile_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-a49fa3ae2fe43353)
+
+running 14 tests
+test cancel_once ... ok
+test context_children_fragments ... ok
+test batches ... ok
+test default_generic_named_slots ... ok
+test disposed_http_completion_rejected ... ok
+test completed_requests_release_cleanup ... ok
+test imported_reactive_and_initial_props ... ok
+test node_refs_clear_on_disposal ... ok
+test memo_effect_cleanup ... ok
+test keyed_state_and_disposal ... ok
+test setup_mounts_once ... ok
+test duplicate_keys - should panic ... ok
+test stale_dependencies_removed ... ok
+test effect_cycles_are_bounded - should panic ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_cli-784187b0ea231dfb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_core-3b83f6c90def2403)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-8aee0e580ce3af4d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_lab-a07908708efddaae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_lab-39f3d3febd9840b4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_macros-a88eea437cdf4dd1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_web-bcce9b21a038ef62)
+
+running 1 test
+test host_ids_are_exact ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_macros
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

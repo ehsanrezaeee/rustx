@@ -1,0 +1,34 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running tests/editing_forms.rs (target/debug/deps/editing_forms-1a5321d34b1b8ece)
+
+running 2 tests
+test async_validation_preserves_form_level_field_errors_without_touching_other_fields ... FAILED
+test async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors ... FAILED
+
+failures:
+
+---- async_validation_preserves_form_level_field_errors_without_touching_other_fields stdout ----
+
+thread 'async_validation_preserves_form_level_field_errors_without_touching_other_fields' panicked at crates/rustx/tests/editing_forms.rs:322:5:
+assertion `left == right` failed
+  left: None
+ right: Some("Passwords differ")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors stdout ----
+
+thread 'async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors' panicked at crates/rustx/tests/editing_forms.rs:286:5:
+assertion `left == right` failed
+  left: None
+ right: Some("Name required")
+
+
+failures:
+    async_validation_preserves_form_level_field_errors_without_touching_other_fields
+    async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p rustx --test editing_forms`

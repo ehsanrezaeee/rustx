@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-09T15:31:17.450Z",
+  "engine": "chromium",
+  "checks": [
+    "hash deep link mounts the public Rust application",
+    "queued selection events cannot overwrite consecutive Rust keyboard edits before a visual frame (synthetic event ordering regression)",
+    "controlled fields, dirty/errors, UTF16/grapheme editing, Rust undo and password diagnostic redaction",
+    "checkbox Space activates exactly once; slider keys and Rust-painted select popup work",
+    "modal focus trap, Escape restoration and validated submission",
+    "actual IndexedDB draft persistence and stale asynchronous name-validation rejection",
+    "query cache refresh and recoverable subtree retry",
+    "real fixture HTTP JSON POST, multipart upload, pull streaming and WebSocket echo through compiled Rust",
+    "actual file chooser import and named download without password export",
+    "actual Chromium clipboard write and readback contains selected person",
+    "actual Chromium native selected-text clipboard copy from readonly ordinary Text",
+    "ordinary Rust Text supports readonly keyboard selection and shaped pointer drag",
+    "actual printable semantic export contains selected person; no physical printer claim",
+    "Rust search/details, history back and reload from a deep link",
+    "drawing object moves with keyboard and exports all 10,000 rectangles",
+    "390px responsive application",
+    "settled application stops drawing; no browser page errors"
+  ],
+  "limitations": [
+    "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
+  ],
+  "version": "156.0.8078.80",
+  "wasmSha256": "4847b1482206e0e3a201f68f74e2e290ac391b2a46abe9ac70ee86747551b1d9",
+  "result": "passed"
+}

@@ -128,6 +128,7 @@ fn disposed_http_completion_rejected() {
         HOST_PROTOCOL_VERSION,
         1,
         Ok(HttpResponse {
+            headers: vec![],
             status: 200,
             body: vec![]
         })
@@ -158,6 +159,7 @@ fn cancel_once() {
         HOST_PROTOCOL_VERSION,
         1,
         Ok(HttpResponse {
+            headers: vec![],
             status: 200,
             body: vec![]
         })
@@ -234,6 +236,7 @@ fn completed_requests_release_cleanup() {
             HOST_PROTOCOL_VERSION,
             id,
             Ok(HttpResponse {
+                headers: vec![],
                 status: 200,
                 body: vec![],
             }),

@@ -1,0 +1,21 @@
+// Adapter contracts only: no OS drop/IME/assistive-technology certification.
+import assert from 'node:assert/strict';
+import {droppedFileMetadata,SemanticProjection} from '../web/semantics.js';
+const file={name:'سلام.json',type:'application/json',size:42};
+Object.defineProperty(file,'arrayBuffer',{get(){throw new Error('Drop metadata must not read file contents');}});
+assert.deepEqual(droppedFileMetadata([file]),[{name:'سلام.json',mime:'application/json',size:42}]);
+for(const files of [[],Array(17).fill(file),[{...file,name:'/private/file'}],[{...file,name:'C:\\private\\file'}],[{...file,name:'x'.repeat(1025)}],[{...file,type:'text/plain\r\nx-secret: value'}],[{...file,size:Number.MAX_SAFE_INTEGER+1}]])assert.throws(()=>droppedFileMetadata(files));
+const projection=Object.create(SemanticProjection.prototype),calls=[];let prevented=false,stopped=false;
+projection.event=(el,kind,data)=>{assert(prevented&&stopped);calls.push({id:el.dataset.node,kind,data});return true;};
+projection.hostEvent=(kind,data)=>calls.push({kind,data});
+const native={dataTransfer:{files:[file]},clientX:12,clientY:18,preventDefault(){prevented=true;},stopPropagation(){stopped=true;}};
+projection.drop({dataset:{node:'7'}},native);
+assert.equal(calls[0].id,'7');assert.equal(calls[0].kind,'file_drop');assert.deepEqual(calls[0].data.files,droppedFileMetadata([file]));
+projection.drop(null,{...native,dataTransfer:{files:Array(17).fill(file)}});
+assert.deepEqual(calls[1],{kind:'resource_error',data:{resource_error:{source:'service',code:'invalid_drop_metadata',status:null}}});
+const hostProjection=Object.create(SemanticProjection.prototype),forwarded=[];
+hostProjection.app={host_event:json=>{forwarded.push(JSON.parse(json));return '{"default_prevented":true}';}};
+hostProjection.pump=()=>{};hostProjection.schedule=()=>{};
+assert(hostProjection.hostEvent('resize',{width:800,height:600,scale:2},{cancelable:true,preventDefault(){}}));
+assert.deepEqual(forwarded,[{kind:'resize',width:800,height:600,scale:2}]);
+console.log('PASS: synchronous bounded metadata-only drop forwarding, navigation cancellation, invalid-metadata rejection and typed viewport forwarding (adapter contracts).');

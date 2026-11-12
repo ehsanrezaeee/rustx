@@ -1,0 +1,738 @@
+//! Reference application: a portable form, async validation and capability flows.
+use rustx::prelude::*;
+
+fn card() -> Style {
+    Style::column()
+        .gap(14.)
+        .padding(20.)
+        .radius(12.)
+        .background_token(ColorToken::Surface)
+        .border(1., 0x45566c)
+}
+fn row(children: Vec<View>) -> View {
+    Node::widget(Widget::Row)
+        .style(Style::row().gap(10.).wrap())
+        .children(children)
+}
+fn button(id: &str, label: &str, f: impl Fn(ClickEvent) + 'static) -> View {
+    Node::widget(Widget::Button).id(id).value(label).on_click(f)
+}
+fn heading(value: &str) -> View {
+    Node::widget(Widget::Heading).value(value)
+}
+
+pub fn application(cx: Scope) -> View {
+    let form = FormState::new(&cx);
+    let name = form
+        .field("name", "")
+        .validator(required("Enter your name"));
+    let email = form.field("email", "").validator(|s| {
+        if s.contains('@') {
+            None
+        } else {
+            Some("Enter a valid email".into())
+        }
+    });
+    let password = form.field("password", "").sensitive();
+    let bio = form.field("bio", "سلام! I build with Rust.");
+    let bio_editor = Editor::new(bio.value());
+    let http = cx.context::<HttpClient>().unwrap();
+    let services = cx.context::<ServiceClient>().unwrap();
+    let feedback =
+        cx.signal("Ready. Your draft stays on this device when you save it.".to_string());
+    let dialog = cx.signal(false);
+    let checked = cx.signal(false);
+    let notifications = cx.signal(true);
+    let level = cx.signal("40".to_string());
+    let region = cx.signal("tehran".to_string());
+    let tab = cx.signal(0);
+    let menu = cx.signal(false);
+    let fields = {
+        let name = name.clone();
+        let email = email.clone();
+        let password = password.clone();
+        let bio = bio.clone();
+        let editor = bio_editor.clone();
+        dynamic(move || {
+            let ns = name.state();
+            let es = email.state();
+            let n = name.clone();
+            let e = email.clone();
+            let p = password.clone();
+            let b = bio.clone();
+            Node::widget(Widget::Form)
+                .id("profile-form")
+                .label("Profile settings")
+                .style(card())
+                .children(vec![
+                    heading("Your workspace / فضای کار"),
+                    Node::widget(Widget::Label)
+                        .id("profile-name-label")
+                        .value("Name / نام"),
+                    Node::widget(Widget::TextInput)
+                        .id("profile-name")
+                        .labelled_by("profile-name-label")
+                        .described_by("name-error")
+                        .required(true)
+                        .invalid(ns.error.is_some())
+                        .value(name.value())
+                        .on_input(move |ev| {
+                            let _ = n.set(ev.value);
+                            let _ = n.touch();
+                        }),
+                    Node::widget(Widget::Text)
+                        .id("name-error")
+                        .value(ns.error.unwrap_or_default())
+                        .style(Style::column().color(0xffc2b3)),
+                    Node::widget(Widget::Label)
+                        .id("profile-email-label")
+                        .value("Email"),
+                    Node::widget(Widget::TextInput)
+                        .id("profile-email")
+                        .labelled_by("profile-email-label")
+                        .input_type("email")
+                        .described_by("email-error")
+                        .invalid(es.error.is_some())
+                        .value(email.value())
+                        .on_input(move |ev| {
+                            let _ = e.set(ev.value);
+                            let _ = e.touch();
+                        }),
+                    Node::text(es.error.unwrap_or_default())
+                        .id("email-error")
+                        .style(Style::column().color(0xffc2b3)),
+                    Node::widget(Widget::Label)
+                        .id("profile-password-label")
+                        .value("Password"),
+                    Node::widget(Widget::PasswordInput)
+                        .id("profile-password")
+                        .labelled_by("profile-password-label")
+                        .value(password.value())
+                        .on_input(move |ev| {
+                            let _ = p.set(ev.value);
+                        }),
+                    Node::widget(Widget::Label)
+                        .id("profile-bio-label")
+                        .value("About you / درباره شما"),
+                    Node::widget(Widget::TextArea)
+                        .id("profile-bio")
+                        .labelled_by("profile-bio-label")
+                        .editing(editor.clone())
+                        .value(bio.value())
+                        .on_input(move |ev| {
+                            let _ = b.set(ev.value);
+                        }),
+                ])
+        })
+    };
+    let validate = {
+        let name = name.clone();
+        let http = http.clone();
+        let cx = cx.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            let Ok(token) = name.begin_validation() else {
+                return;
+            };
+            let field = name.clone();
+            let feedback = feedback.clone();
+            let _ = feedback.set("Checking your name…".into());
+            let path = if name.value().to_lowercase() == "taken" {
+                "/api/error"
+            } else {
+                "/api/users?delay=1"
+            };
+            http.get(&cx, path, move |result| {
+                let error = match result {
+                    Ok(r) if r.status < 400 => None,
+                    _ => Some("This name is unavailable; choose another".into()),
+                };
+                if field.finish_validation(token, error) {
+                    let _ = feedback.set("Name check finished.".into());
+                }
+            });
+        }
+    };
+    let submit = {
+        let form = form.clone();
+        let dialog = dialog.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            if form.validate() {
+                let _ = dialog.set(true);
+            } else {
+                let _ = feedback.set("Review the highlighted fields.".into());
+            }
+        }
+    };
+    let reset = {
+        let form = form.clone();
+        let feedback = feedback.clone();
+        let editor = bio_editor.clone();
+        move |_: ClickEvent| {
+            let _ = form.reset();
+            let _ = editor.set_value("سلام! I build with Rust.");
+            let _ = feedback.set("Draft reset.".into());
+        }
+    };
+    let save = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            let data = serde_json::json!({"name":name.value(),"email":email.value()}).to_string();
+            let out = feedback.clone();
+            let result = s.call(
+                &cx,
+                ServiceOperation::StorageSet {
+                    key: "rustx-profile".into(),
+                    version: 1,
+                    value: data,
+                },
+                move |r| {
+                    let _ = out.set(match r {
+                        Ok(_) => "Draft saved locally.".into(),
+                        Err(e) => format!("Save: {e:?}"),
+                    });
+                },
+            );
+            if let Err(e) = result {
+                let _ = feedback.set(format!("Save: {e:?}"));
+            }
+        }
+    };
+    let restore = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            let n = name.clone();
+            let e = email.clone();
+            let out = feedback.clone();
+            let _ = s.call(
+                &cx,
+                ServiceOperation::StorageGet {
+                    key: "rustx-profile".into(),
+                },
+                move |r| match r {
+                    Ok(ServiceValue::Storage { version: 1, value }) => {
+                        if let Ok(v) = serde_json::from_str::<serde_json::Value>(&value) {
+                            let _ = n.set(v["name"].as_str().unwrap_or_default());
+                            let _ = e.set(v["email"].as_str().unwrap_or_default());
+                            let _ = out.set("Draft restored.".into());
+                        }
+                    }
+                    Ok(_) => {
+                        let _ = out.set("No compatible saved draft.".into());
+                    }
+                    Err(err) => {
+                        let _ = out.set(format!("Restore: {err:?}"));
+                    }
+                },
+            );
+        }
+    };
+    let copy = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            let out = feedback.clone();
+            let _ = s.clipboard_write(
+                &cx,
+                format!("{} <{}>", name.value(), email.value()),
+                move |r| {
+                    let _ = out.set(if r.is_ok() {
+                        "Profile copied.".into()
+                    } else {
+                        format!("Clipboard: {r:?}")
+                    });
+                },
+            );
+        }
+    };
+    let print = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        let bio = bio.clone();
+        move |_: ClickEvent| {
+            let _ = s.call(
+                &cx,
+                ServiceOperation::Print {
+                    title: "RustX profile".into(),
+                    text: format!("{}\n{}\n{}", name.value(), email.value(), bio.value()),
+                },
+                |_| {},
+            );
+        }
+    };
+    let export = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        move |_: ClickEvent| {
+            let _ = s.call(
+                &cx,
+                ServiceOperation::FileDownload {
+                    name: "rustx-profile.json".into(),
+                    mime: "application/json".into(),
+                    bytes: serde_json::json!({"name":name.value(),"email":email.value()})
+                        .to_string()
+                        .into_bytes(),
+                },
+                |_| {},
+            );
+        }
+    };
+    let import = {
+        let s = services.clone();
+        let cx = cx.clone();
+        let name = name.clone();
+        let email = email.clone();
+        let feedback = feedback.clone();
+        move |_: ClickEvent| {
+            let n = name.clone();
+            let e = email.clone();
+            let out = feedback.clone();
+            let _ = s.call(
+                &cx,
+                ServiceOperation::FileOpen {
+                    accept: ".json,application/json".into(),
+                    max_bytes: 65536,
+                },
+                move |r| match r {
+                    Ok(ServiceValue::File { bytes, .. }) => {
+                        match serde_json::from_slice::<serde_json::Value>(&bytes) {
+                            Ok(v) => {
+                                let _ = n.set(v["name"].as_str().unwrap_or_default());
+                                let _ = e.set(v["email"].as_str().unwrap_or_default());
+                                let _ = out.set("Profile imported.".into());
+                            }
+                            Err(_) => {
+                                let _ = out.set("Choose a valid JSON profile.".into());
+                            }
+                        }
+                    }
+                    Err(err) => {
+                        let _ = out.set(format!("File: {err:?}"));
+                    }
+                    _ => {}
+                },
+            );
+        }
+    };
+    let controls = {
+        let checked = checked.clone();
+        let notifications = notifications.clone();
+        let level = level.clone();
+        let region = region.clone();
+        dynamic(move || {
+            let c = checked.clone();
+            let n = notifications.clone();
+            let l = level.clone();
+            let r = region.clone();
+            Node::widget(Widget::Column).style(card()).children(vec![
+                heading("Preferences"),
+                Node::widget(Widget::Checkbox)
+                    .id("profile-consent")
+                    .label("Accept updates")
+                    .value("Accept updates")
+                    .checked(checked.get())
+                    .on_input(move |e| {
+                        let _ = c.set(e.value == "true");
+                    }),
+                Node::widget(Widget::Switch)
+                    .id("profile-notifications")
+                    .label("Notifications")
+                    .value("Notifications")
+                    .checked(notifications.get())
+                    .on_input(move |e| {
+                        let _ = n.set(e.value == "true");
+                    }),
+                select_with_id(
+                    "profile-region",
+                    r,
+                    vec![
+                        Choice::new("tehran", "Tehran"),
+                        Choice::new("london", "London"),
+                        Choice::new("tokyo", "Tokyo"),
+                    ],
+                    "Region",
+                ),
+                Node::widget(Widget::Slider)
+                    .id("profile-level")
+                    .label("Detail level")
+                    .min(0.)
+                    .max(100.)
+                    .step(10.)
+                    .value(level.get())
+                    .on_input(move |e| {
+                        let _ = l.set(e.value);
+                    }),
+                Node::widget(Widget::Progress)
+                    .id("profile-progress")
+                    .label("Profile progress")
+                    .value(level.get())
+                    .min(0.)
+                    .max(100.),
+                Node::text(format!(
+                    "Region {} · level {} · updates {}",
+                    region.get(),
+                    level.get(),
+                    checked.get()
+                ))
+                .id("preferences-state"),
+            ])
+        })
+    };
+    let modal = {
+        let dialog = dialog.clone();
+        let form = form.clone();
+        let feedback = feedback.clone();
+        dynamic(move || {
+            if !dialog.get() {
+                return Node::fragment(vec![]);
+            }
+            let close = dialog.clone();
+            let confirm = dialog.clone();
+            let f = form.clone();
+            let out = feedback.clone();
+            Node::widget(Widget::Dialog)
+                .id("profile-dialog")
+                .label("Confirm profile")
+                .style(card().width(340.))
+                .on_event(EventKind::KeyDown, {
+                    let dialog = dialog.clone();
+                    move |e| {
+                        if e.data.key == "Escape" {
+                            e.prevent_default();
+                            let _ = dialog.set(false);
+                        }
+                    }
+                })
+                .children(vec![
+                    heading("Save this profile?"),
+                    Node::text("Confirm to finish the reference form."),
+                    row(vec![
+                        button("confirm-profile", "Confirm", move |_| {
+                            if let Ok(ticket) = f.begin_submit() {
+                                f.finish_submit(ticket, Ok(()));
+                                let _ = out.set("Profile submitted successfully.".into());
+                            }
+                            let _ = confirm.set(false);
+                        }),
+                        button("close-profile", "Cancel", move |_| {
+                            let _ = close.set(false);
+                        }),
+                    ]),
+                ])
+        })
+    };
+    let tabs = {
+        let t = tab.clone();
+        let first = tab.clone();
+        let second = tab.clone();
+        Node::widget(Widget::Tabs)
+            .label("Dashboard views")
+            .children(vec![
+                button("tab-summary", "Summary", move |_| {
+                    let _ = first.set(0);
+                })
+                .role("tab"),
+                button("tab-data", "Data", move |_| {
+                    let _ = second.set(1);
+                })
+                .role("tab"),
+                dynamic(move || {
+                    Node::text(if t.get() == 0 {
+                        "Your team profile"
+                    } else {
+                        "Data and export tools"
+                    })
+                    .id("dashboard-tab")
+                }),
+            ])
+    };
+    let menu_view = {
+        let menu = menu.clone();
+        let toggle = menu.clone();
+        let close = menu.clone();
+        Node::widget(Widget::Column).children(vec![
+            button("open-menu", "More actions", move |_| {
+                let _ = toggle.update(|v| *v = !*v);
+            })
+            .expanded(menu.get()),
+            dynamic(move || {
+                if menu.get() {
+                    Node::widget(Widget::Menu)
+                        .label("Profile actions")
+                        .children(vec![Node::widget(Widget::MenuItem)
+                            .id("menu-dismiss")
+                            .value("Dismiss menu")
+                            .on_click({
+                                let close = close.clone();
+                                move |_| {
+                                    let _ = close.set(false);
+                                }
+                            })])
+                } else {
+                    Node::fragment(vec![])
+                }
+            }),
+        ])
+    };
+    let table = data_table(
+        TableState::new(
+            &cx,
+            vec![
+                TableRecord {
+                    key: "ada".into(),
+                    cells: vec!["Ada".into()],
+                },
+                TableRecord {
+                    key: "grace".into(),
+                    cells: vec!["Grace".into()],
+                },
+                TableRecord {
+                    key: "linus".into(),
+                    cells: vec!["Linus".into()],
+                },
+            ],
+        ),
+        vec![TableColumn {
+            label: "Name".into(),
+        }],
+        "Team members",
+    );
+    let boundary = ErrorBoundary::new(&cx);
+    let fail = boundary.clone();
+    let recovery = Node::widget(Widget::Column).style(card()).children(vec![
+        button("simulate-view-error", "Try recovery", move |_| {
+            fail.report(AppError::new(
+                "demo",
+                "This view could not load. Try again to restore it.",
+            ))
+        }),
+        error_boundary(boundary, |_| {
+            Node::text("Recovered content is ready.").id("recovered-content")
+        }),
+    ]);
+    let status = {
+        let f = form.clone();
+        dynamic(move || {
+            let s = f.state();
+            Node::text(format!(
+                "dirty={} · touched={} · valid={} · validating={} · submitting={}",
+                s.dirty, s.touched, s.valid, s.validating, s.submitting
+            ))
+            .id("form-state")
+        })
+    };
+    Node::widget(Widget::Column).id("applications-dashboard").style(Style::column().gap(20.)).children(vec![
+       Node::widget(Widget::Heading).value("Build something useful.").style(Style::column().font_size(36.)),
+       Node::widget(Widget::Paragraph).value("A shared Rust form with Unicode editing, validation, saved drafts and explicit permission errors."),tabs,
+       Node::widget(Widget::Grid).style(Style::grid(2).responsive(320.).gap(18.)).children(vec![fields,controls]),status,
+       row(vec![button("validate-name","Check name",validate),button("submit-profile","Review profile",submit),button("reset-profile","Reset",reset)]),
+       row(vec![button("save-profile","Save draft",save),button("restore-profile","Restore draft",restore),button("copy-profile","Copy",copy),button("print-profile","Print",print),button("export-profile","Export",export),button("import-profile","Import",import)]),
+       dynamic(move||Node::widget(Widget::Toast).id("profile-feedback").value(feedback.get())),menu_view,table,recovery,service_panel(cx),modal,
+    ])
+}
+
+fn service_panel(cx: Scope) -> View {
+    use std::{cell::Cell, rc::Rc};
+    let http = cx.context::<HttpClient>().unwrap();
+    let service = cx.context::<ServiceClient>().unwrap();
+    let tasks = cx.context::<TaskQueue>().unwrap();
+    let cache = QueryCache::<Vec<serde_json::Value>>::new(&cx, 8);
+    let users = cache
+        .query(&cx, "users", "/api/users", 0, 30_000, &http)
+        .expect("query config");
+    let refresh = {
+        let cache = cache.clone();
+        let http = http.clone();
+        move |_: ClickEvent| {
+            let _ = cache.refetch("users", 1, &http);
+        }
+    };
+    let output = cx.signal("Choose a service operation.".to_string());
+    let resource = Rc::new(Cell::new(None));
+    let post = {
+        let http = http.clone();
+        let tasks = tasks.clone();
+        let cx = cx.clone();
+        let out = output.clone();
+        move |_: ClickEvent| {
+            let request = http
+                .request("POST", "/api/echo")
+                .json(&serde_json::json!({"message":"Hello from Rust"}))
+                .send(&cx);
+            let out = out.clone();
+            let _ = tasks.spawn(&cx, async move {
+                let result = request
+                    .await
+                    .and_then(HttpResponse::error_for_status)
+                    .and_then(HttpResponse::text);
+                let _ = out.set(match result {
+                    Ok(text) => format!("POST: {text}"),
+                    Err(e) => format!("POST: {e:?}"),
+                });
+            });
+        }
+    };
+    let upload = {
+        let http = http.clone();
+        let cx = cx.clone();
+        let out = output.clone();
+        move |_: ClickEvent| {
+            let out = out.clone();
+            http.request("POST", "/api/echo")
+                .multipart(vec![MultipartPart {
+                    name: "profile".into(),
+                    filename: Some("profile.txt".into()),
+                    mime: "text/plain".into(),
+                    bytes: b"RustX upload".to_vec(),
+                }])
+                .send_callback(&cx, move |r| {
+                    let _ = out.set(match r {
+                        Ok(r) => format!("Upload: HTTP {} / {} bytes", r.status, r.body.len()),
+                        Err(e) => format!("Upload: {e:?}"),
+                    });
+                });
+        }
+    };
+    let stream = {
+        let s = service.clone();
+        let cx = cx.clone();
+        let out = output.clone();
+        let id = resource.clone();
+        move |_: ClickEvent| {
+            if let Some(old) = id.take() {
+                s.cancel(old);
+            }
+            let stream_id = Rc::new(Cell::new(0));
+            let active = stream_id.clone();
+            let next = s.clone();
+            let out = out.clone();
+            let result = s.subscribe(
+                &cx,
+                ServiceOperation::StreamOpen {
+                    url: "/api/stream".into(),
+                    max_bytes: 1_048_576,
+                    timeout_ms: 10_000,
+                },
+                move |r| match r {
+                    Ok(ServiceValue::Stream { status, .. }) => {
+                        let _ = out.set(format!("Stream: HTTP {status}"));
+                        let _ = next.read_stream(active.get());
+                    }
+                    Ok(ServiceValue::Chunk { received, done, .. }) => {
+                        let _ = out.set(format!(
+                            "Stream: {received} bytes / {}",
+                            if done { "complete" } else { "reading" }
+                        ));
+                        if !done {
+                            let _ = next.read_stream(active.get());
+                        }
+                    }
+                    Err(e) => {
+                        let _ = out.set(format!("Stream: {e:?}"));
+                    }
+                    _ => {}
+                },
+            );
+            if let Ok(value) = result {
+                stream_id.set(value);
+                id.set(Some(value));
+            }
+        }
+    };
+    let socket = {
+        let s = service.clone();
+        let cx = cx.clone();
+        let out = output.clone();
+        let id = resource.clone();
+        move |_: ClickEvent| {
+            if let Some(old) = id.take() {
+                s.cancel(old);
+            }
+            let socket_id = Rc::new(Cell::new(0));
+            let active = socket_id.clone();
+            let next = s.clone();
+            let out = out.clone();
+            let result = s.subscribe(
+                &cx,
+                ServiceOperation::SocketOpen {
+                    url: "/api/socket".into(),
+                    protocols: vec![],
+                },
+                move |r| match r {
+                    Ok(ServiceValue::SocketOpen) => {
+                        let _ = next.socket_send(active.get(), b"Hello socket".to_vec(), true);
+                    }
+                    Ok(ServiceValue::SocketMessage { bytes, .. }) => {
+                        let _ = out.set(format!("WebSocket: {}", String::from_utf8_lossy(&bytes)));
+                        let _ = next.command(ServiceOperation::SocketClose {
+                            resource: active.get(),
+                            code: 1000,
+                            reason: "Finished".into(),
+                        });
+                    }
+                    Err(e) => {
+                        let _ = out.set(format!("WebSocket: {e:?}"));
+                    }
+                    _ => {}
+                },
+            );
+            if let Ok(value) = result {
+                socket_id.set(value);
+                id.set(Some(value));
+            }
+        }
+    };
+    let cancel = {
+        let s = service.clone();
+        let resource = resource.clone();
+        let out = output.clone();
+        move |_: ClickEvent| {
+            if let Some(id) = resource.take() {
+                s.cancel(id);
+            }
+            let _ = out.set("Operation canceled.".into());
+        }
+    };
+    Node::widget(Widget::Column).style(card()).children(vec![
+        heading("Connected services"),
+        button("query-refresh", "Refresh cached people", refresh),
+        dynamic(move || {
+            Node::text(match users.get() {
+                QueryState::Idle => "Query idle".into(),
+                QueryState::Loading => "Query loading…".into(),
+                QueryState::Success(users) => format!("Cached people: {}", users.len()),
+                QueryState::Error(e) => format!("Query error: {e:?}"),
+            })
+            .id("query-state")
+        }),
+        row(vec![
+            button("service-post", "Send JSON", post),
+            button("service-upload", "Upload multipart", upload),
+            button("service-stream", "Read stream", stream),
+            button("service-socket", "Echo WebSocket", socket),
+            button("service-cancel", "Cancel operation", cancel),
+        ]),
+        dynamic(move || {
+            Node::widget(Widget::Alert)
+                .live("polite")
+                .id("service-output")
+                .value(output.get())
+        }),
+    ])
+}

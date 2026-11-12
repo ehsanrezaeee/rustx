@@ -1,0 +1,36 @@
+
+> test:stage3:browser
+> node scripts/test-stage3-browser.mjs
+
+{
+  "date": "2026-11-09T15:13:31.986Z",
+  "engine": "chromium",
+  "checks": [
+    "hash deep link mounts the public Rust application"
+  ],
+  "limitations": [
+    "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
+  ],
+  "version": "156.0.8078.80",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(!(await bio.inputValue()).endsWith('م'))\n",
+  "pageErrors": []
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(!(await bio.inputValue()).endsWith('م'))
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage3-browser.mjs:21:149 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

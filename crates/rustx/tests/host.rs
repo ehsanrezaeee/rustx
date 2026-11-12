@@ -18,6 +18,7 @@ fn ready() -> HttpClient {
 }
 fn result() -> Result<HttpResponse, HostError> {
     Ok(HttpResponse {
+        headers: vec![],
         status: 200,
         body: vec![],
     })
@@ -99,6 +100,7 @@ fn skewed_stale_and_oversized_completions_are_safe() {
         HOST_PROTOCOL_VERSION,
         id,
         Ok(HttpResponse {
+            headers: vec![],
             status: 200,
             body: vec![0; MAX_HTTP_BYTES + 1]
         })

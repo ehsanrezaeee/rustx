@@ -1,0 +1,10 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+   Compiling rustx-web v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-web)
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.03s
+     Running `target/debug/rustx-lab`
+
+Command: RUSTX_DEMO=applications RUSTX_SMOKE_FRAMES=2 cargo run -p rustx-lab --bin rustx-lab --locked
+Actual macOS process exit: 0 after requested two smoke frames. Window startup only; no full native interaction, Windows, OS IME or screen-reader claim.

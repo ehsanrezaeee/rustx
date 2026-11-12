@@ -40,6 +40,48 @@ pub fn VisualEngine(cx: Scope) -> View {
         )
         .unwrap(),
     );
+    let scene = cx.signal(scene);
+    let export_scene = scene.clone();
+    let export_service = cx.context::<ServiceClient>().unwrap();
+    let export_scope = cx.clone();
+    let export_status = cx.signal(String::new());
+    let export_feedback = export_status.clone();
+    let export = move |_: ClickEvent| {
+        let scene = export_scene.get();
+        let mut csv = String::from("id,x,y,width,height,color\n");
+        for index in 0..scene.len() {
+            let shape = scene.shape(index);
+            let b = shape.transform.bounds(shape.bounds);
+            csv.push_str(&format!(
+                "{},{},{},{},{},{:06x}\n",
+                shape.id,
+                b.x0,
+                b.y0,
+                b.width(),
+                b.height(),
+                shape.fill
+            ));
+        }
+        let feedback = export_feedback.clone();
+        let _ = export_service.call(
+            &export_scope,
+            ServiceOperation::FileDownload {
+                name: "rustx-drawing.csv".into(),
+                mime: "text/csv;charset=utf-8".into(),
+                bytes: csv.into_bytes(),
+            },
+            move |result| {
+                let _ = feedback.set(if result.is_ok() {
+                    "Drawing exported.".into()
+                } else {
+                    format!("Export: {result:?}")
+                });
+            },
+        );
+    };
+    let edit_mode = cx.signal(false);
+    let toggle_edit = edit_mode.clone();
+    let editing = edit_mode.clone();
     let camera = cx.signal(Camera::default());
     let left = camera.clone();
     let right = camera.clone();
@@ -51,6 +93,10 @@ pub fn VisualEngine(cx: Scope) -> View {
     let hit_scene = scene.clone();
     let pick = cx.signal(None::<u64>);
     let pick_shown = pick.clone();
+    let key_pick = pick.clone();
+    let key_scene = scene.clone();
+    let key_mode = edit_mode.clone();
+    let key_camera = camera.clone();
     let list = VirtualListState::new(&cx, 100_000, 32., 320.);
     let next = list.clone();
     let end = list.clone();
@@ -70,9 +116,9 @@ pub fn VisualEngine(cx: Scope) -> View {
         </Div>
         <Column style={panel()}><Text style={Style::column().font_size(24.)}>{"Drawing board"}</Text>
             <Row style={Style::row().gap(8.).wrap()}><Button id="board-left" style={action()} on_click={move|_|{let _=left.update(|c|c.pan(120.,0.));}}>{"Pan left"}</Button><Button id="board-right" style={action()} on_click={move|_|{let _=right.update(|c|c.pan(-120.,0.));}}>{"Pan right"}</Button><Button id="board-zoom" style={action()} on_click={move|_|{let _=zoom.update(|c|c.zoom_at(160.,120.,1.25));}}>{"Zoom in"}</Button><Button id="board-reset" style={action()} on_click={move|_|{let _=reset.set(Camera::default());}}>{"Reset camera"}</Button></Row>
-            <Text id="board-picked">{move||format!("Selected object: {}",pick_shown.get().map(|n|n.to_string()).unwrap_or_else(||"None yet".into()))}</Text>
+            <Button id="board-edit" style={action()} on_click={move|_|{let _=toggle_edit.update(|v|*v=!*v);}}>{move||if editing.get(){"Editing selected object"}else{"Edit selected object"}}</Button><Button id="board-export" style={action()} on_click={export}>{"Export drawing"}</Button><Text>{move||export_status.get()}</Text><Text id="board-picked">{move||format!("Selected object: {}",pick_shown.get().map(|n|n.to_string()).unwrap_or_else(||"None yet".into()))}</Text>
             <Text id="camera-state">{move||{let c=position.get();format!("Camera {:.1}, {:.1} · zoom {:.2}",c.x,c.y,c.zoom)}}</Text>
-            {move||rustx!{<Canvas id="drawing-board" label="10,000 object drawing board; use pan and zoom controls" drawing={scene.clone()} camera={shown.get()} on_canvas={{let gestures=gestures.clone();let scene=hit_scene.clone();let pick=pick.clone();move|event|{match event{rustx::drawing::CanvasEvent::Pan{dx,dy}=>{let _=gestures.update(|c|c.pan(dx,dy));},rustx::drawing::CanvasEvent::Zoom{x,y,factor}=>{let _=gestures.update(|c|c.zoom_at(x,y,factor));},rustx::drawing::CanvasEvent::Pick{x,y}=>{let _=pick.set(scene.hit(gestures.get(),x,y));}}}}} style={Style::column().height(320.).clip().radius(12.).background(0x0b1018)}/>}}
+            {move||rustx!{<Canvas id="drawing-board" label="10,000 object drawing board; use pan and zoom controls" drawing={scene.get()} camera={shown.get()} on_canvas={{let gestures=gestures.clone();let scene=hit_scene.clone();let pick=pick.clone();let edit=edit_mode.clone();move|event|{match event{rustx::drawing::CanvasEvent::Pan{dx,dy}=>{if edit.get(){if let Some(id)=pick.get(){let c=gestures.get();if let Ok(next)=scene.get().translate_shape(id,dx/c.zoom,dy/c.zoom){let _=scene.set(Rc::new(next));}}}else{let _=gestures.update(|c|c.pan(dx,dy));}},rustx::drawing::CanvasEvent::Zoom{x,y,factor}=>{let _=gestures.update(|c|c.zoom_at(x,y,factor));},rustx::drawing::CanvasEvent::Pick{x,y}=>{let _=pick.set(scene.get().hit(gestures.get(),x,y));}}}}} on_key_down={{let selected=key_pick.clone();let scene=key_scene.clone();let editing=key_mode.clone();let camera=key_camera.clone();move|e:Event|{if editing.get(){if let Some(id)=selected.get(){let delta=match e.data.key.as_str(){"ArrowLeft"=>Some((-10.,0.)),"ArrowRight"=>Some((10.,0.)),"ArrowUp"=>Some((0.,-10.)),"ArrowDown"=>Some((0.,10.)),_=>None};if let Some((dx,dy))=delta{if let Ok(next)=scene.get().translate_shape(id,dx/camera.get().zoom,dy/camera.get().zoom){let _=scene.set(Rc::new(next));}e.prevent_default();}}}}}} style={Style::column().height(320.).clip().radius(12.).background(0x0b1018)}/>}}
         </Column>
         <Column style={panel()}><Text style={Style::column().font_size(24.)}>{"Virtual data explorer"}</Text>
             <Row style={Style::row().gap(8.).wrap()}><Button id="rows-start" style={action()} on_click={move|_|start.scroll_to(0.)}>{"First rows"}</Button><Button id="rows-next" style={action()} on_click={move|_|next.scroll_by(320.)}>{"Next rows"}</Button><Button id="rows-end" style={action()} on_click={move|_|end.scroll_to(3_199_680.)}>{"Last rows"}</Button></Row>

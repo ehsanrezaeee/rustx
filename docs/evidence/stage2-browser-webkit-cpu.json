@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-02",
+  "date": "2026-11-10T18:43:02.170Z",
   "engine": "webkit",
   "backend": "Rust CPU",
   "platform": "darwin",
@@ -19,25 +19,25 @@
     "API counters and local samples are not full platform/performance certification"
   ],
   "version": "27.2",
-  "wasmSha256": "d9ae281bd9f46414a83c3b0de323f07d677fbe90c6c435524760778f94a59243",
+  "wasmSha256": "ab207951fc412b9ec041b319a9aae7acbf3143ede855fc27be7093a8344fd86b",
   "drawingVisible": 133,
   "result": "passed",
   "finalMetrics": {
     "cpu_culled": 1,
-    "cpu_visited": 44,
-    "glyph_bytes": 80325,
-    "glyph_entries": 371,
+    "cpu_visited": 48,
+    "glyph_bytes": 80802,
+    "glyph_entries": 375,
     "image_bytes": 0,
     "image_entries": 0,
     "layout_changed": 3,
-    "layout_nodes": 128,
-    "scene_cache_bytes": 47261,
-    "scene_cache_entries": 44,
-    "scene_painted": 19,
-    "scene_reused": 16,
+    "layout_nodes": 132,
+    "scene_cache_bytes": 52131,
+    "scene_cache_entries": 48,
+    "scene_painted": 20,
+    "scene_reused": 19,
     "shapes_visible": 133,
-    "text_cache_bytes": 467584,
-    "text_cache_entries": 412,
-    "text_shapes": 412
+    "text_cache_bytes": 495512,
+    "text_cache_entries": 426,
+    "text_shapes": 426
   }
 }

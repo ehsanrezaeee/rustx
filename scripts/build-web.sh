@@ -8,5 +8,5 @@ fi
 cargo build -p rustx-lab --lib --target wasm32-unknown-unknown --release --locked
 mkdir -p dist/pkg
 wasm-bindgen target/wasm32-unknown-unknown/release/rustx_lab.wasm --target web --out-dir dist/pkg
-cp web/index.html web/host.js web/services.js dist/
+cp web/index.html web/host.js web/services.js web/semantics.js dist/
 echo 'Built dist/. Run: cargo run -p rustx-cli -- serve dist 3000'

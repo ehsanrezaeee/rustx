@@ -1,0 +1,22 @@
+   Compiling rustx-engine v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-engine)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.49s
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-74d3e46e92f17567)
+
+running 1 test
+
+thread '<unnamed>' panicked at crates/rustx-engine/src/host/services.rs:164:278:
+called `Result::unwrap()` on an `Err` value: ConnectionClosed
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'host::services::tests::actual_native_pull_stream_and_socket_echo' panicked at crates/rustx-engine/src/host/services.rs:167:23:
+called `Result::unwrap()` on an `Err` value: Any { .. }
+test host::services::tests::actual_native_pull_stream_and_socket_echo ... FAILED
+
+failures:
+
+failures:
+    host::services::tests::actual_native_pull_stream_and_socket_echo
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p rustx-engine --lib`

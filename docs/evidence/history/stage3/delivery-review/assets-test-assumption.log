@@ -1,0 +1,13 @@
+Command: cargo test -p rustx-engine --locked --test stage3_assets
+Initial added-test execution: 3 passed, 1 failed.
+
+---- asset_registry_rejects_resource_kind_changes_without_orphaning_resources stdout ----
+
+thread 'asset_registry_rejects_resource_kind_changes_without_orphaning_resources' panicked at crates/rustx-engine/tests/stage3_assets.rs:196:5:
+assertion failed: installed_fonts > initial_fonts
+
+This failure was an incorrect test assumption: installing the bundled DejaVuSans
+again can deduplicate the existing font face. Removed the strict font-count
+increase assertion; the regression still verifies rejected kind changes preserve
+font count, image ownership, registry entries and image removal behavior.
+The corrected four-test execution passes in stage3-delivery-assets.log.

@@ -1,0 +1,25 @@
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.77s
+     Running tests/editing_forms.rs (target/debug/deps/editing_forms-1a5321d34b1b8ece)
+
+running 16 tests
+test composition_is_one_undo_transaction_and_cancel_restores_selection ... ok
+test composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text ... ok
+test form_level_validation_and_sensitive_debug_use_declared_associations ... ok
+test browser_composition_sync_commits_once_and_invalid_input_does_not_mutate ... ok
+test form_tracks_dirty_touched_validation_and_reset ... ok
+test async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors ... ok
+test async_validation_preserves_form_level_field_errors_without_touching_other_fields ... ok
+test grapheme_motion_and_deletion_preserve_joined_emoji_and_combining_marks ... ok
+test insertion_caret_stays_on_a_grapheme_boundary_when_neighbors_join ... ok
+test readonly_deletion_preserves_selection_and_editable_deletion_undo_restores_it ... ok
+test readonly_and_password_never_expose_secret_in_diagnostics_or_clipboard ... ok
+test utf16_validation_is_atomic_and_bidi_selections_keep_source_ranges ... ok
+test stale_validation_and_submission_are_rejected_after_edit_reset_and_disposal ... ok
+test tickets_cannot_cross_forms_and_controlledness_changes_are_diagnosed ... ok
+test word_navigation_uses_unicode_words_and_extends_grapheme_safe_ranges ... ok
+test editing_history_is_bounded_and_new_edit_discards_redo_branch ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

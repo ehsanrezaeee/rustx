@@ -13,6 +13,7 @@ struct PaintKey {
     text: String,
     size: (f64, f64),
     kind: Kind,
+    label_inset: f32,
     epoch: u64,
 }
 struct Cached {
@@ -149,14 +150,14 @@ impl SceneEngine {
             let shaped = text.shape_with(
                 &key.text,
                 s.font_size,
-                (rect.width() as f32 - 2. * s.padding).max(1.),
+                (rect.width() as f32 - 2. * s.padding - key.label_inset).max(1.),
                 s.text_align,
                 s.text_direction,
             );
             TextEngine::paint(
                 &mut own,
                 &shaped,
-                Affine::translate((f64::from(s.padding), f64::from(s.padding))),
+                Affine::translate((f64::from(s.padding + key.label_inset), f64::from(s.padding))),
                 color(s.color),
             );
         }
@@ -242,6 +243,7 @@ impl SceneEngine {
                 text: content,
                 size: (b.rect.width(), b.rect.height()),
                 kind: b.node.kind,
+                label_inset: crate::controls::label_inset(&b.node),
                 epoch: if matches!(b.node.kind, Kind::Text | Kind::Input | Kind::Button) {
                     text.epoch
                 } else if b.node.kind == Kind::Image {
@@ -261,6 +263,9 @@ impl SceneEngine {
                 &self.cache[&b.node.id].scene,
                 Some(Affine::translate(b.rect.origin().to_vec2())),
             );
+            for (rect, ink) in crate::controls::decorations(b) {
+                scene.fill(Fill::NonZero, Affine::IDENTITY, color(ink), None, &rect);
+            }
             if b.node.interactive {
                 let i = self.hits.len();
                 self.hits.push(Hit {
@@ -276,6 +281,17 @@ impl SceneEngine {
                 }
             }
             if focus == Some(b.node.id) {
+                scene.push_layer(Mix::Clip, 1., Affine::IDENTITY, &shape);
+                for (rect, ink, alpha) in crate::editing::decorations(b, text) {
+                    scene.fill(
+                        Fill::NonZero,
+                        Affine::IDENTITY,
+                        color(ink).with_alpha(alpha),
+                        None,
+                        &rect,
+                    );
+                }
+                scene.pop_layer();
                 scene.stroke(
                     &Stroke::new(2.),
                     Affine::IDENTITY,

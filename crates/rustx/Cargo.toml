@@ -9,3 +9,4 @@ rustx-macros = { path = "../rustx-macros" }
 typed-builder = "=0.20.1"
 [dev-dependencies]
 trybuild = "=1.0.115"
+serde_json = "1"

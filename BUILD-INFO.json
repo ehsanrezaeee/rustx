@@ -1,11 +1,11 @@
 {
-  "version": "0.1.0-stage2-engine",
-  "date": "2026-11-02",
+  "version": "0.1.0-stage3-applications",
+  "date": "2026-11-10",
   "stage_accepted": false,
-  "active_stage": 2,
+  "active_stage": 3,
   "stage_2_started": true,
   "baseline_git_revision": "657bcb8",
-  "git_branch": "stage-1-completion",
+  "git_branch": "stage-3",
   "rust": "1.90.0",
   "wasm_bindgen": "0.2.100",
   "node": "24.18.1",
@@ -13,11 +13,11 @@
   "sharp": "0.35.5",
   "test_environment": "macOS 27.0.1 (26A434), aarch64, Apple M3 MacBook Air, 16 GiB RAM",
   "browser_cpu": [
-    "Google Chrome 156.0.8078.80",
+    "Google Chrome 157.0.8103.40",
     "Playwright WebKit 27.2"
   ],
-  "browser_gpu": "Visible Google Chrome 156.0.8078.80; Apple Metal 3; direct presentation, actual device destruction, CPU recovery and fresh GPU retry",
-  "native_probe": "Apple M3 Metal and Rust CPU: matched 900x720 scene, plus two-frame native Visual engine startup",
+  "browser_gpu": "Visible Google Chrome; physical Apple Metal 3 adapter; direct presentation, actual device destruction, CPU recovery and fresh GPU retry (versions in evidence reports)",
+  "native_probe": "Actual Mac two-frame Applications window startup with default renderer and forced CPU; separate native loopback pull-stream/WebSocket fixture",
   "identity": "SOURCE-REVISION.txt hashes SOURCE_MANIFEST.sha256; archive adds exact GIT-REVISION.txt and ARTIFACT_MANIFEST.sha256",
   "source_manifest_excludes": [
     "evidence",
@@ -28,12 +28,27 @@
     "releases"
   ],
   "missing": [
-    "actual Windows x64 execution and full target parity/recovery/DPI",
-    "human screen-reader and real OS IME tasks",
-    "actual Safari/mobile and usable Firefox session",
-    "full font/style/text/effect conformance",
-    "external clean-machine replay and frozen benchmark hardware/performance certification"
+    "actual Windows x64 browser/native execution, UI Automation and full target services/rendering/recovery/DPI matrix",
+    "human NVDA/VoiceOver screen-reader and real Persian/English OS IME tasks",
+    "actual Safari/mobile virtual-keyboard/touch/AT and usable Firefox session",
+    "full font/style/text/effect conformance and native utility permissions/printer behavior",
+    "external live API and clean-machine replay; frozen benchmark hardware/performance certification",
+    "Stage 4 editor/tooling/distribution and RX-45/RX-46 final example acceptance"
   ],
   "stage_2_accepted": false,
-  "wasm_sha256": "d9ae281bd9f46414a83c3b0de323f07d677fbe90c6c435524760778f94a59243"
+  "wasm_sha256": "ab207951fc412b9ec041b319a9aae7acbf3143ede855fc27be7093a8344fd86b",
+  "stage_3_implemented": true,
+  "stage_3_accepted": false,
+  "verification": "docs/ACCEPTANCE.md S3-1 through S3-6 and 10 November final replay; automated input is not OS IME or screen-reader evidence",
+  "web_artifact_sha256": {
+    "host.js": "d947b2c01e7a3d738c7ba89724f9b6534fc31dc8b6b26b36fcc62c2503f36cac",
+    "index.html": "618461185b7358b81d92c61578591ce8f22b0b37b7f5f960d4904b58d3ac89fa",
+    "pkg/rustx_lab.d.ts": "3198818b825b0b7c2054074b7254cdbb15c533e6773748f2c728ccd424abd6ba",
+    "pkg/rustx_lab.js": "cf11061fcb6ac13d89d27e583143425dbb0b1a5014afaf4a0b3d3e56ff32b2fa",
+    "pkg/rustx_lab_bg.wasm": "ab207951fc412b9ec041b319a9aae7acbf3143ede855fc27be7093a8344fd86b",
+    "pkg/rustx_lab_bg.wasm.d.ts": "e7bdb2f3277647d78c4f5896891ec4bb021c64db34d963933bf5a818965d9562",
+    "semantics.js": "e3c73bfa6476a7f7bf1751605811bf985f68202c88cf7ce5eeacf429ce1e9286",
+    "services.js": "d4b8fde9849c4897e0698d13289ebced8fa88c32c5b7fc5d49bfdc22caf29aa1"
+  },
+  "source_manifest_sha256": "fb12e8f9159dcf2b94a365fac9eae93c44deb5eb54667ff20bafaaa7ebdd8217"
 }
