@@ -4,6 +4,8 @@ Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVIS
 
 ## Executed checks
 
+Documentation addition, 10 November 2026: `node scripts/create-flow-guide.mjs` generated the six-page [visual flow PDF](visual-guide/rustx-app-flow.pdf) and HTML/SVG source using local Chrome. All six page layouts passed overflow/footer checks and the page contact sheet was visually reviewed. Artifact hashes and limits are in `evidence/visual-guide.json`. This was a documentation export; no new application/platform/performance pass is claimed and the runtime/built demo were not changed.
+
 | Evidence | Command | Actual result and limit |
 | --- | --- | --- |
 | E1 | `cargo test --workspace --locked` | PASS: 14 runtime tests, 1 numeric host-ID test, compiler harness with 4 negative fixtures; Linux x64 Rust 1.90.0. See evidence/workspace-tests.log. |

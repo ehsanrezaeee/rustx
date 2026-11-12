@@ -1,5 +1,7 @@
 # Evidence provenance
 
+Visual guide (10 November 2026): `../visual-guide/rustx-app-flow.pdf` documents source-level startup, reactive updates, layout/text ownership, CPU/GPU presentation, navigation and service flow. `visual-guide.json` records artifact hashes and documentation checks. Six page layouts were checked for page/notes overflow and their contact sheet visually reviewed. Chrome was used to print documentation only; this is not an application browser test, renderer benchmark or new platform acceptance result. An initial sandboxed Chrome launch failed; export succeeded with approved execution outside the sandbox.
+
 The final source content identity is in ../../SOURCE-REVISION.txt and ../../SOURCE_MANIFEST.sha256. The release archive adds the exact Git commit and checksums for every payload file. ACCEPTANCE.md is the authoritative interpretation of these results and their limits.
 
 - `current-*` logs and `browser-*.json` describe this macOS continuation. Final successful browser versions are installed Chrome 156.0.8078.74 and Playwright WebKit 27.2. Firefox startup failed; its log is a failure, not a pass.
