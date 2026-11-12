@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T15:09:40.141Z",
+  "date": "2026-11-12T16:19:14.425Z",
   "engine": "webkit",
   "checks": [
     "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
@@ -11,17 +11,17 @@
     "Offline application shell preserves no implicit API cache",
     "Network throttling estimates navigation to usable frame; no physical scanout measurement"
   ],
-  "build": "74375fca62c1e8501b45147d85218cdb341e0c008f54e5d45c68325adc4f5291",
+  "build": "30e5a2eff1c1ed9959846e3ad71e82266ea58f85ab09e94f003510876b089f59",
   "version": "27.2",
-  "coldStartupMs": 379,
+  "unthrottledObservationMs": 390,
   "coldDesktopGate": null,
   "offlineApi": {
     "text": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns.",
     "label": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns."
   },
-  "compressedInitialBytes": 3202009,
+  "compressedInitialBytes": 3206931,
+  "transferScope": "Complete reference dashboard; standalone counter is measured by test:stage4:cli",
   "transferGates": {
-    "counter3MiB": false,
     "dashboard5MiB": true
   },
   "result": "passed-functional"

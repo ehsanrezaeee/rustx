@@ -282,23 +282,55 @@ fn respond(mut stream: TcpStream, root: &Path) {
     } else {
         ("404 Not Found", "text/plain", b"Not found".to_vec())
     };
-    let accepts_gzip = headers.get("accept-encoding").is_some_and(|value| {
-        value.split(',').any(|entry| {
+    let quality = |name: &str| {
+        let mut exact = None;
+        let mut wildcard = 0_f32;
+        for entry in headers
+            .get("accept-encoding")
+            .into_iter()
+            .flat_map(|value| value.split(','))
+        {
             let mut parts = entry.trim().split(';');
-            parts.next() == Some("gzip")
-                && !parts.any(|part| {
-                    part.trim()
-                        .strip_prefix("q=")
-                        .is_some_and(|q| q.parse::<f32>().unwrap_or(0.) <= 0.)
-                })
-        })
-    });
+            let encoding = parts.next().unwrap_or("").trim();
+            let mut weight = 1_f32;
+            for parameter in parts {
+                if let Some(value) = parameter.trim().strip_prefix("q=") {
+                    weight = value
+                        .parse::<f32>()
+                        .ok()
+                        .filter(|q| q.is_finite() && (0_f32..=1.).contains(q))
+                        .unwrap_or(0.);
+                }
+            }
+            if encoding.eq_ignore_ascii_case(name) {
+                exact = Some(weight);
+            }
+            if encoding == "*" {
+                wildcard = weight;
+            }
+        }
+        exact.unwrap_or(wildcard)
+    };
+    let mut candidates = [
+        (quality("br"), "br", "Content-Encoding: br\r\n"),
+        (quality("gzip"), "gz", "Content-Encoding: gzip\r\n"),
+    ];
+    candidates.sort_by(|a, b| b.0.total_cmp(&a.0));
     let mut encoding = "";
-    if status == "200 OK" && !url.starts_with("/api/") && accepts_gzip {
-        if let Some(file) = resolve(root, &format!("{}.gz", url.split('?').next().unwrap_or(""))) {
-            if let Ok(bytes) = fs::read(file) {
-                body = bytes;
-                encoding = "Content-Encoding: gzip\r\n";
+    if status == "200 OK" && !url.starts_with("/api/") {
+        for (quality, suffix, header) in candidates {
+            if quality <= 0. {
+                continue;
+            }
+            if let Some(file) = resolve(
+                root,
+                &format!("{}.{suffix}", url.split('?').next().unwrap_or("")),
+            ) {
+                if let Ok(bytes) = fs::read(file) {
+                    body = bytes;
+                    encoding = header;
+                    break;
+                }
             }
         }
     }

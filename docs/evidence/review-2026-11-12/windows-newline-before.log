@@ -1,0 +1,16 @@
+   Compiling rustx-cli v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+     Running unittests src/main.rs (target/debug/deps/rustx-4789c1e6a79bf3e2)
+
+running 1 test
+test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.11s
+
+     Running unittests src/legacy.rs (target/debug/deps/rustx_cli-41fdbdcd88a69e54)
+
+running 1 test
+test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.11s
+

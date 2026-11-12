@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { chromium, webkit } from 'playwright';
+import { compressedShellBytes, measureColdStartup } from './measure-startup.mjs';
 const base = process.env.RUSTX_URL || 'http://127.0.0.1:3011',
   engine = process.env.RUSTX_BROWSER || 'chromium',
   root = process.env.RUSTX_DIST || 'dist-release',
@@ -31,6 +32,21 @@ try {
   const wasm = Object.keys(manifest.files).find((p) => /\.[a-f0-9]{12}\.wasm$/.test(p)),
     host = Object.keys(manifest.files).find((p) => /^host\.[a-f0-9]{12}\.js$/.test(p));
   assert(wasm && host);
+  for (const [accept, encoding] of [
+    ['br, gzip', 'br'],
+    ['br;q=0, gzip', 'gzip'],
+    ['br;q=0.2, gzip;q=1', 'gzip'],
+    ['br;q=0, gzip;q=0', null],
+  ]) {
+    const response = await fetch(base + '/' + wasm, { headers: { 'accept-encoding': accept } });
+    assert.equal(response.headers.get('content-encoding'), encoding);
+    assert.equal(
+      createHash('sha256')
+        .update(Buffer.from(await response.arrayBuffer()))
+        .digest('hex'),
+      manifest.files[wasm],
+    );
+  }
   const res = await fetch(base + '/' + wasm, { headers: { 'accept-encoding': 'gzip' } });
   assert.equal(res.headers.get('content-type'), 'application/wasm');
   assert.equal(res.headers.get('content-encoding'), 'gzip');
@@ -52,6 +68,15 @@ try {
     ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
   });
   report.version = browser.version();
+  if (engine === 'chromium') {
+    report.coldStartup = await measureColdStartup(
+      browser,
+      base + '/?renderer=cpu#/people',
+      'load-fixture',
+    );
+    report.coldStartupMs = report.coldStartup.p95Ms;
+    report.coldDesktopGate = report.coldStartup.passed;
+  }
   const context = await browser.newContext({
       viewport: { width: 1280, height: 720 },
       serviceWorkers: 'allow',
@@ -62,18 +87,15 @@ try {
     cdp = await context.newCDPSession(page);
     await cdp.send('Network.enable');
     await cdp.send('Network.setCacheDisabled', { cacheDisabled: true });
-    await cdp.send('Network.emulateNetworkConditions', {
-      offline: false,
-      latency: 100,
-      downloadThroughput: 10_000_000 / 8,
-      uploadThroughput: 2_000_000 / 8,
-    });
   }
   const started = Date.now();
   await page.goto(base + '/?renderer=cpu#/people');
   await page.waitForSelector('[data-testid=load-fixture]', { timeout: 60000 });
-  report.coldStartupMs = Date.now() - started;
-  report.coldDesktopGate = engine === 'chromium' ? report.coldStartupMs <= 3000 : null;
+  if (engine !== 'chromium') {
+    report.unthrottledObservationMs = Date.now() - started;
+    report.coldDesktopGate = null;
+  }
+  assert.equal(await page.locator(`link[rel=preload][href="/${wasm}"]`).count(), 1);
   assert.equal(await page.evaluate(() => window.rustx), undefined);
   assert.equal(await page.locator('#rustx-devtools').count(), 0);
   assert.equal(await page.request.get(base + '/inspector.html').then((r) => r.status()), 404);
@@ -130,13 +152,13 @@ try {
   report.checks.push(
     'service-worker cached application launches on offline nested route; API honestly fails; online deep-link reload recovers',
   );
-  const precache = await fs.readFile(root + '/service-worker.js', 'utf8');
-  const files = JSON.parse(precache.match(/const FILES\s*=\s*(\[.*?\]);/)[1]);
-  let transfer = 0;
-  for (const name of files) transfer += (await fs.stat(root + name + '.gz')).size;
+  const transfer = await compressedShellBytes(root);
   report.compressedInitialBytes = transfer;
+  report.compression = 'br';
+  report.gzipInitialBytes = await compressedShellBytes(root, 'gzip');
+  report.transferScope =
+    'Complete reference dashboard; standalone counter is measured by test:stage4:cli';
   report.transferGates = {
-    counter3MiB: transfer <= 3 * 1024 * 1024,
     dashboard5MiB: transfer <= 5 * 1024 * 1024,
   };
   report.result = 'passed-functional';

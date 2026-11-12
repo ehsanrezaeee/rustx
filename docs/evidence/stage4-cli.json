@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T15:05:44.895Z",
+  "date": "2026-11-12T16:19:16.150Z",
   "checks": [
     "embedded SDK creates independent vendored project from unrelated directory",
     "new, doctor, formatter, locked check/test and standalone web build",
@@ -7,7 +7,25 @@
     "real Cargo error overlay and recovery after source correction"
   ],
   "limitations": [
-    "Cached pinned dependencies/toolchain on this Mac; not a clean Windows/first-ever-download installation"
+    "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation"
   ],
+  "counterCompressedBytes": 3059552,
+  "counterTransferGate": true,
+  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-JwoNtM/sample",
+  "counterColdStartup": {
+    "rawMs": [
+      3181.7323749999996,
+      3167.5462079999998,
+      3166.136292000003,
+      3166.0627909999967,
+      3163.321125000002
+    ],
+    "medianMs": 3166.136292000003,
+    "p95Ms": 3181.7323749999996,
+    "budgetMs": 3000,
+    "passed": false,
+    "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+    "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+  },
   "result": "passed"
 }

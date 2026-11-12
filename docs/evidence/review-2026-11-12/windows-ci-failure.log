@@ -1,0 +1,28 @@
+2026-11-12T16:20:39.9793381Z 
+2026-11-12T16:20:39.9793581Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T16:20:39.9793807Z 
+2026-11-12T16:20:39.9793970Z      Running unittests src\main.rs (target\debug\deps\rustx-766ccf93319453f4.exe)
+2026-11-12T16:20:39.9951245Z 
+2026-11-12T16:20:39.9952542Z running 3 tests
+2026-11-12T16:20:40.1538246Z test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... FAILED
+2026-11-12T16:20:40.2331088Z test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+2026-11-12T16:20:40.2331866Z test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+2026-11-12T16:20:40.2332229Z 
+2026-11-12T16:20:40.2332304Z failures:
+2026-11-12T16:20:40.2332419Z 
+2026-11-12T16:20:40.2332709Z ---- tooling::format::tests::adjacent_tags_are_not_rust_shift_operators stdout ----
+2026-11-12T16:20:40.2333010Z 
+2026-11-12T16:20:40.2333530Z thread 'tooling::format::tests::adjacent_tags_are_not_rust_shift_operators' panicked at crates\rustx-cli\src\tooling\format.rs:332:9:
+2026-11-12T16:20:40.2334576Z assertion `left == right` failed
+2026-11-12T16:20:40.2336524Z   left: "fn app() {\n    let _ = rustx! {\n        <Column>\n            <Text\n                value={\n                    if 2 >= 1 {\n                        \"yes\"\n                    } else {\n                        \"no\"\n                    }\n                }\n            />\n        </Column>\n    };\n}\n"
+2026-11-12T16:20:40.2338724Z  right: "fn app() {\r\n    let _ = rustx! {\n        <Column>\n            <Text\n                value={\n                    if 2 >= 1 {\n                        \"yes\"\n                    } else {\n                        \"no\"\n                    }\n                }\n            />\n        </Column>\n    };\r\n}\r\n"
+2026-11-12T16:20:40.2339791Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+2026-11-12T16:20:40.2340088Z 
+2026-11-12T16:20:40.2340095Z 
+2026-11-12T16:20:40.2340165Z failures:
+2026-11-12T16:20:40.2340485Z     tooling::format::tests::adjacent_tags_are_not_rust_shift_operators
+2026-11-12T16:20:40.2340755Z 
+2026-11-12T16:20:40.2341126Z test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+2026-11-12T16:20:40.2341470Z 
+2026-11-12T16:20:40.2341664Z error: test failed, to rerun pass `-p rustx-cli --bin rustx`
+2026-11-12T16:20:40.2387460Z ##[error]Process completed with exit code 101.

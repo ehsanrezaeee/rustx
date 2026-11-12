@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png -text
+*.ttf -text
+*.pdf -text
+*.zip -text
+*.vsix -text
+*.crate -text
+*.bundle -text

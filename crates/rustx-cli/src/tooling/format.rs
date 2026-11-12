@@ -269,6 +269,8 @@ pub fn source(input: &str) -> Result<String, String> {
             "rustfmt",
             "--edition",
             "2021",
+            "--config",
+            "newline_style=Unix",
             "--emit",
             "stdout",
         ])
@@ -329,6 +331,14 @@ mod tests {
         let formatted = source(source_text).unwrap();
         assert!(formatted.contains("<Column>\n"));
         assert!(formatted.contains("if 2 >= 1"));
+        assert_eq!(source(&formatted).unwrap(), formatted);
+    }
+
+    #[test]
+    fn windows_input_produces_consistent_idempotent_lf_output() {
+        let input = "fn app() {\r\n let _ = rustx! {<Column><Text>{if true {\"سلام\"} else {\"hello\"}}</Text></Column>};\r\n}\r\n";
+        let formatted = source(input).unwrap();
+        assert!(!formatted.contains('\r'));
         assert_eq!(source(&formatted).unwrap(), formatted);
     }
 

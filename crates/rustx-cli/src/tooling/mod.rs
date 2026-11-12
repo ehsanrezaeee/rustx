@@ -480,7 +480,11 @@ pub fn build(
     write(&temporary.join(&host_name), host)?;
     write(
         &temporary.join("index.html"),
-        INDEX.replace("/host.js", &format!("/{host_name}")),
+        INDEX
+            .replace("/host.js", &format!("/{host_name}"))
+            .replace("<!-- RUSTX_WASM_PRELOAD -->", &format!(
+                r#"<link rel="preload" href="/pkg/{wasm_name}" as="fetch" type="application/wasm" crossorigin />"#,
+            )),
     )?;
     let mut paths = vec![];
     files(&temporary, &mut paths)?;
@@ -535,6 +539,12 @@ pub fn build(
                 &PathBuf::from(format!("{}.gz", path.display())),
                 encoder.finish().map_err(|e| e.to_string())?,
             )?;
+            let mut compressed = Vec::new();
+            {
+                let mut encoder = brotli::CompressorWriter::new(&mut compressed, 65536, 9, 22);
+                std::io::Write::write_all(&mut encoder, &data).map_err(|e| e.to_string())?;
+            }
+            write(&PathBuf::from(format!("{}.br", path.display())), compressed)?;
         }
     }
     if out.exists() {

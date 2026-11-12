@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T15:11:28.569Z",
+  "date": "2026-11-12T16:14:41.596Z",
   "engine": "chromium",
   "checks": [
     "hash deep link mounts the public Rust application",
@@ -27,6 +27,6 @@
     "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
   ],
   "version": "157.0.8103.40",
-  "wasmSha256": "0d00b7999818e3cb7f7511a3ac62b742e318cf2006aaad5e87e1beb7df6d6579",
+  "wasmSha256": "519e597acdce33e1b829caf531bc16e05a40f5e4039f6b0390e6d5e9d0c27c9a",
   "result": "passed"
 }

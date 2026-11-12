@@ -47,10 +47,15 @@ const webManifest = JSON.parse(await fs.readFile(path.join(root, 'dist/assets.js
 const hashedHost = Object.keys(webManifest.files).find((name) =>
   /^host\.[a-f0-9]{12}\.js$/.test(name),
 );
-const expectedIndex = (await fs.readFile(path.join(root, 'web/index.html'), 'utf8')).replace(
-  '/host.js',
-  `/${hashedHost}`,
+const hashedWasm = Object.keys(webManifest.files).find((name) =>
+  /\.[a-f0-9]{12}\.wasm$/.test(name),
 );
+const expectedIndex = (await fs.readFile(path.join(root, 'web/index.html'), 'utf8'))
+  .replace('/host.js', `/${hashedHost}`)
+  .replace(
+    '<!-- RUSTX_WASM_PRELOAD -->',
+    `<link rel="preload" href="/${hashedWasm}" as="fetch" type="application/wasm" crossorigin />`,
+  );
 if (
   !hashedHost ||
   expectedIndex !== (await fs.readFile(path.join(root, 'dist/index.html'), 'utf8'))
