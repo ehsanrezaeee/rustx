@@ -23,7 +23,7 @@ async function walk(relative = '') {
   for (const entry of await fs.readdir(new URL(relative, root), { withFileTypes: true })) {
     if (excluded.has(entry.name)) continue;
     const file = path.posix.join(relative, entry.name);
-    if (file === 'docs/evidence') continue;
+    if (file === 'docs/evidence' || file === 'crates/rustx-cli/assets') continue;
     if (entry.isDirectory()) await walk(file + '/');
     else if (entry.isFile()) files.push(file);
   }
