@@ -1,0 +1,16 @@
+
+> test:http
+> cargo build -p rustx-cli --locked && node scripts/test-http.mjs
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-http.mjs:27
+    server.once('exit', (code) => fail(new Error(`Server exited ${code}`)));
+                                       ^
+
+Error: Server exited 1
+    at ChildProcess.<anonymous> (file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-http.mjs:27:40)
+    at Object.onceWrapper (node:events:631:26)
+    at ChildProcess.emit (node:events:509:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.18.1

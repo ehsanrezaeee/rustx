@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-12T11:16:54.112Z",
+  "checks": [
+    "embedded SDK creates independent vendored project from unrelated directory",
+    "new, doctor, formatter, locked check/test and standalone web build",
+    "real source edit rebuilds Wasm and reloads browser with matching output",
+    "real Cargo error overlay and recovery after source correction"
+  ],
+  "limitations": [
+    "Cached pinned dependencies/toolchain on this Mac; not a clean Windows/first-ever-download installation"
+  ],
+  "result": "passed"
+}

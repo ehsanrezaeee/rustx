@@ -1,0 +1,6 @@
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.04s
+     Running `target/debug/examples/stage2_probe docs/evidence/stage2-probe --gpu`
+Stage 2 CPU shared scene rendered
+Adapter: AdapterInfo { name: "Apple M3", vendor: 0, device: 0, device_type: IntegratedGpu, driver: "", driver_info: "", backend: Metal }
+Offscreen Vello probe passed; not hardware/browser presentation certification

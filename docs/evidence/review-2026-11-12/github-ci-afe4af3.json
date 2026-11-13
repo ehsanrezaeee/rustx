@@ -1,0 +1,406 @@
+{
+  "head": "afe4af3003a2524e1f8d04dfbf1d1b23d0d5a2be",
+  "url": "https://github.com/ehsanrezaeee/rustx/actions/runs/43260768760",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Browser stages 1–4 (CPU, Linux Chromium)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ehsanrezaeee/rustx/actions/runs/43260768760/job/131336785513",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-12T16:48:12Z",
+          "completed_at": "2026-11-12T16:48:13Z"
+        },
+        {
+          "name": "Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-12T16:48:13Z",
+          "completed_at": "2026-11-12T16:48:15Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-12T16:48:15Z",
+          "completed_at": "2026-11-12T16:48:19Z"
+        },
+        {
+          "name": "Pinned toolchain and real browser",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-12T16:48:19Z",
+          "completed_at": "2026-11-12T16:51:18Z"
+        },
+        {
+          "name": "Sequential browser and standalone CLI tasks",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-12T16:51:18Z",
+          "completed_at": "2026-11-12T16:55:18Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-12T16:55:18Z",
+          "completed_at": "2026-11-12T16:55:19Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-12T16:55:19Z",
+          "completed_at": "2026-11-12T16:55:19Z"
+        },
+        {
+          "name": "Post Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-12T16:55:19Z",
+          "completed_at": "2026-11-12T16:55:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-12T16:55:19Z",
+          "completed_at": "2026-11-12T16:55:19Z"
+        }
+      ]
+    },
+    {
+      "name": "Contracts (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ehsanrezaeee/rustx/actions/runs/43260768760/job/131336786112",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-12T16:48:12Z",
+          "completed_at": "2026-11-12T16:48:13Z"
+        },
+        {
+          "name": "Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-12T16:48:13Z",
+          "completed_at": "2026-11-12T16:48:15Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-12T16:48:15Z",
+          "completed_at": "2026-11-12T16:48:17Z"
+        },
+        {
+          "name": "Pinned Rust and web prerequisites",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-12T16:48:17Z",
+          "completed_at": "2026-11-12T16:49:54Z"
+        },
+        {
+          "name": "Stages 1–3 deterministic contracts and Stage 4 formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-12T16:49:54Z",
+          "completed_at": "2026-11-12T16:52:22Z"
+        },
+        {
+          "name": "Rebuilt Wasm and scoped host contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-12T16:52:22Z",
+          "completed_at": "2026-11-12T16:54:17Z"
+        },
+        {
+          "name": "Actual Windows native CPU startup and package",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-12T16:54:17Z",
+          "completed_at": "2026-11-12T16:54:17Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-12T16:54:17Z",
+          "completed_at": "2026-11-12T16:54:18Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-12T16:54:18Z",
+          "completed_at": "2026-11-12T16:54:19Z"
+        },
+        {
+          "name": "Post Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-12T16:54:19Z",
+          "completed_at": "2026-11-12T16:54:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-12T16:54:19Z",
+          "completed_at": "2026-11-12T16:54:19Z"
+        }
+      ]
+    },
+    {
+      "name": "Contracts (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ehsanrezaeee/rustx/actions/runs/43260768760/job/131336786328",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-12T16:56:19Z",
+          "completed_at": "2026-11-12T16:56:20Z"
+        },
+        {
+          "name": "Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-12T16:56:20Z",
+          "completed_at": "2026-11-12T16:56:23Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-12T16:56:23Z",
+          "completed_at": "2026-11-12T16:56:25Z"
+        },
+        {
+          "name": "Pinned Rust and web prerequisites",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-12T16:56:25Z",
+          "completed_at": "2026-11-12T16:58:16Z"
+        },
+        {
+          "name": "Stages 1–3 deterministic contracts and Stage 4 formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-12T16:58:16Z",
+          "completed_at": "2026-11-12T17:00:45Z"
+        },
+        {
+          "name": "Rebuilt Wasm and scoped host contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-12T17:00:45Z",
+          "completed_at": "2026-11-12T17:02:48Z"
+        },
+        {
+          "name": "Actual Windows native CPU startup and package",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-12T17:02:48Z",
+          "completed_at": "2026-11-12T17:02:48Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-12T17:02:48Z",
+          "completed_at": "2026-11-12T17:02:49Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-12T17:02:49Z",
+          "completed_at": "2026-11-12T17:02:49Z"
+        },
+        {
+          "name": "Post Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-12T17:02:49Z",
+          "completed_at": "2026-11-12T17:02:49Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-12T17:02:49Z",
+          "completed_at": "2026-11-12T17:02:52Z"
+        }
+      ]
+    },
+    {
+      "name": "Contracts (windows-2025)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/ehsanrezaeee/rustx/actions/runs/43260768760/job/131336786329",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-12T16:48:14Z",
+          "completed_at": "2026-11-12T16:48:15Z"
+        },
+        {
+          "name": "Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-12T16:48:15Z",
+          "completed_at": "2026-11-12T16:48:26Z"
+        },
+        {
+          "name": "Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-12T16:48:26Z",
+          "completed_at": "2026-11-12T16:48:31Z"
+        },
+        {
+          "name": "Pinned Rust and web prerequisites",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-12T16:48:31Z",
+          "completed_at": "2026-11-12T16:51:20Z"
+        },
+        {
+          "name": "Stages 1–3 deterministic contracts and Stage 4 formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-12T16:51:20Z",
+          "completed_at": "2026-11-12T16:55:40Z"
+        },
+        {
+          "name": "Rebuilt Wasm and scoped host contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-12T16:55:40Z",
+          "completed_at": "2026-11-12T16:58:46Z"
+        },
+        {
+          "name": "Actual Windows native CPU startup and package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-12T16:58:46Z",
+          "completed_at": "2026-11-12T17:09:15Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-12T17:09:15Z",
+          "completed_at": "2026-11-12T17:09:19Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-12T17:09:19Z",
+          "completed_at": "2026-11-12T17:09:20Z"
+        },
+        {
+          "name": "Post Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-12T17:09:20Z",
+          "completed_at": "2026-11-12T17:09:22Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-12T17:09:22Z",
+          "completed_at": "2026-11-12T17:09:22Z"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13966915142,
+      "name": "contracts-windows-2025",
+      "size": 22751917,
+      "digest": "sha256:a33c2a9a5fd68a5186befa95cf863bedaa915a6d442bcf22bad01f8df80e69c9",
+      "expired": false
+    },
+    {
+      "id": 13965620628,
+      "name": "linux-browser-evidence",
+      "size": 776818,
+      "digest": "sha256:f1b8ccb2a87dba5fe532ef46f80100df7a7934fc24607eaba63756b6a29b14a5",
+      "expired": false
+    },
+    {
+      "id": 13965581972,
+      "name": "contracts-macos-15",
+      "size": 50340,
+      "digest": "sha256:798cba881c3dad75578639f52cf9bc6539e88131bb08f910070ce0ff85a2a1e6",
+      "expired": false
+    },
+    {
+      "id": 13965565543,
+      "name": "contracts-ubuntu-24.04",
+      "size": 50566,
+      "digest": "sha256:a1e35ea6feffadf6b5fe15879f49623f5b00008120181f9a7de582c835918a39",
+      "expired": false
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+
+> test:stage3:browser
+> node scripts/test-stage3-browser.mjs
+
+{
+  "date": "2026-11-12T16:58:07.109Z",
+  "engine": "chromium",
+  "checks": [],
+  "limitations": [
+    "No Windows, human screen-reader, real OS IME, actual Safari or mobile acceptance"
+  ],
+  "version": "157.0.8103.40",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert((await page.evaluate(() => window.firstRustFrameIds)).includes('profile-name'))\n",
+  "pageErrors": []
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert((await page.evaluate(() => window.firstRustFrameIds)).includes('profile-name'))
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage3-browser.mjs:58:3 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

@@ -1,0 +1,34 @@
+
+> test:stage4:deploy
+> node scripts/test-stage4-deploy.mjs
+
+{
+  "date": "2026-11-13T07:26:49.823Z",
+  "engine": "webkit",
+  "checks": [
+    "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
+    "production disables devtools/API; cold navigation to usable semantic control measured",
+    "service-worker cached application launches on offline nested route; API honestly fails; online deep-link reload recovers"
+  ],
+  "limitations": [
+    "Loopback delivery; no public HTTPS deployment",
+    "Offline application shell preserves no implicit API cache",
+    "Network throttling estimates navigation to usable frame; no physical scanout measurement"
+  ],
+  "build": "e96ee83622d67d172f0da116ebe9ac177dd64288b4b3f00c78edaacd5947ba78",
+  "version": "27.2",
+  "unthrottledObservationMs": 274,
+  "coldDesktopGate": null,
+  "offlineApi": {
+    "text": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns.",
+    "label": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns."
+  },
+  "compressedInitialBytes": 2786618,
+  "compression": "br",
+  "gzipInitialBytes": 3215785,
+  "transferScope": "Complete reference dashboard; standalone counter is measured by test:stage4:cli",
+  "transferGates": {
+    "dashboard5MiB": true
+  },
+  "result": "passed-functional"
+}

@@ -14,9 +14,60 @@ use std::{fs::File, sync::Arc};
 fn main() {
     let out = std::env::args().nth(1).unwrap_or("docs/evidence".into());
     std::fs::create_dir_all(&out).unwrap();
-    let mut e = Engine::new(
-        |_| rustx! {<Div style={Style::column().padding(30.).gap(20.).background(0x172033)}><Text style={Style::column().font_size(30.)}>{"RustX Stage 2 — سلام دنیا 🦀 🚀"}</Text><Div style={Style::column().height(130.).clip().radius(24.).background(0x425377).shadow(0x000000,6.,(3.,4.))}><Div style={Style::row().width(900.).height(180.).translate(25.,15.).gradient(0xc1f392,0x4b74ca).opacity(0.6)}><Text style={Style::column().padding(20.).font_size(24.).color(0x101820)}>{"Nested clip · translation · opacity group"}</Text></Div></Div><Image src="probe" style={Style::column().width(180.).height(120.).radius(20.).opacity(0.65)}/><Canvas drawing={rustx_lab::visual::conformance_scene()} style={Style::column().height(200.).clip().radius(16.).background(0x0b1018)}/></Div>},
-    );
+    let mut e = Engine::new(|_| {
+        rustx! {
+            <Div style={ Style::column().padding(30.).gap(20.).background(0x172033) }>
+                <Text style={ Style::column().font_size(30.) }>
+                    { "RustX Stage 2 — سلام دنیا 🦀 🚀" }
+                </Text>
+                <Div
+                    style={
+                        Style::column()
+                            .height(130.)
+                            .clip()
+                            .radius(24.)
+                            .background(0x425377)
+                            .shadow(0x000000, 6., (3., 4.))
+                    }
+                >
+                    <Div
+                        style={
+                            Style::row()
+                                .width(900.)
+                                .height(180.)
+                                .translate(25., 15.)
+                                .gradient(0xc1f392, 0x4b74ca)
+                                .opacity(0.6)
+                        }
+                    >
+                        <Text style={ Style::column().padding(20.).font_size(24.).color(0x101820) }>
+                            { "Nested clip · translation · opacity group" }
+                        </Text>
+                    </Div>
+                </Div>
+                <Image
+                    src="probe"
+                    style={
+                        Style::column()
+                            .width(180.)
+                            .height(120.)
+                            .radius(20.)
+                            .opacity(0.65)
+                    }
+                />
+                <Canvas
+                    drawing={ rustx_lab::visual::conformance_scene() }
+                    style={
+                        Style::column()
+                            .height(200.)
+                            .clip()
+                            .radius(16.)
+                            .background(0x0b1018)
+                    }
+                />
+            </Div>
+        }
+    });
     let pixels: Vec<u8> = (0..64)
         .flat_map(|i| {
             if (i / 8 + i % 8) % 2 == 0 {

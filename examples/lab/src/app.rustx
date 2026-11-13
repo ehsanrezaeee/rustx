@@ -42,9 +42,71 @@ fn Counter(cx: Scope, name: String, #[prop(default = 0)] initial: i32) -> View {
     let edit_task = task.clone();
     let edit_id = format!("edit-{name}");
     let edit_label = format!("Task for {name}");
-    rustx! {<Column style={card().width(280.)}><Text style={small()}>{format!("KEYED COMPONENT / {name}")}</Text><Text id={format!("count-{name}")} style={Style::column().font_size(36.).color(INK)}>{move||format!("Count: {}",display.get())}</Text><Row style={Style::row().gap(10.)}><Button id={format!("inc-{name}")} style={primary()} on_click={move|_|{let _=inc.update(|v|*v+=1);}}>{"Increase +"}</Button><Button id={format!("dec-{name}")} style={secondary()} on_click={move|_|{let _=dec.update(|v|*v-=1);}}>{"−"}</Button></Row>
-    {move||rustx!{<Input id={edit_id.clone()} label={edit_label.clone()} value={shown_task.get()} style={Style::column().padding(10.).height(48.).background(0x0b121d).border(1.,0x456078).radius(8.).font_size(16.)} on_input={{let edit_task=edit_task.clone();move|e:InputEvent|{let _=edit_task.set(e.value);}}}/>}}
-    </Column>}
+    rustx! {
+        <Column style={ card().width(280.) }>
+            <Text style={ small() }>
+                { format!("KEYED COMPONENT / {name}") }
+            </Text>
+            <Text
+                id={ format!("count-{name}") }
+                style={ Style::column().font_size(36.).color(INK) }
+            >
+                { move || format!("Count: {}", display.get()) }
+            </Text>
+            <Row style={ Style::row().gap(10.) }>
+                <Button
+                    id={ format!("inc-{name}") }
+                    style={ primary() }
+                    on_click={
+                        move |_| {
+                            let _ = inc.update(|v| *v += 1);
+                        }
+                    }
+                >
+                    { "Increase +" }
+                </Button>
+                <Button
+                    id={ format!("dec-{name}") }
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = dec.update(|v| *v -= 1);
+                        }
+                    }
+                >
+                    { "−" }
+                </Button>
+            </Row>
+            {
+                move || {
+                    rustx! {
+                        <Input
+                            id={ edit_id.clone() }
+                            label={ edit_label.clone() }
+                            value={ shown_task.get() }
+                            style={
+                                Style::column()
+                                    .padding(10.)
+                                    .height(48.)
+                                    .background(0x0b121d)
+                                    .border(1., 0x456078)
+                                    .radius(8.)
+                                    .font_size(16.)
+                            }
+                            on_input={
+                                {
+                                    let edit_task = edit_task.clone();
+                                    move |e: InputEvent| {
+                                        let _ = edit_task.set(e.value);
+                                    }
+                                }
+                            }
+                        />
+                    }
+                }
+            }
+        </Column>
+    }
 }
 #[component]
 fn Foundation(cx: Scope) -> View {
@@ -59,11 +121,121 @@ fn Foundation(cx: Scope) -> View {
     let label = visible.clone();
     let memo = input.clone();
     let length = cx.memo(move || memo.get().chars().count());
-    rustx! {<Column style={Style::column().gap(22.)}><Text style={Style::column().font_size(32.)}>{"Small components. Real Rust."}</Text><Text style={small()}>{"Edit a task, change its counter, then reverse the keyed list. State and text stay with each key."}</Text><Row style={Style::row().gap(12.).wrap()}><Button id="reverse" style={primary()} on_click={move|_|{let _=flip.update(|v|v.reverse());}}>{"Reverse components"}</Button><Button id="toggle" style={secondary()} on_click={move|_|{let _=show.update(|v|*v=!*v);}}>{move||if label.get(){"Unmount components"}else{"Mount components"}}</Button></Row>
-    {move||if visible.get(){rustx!{<Row style={Style::row().gap(16.).wrap()}>{keyed(order.get(),|n|n.clone(),|name|rustx!{<Counter name={name}/>})}</Row>}}else{rustx!{<Text>{"Disposed. Mount again to create fresh state."}</Text>}}}
-    <Column style={card()}><Text style={Style::column().font_size(20.)}>{"Write in your language."}</Text><Text style={small()}>{"Browser composition events feed the Rust text model. Persian + English are shaped in Rust."}</Text>
-    {move||rustx!{<Input id="name-input" label="Your message" value={field.get()} style={Style::column().padding(14.).height(54.).background(0x0b121d).border(1.,0x456078).radius(10.).font_size(20.)} on_input={{let change=change.clone();move|e:InputEvent|{let _=change.set(e.value);}}}/>}}
-    <Text id="echo" style={Style::column().font_size(24.).color(GREEN)}>{move||echo.get()}</Text><Text id="length" style={small()}>{move||format!("Derived memo: {} Unicode scalars",length.get())}</Text></Column></Column>}
+    rustx! {
+        <Column style={ Style::column().gap(22.) }>
+            <Text style={ Style::column().font_size(32.) }>
+                { "Small components. Real Rust." }
+            </Text>
+            <Text style={ small() }>
+                {
+                    "Edit a task, change its counter, then reverse the keyed list. State and text stay with each key."
+                }
+            </Text>
+            <Row style={ Style::row().gap(12.).wrap() }>
+                <Button
+                    id="reverse"
+                    style={ primary() }
+                    on_click={
+                        move |_| {
+                            let _ = flip.update(|v| v.reverse());
+                        }
+                    }
+                >
+                    { "Reverse components" }
+                </Button>
+                <Button
+                    id="toggle"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = show.update(|v| *v = !*v);
+                        }
+                    }
+                >
+                    {
+                        move || {
+                            if label.get() {
+                                "Unmount components"
+                            } else {
+                                "Mount components"
+                            }
+                        }
+                    }
+                </Button>
+            </Row>
+            {
+                move || {
+                    if visible.get() {
+                        rustx! {
+                            <Row style={ Style::row().gap(16.).wrap() }>
+                                {
+                                    keyed(
+                                        order.get(),
+                                        |n| n.clone(),
+                                        |name| {
+                                            rustx! {
+                                                <Counter name={ name } />
+                                            }
+                                        },
+                                    )
+                                }
+                            </Row>
+                        }
+                    } else {
+                        rustx! {
+                            <Text>
+                                { "Disposed. Mount again to create fresh state." }
+                            </Text>
+                        }
+                    }
+                }
+            }
+            <Column style={ card() }>
+                <Text style={ Style::column().font_size(20.) }>
+                    { "Write in your language." }
+                </Text>
+                <Text style={ small() }>
+                    {
+                        "Browser composition events feed the Rust text model. Persian + English are shaped in Rust."
+                    }
+                </Text>
+                {
+                    move || {
+                        rustx! {
+                            <Input
+                                id="name-input"
+                                label="Your message"
+                                value={ field.get() }
+                                style={
+                                    Style::column()
+                                        .padding(14.)
+                                        .height(54.)
+                                        .background(0x0b121d)
+                                        .border(1., 0x456078)
+                                        .radius(10.)
+                                        .font_size(20.)
+                                }
+                                on_input={
+                                    {
+                                        let change = change.clone();
+                                        move |e: InputEvent| {
+                                            let _ = change.set(e.value);
+                                        }
+                                    }
+                                }
+                            />
+                        }
+                    }
+                }
+                <Text id="echo" style={ Style::column().font_size(24.).color(GREEN) }>
+                    { move || echo.get() }
+                </Text>
+                <Text id="length" style={ small() }>
+                    { move || format!("Derived memo: {} Unicode scalars", length.get()) }
+                </Text>
+            </Column>
+        </Column>
+    }
 }
 #[derive(Clone)]
 struct Person {
@@ -84,22 +256,35 @@ fn PeopleApp(cx: Scope) -> View {
     let http = cx.context::<HttpClient>().expect("HTTP context");
     let status = cx.signal(People::Idle);
     let latest = Rc::new(RefCell::new(None));
+    let last_source = Rc::new(RefCell::new("/api/users".to_owned()));
     let start = {
+        let last_source = last_source.clone();
         let cx = cx.clone();
         let status = status.clone();
         let http = http.clone();
         let latest = latest.clone();
         move |url: &str| {
-            if let Some(id) = latest.borrow_mut().take() {
+            let previous = latest.borrow_mut().take();
+            if let Some(id) = previous {
                 http.cancel(id);
             }
+            *last_source.borrow_mut() = url.to_owned();
             let _ = status.set(People::Loading);
             let update = status.clone();
-            let id = http.get(&cx, url, move |result| {
+            let complete = move |result: Result<HttpResponse, HostError>| {
                 let next = match result {
                     Ok(r) if (200..300).contains(&r.status) => {
                         match serde_json::from_slice::<serde_json::Value>(&r.body) {
                             Ok(v) => match v.as_array() {
+                                Some(rows)
+                                    if rows.iter().any(|user| {
+                                        user["id"].as_u64().is_none()
+                                            || user["name"].as_str().is_none()
+                                            || user["email"].as_str().is_none()
+                                    }) =>
+                                {
+                                    People::Failed("Malformed person record".into())
+                                }
                                 Some(rows) => People::Ready(
                                     rows.iter()
                                         .take(12)
@@ -122,10 +307,25 @@ fn PeopleApp(cx: Scope) -> View {
                         }
                     }
                     Ok(r) => People::Failed(format!("HTTP {}", r.status)),
+                    Err(HostError::Transport(_)) => People::Failed(
+                        concat!(
+                            "Network unavailable: you may be offline, ",
+                            "or the host may have blocked the request. ",
+                            "Retry when connectivity returns."
+                        )
+                        .into(),
+                    ),
                     Err(e) => People::Failed(format!("{e:?}")),
                 };
                 let _ = update.set(next);
-            });
+            };
+            let id = if url == "/api/timeout" {
+                http.request("GET", url)
+                    .timeout(std::time::Duration::from_millis(75))
+                    .send_callback(&cx, complete)
+            } else {
+                http.get(&cx, url, complete)
+            };
             *latest.borrow_mut() = Some(id);
         }
     };
@@ -133,6 +333,11 @@ fn PeopleApp(cx: Scope) -> View {
     let live = start.clone();
     let fail = start.clone();
     let slow = start.clone();
+    let empty = start.clone();
+    let malformed = start.clone();
+    let timeout = start.clone();
+    let retry = start.clone();
+    let retry_source = last_source.clone();
     let cancel = http.clone();
     let request = latest.clone();
     let query = cx.signal(String::new());
@@ -140,38 +345,382 @@ fn PeopleApp(cx: Scope) -> View {
     let selected = cx.signal(None::<u64>);
     let services = cx.context::<ServiceClient>().unwrap();
     let export_scope = cx.clone();
-    rustx! {<Column style={Style::column().gap(20.)}><Text style={small().color(GREEN)}>{"EXAMPLE 01 / PEOPLE EXPLORER"}</Text><Text style={Style::column().font_size(36.)}>{"Rust UI. Browser networking."}</Text><Text style={small()}>{"A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result."}</Text><Row style={Style::row().gap(10.).wrap()}><Button id="load-fixture" style={primary()} on_click={move|_|fixture("/api/users")}>{"Load local sample"}</Button><Button id="load-live" style={secondary()} on_click={move|_|live("https://jsonplaceholder.typicode.com/users")}>{"Try JSONPlaceholder"}</Button><Button id="load-error" style={secondary()} on_click={move|_|fail("/api/error")}>{"Test error"}</Button><Button id="load-slow" style={secondary()} on_click={move|_|slow("/api/users?delay=1")}>{"Slow request"}</Button><Button id="cancel" style={secondary()} on_click={move|_|{if let Some(id)=request.borrow_mut().take(){cancel.cancel(id);}}}>{"Cancel"}</Button></Row>
-    <TextInput id="people-search" label="Search people" on_input={move|e:InputEvent|{let _=search.set(e.value);}}/>
-    {move||match status.get(){People::Idle=>rustx!{<Column style={card()}><Text id="api-state">{"Ready when you are. Choose a data source above."}</Text></Column>},People::Loading=>rustx!{<Text id="api-state" style={small().color(GREEN)}>{"Loading people…"}</Text>},People::Failed(error)=>rustx!{<Column style={card().border(1.,0x9f6554)}><Text id="api-state">{format!("Request failed: {error}")}</Text><Text style={small()}>{"Retry either source. The local sample works without external internet."}</Text></Column>},People::Ready(people)=>{
-        let q=query.get().to_lowercase();let shown:Vec<_>=people.iter().filter(|p|format!("{} {} {}",p.name,p.email,p.company).to_lowercase().contains(&q)).cloned().collect();
-        let mut children=vec![Node::text(format!("{} people / request completed",shown.len())).id("api-state").style(small().color(GREEN))];
-        let select=selected.clone();
-        children.push(Node::new(Kind::Div).style(Style::grid(3).responsive(250.).gap(14.)).children(keyed(shown,|p|p.id,move|p|{
-            let select=select.clone();let id=p.id;
-            Node::new(Kind::Div).style(card()).children(vec![Node::text(format!("PERSON {:02}",p.id)).style(small().color(GREEN)),Node::text(&p.name).style(Style::column().font_size(21.)),Node::text(&p.email).style(small()),Node::text(&p.company).style(small()),Node::widget(Widget::Button).id(format!("person-{}",p.id)).value("View details").on_click(move|_|{let _=select.set(Some(id));})])
-        }).children));
-        if let Some(person)=people.iter().find(|p|Some(p.id)==selected.get()){
-            let text=format!("{}\n{}\n{}",person.name,person.email,person.company);let copied=text.clone();let printed=text.clone();
-            let service=services.clone();let scope=export_scope.clone();let print_service=services.clone();let print_scope=export_scope.clone();
-            children.push(Node::new(Kind::Div).id("person-details").style(card()).children(vec![Node::text(text).id("person-details-text").label("Person details").selectable(true),Node::widget(Widget::Button).id("copy-person").value("Copy details").on_click(move|_|{let _=service.clipboard_write(&scope,copied.clone(),|_|{});}),Node::widget(Widget::Button).id("print-person").value("Print details").on_click(move|_|{let _=print_service.call(&print_scope,ServiceOperation::Print{title:"People Explorer".into(),text:printed.clone()},|_|{});})]));
-        }
-        Node::new(Kind::Div).style(Style::column().gap(14.)).children(children)
-    }}}</Column>}
+    rustx! {
+        <Column style={ Style::column().gap(20.) }>
+            <Text style={ small().color(GREEN) }>
+                { "EXAMPLE 01 / PEOPLE EXPLORER" }
+            </Text>
+            <Text style={ Style::column().font_size(36.) }>
+                { "Rust UI. Browser networking." }
+            </Text>
+            <Text style={ small() }>
+                {
+                    "A Rust component requests data. A JavaScript adapter fetches it. Rust renders the result."
+                }
+            </Text>
+            <Row style={ Style::row().gap(10.).wrap() }>
+                <Button
+                    id="load-fixture"
+                    style={ primary() }
+                    on_click={ move |_| fixture("/api/users") }
+                >
+                    { "Load local sample" }
+                </Button>
+                <Button
+                    id="load-live"
+                    style={ secondary() }
+                    on_click={ move |_| live("https://jsonplaceholder.typicode.com/users") }
+                >
+                    { "Try JSONPlaceholder" }
+                </Button>
+                <Button
+                    id="load-error"
+                    style={ secondary() }
+                    on_click={ move |_| fail("/api/error") }
+                >
+                    { "Test error" }
+                </Button>
+                <Button
+                    id="load-slow"
+                    style={ secondary() }
+                    on_click={ move |_| slow("/api/users?delay=1") }
+                >
+                    { "Slow request" }
+                </Button>
+                <Button
+                    id="load-empty"
+                    style={ secondary() }
+                    on_click={ move |_| empty("/api/empty") }
+                >
+                    "Empty response"
+                </Button>
+                <Button
+                    id="load-malformed"
+                    style={ secondary() }
+                    on_click={ move |_| malformed("/api/malformed") }
+                >
+                    "Malformed response"
+                </Button>
+                <Button
+                    id="load-timeout"
+                    style={ secondary() }
+                    on_click={ move |_| timeout("/api/timeout") }
+                >
+                    "Timeout"
+                </Button>
+                <Button
+                    id="retry-people"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let source = retry_source.borrow().clone();
+                            retry(&source);
+                        }
+                    }
+                >
+                    "Retry"
+                </Button>
+                <Button
+                    id="cancel"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            if let Some(id) = request.borrow_mut().take() {
+                                cancel.cancel(id);
+                            }
+                        }
+                    }
+                >
+                    { "Cancel" }
+                </Button>
+            </Row>
+            <TextInput
+                id="people-search"
+                label="Search people"
+                on_input={
+                    move |e: InputEvent| {
+                        let _ = search.set(e.value);
+                    }
+                }
+            />
+            {
+                move || match status.get() {
+                    People::Idle => {
+                        rustx! {
+                            <Column style={ card() }>
+                                <Text id="api-state">
+                                    { "Ready when you are. Choose a data source above." }
+                                </Text>
+                            </Column>
+                        }
+                    }
+                    People::Loading => {
+                        rustx! {
+                            <Text id="api-state" style={ small().color(GREEN) }>
+                                { "Loading people…" }
+                            </Text>
+                        }
+                    }
+                    People::Failed(error) => {
+                        rustx! {
+                            <Column style={ card().border(1., 0x9f6554) }>
+                                <Text id="api-state">
+                                    { format!("Request failed: {error}") }
+                                </Text>
+                                <Text style={ small() }>
+                                    { "Retry either source. The local sample works without external internet." }
+                                </Text>
+                            </Column>
+                        }
+                    }
+                    People::Ready(people) => {
+                        let q = query.get().to_lowercase();
+                        let shown: Vec<_> = people
+                            .iter()
+                            .filter(|p| {
+                                format!("{} {} {}", p.name, p.email, p.company)
+                                    .to_lowercase()
+                                    .contains(&q)
+                            })
+                            .cloned()
+                            .collect();
+                        let mut children =
+                            vec![
+                                Node::text(format!("{} people / request completed", shown.len()))
+                                    .id("api-state")
+                                    .style(small().color(GREEN)),
+                            ];
+                        if shown.is_empty() {
+                            children.push(
+                                Node::text(if people.is_empty() {
+                                    "No people returned. Choose a source or retry."
+                                } else {
+                                    "No matching people. Change your search."
+                                })
+                                .id("people-empty"),
+                            );
+                        }
+                        let select = selected.clone();
+                        children.push(
+                            Node::new(Kind::Div)
+                                .style(Style::grid(3).responsive(250.).gap(14.))
+                                .children(
+                                    keyed(
+                                        shown,
+                                        |p| p.id,
+                                        move |p| {
+                                            let select = select.clone();
+                                            let id = p.id;
+                                            Node::new(Kind::Div).style(card()).children(vec![
+                                                Node::text(format!("PERSON {:02}", p.id))
+                                                    .style(small().color(GREEN)),
+                                                Node::text(&p.name).style(Style::column().font_size(21.)),
+                                                Node::text(&p.email).style(small()),
+                                                Node::text(&p.company).style(small()),
+                                                Node::widget(Widget::Button)
+                                                    .id(format!("person-{}", p.id))
+                                                    .value("View details")
+                                                    .on_click(move |_| {
+                                                        let _ = select.set(Some(id));
+                                                    }),
+                                            ])
+                                        },
+                                    )
+                                    .children,
+                                ),
+                        );
+                        if let Some(person) = people.iter().find(|p| Some(p.id) == selected.get()) {
+                            let text = format!("{}\n{}\n{}", person.name, person.email, person.company);
+                            let copied = text.clone();
+                            let printed = text.clone();
+                            let service = services.clone();
+                            let scope = export_scope.clone();
+                            let print_service = services.clone();
+                            let print_scope = export_scope.clone();
+                            children.push(
+                                Node::new(Kind::Div)
+                                    .id("person-details")
+                                    .style(card())
+                                    .children(vec![
+                                        Node::text(text)
+                                            .id("person-details-text")
+                                            .label("Person details")
+                                            .selectable(true),
+                                        Node::widget(Widget::Button)
+                                            .id("copy-person")
+                                            .value("Copy details")
+                                            .on_click(move |_| {
+                                                let _ =
+                                                    service.clipboard_write(&scope, copied.clone(), |_| {});
+                                            }),
+                                        Node::widget(Widget::Button)
+                                            .id("print-person")
+                                            .value("Print details")
+                                            .on_click(move |_| {
+                                                let _ = print_service.call(
+                                                    &print_scope,
+                                                    ServiceOperation::Print {
+                                                        title: "People Explorer".into(),
+                                                        text: printed.clone(),
+                                                    },
+                                                    |_| {},
+                                                );
+                                            }),
+                                    ]),
+                            );
+                        }
+                        Node::new(Kind::Div)
+                            .style(Style::column().gap(14.))
+                            .children(children)
+                    }
+                }
+            }
+        </Column>
+    }
 }
 #[component]
 fn Home(cx: Scope) -> View {
     let preset = cx.signal(false);
     let switch = preset.clone();
     let shown = preset.clone();
-    rustx! {<Column style={Style::column().gap(28.)}>
-    <Text style={small().color(GREEN)}>{"A DIFFERENT WAY TO BUILD INTERFACES"}</Text><Text style={Style::column().font_size(58.).small_font_size(34.).color(INK)}>{"Think in components.\nCreate with Rust."}</Text><Text style={Style::column().font_size(18.).color(MUTED)}>{"A canvas-first UI framework. Familiar composition, typed Rust, and one shared engine for web and desktop."}</Text><Row style={Style::row().gap(12.).wrap()}><Text style={primary()}>{"Rust → WebAssembly → Canvas"}</Text><Text style={secondary()}>{"Stage 1 / experimental"}</Text></Row>
-    <Div style={Style::grid(3).responsive(250.).gap(14.)}><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"01  Compose"}</Text><Text>{"Typed props. Scoped state. JSX-like markup."}</Text><Text style={small()}>{"Keep behavior in Rust and reuse components as crates."}</Text></Column><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"02  Render"}</Text><Text>{"Your UI, owned by the Rust engine."}</Text><Text style={small()}>{"Shared layout and shaped text. Explicit GPU and CPU paths."}</Text></Column><Column style={card()}><Text style={Style::column().font_size(22.).color(GREEN)}>{"03  Connect"}</Text><Text>{"Browser capabilities, typed boundaries."}</Text><Text style={small()}>{"Call HTTP from Rust. Let the host handle Fetch and cancellation."}</Text></Column></Div>
-    <Column style={card().background(0x101927)}><Row style={Style::row().gap(18.).wrap()}><Text style={Style::column().font_size(24.)}>{"The playground"}</Text><Text style={small().color(GREEN)}>{"LIVE, PRECOMPILED COMPONENTS"}</Text></Row><Text style={small()}>{"Switch presets and interact with real Rust state. Arbitrary source compilation is a final-release requirement."}</Text><Button id="preset" style={secondary()} on_click={move|_|{let _=switch.update(|v|*v=!*v);}}>{"Switch example"}</Button>
-    {move||if shown.get(){rustx!{<Column><Text style={small()}>{"rustx! { <Text>{\"سلام RustX\"}</Text> }"}</Text><Text style={Style::column().font_size(32.).color(GREEN)}>{"سلام RustX — Hello, world."}</Text></Column>}}else{rustx!{<Column><Text style={small()}>{"let count = cx.signal(0); // owned by this component"}</Text><Counter name={"PLAYGROUND".into()}/></Column>}}}</Column><Text style={small()}>{"Built with RustX. Canvas visuals · semantic browser bridge · performance claims require measurements."}</Text></Column>}
+    rustx! {
+        <Column style={ Style::column().gap(28.) }>
+            <Text style={ small().color(GREEN) }>
+                { "A DIFFERENT WAY TO BUILD INTERFACES" }
+            </Text>
+            <Text
+                style={
+                    Style::column()
+                        .font_size(58.)
+                        .small_font_size(34.)
+                        .color(INK)
+                }
+            >
+                { "Think in components.\nCreate with Rust." }
+            </Text>
+            <Text style={ Style::column().font_size(18.).color(MUTED) }>
+                {
+                    "A canvas-first UI framework. Familiar composition, typed Rust, and one shared engine for web and desktop."
+                }
+            </Text>
+            <Row style={ Style::row().gap(12.).wrap() }>
+                <Text style={ primary() }>
+                    { "Rust → WebAssembly → Canvas" }
+                </Text>
+                <Text style={ secondary() }>
+                    { "Stage 4 / acceptance in progress" }
+                </Text>
+            </Row>
+            <Div style={ Style::grid(3).responsive(250.).gap(14.) }>
+                <Column style={ card() }>
+                    <Text style={ Style::column().font_size(22.).color(GREEN) }>
+                        { "01  Compose" }
+                    </Text>
+                    <Text>
+                        { "Typed props. Scoped state. JSX-like markup." }
+                    </Text>
+                    <Text style={ small() }>
+                        { "Keep behavior in Rust and reuse components as crates." }
+                    </Text>
+                </Column>
+                <Column style={ card() }>
+                    <Text style={ Style::column().font_size(22.).color(GREEN) }>
+                        { "02  Render" }
+                    </Text>
+                    <Text>
+                        { "Your UI, owned by the Rust engine." }
+                    </Text>
+                    <Text style={ small() }>
+                        { "Shared layout and shaped text. Explicit GPU and CPU paths." }
+                    </Text>
+                </Column>
+                <Column style={ card() }>
+                    <Text style={ Style::column().font_size(22.).color(GREEN) }>
+                        { "03  Connect" }
+                    </Text>
+                    <Text>
+                        { "Browser capabilities, typed boundaries." }
+                    </Text>
+                    <Text style={ small() }>
+                        { "Call HTTP from Rust. Let the host handle Fetch and cancellation." }
+                    </Text>
+                </Column>
+            </Div>
+            <Row style={ Style::row().gap(12.).wrap() }>
+                <Link id="open-capabilities" href="#/capabilities" style={ primary() }>
+                    "See what you can build →"
+                </Link>
+                <Link id="open-playground" href="#/playground">
+                    "Open the source playground"
+                </Link>
+                <Link href="/docs/index.html">
+                    "Documentation and installation"
+                </Link>
+            </Row>
+            <Text selectable={ true }>
+                "cargo install --path crates/rustx-cli --bin rustx --locked\nrustx new my-app\ncd my-app && rustx dev --target web"
+            </Text>
+            <Column style={ card().background(0x101927) }>
+                <Row style={ Style::row().gap(18.).wrap() }>
+                    <Text style={ Style::column().font_size(24.) }>
+                        { "The playground" }
+                    </Text>
+                    <Text style={ small().color(GREEN) }>
+                        { "LIVE, PRECOMPILED COMPONENTS" }
+                    </Text>
+                </Row>
+                <Text style={ small() }>
+                    {
+                        "Switch presets and interact with real Rust state. Use the source playground to edit, compile and run real Rust."
+                    }
+                </Text>
+                <Button
+                    id="preset"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = switch.update(|v| *v = !*v);
+                        }
+                    }
+                >
+                    { "Switch example" }
+                </Button>
+                {
+                    move || {
+                        if shown.get() {
+                            rustx! {
+                                <Column>
+                                    <Text style={ small() }>
+                                        { "rustx! { <Text>{\"سلام RustX\"}</Text> }" }
+                                    </Text>
+                                    <Text style={ Style::column().font_size(32.).color(GREEN) }>
+                                        { "سلام RustX — Hello, world." }
+                                    </Text>
+                                </Column>
+                            }
+                        } else {
+                            rustx! {
+                                <Column>
+                                    <Text style={ small() }>
+                                        { "let count = cx.signal(0); // owned by this component" }
+                                    </Text>
+                                    <Counter name={ "PLAYGROUND".into() } />
+                                </Column>
+                            }
+                        }
+                    }
+                }
+            </Column>
+            <Text style={ small() }>
+                {
+                    "Built with RustX. Canvas visuals · semantic browser bridge · performance claims require measurements."
+                }
+            </Text>
+        </Column>
+    }
 }
 #[component]
 pub fn App(cx: Scope) -> View {
-    let page = cx.signal(crate::start_page());
     let router = Router::new(
         &cx,
         cx.context::<ServiceClient>().unwrap(),
@@ -182,6 +731,8 @@ pub fn App(cx: Scope) -> View {
             ("/lab".into(), 2),
             ("/engine".into(), 3),
             ("/applications".into(), 4),
+            ("/playground".into(), 6),
+            ("/capabilities".into(), 7),
         ],
     )
     .expect("route configuration");
@@ -194,32 +745,134 @@ pub fn App(cx: Scope) -> View {
         let _ = router.navigate(path, true);
     }
     let current = router.current.clone();
-    let routed = page.clone();
-    cx.effect(move || {
-        match current.get() {
-            RouteState::Found(r) => {
-                let _ = routed.set(r.route);
-            }
-            RouteState::NotFound(p) if !p.is_empty() => {
-                let _ = routed.set(5);
-            }
-            _ => {}
-        }
-        Box::new(|| {})
+    let page = cx.memo(move || match current.get() {
+        RouteState::Found(route) => route.route,
+        RouteState::NotFound(path) if !path.is_empty() => 5,
+        RouteState::Error(_) => 5,
+        _ => crate::start_page(),
     });
     let hr = router.clone();
     let pr = router.clone();
     let lr = router.clone();
     let vr = router.clone();
     let ar = router.clone();
+    let cr = router.clone();
     let h = page.clone();
     let p = page.clone();
     let l = page.clone();
     let v = page.clone();
     let a = page.clone();
-    rustx! {<Column style={Style::column().padding(32.).gap(30.).background_token(ColorToken::Background)}><Row style={Style::row().gap(12.).wrap()}><Text style={Style::column().font_size(28.).color(GREEN).padding(10.)}>{"rustx /"}</Text><Button id="nav-home" style={secondary()} on_click={move|_|{let _=h.set(0);let _=hr.navigate("/",false);}}>{"Overview"}</Button><Button id="nav-people" style={secondary()} on_click={move|_|{let _=p.set(1);let _=pr.navigate("/people",false);}}>{"People explorer"}</Button><Button id="nav-lab" style={secondary()} on_click={move|_|{let _=l.set(2);let _=lr.navigate("/lab",false);}}>{"Runtime lab"}</Button><Button id="nav-engine" style={secondary()} on_click={move|_|{let _=v.set(3);let _=vr.navigate("/engine",false);}}>{"Visual engine"}</Button><Button id="nav-applications" style={secondary()} on_click={move|_|{let _=a.set(4);let _=ar.navigate("/applications",false);}}>{"Applications"}</Button></Row>{move||match page.get(){5=>Node::text("Page not found. Choose a page above."),4=>Node::component("Applications",crate::applications::application),3=>rustx!{<VisualEngine/>},1=>rustx!{<PeopleApp/>},2=>rustx!{<Foundation/>},_=>rustx!{<Home/>}}}</Column>}
+    rustx! {
+        <Column
+            style={
+                Style::column()
+                    .padding(32.)
+                    .gap(30.)
+                    .background_token(ColorToken::Background)
+            }
+        >
+            <Row style={ Style::row().gap(12.).wrap() }>
+                <Text style={ Style::column().font_size(28.).color(GREEN).padding(10.) }>
+                    { "rustx /" }
+                </Text>
+                <Button
+                    id="nav-home"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = h.set(0);
+                            let _ = hr.navigate("/", false);
+                        }
+                    }
+                >
+                    { "Overview" }
+                </Button>
+                <Button
+                    id="nav-capabilities"
+                    style={ primary() }
+                    on_click={
+                        move |_| {
+                            let _ = cr.navigate("/capabilities", false);
+                        }
+                    }
+                >
+                    "What can I build?"
+                </Button>
+                <Button
+                    id="nav-people"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = p.set(1);
+                            let _ = pr.navigate("/people", false);
+                        }
+                    }
+                >
+                    { "People explorer" }
+                </Button>
+                <Button
+                    id="nav-lab"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = l.set(2);
+                            let _ = lr.navigate("/lab", false);
+                        }
+                    }
+                >
+                    { "Runtime lab" }
+                </Button>
+                <Button
+                    id="nav-engine"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = v.set(3);
+                            let _ = vr.navigate("/engine", false);
+                        }
+                    }
+                >
+                    { "Visual engine" }
+                </Button>
+                <Button
+                    id="nav-applications"
+                    style={ secondary() }
+                    on_click={
+                        move |_| {
+                            let _ = a.set(4);
+                            let _ = ar.navigate("/applications", false);
+                        }
+                    }
+                >
+                    { "Applications" }
+                </Button>
+            </Row>
+            {
+                move || match page.get() {
+                    7 => Node::component("Capabilities", crate::capabilities::application),
+                    6 => Node::component("Playground", crate::playground::application),
+                    5 => Node::text("Page not found. Choose a page above."),
+                    4 => Node::component("Applications", crate::applications::application),
+                    3 => rustx! {
+                        <VisualEngine />
+                    },
+                    1 => rustx! {
+                        <PeopleApp />
+                    },
+                    2 => rustx! {
+                        <Foundation />
+                    },
+                    _ => rustx! {
+                        <Home />
+                    },
+                }
+            }
+        </Column>
+    }
 }
 pub fn root(cx: Scope, http: HttpClient) -> View {
     cx.provide(http);
-    rustx! {<App/>}
+    rustx! {
+        <App />
+    }
 }

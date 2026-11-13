@@ -1,4 +1,5 @@
 //! Mount-once components; owned signals and automatically tracked reactive bindings.
+pub mod allocation;
 mod assets;
 pub use assets::*;
 pub mod drawing;
@@ -67,6 +68,7 @@ impl std::fmt::Debug for InputEvent {
 }
 #[derive(Clone)]
 pub struct Node {
+    pub source: Option<SourceLocation>,
     pub control: ControlState,
     pub editing: Option<Editor>,
     pub listeners: Vec<EventListener>,
@@ -93,6 +95,7 @@ pub struct Node {
 impl Node {
     pub fn new(kind: Kind) -> Self {
         Self {
+            source: None,
             control: ControlState::default(),
             editing: None,
             listeners: vec![],
@@ -122,6 +125,10 @@ impl Node {
             text: v.to_string(),
             ..Self::new(Kind::Text)
         }
+    }
+    pub fn source(mut self, file: &'static str, line: u32, column: u32) -> Self {
+        self.source = Some(SourceLocation { file, line, column });
+        self
     }
     pub fn editing(mut self, editor: Editor) -> Self {
         self.control.read_only = editor.snapshot().read_only;
@@ -279,8 +286,17 @@ pub fn keyed<T, K: ToString>(
             .collect(),
     )
 }
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct SourceLocation {
+    pub file: &'static str,
+    pub line: u32,
+    pub column: u32,
+}
 #[derive(Clone, Debug)]
 pub struct Snapshot {
+    pub source: Option<SourceLocation>,
+    pub owner: u64,
+    pub component: Option<&'static str>,
     pub control: ControlState,
     pub editing: Option<EditingState>,
     pub role: Option<&'static str>,
@@ -924,6 +940,9 @@ impl Runtime {
                 children.clear();
             }
             Snapshot {
+                source: b.node.source.clone(),
+                owner: b.scope.id,
+                component: b.node.component.as_ref().map(|(name, _)| *name),
                 control: b.node.control.clone(),
                 editing: b.node.editing.as_ref().map(Editor::snapshot),
                 id: b.id,
@@ -1459,6 +1478,36 @@ impl Runtime {
     pub fn counts(&self) -> (usize, usize, usize) {
         let b = self.inner.borrow();
         (b.owners.len(), b.values.len(), b.observers.len())
+    }
+    /// Ownership and subscriptions only; values and context payloads stay private.
+    pub fn ownership(&self) -> Vec<serde_json::Value> {
+        let inner = self.inner.borrow();
+        let mut rows = inner
+            .owners
+            .iter()
+            .map(|(id, owner)| {
+                let subscriptions = owner
+                    .signals
+                    .iter()
+                    .map(|id| {
+                        inner
+                            .values
+                            .get(id)
+                            .map_or(0, |value| value.subscribers.len())
+                    })
+                    .sum::<usize>();
+                serde_json::json!({
+                    "id": id,
+                    "parent": owner.parent,
+                    "signals": owner.signals,
+                    "observers": owner.observers,
+                    "cleanups": owner.cleanups.len(),
+                    "subscriptions": subscriptions,
+                })
+            })
+            .collect::<Vec<_>>();
+        rows.sort_by_key(|v| v["id"].as_u64());
+        rows
     }
 }
 impl Drop for Runtime {

@@ -1,0 +1,21 @@
+
+> test:stage2:probe
+> node scripts/compare-stage2-probe.mjs
+
+{
+  "scene": "stage2_probe: Persian/English/emoji fallback, gradient, translated clip, shadow, group/image alpha and custom drawing path/text",
+  "viewport": [
+    900,
+    720
+  ],
+  "dpr": 1,
+  "thresholds": {
+    "meanAbsoluteRGB": 2,
+    "percentPixelsOver32": 2
+  },
+  "meanAbsoluteRGB": 0.38706327160493825,
+  "maximumChannelDifference": 163,
+  "percentPixelsOver32": 0.36234567901234566,
+  "limitations": "Matched native CPU/Metal 900x720 DPR1 conformance fixture. Different text rasterizers; Windows/browser parity and performance certification remain unverified.",
+  "result": "passed"
+}

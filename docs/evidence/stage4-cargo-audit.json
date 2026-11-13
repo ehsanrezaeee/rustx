@@ -1,0 +1,231 @@
+{
+  "date": "2026-11-13T07:22:37.427Z",
+  "cargoLockSha256": "e155dfa8f3ef7441034d05cebca38ae70aef6f83c0bdd1c1a490eb4417117120",
+  "provider": "https://api.osv.dev/v1/querybatch",
+  "queried": 385,
+  "completedQueries": 385,
+  "findings": [
+    {
+      "name": "paste",
+      "version": "1.0.15",
+      "vulnerabilities": [
+        {
+          "id": "RUSTSEC-2024-0436",
+          "modified": "2026-01-27T22:03:15.694766Z"
+        }
+      ]
+    },
+    {
+      "name": "rustybuzz",
+      "version": "0.14.1",
+      "vulnerabilities": [
+        {
+          "id": "RUSTSEC-2026-0206",
+          "modified": "2026-07-12T07:15:04.317501Z"
+        }
+      ]
+    },
+    {
+      "name": "ttf-parser",
+      "version": "0.20.0",
+      "vulnerabilities": [
+        {
+          "id": "RUSTSEC-2026-0192",
+          "modified": "2026-06-29T21:15:04.384453Z"
+        }
+      ]
+    },
+    {
+      "name": "ttf-parser",
+      "version": "0.21.1",
+      "vulnerabilities": [
+        {
+          "id": "RUSTSEC-2026-0192",
+          "modified": "2026-06-29T21:15:04.384453Z"
+        }
+      ]
+    }
+  ],
+  "details": [
+    {
+      "id": "RUSTSEC-2024-0436",
+      "summary": "paste - no longer maintained",
+      "details": "The creator of the crate `paste` has stated in the [`README.md`](https://github.com/dtolnay/paste/blob/master/README.md) \nthat this project is not longer maintained as well as archived the repository\n\n## Possible Alternative(s)\n\n- [`pastey`]: a fork of paste and is aimed to be a drop-in replacement with additional features for paste crate\n- [`with_builtin_macros`]: crate providing a [superset of `paste`'s functionality including general `macro_rules!` eager expansions](https://docs.rs/with_builtin_macros/0.1.0/with_builtin_macros/macro.with_eager_expansions.html)  and `concat!`/`concat_idents!` macros\n\n[`pastey`]: https://crates.io/crates/pastey\n[`with_builtin_macros`]: https://crates.io/crates/with_builtin_macros",
+      "modified": "2026-01-27T22:03:15.694766Z",
+      "published": "2024-10-07T12:00:00Z",
+      "database_specific": {
+        "license": "CC0-1.0"
+      },
+      "references": [
+        {
+          "type": "PACKAGE",
+          "url": "https://crates.io/crates/paste"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://rustsec.org/advisories/RUSTSEC-2024-0436.html"
+        },
+        {
+          "type": "WEB",
+          "url": "https://github.com/dtolnay/paste"
+        }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "paste",
+            "ecosystem": "crates.io",
+            "purl": "pkg:cargo/paste"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [
+                {
+                  "introduced": "0.0.0-0"
+                }
+              ]
+            }
+          ],
+          "ecosystem_specific": {
+            "affected_functions": null,
+            "affects": {
+              "arch": [],
+              "functions": [],
+              "os": []
+            }
+          },
+          "database_specific": {
+            "categories": [],
+            "cvss": null,
+            "informational": "unmaintained",
+            "source": "https://github.com/rustsec/advisory-db/blob/osv/crates/RUSTSEC-2024-0436.json"
+          }
+        }
+      ],
+      "schema_version": "1.7.3"
+    },
+    {
+      "id": "RUSTSEC-2026-0206",
+      "summary": "`rustybuzz` is unmaintained",
+      "details": "The current maintainer of `rustybuzz` has stated that the crate is unmaintained and will not receive further fixes or updates (see the referenced issue).\n\n## Alternative(s)\n\n- [`harfrust`](https://github.com/harfbuzz/harfrust), an actively maintained and updated alternative which is part of the Harfbuzz project.",
+      "modified": "2026-07-12T07:15:04.317501614Z",
+      "published": "2026-07-11T12:00:00Z",
+      "database_specific": {
+        "license": "CC0-1.0"
+      },
+      "references": [
+        {
+          "type": "PACKAGE",
+          "url": "https://crates.io/crates/rustybuzz"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://rustsec.org/advisories/RUSTSEC-2026-0206.html"
+        },
+        {
+          "type": "REPORT",
+          "url": "https://github.com/harfbuzz/rustybuzz/issues/166"
+        }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "rustybuzz",
+            "ecosystem": "crates.io",
+            "purl": "pkg:cargo/rustybuzz"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [
+                {
+                  "introduced": "0.0.0-0"
+                }
+              ]
+            }
+          ],
+          "ecosystem_specific": {
+            "affects": {
+              "arch": [],
+              "os": [],
+              "functions": []
+            },
+            "affected_functions": null
+          },
+          "database_specific": {
+            "source": "https://github.com/rustsec/advisory-db/blob/osv/crates/RUSTSEC-2026-0206.json",
+            "cvss": null,
+            "informational": "unmaintained",
+            "categories": []
+          }
+        }
+      ],
+      "schema_version": "1.7.5"
+    },
+    {
+      "id": "RUSTSEC-2026-0192",
+      "summary": "`ttf-parser` is unmaintained",
+      "details": "The author of `ttf-parser` has stated that the crate is unmaintained and will not receive further fixes (see the referenced issue).\n\n## Alternative(s)\n\n- [`skrifa`](https://crates.io/crates/skrifa), an actively maintained TrueType and OpenType font parsing crate, part of the Google Fonts \"oxidize\" (`fontations`) project.",
+      "modified": "2026-06-29T21:15:04.384453633Z",
+      "published": "2026-06-28T12:00:00Z",
+      "database_specific": {
+        "license": "CC0-1.0"
+      },
+      "references": [
+        {
+          "type": "PACKAGE",
+          "url": "https://crates.io/crates/ttf-parser"
+        },
+        {
+          "type": "ADVISORY",
+          "url": "https://rustsec.org/advisories/RUSTSEC-2026-0192.html"
+        },
+        {
+          "type": "REPORT",
+          "url": "https://github.com/harfbuzz/ttf-parser/issues/217"
+        }
+      ],
+      "affected": [
+        {
+          "package": {
+            "name": "ttf-parser",
+            "ecosystem": "crates.io",
+            "purl": "pkg:cargo/ttf-parser"
+          },
+          "ranges": [
+            {
+              "type": "SEMVER",
+              "events": [
+                {
+                  "introduced": "0.0.0-0"
+                }
+              ]
+            }
+          ],
+          "ecosystem_specific": {
+            "affected_functions": null,
+            "affects": {
+              "arch": [],
+              "os": [],
+              "functions": []
+            }
+          },
+          "database_specific": {
+            "categories": [],
+            "cvss": null,
+            "informational": "unmaintained",
+            "source": "https://github.com/rustsec/advisory-db/blob/osv/crates/RUSTSEC-2026-0192.json"
+          }
+        }
+      ],
+      "schema_version": "1.7.5"
+    }
+  ],
+  "limitations": [
+    "SPDX metadata and supplied license texts are an inventory, not legal advice",
+    "All locked target packages queried; dependency findings require reachability/maintainer review",
+    "OSV availability and new advisories can change; rerun before publication"
+  ],
+  "result": "findings"
+}

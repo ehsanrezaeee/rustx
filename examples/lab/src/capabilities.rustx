@@ -1,0 +1,245 @@
+use rustx::prelude::*;
+
+const INK: u32 = 0xf1f5ff;
+const MUTED: u32 = 0x9baac2;
+const LIME: u32 = 0xb5f36b;
+
+fn panel() -> Style {
+    Style::column()
+        .padding(26.)
+        .gap(18.)
+        .background(0x141e2e)
+        .border(1., 0x2a384e)
+        .radius(20.)
+}
+
+#[component]
+fn UseCase(
+    cx: Scope,
+    category: String,
+    title: String,
+    description: String,
+    features: String,
+    href: String,
+    action: String,
+    accent: u32,
+) -> View {
+    rustx! {
+        <Column style={ panel() }>
+            <Text style={ Style::column().font_size(12.).color(accent) }>
+                { category }
+            </Text>
+            <Heading style={ Style::column().font_size(27.).color(INK) }>
+                { title }
+            </Heading>
+            <Text style={ Style::column().font_size(16.).color(MUTED) }>
+                { description }
+            </Text>
+            <Text style={ Style::column().font_size(13.).color(accent) }>
+                { features }
+            </Text>
+            <Link href={ href } style={ Style::row().font_size(15.).color(INK).padding(8.) }>
+                { action }
+            </Link>
+        </Column>
+    }
+}
+
+/// A public-API-only guide to the applications this candidate can support.
+pub fn application(_cx: Scope) -> View {
+    rustx! {
+        <Column style={ Style::column().gap(32.).color(INK) }>
+            <Column
+                style={
+                    panel()
+                        .padding(30.)
+                        .gap(22.)
+                        .background(0x192b28)
+                        .border(1., 0x416143)
+                }
+            >
+                <Text style={ Style::column().font_size(13.).color(LIME) }>
+                    "THE RUSTX CAPABILITIES GUIDE"
+                </Text>
+                <Heading
+                    id="capabilities-title"
+                    style={
+                        Style::column()
+                            .font_size(54.)
+                            .small_font_size(32.)
+                            .color(INK)
+                    }
+                >
+                    "Your next tool,\nbuilt with Rust."
+                </Heading>
+                <Text style={ Style::column().font_size(18.).color(0xc5d8cd) }>
+                    "Build interactive dashboards, data explorers, forms and drawing tools. Compose the interface in Rust; the shared engine handles layout, text and canvas rendering."
+                </Text>
+                <Row style={ Style::row().gap(12.).wrap() }>
+                    <Text
+                        style={
+                            Style::row()
+                                .padding(10.)
+                                .background(LIME)
+                                .color(0x142416)
+                                .radius(9.)
+                                .font_size(13.)
+                        }
+                    >
+                        "Rust components"
+                    </Text>
+                    <Text
+                        style={
+                            Style::row()
+                                .padding(10.)
+                                .background(0x29443a)
+                                .color(INK)
+                                .radius(9.)
+                                .font_size(13.)
+                        }
+                    >
+                        "Browser WebAssembly"
+                    </Text>
+                    <Text
+                        style={
+                            Style::row()
+                                .padding(10.)
+                                .background(0x29443a)
+                                .color(INK)
+                                .radius(9.)
+                                .font_size(13.)
+                        }
+                    >
+                        "Shared native engine"
+                    </Text>
+                </Row>
+            </Column>
+            <Column style={ Style::column().gap(10.) }>
+                <Heading style={ Style::column().font_size(30.).color(INK) }>
+                    "What would you like to make?"
+                </Heading>
+                <Text style={ Style::column().font_size(16.).color(MUTED) }>
+                    "These are application ideas supported by the features in this repository. Each example opens a working part of the demo."
+                </Text>
+            </Column>
+            <Grid style={ Style::grid(2).responsive(340.).gap(18.) }>
+                <UseCase
+                    category={ "01 / OPERATIONS".into() }
+                    title={ "Dashboards & admin tools".into() }
+                    description={
+                        "Create project trackers, settings panels, approval forms and internal workspaces with validated input and clear feedback.".into()
+                    }
+                    features={ "Forms · dialogs · tabs · validation · saved settings".into() }
+                    href={ "#/applications".into() }
+                    action={ "Explore the Applications demo →".into() }
+                    accent={ LIME }
+                />
+                <UseCase
+                    category={ "02 / DATA".into() }
+                    title={ "Explorers & API clients".into() }
+                    description={
+                        "Build searchable directories, inventory browsers and service clients. Present loading, empty and error states, cancel requests and show selected records.".into()
+                    }
+                    features={ "Typed HTTP · resources · search · routing · virtual lists".into() }
+                    href={ "#/people".into() }
+                    action={ "Open People Explorer →".into() }
+                    accent={ 0x8fc9ff }
+                />
+                <UseCase
+                    category={ "03 / CREATIVE".into() }
+                    title={ "Drawing & diagram tools".into() }
+                    description={
+                        "Make a whiteboard, scene viewer or diagram editor with vector shapes, text, selection, dragging and a camera you can pan and zoom.".into()
+                    }
+                    features={ "Canvas scenes · hit testing · culling · paths · transforms".into() }
+                    href={ "#/engine".into() }
+                    action={ "Try the Visual engine →".into() }
+                    accent={ 0xd4b0ff }
+                />
+                <UseCase
+                    category={ "04 / PRODUCTIVITY".into() }
+                    title={ "Focused utilities".into() }
+                    description={
+                        "Compose task panels, calculators, editors for plain text and small desktop tools from reusable components with scoped state and keyboard interaction.".into()
+                    }
+                    features={ "Signals · keyed state · Unicode editing · reusable widgets".into() }
+                    href={ "#/lab".into() }
+                    action={ "Try the Runtime lab →".into() }
+                    accent={ 0xffcd91 }
+                />
+            </Grid>
+            <Column style={ panel().background(0x101927) }>
+                <Text style={ Style::column().font_size(12.).color(LIME) }>
+                    "THE BUILDING BLOCKS"
+                </Text>
+                <Heading style={ Style::column().font_size(28.).color(INK) }>
+                    "Combine the pieces your app needs."
+                </Heading>
+                <Grid style={ Style::grid(3).responsive(260.).gap(22.) }>
+                    <Column style={ Style::column().gap(10.) }>
+                        <Heading style={ Style::column().font_size(19.).color(INK) }>
+                            "A flexible interface"
+                        </Heading>
+                        <Text style={ Style::column().font_size(15.).color(MUTED) }>
+                            "Flex and grid layouts, responsive styles, light and dark themes, shaped Persian/English text, images and vector drawing."
+                        </Text>
+                    </Column>
+                    <Column style={ Style::column().gap(10.) }>
+                        <Heading style={ Style::column().font_size(19.).color(INK) }>
+                            "Connected behavior"
+                        </Heading>
+                        <Text style={ Style::column().font_size(15.).color(MUTED) }>
+                            "Scoped async work, HTTP, streams, WebSockets, routes, storage, files and clipboard through typed host services. Your backend supplies shared data and authentication."
+                        </Text>
+                    </Column>
+                    <Column style={ Style::column().gap(10.) }>
+                        <Heading style={ Style::column().font_size(19.).color(INK) }>
+                            "A development workflow"
+                        </Heading>
+                        <Text style={ Style::column().font_size(15.).color(MUTED) }>
+                            "Create, format, check and build with the CLI. Use source diagnostics, the editor extension and an opt-in inspector. Ship hashed web assets with an offline app shell."
+                        </Text>
+                    </Column>
+                </Grid>
+            </Column>
+            <Column style={ panel().background(0x20243a).border(1., 0x444a6e) }>
+                <Heading style={ Style::column().font_size(28.).color(INK) }>
+                    "Start with something small."
+                </Heading>
+                <Text style={ Style::column().font_size(16.).color(0xbcc5e0) }>
+                    "Edit real Rust in the local source playground, or follow the installation guide to create your own application. The playground needs the separate local compiler service."
+                </Text>
+                <Row style={ Style::row().gap(18.).wrap() }>
+                    <Link
+                        id="capabilities-playground"
+                        href="#/playground"
+                        style={ Style::row().padding(12.).font_size(16.).color(LIME) }
+                    >
+                        "Open the source playground →"
+                    </Link>
+                    <Link
+                        id="capabilities-docs"
+                        href="/docs/index.html"
+                        style={ Style::row().padding(12.).font_size(16.).color(INK) }
+                    >
+                        "Read the getting-started guide →"
+                    </Link>
+                </Row>
+            </Column>
+            <Column style={ Style::column().gap(10.).padding(12.) }>
+                <Heading style={ Style::column().font_size(20.).color(INK) }>
+                    "Where this candidate stands"
+                </Heading>
+                <Text
+                    id="capabilities-limits"
+                    style={ Style::column().font_size(14.).color(MUTED) }
+                >
+                    "Browser CPU and Metal GPU paths have recorded tests. The same application source builds for Windows, with CI CPU startup evidence. Full Windows interaction, clean-machine installation, real IME, human screen readers and physical mobile acceptance remain open."
+                </Text>
+                <Text style={ Style::column().font_size(14.).color(MUTED) }>
+                    "Best suited to interactive tools. Full React/HTML compatibility, rich text, spreadsheets, media widgets and SEO-focused document sites are outside this release. The strict GPU frame budget remains unmet; this is a development candidate, with no general production or speed claim."
+                </Text>
+            </Column>
+        </Column>
+    }
+}

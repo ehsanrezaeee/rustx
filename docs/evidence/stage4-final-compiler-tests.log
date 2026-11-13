@@ -1,0 +1,32 @@
+
+> test:stage4:compiler
+> node scripts/test-stage4-compiler.mjs
+
+{
+  "date": "2026-11-12T15:05:16.283Z",
+  "checks": [
+    "configured-origin admission and source-size rejection",
+    "actual edited Rust compiled and bound to a real Wasm artifact with checksum",
+    "real rustc type error is linked to main.rustx line 2",
+    "actual rustc cannot read host /etc/passwd, another job source or inherited HOME",
+    "visitor JavaScript snippets are rejected before publication",
+    "explicit cancellation stops a real compiler process group",
+    "two actual concurrent jobs, random distinct identities, third admission rejected"
+  ],
+  "limitations": [
+    "Local macOS compiler isolation only; not a public-service security certification",
+    "No Windows/Linux sandbox execution claim",
+    "Browser Wasm/worker tests are recorded separately"
+  ],
+  "health": {
+    "available": true,
+    "concurrent": 2,
+    "isolation": "seatbelt",
+    "retained_jobs": 8,
+    "source_limit": 32768,
+    "timeout_ms": 30000,
+    "wasm_memory": 268435456
+  },
+  "wasmSha256": "21104ef69aaf811c0230b71540fe983f2402153f04bb6c96687bdaaa6f05d24e",
+  "result": "passed"
+}

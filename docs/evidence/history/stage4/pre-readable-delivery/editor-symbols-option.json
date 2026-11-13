@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-12T15:06:06.328Z",
+  "editor": "1.146.0",
+  "checks": [
+    "actual .rustx language recognition and imported Rust component completion"
+  ],
+  "limitations": [
+    "Actual VS Code extension-host automation on macOS; no Windows/editor-human-usability claim"
+  ],
+  "rustAnalyzer": "0.3.3113",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(completions.items.some((i) => i.label === 'title'))\n"
+}

@@ -1,11 +1,12 @@
 {
   "result": "passed",
-  "date": "2026-11-01",
+  "date": "2026-11-13T07:20:47.123Z",
   "engine": "chromium",
-  "version": "156.0.8078.80",
+  "version": "156.0.8078.4",
   "platform": "darwin",
   "arch": "arm64",
   "backend": "Rust CPU",
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
   "checks": [
     "pointer, Enter and Space each activate once",
     "keyed text/counter state, active input and selection survive reorder",

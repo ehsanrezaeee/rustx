@@ -1,0 +1,8 @@
+   Compiling rustx-core v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter/vendor/crates/rustx-core)
+   Compiling rustx-macros v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter/vendor/crates/rustx-macros)
+   Compiling rustx-engine v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter/vendor/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter/vendor/crates/rustx)
+   Compiling rustx-web v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter/vendor/crates/rustx-web)
+   Compiling counter v0.1.0 (/private/tmp/rustx-stage4-QjWKHQ/counter)
+    Finished `release` profile [optimized] target(s) in 5.55s
+Built /private/tmp/rustx-stage4-QjWKHQ/counter/dist (0c9d0c6f5070bc119bc291e3a922ecb486786f63a31595cd3a5ff5fc6f2524c7)

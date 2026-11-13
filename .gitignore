@@ -6,3 +6,9 @@
 !/docs/evidence/**/*.log
 /releases/
 .DS_Store
+/.rustx/
+
+/dist-release/
+/dist-bench/
+/dist-native/
+/crates/rustx-cli/assets/

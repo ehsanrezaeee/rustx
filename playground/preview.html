@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Compiled RustX output</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #0b1018;
+      color: white;
+    }
+    canvas,
+    #semantic {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #semantic {
+      pointer-events: none;
+      overflow: clip;
+    }
+    #semantic > * {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #semantic .control,
+    #semantic input,
+    #semantic textarea {
+      pointer-events: auto;
+      color: transparent;
+      background: transparent;
+      border: 0;
+    }
+    #error {
+      position: fixed;
+      inset: 12px;
+      white-space: pre-wrap;
+      font: 14px system-ui;
+      color: #ffc2b3;
+      pointer-events: none;
+    }
+  </style>
+  <canvas id="surface" aria-hidden="true"></canvas>
+  <main id="semantic" aria-label="Compiled application"></main>
+  <pre id="error" role="alert"></pre>
+  <script
+    type="module"
+    src="__ORIGIN__/preview.js"
+    data-origin="__ORIGIN__"
+    data-job="__JOB__"
+  ></script>
+</html>

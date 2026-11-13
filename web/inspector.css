@@ -1,0 +1,41 @@
+body {
+  font: 15px system-ui;
+  background: #0b1018;
+  color: #edf3ff;
+  margin: 24px;
+}
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+td,
+th {
+  padding: 6px;
+  border-bottom: 1px solid #344258;
+  text-align: left;
+}
+button {
+  padding: 8px;
+  margin: 4px;
+  background: #253247;
+  color: white;
+  border: 1px solid #65748b;
+  border-radius: 5px;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+a {
+  color: #b5f36b;
+}
+@media (max-width: 700px) {
+  main {
+    display: block;
+  }
+}

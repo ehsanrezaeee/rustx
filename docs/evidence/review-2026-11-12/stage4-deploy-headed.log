@@ -1,0 +1,56 @@
+
+> test:stage4:deploy
+> node scripts/test-stage4-deploy.mjs
+
+{
+  "date": "2026-11-12T16:52:10.931Z",
+  "engine": "chromium",
+  "checks": [
+    "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
+    "production disables devtools/API; cold navigation to usable semantic control measured",
+    "service-worker cached application launches on offline nested route; API honestly fails; online deep-link reload recovers"
+  ],
+  "limitations": [
+    "Loopback delivery; no public HTTPS deployment",
+    "Offline application shell preserves no implicit API cache",
+    "Network throttling estimates navigation to usable frame; no physical scanout measurement"
+  ],
+  "build": "ab24327c44f4d17093b554ff5490be1377982041623e3f28d8dcabdf1fd01169",
+  "version": "157.0.8103.40",
+  "coldStartup": {
+    "rawMs": [
+      3228.7649999999994,
+      3199.4616669999996,
+      3197.9844169999988,
+      3201.281167000001,
+      3199.118957999999
+    ],
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 3199.4616669999996,
+    "p95Ms": 3228.7649999999994,
+    "budgetMs": 3000,
+    "passed": false,
+    "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+    "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+  },
+  "coldStartupMs": 3228.7649999999994,
+  "coldDesktopGate": false,
+  "offlineApi": {
+    "text": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns.",
+    "label": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns."
+  },
+  "compressedInitialBytes": 2779842,
+  "compression": "br",
+  "gzipInitialBytes": 3209501,
+  "transferScope": "Complete reference dashboard; standalone counter is measured by test:stage4:cli",
+  "transferGates": {
+    "dashboard5MiB": true
+  },
+  "result": "passed-functional"
+}

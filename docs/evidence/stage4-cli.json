@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-13T07:26:28.698Z",
+  "checks": [
+    "embedded SDK creates independent vendored project from unrelated directory",
+    "new, doctor, formatter, locked check/test and standalone web build",
+    "real source edit rebuilds Wasm and reloads browser with matching output",
+    "real Cargo error overlay and recovery after source correction"
+  ],
+  "limitations": [
+    "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation"
+  ],
+  "counterCompressedBytes": 2659796,
+  "counterCompression": "br",
+  "counterGzipBytes": 3062417,
+  "counterTransferGate": true,
+  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-Qutyaa/sample",
+  "counterColdStartup": {
+    "rawMs": [
+      2661.534584000001,
+      2660.0947499999966,
+      2655.5054579999996,
+      2654.9232499999925,
+      2656.5229580000014
+    ],
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 2656.5229580000014,
+    "p95Ms": 2661.534584000001,
+    "budgetMs": 3000,
+    "passed": true,
+    "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+    "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+  },
+  "result": "passed"
+}

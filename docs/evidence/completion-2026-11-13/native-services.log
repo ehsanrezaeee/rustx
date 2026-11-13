@@ -1,0 +1,62 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-48d9b0b7f1879270)
+
+running 1 test
+test host::services::tests::actual_native_pull_stream_and_socket_echo ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.01s
+
+     Running tests/cpu.rs (target/debug/deps/cpu-e64a644064ba0aa8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-5862fd66853d11f2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.00s
+
+     Running tests/stage2_contracts.rs (target/debug/deps/stage2_contracts-5b6d7b59d4be26d4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/stage3_assets.rs (target/debug/deps/stage3_assets-45fd9fb502da0f9e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/stage3_controls.rs (target/debug/deps/stage3_controls-d3f07679217dc9c1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/stage3_host_events.rs (target/debug/deps/stage3_host_events-69429855d2925edf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/stage3_interaction.rs (target/debug/deps/stage3_interaction-8a6646c157711164)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/stage3_layout.rs (target/debug/deps/stage3_layout-f87b0252b2b81b95)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/stage4_diagnostics_editing.rs (target/debug/deps/stage4_diagnostics_editing-20c2ec597c95ec9a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+

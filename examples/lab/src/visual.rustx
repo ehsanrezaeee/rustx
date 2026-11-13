@@ -105,28 +105,356 @@ pub fn VisualEngine(cx: Scope) -> View {
     let selected = cx.signal(None::<usize>);
     let chosen = selected.clone();
     let rows = selected.clone();
-    rustx! {<Column style={Style::column().gap(20.).color_token(ColorToken::Text)}>
-        <Text style={Style::column().font_size(34.).small_font_size(26.).color_token(ColorToken::Text)}>{"The shared visual engine"}</Text>
-        <Text style={Style::column().color_token(ColorToken::Muted)}>{"Rust layout, Unicode text, bounded lists and a retained drawing surface."}</Text>
-        <Button id="theme-toggle" style={action()} on_click={move|_|{let _=theme.update(|t|*t=if *t==Theme::DARK{Theme::LIGHT}else{Theme::DARK});}}>{"Switch theme"}</Button>
-        <Div id="engine-dashboard" style={Style::grid(1).gap(16.).at_width(ResponsiveStyle{min_width:700.,columns:Some(3),font_size:None,padding:None,direction:None})}>
-            <Column style={panel()}><Text>{"100,000 records"}</Text><Text style={Style::column().font_size(28.).color_token(ColorToken::Accent)}>{"Bounded rows"}</Text><Text>{"Two viewports of overscan per side; one focused row can stay mounted."}</Text></Column>
-            <Column style={panel()}><Text>{"10,000 drawing objects"}</Text><Text style={Style::column().font_size(28.).color_token(ColorToken::Accent)}>{"Visible geometry"}</Text><Text>{"Spatial buckets cull the scene before either renderer paints it."}</Text></Column>
-            <Column style={panel()}><Text>{"یک موتور، دو مسیر"}</Text><Text id="engine-unicode" style={Style::column().font_size(24.).text_direction(TextDirection::RightToLeft)}>{"سلام RustX — English 123 🦀 🚀"}</Text><Text>{"Bundled Persian/English shaping and monochrome emoji fallback."}</Text></Column>
-        </Div>
-        <Column style={panel()}><Text style={Style::column().font_size(24.)}>{"Drawing board"}</Text>
-            <Row style={Style::row().gap(8.).wrap()}><Button id="board-left" style={action()} on_click={move|_|{let _=left.update(|c|c.pan(120.,0.));}}>{"Pan left"}</Button><Button id="board-right" style={action()} on_click={move|_|{let _=right.update(|c|c.pan(-120.,0.));}}>{"Pan right"}</Button><Button id="board-zoom" style={action()} on_click={move|_|{let _=zoom.update(|c|c.zoom_at(160.,120.,1.25));}}>{"Zoom in"}</Button><Button id="board-reset" style={action()} on_click={move|_|{let _=reset.set(Camera::default());}}>{"Reset camera"}</Button></Row>
-            <Button id="board-edit" style={action()} on_click={move|_|{let _=toggle_edit.update(|v|*v=!*v);}}>{move||if editing.get(){"Editing selected object"}else{"Edit selected object"}}</Button><Button id="board-export" style={action()} on_click={export}>{"Export drawing"}</Button><Text>{move||export_status.get()}</Text><Text id="board-picked">{move||format!("Selected object: {}",pick_shown.get().map(|n|n.to_string()).unwrap_or_else(||"None yet".into()))}</Text>
-            <Text id="camera-state">{move||{let c=position.get();format!("Camera {:.1}, {:.1} · zoom {:.2}",c.x,c.y,c.zoom)}}</Text>
-            {move||rustx!{<Canvas id="drawing-board" label="10,000 object drawing board; use pan and zoom controls" drawing={scene.get()} camera={shown.get()} on_canvas={{let gestures=gestures.clone();let scene=hit_scene.clone();let pick=pick.clone();let edit=edit_mode.clone();move|event|{match event{rustx::drawing::CanvasEvent::Pan{dx,dy}=>{if edit.get(){if let Some(id)=pick.get(){let c=gestures.get();if let Ok(next)=scene.get().translate_shape(id,dx/c.zoom,dy/c.zoom){let _=scene.set(Rc::new(next));}}}else{let _=gestures.update(|c|c.pan(dx,dy));}},rustx::drawing::CanvasEvent::Zoom{x,y,factor}=>{let _=gestures.update(|c|c.zoom_at(x,y,factor));},rustx::drawing::CanvasEvent::Pick{x,y}=>{let _=pick.set(scene.get().hit(gestures.get(),x,y));}}}}} on_key_down={{let selected=key_pick.clone();let scene=key_scene.clone();let editing=key_mode.clone();let camera=key_camera.clone();move|e:Event|{if editing.get(){if let Some(id)=selected.get(){let delta=match e.data.key.as_str(){"ArrowLeft"=>Some((-10.,0.)),"ArrowRight"=>Some((10.,0.)),"ArrowUp"=>Some((0.,-10.)),"ArrowDown"=>Some((0.,10.)),_=>None};if let Some((dx,dy))=delta{if let Ok(next)=scene.get().translate_shape(id,dx/camera.get().zoom,dy/camera.get().zoom){let _=scene.set(Rc::new(next));}e.prevent_default();}}}}}} style={Style::column().height(320.).clip().radius(12.).background(0x0b1018)}/>}}
+    rustx! {
+        <Column style={ Style::column().gap(20.).color_token(ColorToken::Text) }>
+            <Text
+                style={
+                    Style::column()
+                        .font_size(34.)
+                        .small_font_size(26.)
+                        .color_token(ColorToken::Text)
+                }
+            >
+                { "The shared visual engine" }
+            </Text>
+            <Text style={ Style::column().color_token(ColorToken::Muted) }>
+                { "Rust layout, Unicode text, bounded lists and a retained drawing surface." }
+            </Text>
+            <Button
+                id="theme-toggle"
+                style={ action() }
+                on_click={
+                    move |_| {
+                        let _ = theme.update(|t| {
+                            *t = if *t == Theme::DARK {
+                                Theme::LIGHT
+                            } else {
+                                Theme::DARK
+                            }
+                        });
+                    }
+                }
+            >
+                { "Switch theme" }
+            </Button>
+            <Div
+                id="engine-dashboard"
+                style={
+                    Style::grid(1).gap(16.).at_width(ResponsiveStyle {
+                        min_width: 700.,
+                        columns: Some(3),
+                        font_size: None,
+                        padding: None,
+                        direction: None,
+                    })
+                }
+            >
+                <Column style={ panel() }>
+                    <Text>
+                        { "100,000 records" }
+                    </Text>
+                    <Text
+                        style={
+                            Style::column()
+                                .font_size(28.)
+                                .color_token(ColorToken::Accent)
+                        }
+                    >
+                        { "Bounded rows" }
+                    </Text>
+                    <Text>
+                        { "Two viewports of overscan per side; one focused row can stay mounted." }
+                    </Text>
+                </Column>
+                <Column style={ panel() }>
+                    <Text>
+                        { "10,000 drawing objects" }
+                    </Text>
+                    <Text
+                        style={
+                            Style::column()
+                                .font_size(28.)
+                                .color_token(ColorToken::Accent)
+                        }
+                    >
+                        { "Visible geometry" }
+                    </Text>
+                    <Text>
+                        { "Spatial buckets cull the scene before either renderer paints it." }
+                    </Text>
+                </Column>
+                <Column style={ panel() }>
+                    <Text>
+                        { "یک موتور، دو مسیر" }
+                    </Text>
+                    <Text
+                        id="engine-unicode"
+                        style={
+                            Style::column()
+                                .font_size(24.)
+                                .text_direction(TextDirection::RightToLeft)
+                        }
+                    >
+                        { "سلام RustX — English 123 🦀 🚀" }
+                    </Text>
+                    <Text>
+                        { "Bundled Persian/English shaping and monochrome emoji fallback." }
+                    </Text>
+                </Column>
+            </Div>
+            <Column style={ panel() }>
+                <Text style={ Style::column().font_size(24.) }>
+                    { "Drawing board" }
+                </Text>
+                <Row style={ Style::row().gap(8.).wrap() }>
+                    <Button
+                        id="board-left"
+                        style={ action() }
+                        on_click={
+                            move |_| {
+                                let _ = left.update(|c| c.pan(120., 0.));
+                            }
+                        }
+                    >
+                        { "Pan left" }
+                    </Button>
+                    <Button
+                        id="board-right"
+                        style={ action() }
+                        on_click={
+                            move |_| {
+                                let _ = right.update(|c| c.pan(-120., 0.));
+                            }
+                        }
+                    >
+                        { "Pan right" }
+                    </Button>
+                    <Button
+                        id="board-zoom"
+                        style={ action() }
+                        on_click={
+                            move |_| {
+                                let _ = zoom.update(|c| c.zoom_at(160., 120., 1.25));
+                            }
+                        }
+                    >
+                        { "Zoom in" }
+                    </Button>
+                    <Button
+                        id="board-reset"
+                        style={ action() }
+                        on_click={
+                            move |_| {
+                                let _ = reset.set(Camera::default());
+                            }
+                        }
+                    >
+                        { "Reset camera" }
+                    </Button>
+                </Row>
+                <Button
+                    id="board-edit"
+                    style={ action() }
+                    on_click={
+                        move |_| {
+                            let _ = toggle_edit.update(|v| *v = !*v);
+                        }
+                    }
+                >
+                    {
+                        move || {
+                            if editing.get() {
+                                "Editing selected object"
+                            } else {
+                                "Edit selected object"
+                            }
+                        }
+                    }
+                </Button>
+                <Button id="board-export" style={ action() } on_click={ export }>
+                    { "Export drawing" }
+                </Button>
+                <Text>
+                    { move || export_status.get() }
+                </Text>
+                <Text id="board-picked">
+                    {
+                        move || {
+                            format!(
+                                "Selected object: {}",
+                                pick_shown
+                                    .get()
+                                    .map(|n| n.to_string())
+                                    .unwrap_or_else(|| "None yet".into())
+                            )
+                        }
+                    }
+                </Text>
+                <Text id="camera-state">
+                    {
+                        move || {
+                            let c = position.get();
+                            format!("Camera {:.1}, {:.1} · zoom {:.2}", c.x, c.y, c.zoom)
+                        }
+                    }
+                </Text>
+                {
+                    move || {
+                        rustx! {
+                            <Canvas
+                                id="drawing-board"
+                                label="10,000 object drawing board; use pan and zoom controls"
+                                drawing={ scene.get() }
+                                camera={ shown.get() }
+                                on_canvas={
+                                    {
+                                        let gestures = gestures.clone();
+                                        let scene = hit_scene.clone();
+                                        let pick = pick.clone();
+                                        let edit = edit_mode.clone();
+                                        move |event| match event {
+                                            rustx::drawing::CanvasEvent::Pan { dx, dy } => {
+                                                if edit.get() {
+                                                    if let Some(id) = pick.get() {
+                                                        let c = gestures.get();
+                                                        if let Ok(next) =
+                                                            scene.get().translate_shape(id, dx / c.zoom, dy / c.zoom)
+                                                        {
+                                                            let _ = scene.set(Rc::new(next));
+                                                        }
+                                                    }
+                                                } else {
+                                                    let _ = gestures.update(|c| c.pan(dx, dy));
+                                                }
+                                            }
+                                            rustx::drawing::CanvasEvent::Zoom { x, y, factor } => {
+                                                let _ = gestures.update(|c| c.zoom_at(x, y, factor));
+                                            }
+                                            rustx::drawing::CanvasEvent::Pick { x, y } => {
+                                                let _ = pick.set(scene.get().hit(gestures.get(), x, y));
+                                            }
+                                        }
+                                    }
+                                }
+                                on_key_down={
+                                    {
+                                        let selected = key_pick.clone();
+                                        let scene = key_scene.clone();
+                                        let editing = key_mode.clone();
+                                        let camera = key_camera.clone();
+                                        move |e: Event| {
+                                            if editing.get() {
+                                                if let Some(id) = selected.get() {
+                                                    let delta = match e.data.key.as_str() {
+                                                        "ArrowLeft" => Some((-10., 0.)),
+                                                        "ArrowRight" => Some((10., 0.)),
+                                                        "ArrowUp" => Some((0., -10.)),
+                                                        "ArrowDown" => Some((0., 10.)),
+                                                        _ => None,
+                                                    };
+                                                    if let Some((dx, dy)) = delta {
+                                                        if let Ok(next) = scene.get().translate_shape(
+                                                            id,
+                                                            dx / camera.get().zoom,
+                                                            dy / camera.get().zoom,
+                                                        ) {
+                                                            let _ = scene.set(Rc::new(next));
+                                                        }
+                                                        e.prevent_default();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                style={
+                                    Style::column()
+                                        .height(320.)
+                                        .clip()
+                                        .radius(12.)
+                                        .background(0x0b1018)
+                                }
+                            />
+                        }
+                    }
+                }
+            </Column>
+            <Column style={ panel() }>
+                <Text style={ Style::column().font_size(24.) }>
+                    { "Virtual data explorer" }
+                </Text>
+                <Row style={ Style::row().gap(8.).wrap() }>
+                    <Button
+                        id="rows-start"
+                        style={ action() }
+                        on_click={ move |_| start.scroll_to(0.) }
+                    >
+                        { "First rows" }
+                    </Button>
+                    <Button
+                        id="rows-next"
+                        style={ action() }
+                        on_click={ move |_| next.scroll_by(320.) }
+                    >
+                        { "Next rows" }
+                    </Button>
+                    <Button
+                        id="rows-end"
+                        style={ action() }
+                        on_click={ move |_| end.scroll_to(3_199_680.) }
+                    >
+                        { "Last rows" }
+                    </Button>
+                </Row>
+                <Text id="row-range">
+                    {
+                        move || {
+                            let r = range.range();
+                            format!("Materialized window: {}..{} / 100000", r.start, r.end)
+                        }
+                    }
+                </Text>
+                <Text id="selected-row">
+                    {
+                        move || {
+                            format!(
+                                "Selected record: {}",
+                                chosen
+                                    .get()
+                                    .map(|i| (i + 1).to_string())
+                                    .unwrap_or_else(|| "None yet".into())
+                            )
+                        }
+                    }
+                </Text>
+                {
+                    virtual_list(list, move |index| {
+                        let selected = rows.clone();
+                        rustx! {
+                            <Button
+                                id={ format!("record-{index}") }
+                                style={
+                                    Style::row()
+                                        .padding(4.)
+                                        .height(32.)
+                                        .font_size(14.)
+                                        .background_token(ColorToken::Surface)
+                                        .color_token(ColorToken::Text)
+                                }
+                                on_click={
+                                    move |_| {
+                                        let _ = selected.set(Some(index));
+                                    }
+                                }
+                            >
+                                { format!("Record {:06} · دادهٔ آزمایشی", index + 1) }
+                            </Button>
+                        }
+                    })
+                }
+            </Column>
         </Column>
-        <Column style={panel()}><Text style={Style::column().font_size(24.)}>{"Virtual data explorer"}</Text>
-            <Row style={Style::row().gap(8.).wrap()}><Button id="rows-start" style={action()} on_click={move|_|start.scroll_to(0.)}>{"First rows"}</Button><Button id="rows-next" style={action()} on_click={move|_|next.scroll_by(320.)}>{"Next rows"}</Button><Button id="rows-end" style={action()} on_click={move|_|end.scroll_to(3_199_680.)}>{"Last rows"}</Button></Row>
-            <Text id="row-range">{move||{let r=range.range();format!("Materialized window: {}..{} / 100000",r.start,r.end)}}</Text>
-            <Text id="selected-row">{move||format!("Selected record: {}",chosen.get().map(|i|(i+1).to_string()).unwrap_or_else(||"None yet".into()))}</Text>
-            {virtual_list(list,move|index|{let selected=rows.clone();rustx!{<Button id={format!("record-{index}")} style={Style::row().padding(4.).height(32.).font_size(14.).background_token(ColorToken::Surface).color_token(ColorToken::Text)} on_click={move|_|{let _=selected.set(Some(index));}}>{format!("Record {:06} · دادهٔ آزمایشی",index+1)}</Button>}})}
-        </Column>
-    </Column>}
+    }
 }
 // A small public drawing fixture also used by engine conformance examples.
 pub fn conformance_scene() -> Rc<CanvasScene> {

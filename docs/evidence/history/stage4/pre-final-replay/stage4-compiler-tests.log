@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-12T11:08:35.718Z",
+  "checks": [
+    "configured-origin admission and source-size rejection",
+    "actual edited Rust compiled and bound to a real Wasm artifact with checksum",
+    "real rustc type error is linked to main.rustx line 2",
+    "actual rustc cannot read host /etc/passwd, another job source or inherited HOME",
+    "visitor JavaScript snippets are rejected before publication",
+    "explicit cancellation stops a real compiler process group"
+  ],
+  "limitations": [
+    "Local macOS compiler isolation only; not a public-service security certification",
+    "No Windows/Linux sandbox execution claim",
+    "Browser Wasm/worker tests are recorded separately"
+  ],
+  "health": {
+    "available": true,
+    "concurrent": 2,
+    "isolation": "seatbelt",
+    "retained_jobs": 8,
+    "source_limit": 32768,
+    "timeout_ms": 30000,
+    "wasm_memory": 268435456
+  },
+  "wasmSha256": "2c837c755ae66754d971d2367cd169f75c344bf8e49a55b043a3ffd1140c3f07",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 2\n"
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+1 !== 2
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-compiler.mjs:16:142
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

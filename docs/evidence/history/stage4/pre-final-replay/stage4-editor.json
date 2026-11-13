@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-12T10:20:57.185Z",
+  "editor": "1.145.3",
+  "checks": [
+    "actual .rustx language recognition and imported Rust component completion",
+    "typed custom component property completion",
+    "navigation from original .rustx tag to imported component definition",
+    "actual formatter provider formats markup with Rust expressions",
+    "real cargo/rustc type error displayed on original .rustx source line"
+  ],
+  "limitations": [
+    "Actual VS Code extension-host automation on macOS; no Windows/editor-human-usability claim"
+  ],
+  "rustAnalyzer": "0.3.3113",
+  "formatter": null,
+  "formatted": "use crate::card::{Welcome, WelcomeProps};\nuse rustx::prelude::*;\npub fn app(cx: Scope) -> View {\n    rustx! {\n        <Column>\n            <Welcome title={\"Editor works\"}/>\n        </Column>\n    }\n}\n",
+  "diagnostics": [
+    {
+      "line": 6,
+      "code": "E0308",
+      "message": "mismatched types"
+    }
+  ],
+  "result": "passed"
+}

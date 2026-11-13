@@ -22,8 +22,11 @@ pub fn indicator_bounds(b: &BoxNode) -> Option<Rect> {
     } else {
         18.
     };
-    let x = b.rect.x0 + f64::from(b.node.style.padding);
-    let y = b.rect.y0 + (b.rect.height() - 18.) * 0.5;
+    let style = &b.node.style;
+    let x = b.rect.x0 + f64::from(style.padding_left());
+    let y = b.rect.y0
+        + f64::from(style.padding_top())
+        + (b.rect.height() - f64::from(style.padding_vertical()) - 18.) * 0.5;
     Some(Rect::new(x, y, x + width, y + 18.))
 }
 

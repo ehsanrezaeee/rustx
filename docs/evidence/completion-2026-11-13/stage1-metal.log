@@ -1,0 +1,41 @@
+
+> test:gpu
+> node scripts/test-gpu.mjs
+
+{
+  "date": "2026-11-13T07:27:48.645Z",
+  "browser": "157.0.8103.52",
+  "platform": "darwin",
+  "arch": "arm64",
+  "viewport": [
+    1200,
+    1000
+  ],
+  "dpr": 1,
+  "checks": [
+    "real WebGPU canvas presentation, interaction, resize and idle",
+    "no copyTextureToBuffer or Canvas2D putImageData during instrumented normal GPU path",
+    "injected adapter absence triggers actual CPU renderer and usable counter; no device-loss claim"
+  ],
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
+  "presentation": {
+    "textureCopiesToCPU": 0,
+    "mapReads": 0,
+    "submits": 10,
+    "presents": 5,
+    "cpuPixelTransfers": 0,
+    "adapters": [
+      {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      }
+    ]
+  },
+  "result": "passed",
+  "limitations": [
+    "No Windows, Safari, mobile, IME or screen-reader task",
+    "API counters are presentation evidence, not performance certification or full device-loss recovery"
+  ]
+}

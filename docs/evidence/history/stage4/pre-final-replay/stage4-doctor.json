@@ -1,0 +1,17 @@
+{
+  "bindings_match": true,
+  "compiler_sandbox": true,
+  "notes": [
+    "Tool availability is not platform/IME/screen-reader acceptance",
+    "Install missing Rust target: rustup target add wasm32-unknown-unknown",
+    "Install matching bindings: cargo install wasm-bindgen-cli --version 0.2.100 --locked"
+  ],
+  "platform": "macos",
+  "rust": "rustc 1.90.0 (1159e78c4 2025-09-14)",
+  "rust_analyzer": "",
+  "rust_pinned": true,
+  "rustfmt": "rustfmt 1.8.0-stable (1159e78c47 2025-09-14)",
+  "wasm_bindgen": "wasm-bindgen 0.2.100",
+  "wasm_target": true,
+  "windows_build_runner": false
+}

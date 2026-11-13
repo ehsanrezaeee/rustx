@@ -1,0 +1,5 @@
+
+> test:stage3:services
+> node scripts/test-stage3-services.mjs
+
+PASS: real fixture HTTP methods/headers/bodies; actual Fetch pull streaming, WebSocket UTF-8 echo/close/cleanup and scoped timers/cancellation. Clipboard denial is a separate injected contract test; no browser/Windows/permission success claim.

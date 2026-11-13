@@ -1,0 +1,20 @@
+   Compiling rustx-cli v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.21s
+     Running unittests src/main.rs (target/debug/deps/rustx-c40c3b44eb28e823)
+
+running 3 tests
+test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running unittests src/legacy.rs (target/debug/deps/rustx_cli-0b96704b42fac322)
+
+running 3 tests
+test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+

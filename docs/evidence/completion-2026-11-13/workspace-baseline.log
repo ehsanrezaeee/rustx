@@ -1,0 +1,350 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.43s
+     Running unittests src/lib.rs (target/debug/deps/rustx-024a2fef19fa5811)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compile.rs (target/debug/deps/compile-1389616dc293c19c)
+
+running 1 test
+    Checking rustx-tests v0.0.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/target/tests/trybuild/rustx)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.25s
+
+
+test tests/ui/duplicate_alias.rs ... ok
+test tests/ui/missing_prop.rs ... ok
+test tests/ui/nesting.rs ... ok
+test tests/ui/wrong_prop.rs ... ok
+
+
+test compile_diagnostics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests/editing_forms.rs (target/debug/deps/editing_forms-15ae37019dff2068)
+
+running 16 tests
+test browser_composition_sync_commits_once_and_invalid_input_does_not_mutate ... ok
+test composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text ... ok
+test async_validation_preserves_form_level_field_errors_without_touching_other_fields ... ok
+test form_level_validation_and_sensitive_debug_use_declared_associations ... ok
+test composition_is_one_undo_transaction_and_cancel_restores_selection ... ok
+test form_tracks_dirty_touched_validation_and_reset ... ok
+test async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors ... ok
+test grapheme_motion_and_deletion_preserve_joined_emoji_and_combining_marks ... ok
+test insertion_caret_stays_on_a_grapheme_boundary_when_neighbors_join ... ok
+test readonly_and_password_never_expose_secret_in_diagnostics_or_clipboard ... ok
+test readonly_deletion_preserves_selection_and_editable_deletion_undo_restores_it ... ok
+test stale_validation_and_submission_are_rejected_after_edit_reset_and_disposal ... ok
+test utf16_validation_is_atomic_and_bidi_selections_keep_source_ranges ... ok
+test tickets_cannot_cross_forms_and_controlledness_changes_are_diagnosed ... ok
+test word_navigation_uses_unicode_words_and_extends_grapheme_safe_ranges ... ok
+test editing_history_is_bounded_and_new_edit_discards_redo_branch ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/host.rs (target/debug/deps/host-629cf86fa85f4e28)
+
+running 5 tests
+test handshake_rejects_skew_and_invalid_limits ... ok
+test missing_or_denied_host_never_enqueues_work ... ok
+test skewed_stale_and_oversized_completions_are_safe ... ok
+test reentrant_callbacks_can_start_work_and_small_host_limits_apply ... ok
+test queue_and_scope_cleanup_stay_bounded_under_adversarial_churn ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/runtime.rs (target/debug/deps/runtime-423980ad6bac3299)
+
+running 15 tests
+test context_children_fragments ... ok
+test cancel_once ... ok
+test disposed_http_completion_rejected ... ok
+test batches ... ok
+test default_generic_named_slots ... ok
+test imported_reactive_and_initial_props ... ok
+test completed_requests_release_cleanup ... ok
+test node_refs_clear_on_disposal ... ok
+test keyed_state_and_disposal ... ok
+test effect_cycles_are_bounded - should panic ... ok
+test memo_effect_cleanup ... ok
+test duplicate_keys - should panic ... ok
+test setup_mounts_once ... ok
+test semantic_text_includes_literal_and_reactive_children ... ok
+test stale_dependencies_removed ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-ef96ad422c7e9971)
+
+running 10 tests
+test responsive_queries_are_ordered_and_theme_tokens_resolve ... ok
+test drawing_large_coordinates_and_transformed_topmost_hits_are_stable ... ok
+test drawing_hits_follow_rounded_and_path_geometry_not_only_bounds ... ok
+test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
+test drawing_queries_include_stroke_overhang_and_reject_unsafe_path_bounds ... ok
+test virtual_scroll_clamps_and_ignores_nonfinite_input ... ok
+test virtual_scrolling_from_a_row_routes_to_the_owning_list ... ok
+test direct_virtual_offsets_and_invalid_viewports_do_not_overflow ... ok
+test spatial_drawing_queries_cull_ten_thousand_shapes_without_reordering ... ok
+test virtual_list_bounds_materialized_scopes_and_retains_focused_state ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+
+     Running tests/stage3_assets.rs (target/debug/deps/stage3_assets-93e47b26e6a2b7b9)
+
+running 2 tests
+test asset_manifest_rejects_ambiguous_names_and_versions_fetch_urls ... ok
+test asset_load_preserves_identity_bounds_payload_and_cancels_on_disposal ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage3_events_widgets.rs (target/debug/deps/stage3_events_widgets-2405bf23cf6093ba)
+
+running 16 tests
+test committed_event_path_has_capture_target_bubble_and_cancelled_default ... ok
+test disabled_and_readonly_controls_reject_default_actions ... ok
+test controlled_checkbox_slider_and_choices_emit_typed_values ... ok
+test full_widget_markup_and_typed_semantics_are_available ... ok
+test editor_identity_and_selection_survive_controlled_patches ... ok
+test immediate_stop_keeps_later_handlers_and_ancestors_from_running ... ok
+test ordinary_paragraph_selection_is_readonly_keyed_and_reactive_without_duplicate_text ... ok
+test combobox_keyboard_navigation_skips_disabled_options ... ok
+test pointer_capture_routes_move_and_releases_on_cancel_or_disposal ... ok
+test nested_scroll_consumes_once_and_chains_at_boundary ... ok
+test controlled_combobox_updates_its_label_and_closes_a_stale_search ... ok
+test password_values_are_masked_in_every_snapshot_and_semantic_dump ... ok
+test table_sort_and_selection_remain_keyed_and_controlled ... ok
+test combobox_filters_then_commits_without_overwriting_value_while_typing ... ok
+test select_popup_commits_named_options_and_closes_with_escape ... ok
+test tooltip_describes_trigger_and_toasts_stay_bounded ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage3_pointer_capture.rs (target/debug/deps/stage3_pointer_capture-cc5da4369dcc79dd)
+
+running 1 test
+test terminal_pointer_events_release_capture_when_target_becomes_ineligible ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage3_services.rs (target/debug/deps/stage3_services-5655e3877a0bbe5a)
+
+running 7 tests
+test storage_schema_and_secret_command_redaction ... ok
+test typed_routes_percent_queries_hash_and_not_found ... ok
+test scheduling_future_cancels_and_capability_denial_stays_distinct ... ok
+test invalid_headers_methods_status_decode_and_diagnostics ... ok
+test request_policy_future_drop_and_scoped_tasks ... ok
+test query_dedup_stale_supersede_and_invalidation ... ok
+test services_reject_stale_skew_and_bound_scope_resources ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/stage3_spinner.rs (target/debug/deps/stage3_spinner-e67c8eae2971c593)
+
+running 1 test
+test spinner_uses_scoped_timers_and_unmount_cancels_the_pending_tick ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx-d62b9faffd58506e)
+
+running 4 tests
+test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running unittests src/legacy.rs (target/debug/deps/rustx_cli-289d1357581a6913)
+
+running 4 tests
+test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_core-7b1b399b279c3bd4)
+
+running 2 tests
+test events::tests::pointer_type_preserves_known_host_inputs_and_defaults_unknown ... ok
+test errors::tests::recoverable_error_disposes_then_remounts_child ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_engine-bf5ba82493f6242a)
+
+running 3 tests
+test host::services::tests::actual_native_pull_stream_and_socket_echo ... ignored, requires permission to bind loopback TCP
+test host::services::tests::native_navigation_preserves_history_and_hash_route_modes ... ok
+test editing::tests::bidi_selection_uses_visual_cluster_rectangles ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cpu.rs (target/debug/deps/cpu-7e4e5dc4db69ddc6)
+
+running 1 test
+test opacity_composites_the_group_once_and_border_stays_inside ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/stage2.rs (target/debug/deps/stage2-18227e8e9fb8ccf6)
+
+running 17 tests
+test drawing_geometry_rebases_large_coordinates_before_backend_float_conversion ... ok
+test budget_cache_obeys_byte_entry_and_lru_constraints ... ok
+test image_registration_rejects_invalid_sizes_and_removal_invalidates_caches ... ok
+test image_resource_updates_repaint_an_otherwise_idle_engine ... ok
+test layout_alignment_growth_and_width_constraints_are_applied ... ok
+test cpu_culling_keeps_visible_shadow_of_an_offscreen_clipped_node ... ok
+test cpu_image_alpha_multiplier_matches_the_shared_asset_contract ... ok
+test explicit_text_direction_preserves_trailing_paragraphs ... ok
+test cpu_image_pixels_use_straight_rgba_source_alpha ... ok
+test cpu_drawings_honor_canvas_clip_path_fill_and_camera ... ok
+test text_coordinates_remain_finite_for_unbounded_measurement ... ok
+test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
+test layout_reflows_at_breakpoints_and_theme_changes_do_not_remount ... ok
+test retained_layout_avoids_invalidation_for_color_only_updates ... ok
+test font_readiness_invalidates_existing_layout_once ... ok
+test text_direction_alignment_clusters_and_utf16_boundaries_share_the_model ... ok
+test text_cache_reuses_shapes_reflows_and_invalidation_follows_font_readiness ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+     Running tests/stage2_contracts.rs (target/debug/deps/stage2_contracts-5d1e262f61b7c367)
+
+running 4 tests
+test percentages_constraints_and_physical_logical_spacing_share_retained_layout ... ok
+test absolute_percent_offsets_and_z_order_agree_between_pixels_and_hit_testing ... ok
+test editing_never_elides_text_and_asymmetric_padding_is_shared_with_painted_caret ... ok
+test typography_cache_line_height_and_grapheme_ellipsis_keep_original_source_offsets ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/stage3_assets.rs (target/debug/deps/stage3_assets-ff3af32e71314958)
+
+running 4 tests
+test png_decoder_rejects_malformed_truncated_and_oversized_images ... ok
+test png_decoder_expands_color_alpha_palette_and_sixteen_bit_samples ... ok
+test asset_registry_replaces_revisions_removes_images_and_rolls_back_failed_installs ... ok
+test asset_registry_rejects_resource_kind_changes_without_orphaning_resources ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/stage3_controls.rs (target/debug/deps/stage3_controls-449b912ef85f7084)
+
+running 1 test
+test indicators_reserve_intrinsic_label_width_and_paint_state_without_changing_labels ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/stage3_host_events.rs (target/debug/deps/stage3_host_events-9e2e30ce06fde622)
+
+running 3 tests
+test resize_and_resource_notifications_target_root_and_preserve_typed_payloads ... ok
+test drop_metadata_is_bounded_redacted_and_cancellable_over_the_committed_path ... ok
+test scroll_events_report_actual_committed_offsets_once_and_ignore_cancelled_wheels_and_boundaries ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/stage3_interaction.rs (target/debug/deps/stage3_interaction-e333e2bebdc40ac2)
+
+running 11 tests
+test event_local_coordinates_follow_each_committed_translated_box ... ok
+test ordinary_text_native_projection_accepts_selection_and_rejects_replacement ... ok
+test ordinary_text_pointer_drag_uses_shaped_graphemes_capture_and_cancellable_defaults ... ok
+test editor_input_selection_and_undo_invalidate_retained_boxes ... ok
+test engine_dispatch_blocks_modal_background_and_releases_earlier_capture ... ok
+test ordinary_text_supports_keyboard_selection_copy_reflow_and_route_disposal ... ok
+test modal_traps_keyboard_blocks_background_and_restores_focus ... ok
+test shared_editor_word_and_vertical_line_keys_preserve_unicode_and_preferred_column ... ok
+test preventing_pointerdown_focus_keeps_native_popup_option_click_usable ... ok
+test slider_pointer_drag_obeys_range_and_keyboard_default_can_be_cancelled ... ok
+test tab_roving_focus_skips_disabled_and_activates_selected_panel ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/stage3_layout.rs (target/debug/deps/stage3_layout-093c02e16a3c2e59)
+
+running 4 tests
+test popup_is_measured_at_viewport_and_painted_outside_its_clipped_parent ... ok
+test stack_children_overlap_and_reserve_the_largest_child_extent ... ok
+test anchored_popup_follows_outer_scroll_and_flips_inside_the_viewport ... ok
+test modal_is_centered_after_resize_and_stays_fixed_when_background_scrolls ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/stage4_diagnostics_editing.rs (target/debug/deps/stage4_diagnostics_editing-2b5b35f42cb0e0a5)
+
+running 2 tests
+test diagnostics_are_opt_in_bounded_redacted_and_source_linked ... ok
+test multiline_viewport_reveals_caret_scrolls_and_invalidates_both_scene_and_pixels ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_lab-30646db76e724609)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/rustx_lab-3be5ad7f594e8636)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_macros-facc3461584f482d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/rustx_web-d0551f54afc01686)
+
+running 1 test
+test host_ids_are_exact ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_engine
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_lab
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_macros
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests rustx_web
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

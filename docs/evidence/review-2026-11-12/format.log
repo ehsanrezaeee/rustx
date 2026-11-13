@@ -1,0 +1,8 @@
+
+> format:check
+> cargo run -p rustx-cli --locked -- fmt --check && prettier --check "web/**/*.{js,html,css}" "playground/**/*.{js,html}" "scripts/*.mjs" "editors/vscode/**/*.{cjs,json}" package.json .prettierrc.json "crates/rustx-cli/templates/*.html"
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running `target/debug/rustx fmt --check`
+Checking formatting...
+All matched files use Prettier code style!

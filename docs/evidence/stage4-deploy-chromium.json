@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-13T07:33:01.970Z",
+  "engine": "chromium",
+  "checks": [
+    "manifest SHA256, hash names, Wasm MIME, gzip, immutable assets, revalidated shell/ETag304, CSP/nosniff and missing-asset404",
+    "production disables devtools/API; cold navigation to usable semantic control measured",
+    "service-worker cached application launches on offline nested route; API honestly fails; online deep-link reload recovers"
+  ],
+  "limitations": [
+    "Loopback delivery; no public HTTPS deployment",
+    "Offline application shell preserves no implicit API cache",
+    "Network throttling estimates navigation to usable frame; no physical scanout measurement"
+  ],
+  "build": "e96ee83622d67d172f0da116ebe9ac177dd64288b4b3f00c78edaacd5947ba78",
+  "version": "157.0.8103.52",
+  "coldStartup": {
+    "rawMs": [
+      2669.5616659999996,
+      2673.0111660000002,
+      2662.085791999999,
+      2673.193165999999,
+      2681.559292
+    ],
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 2673.0111660000002,
+    "p95Ms": 2681.559292,
+    "budgetMs": 3000,
+    "passed": true,
+    "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+    "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+  },
+  "coldStartupMs": 2681.559292,
+  "coldDesktopGate": true,
+  "offlineApi": {
+    "text": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns.",
+    "label": "Request failed: Network unavailable: you may be offline, or the host may have blocked the request. Retry when connectivity returns."
+  },
+  "compressedInitialBytes": 2786618,
+  "compression": "br",
+  "gzipInitialBytes": 3215785,
+  "transferScope": "Complete reference dashboard; standalone counter is measured by test:stage4:cli",
+  "transferGates": {
+    "dashboard5MiB": true
+  },
+  "result": "passed-functional"
+}

@@ -1,0 +1,5 @@
+info: component rust-std for target wasm32-unknown-unknown is up to date
+   Compiling rustx-cli v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.72s
+    Finished `release` profile [optimized] target(s) in 0.17s
+Built /Users/ehsan-mac/Downloads/rustx-stage-01/dist (b75545738cc863de7699857b27afeb20cffcf294179f137fb5727e48ed62e9ab)

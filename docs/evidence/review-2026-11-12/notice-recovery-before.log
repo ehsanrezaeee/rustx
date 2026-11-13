@@ -1,0 +1,10 @@
+file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/collect-upstream-licenses.mjs:50
+        match = pkg.repository?.match(
+                    ^
+
+TypeError: Cannot read properties of undefined (reading 'repository')
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/collect-upstream-licenses.mjs:50:21
+    at Array.map (<anonymous>)
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/collect-upstream-licenses.mjs:46:29
+
+Node.js v24.18.1

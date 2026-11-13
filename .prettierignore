@@ -1,0 +1,10 @@
+node_modules/
+target/
+.git/
+.rustx/
+dist*/
+releases/
+docs/evidence/
+docs/visual-guide/
+package-lock.json
+BUILD-INFO.json

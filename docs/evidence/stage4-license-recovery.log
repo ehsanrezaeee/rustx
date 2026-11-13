@@ -1,0 +1,40 @@
+{
+  "recovered": 43,
+  "remaining": [
+    {
+      "name": "block",
+      "repository": "http://github.com/SSheldon/rust-block",
+      "license": "MIT"
+    },
+    {
+      "name": "dispatch",
+      "repository": "http://github.com/SSheldon/rust-dispatch",
+      "license": "MIT"
+    },
+    {
+      "name": "drm-fourcc",
+      "repository": "https://github.com/danielzfranklin/drm-fourcc-rs",
+      "license": "MIT"
+    },
+    {
+      "name": "hexf-parse",
+      "repository": "https://github.com/lifthrasiir/hexf",
+      "license": "CC0-1.0"
+    },
+    {
+      "name": "malloc_buf",
+      "repository": "https://github.com/SSheldon/malloc_buf",
+      "license": "MIT"
+    },
+    {
+      "name": "r-efi",
+      "repository": "https://github.com/r-efi/r-efi",
+      "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later"
+    },
+    {
+      "name": "r-efi",
+      "repository": "https://github.com/r-efi/r-efi",
+      "license": "MIT OR Apache-2.0 OR LGPL-2.1-or-later"
+    }
+  ]
+}
