@@ -1,0 +1,1009 @@
+2026-11-12T16:58:46.5483517Z ##[group]Run $env:RUSTX_DEMO = 'applications'
+2026-11-12T16:58:46.5483974Z [36;1m$env:RUSTX_DEMO = 'applications'[0m
+2026-11-12T16:58:46.5484254Z [36;1m$env:RUSTX_SMOKE_FRAMES = '2'[0m
+2026-11-12T16:58:46.5484514Z [36;1m$env:RUSTX_RENDERER = 'cpu'[0m
+2026-11-12T16:58:46.5484813Z [36;1mcargo run -p rustx-lab --bin rustx-lab --locked[0m
+2026-11-12T16:58:46.5485226Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Actual Windows CPU startup failed' }[0m
+2026-11-12T16:58:46.5485829Z [36;1m$vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath[0m
+2026-11-12T16:58:46.5486513Z [36;1mImport-Module (Join-Path $vs 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')[0m
+2026-11-12T16:58:46.5487149Z [36;1mEnter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'[0m
+2026-11-12T16:58:46.5487645Z [36;1m./scripts/build-windows.ps1[0m
+2026-11-12T16:58:46.5487998Z [36;1m& ./releases/rustx-0.1.0-windows-x64/rustx-lab.exe[0m
+2026-11-12T16:58:46.5488400Z [36;1mif ($LASTEXITCODE -ne 0) { throw 'Packaged Windows CPU startup failed' }[0m
+2026-11-12T16:58:46.5785181Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-12T16:58:46.5785523Z ##[endgroup]
+2026-11-12T16:58:47.2194983Z warning: output filename collision.
+2026-11-12T16:58:47.2196225Z The bin target `rustx-lab` in package `rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)` has the same output filename as the lib target `rustx_lab` in package `rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)`.
+2026-11-12T16:58:47.2197340Z Colliding filename is: D:\a\rustx\rustx\target\debug\deps\rustx_lab.pdb
+2026-11-12T16:58:47.2197845Z The output filenames should be unique.
+2026-11-12T16:58:47.2198325Z Consider changing their names to be unique or compiling them separately.
+2026-11-12T16:58:47.2199034Z This may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>.
+2026-11-12T16:58:47.2199753Z If this looks unexpected, it may be a bug in Cargo. Please file a bug report at
+2026-11-12T16:58:47.2200392Z https://github.com/rust-lang/cargo/issues/ with as much information as you
+2026-11-12T16:58:47.2200810Z can provide.
+2026-11-12T16:58:47.2201332Z cargo 1.90.0 (840b83a10 2025-07-30) running on `x86_64-pc-windows-msvc` target `x86_64-pc-windows-msvc`
+2026-11-12T16:58:47.2203799Z First unit: Unit { pkg: Package { id: PackageId { name: "rustx-lab", version: "0.1.0", source: "D:\\a\\rustx\\rustx\\examples\\lab" }, ..: ".." }, target: TargetInner { name: "rustx-lab", doc: true, ..: with_path("D:\\a\\rustx\\rustx\\examples\\lab\\src\\main.rs", Edition2021) }, profile: Profile { ..: default_dev() }, kind: Host, mode: Build, features: [], rustflags: [], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 7505111870954909583 }
+2026-11-12T16:58:47.2208196Z Second unit: Unit { pkg: Package { id: PackageId { name: "rustx-lab", version: "0.1.0", source: "D:\\a\\rustx\\rustx\\examples\\lab" }, ..: ".." }, target: TargetInner { name_inferred: true, ..: lib_target("rustx_lab", ["cdylib", "rlib"], "D:\\a\\rustx\\rustx\\examples\\lab\\src\\lib.rs", Edition2021) }, profile: Profile { ..: default_dev() }, kind: Host, mode: Build, features: [], rustflags: [], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 4153054483896478074 }
+2026-11-12T16:58:47.3091633Z    Compiling unicode-ident v1.0.27
+2026-11-12T16:58:47.3094730Z    Compiling quote v1.0.47
+2026-11-12T16:58:47.3106896Z    Compiling serde_core v1.0.229
+2026-11-12T16:58:47.3865546Z    Compiling proc-macro2 v1.0.107
+2026-11-12T16:58:48.0245381Z    Compiling syn v3.0.9
+2026-11-12T16:58:48.0245822Z    Compiling syn v2.0.119
+2026-11-12T16:58:50.2425051Z    Compiling bitflags v2.13.2
+2026-11-12T16:58:50.4941744Z    Compiling gpu-descriptor-types v0.2.0
+2026-11-12T16:58:50.5734198Z    Compiling gpu-alloc-types v0.3.1
+2026-11-12T16:58:50.7853351Z    Compiling spirv v0.3.0+sdk-1.3.268.0
+2026-11-12T16:58:50.9627188Z    Compiling synstructure v0.14.0
+2026-11-12T16:58:51.6798692Z    Compiling gpu-alloc v0.6.2
+2026-11-12T16:58:52.4530413Z    Compiling gpu-descriptor v0.3.2
+2026-11-12T16:58:52.7002577Z    Compiling bytemuck_derive v1.12.1
+2026-11-12T16:58:52.7608865Z    Compiling zerofrom-derive v0.1.8
+2026-11-12T16:58:53.8021149Z    Compiling yoke-derive v0.8.4
+2026-11-12T16:58:53.9639778Z    Compiling zerofrom v0.1.8
+2026-11-12T16:58:54.1039961Z    Compiling zerovec-derive v0.11.7
+2026-11-12T16:58:54.5037352Z    Compiling bytemuck v1.25.2
+2026-11-12T16:58:54.8887454Z    Compiling thiserror-impl v2.0.21
+2026-11-12T16:58:55.2424565Z    Compiling yoke v0.8.4
+2026-11-12T16:58:55.2624988Z    Compiling displaydoc v0.2.7
+2026-11-12T16:58:55.5962758Z    Compiling strum_macros v0.26.4
+2026-11-12T16:58:56.1645823Z    Compiling zerovec v0.11.9
+2026-11-12T16:58:56.3384781Z    Compiling zerotrie v0.2.5
+2026-11-12T16:58:56.7796090Z    Compiling windows-implement v0.60.2
+2026-11-12T16:58:57.0719078Z    Compiling tinystr v0.8.5
+2026-11-12T16:58:57.0984826Z    Compiling thiserror v2.0.21
+2026-11-12T16:58:57.2088540Z    Compiling potential_utf v0.1.6
+2026-11-12T16:58:57.3264200Z    Compiling icu_locale_core v2.4.0
+2026-11-12T16:58:57.3941065Z    Compiling windows-implement v0.58.0
+2026-11-12T16:58:57.7821370Z    Compiling windows-interface v0.58.0
+2026-11-12T16:58:58.3844723Z    Compiling windows-interface v0.59.3
+2026-11-12T16:58:58.4496495Z    Compiling strum v0.26.3
+2026-11-12T16:58:58.5563777Z    Compiling font-types v0.9.0
+2026-11-12T16:58:58.9340384Z    Compiling windows-core v0.58.0
+2026-11-12T16:58:59.1584750Z    Compiling icu_provider v2.4.0
+2026-11-12T16:58:59.4876075Z    Compiling windows-core v0.62.2
+2026-11-12T16:58:59.6557988Z    Compiling icu_collections v2.4.0
+2026-11-12T16:58:59.6571594Z    Compiling thiserror-impl v1.0.69
+2026-11-12T16:58:59.8541320Z    Compiling windows v0.58.0
+2026-11-12T16:59:00.3002334Z    Compiling icu_properties v2.4.0
+2026-11-12T16:59:00.6578847Z    Compiling icu_normalizer v2.4.0
+2026-11-12T16:59:01.5263286Z    Compiling thiserror v1.0.69
+2026-11-12T16:59:01.6331475Z    Compiling read-fonts v0.33.1
+2026-11-12T16:59:01.7921870Z    Compiling naga v24.0.0
+2026-11-12T16:59:15.5726392Z    Compiling gpu-allocator v0.27.0
+2026-11-12T16:59:17.2248292Z    Compiling font-types v0.12.6
+2026-11-12T16:59:17.8905345Z    Compiling wgpu-types v24.0.0
+2026-11-12T16:59:18.9818149Z    Compiling read-fonts v0.41.0
+2026-11-12T16:59:20.7293441Z    Compiling wgpu-hal v24.0.4
+2026-11-12T16:59:24.2099474Z    Compiling vello_shaders v0.5.1
+2026-11-12T16:59:25.3495509Z    Compiling skrifa v0.35.0
+2026-11-12T16:59:30.3417877Z    Compiling idna_adapter v1.2.2
+2026-11-12T16:59:30.4772958Z    Compiling windows-collections v0.3.2
+2026-11-12T16:59:31.1802361Z    Compiling windows-future v0.3.2
+2026-11-12T16:59:32.2758647Z    Compiling windows-numerics v0.3.1
+2026-11-12T16:59:32.5231693Z    Compiling serde_derive v1.0.229
+2026-11-12T16:59:34.5542827Z    Compiling windows v0.62.2
+2026-11-12T16:59:37.2501312Z    Compiling serde v1.0.229
+2026-11-12T16:59:38.1350256Z    Compiling idna v1.1.0
+2026-11-12T16:59:38.2642989Z    Compiling vello_encoding v0.5.1
+2026-11-12T16:59:39.6157728Z    Compiling skrifa v0.44.0
+2026-11-12T16:59:39.6937729Z    Compiling wgpu-core v24.0.5
+2026-11-12T16:59:41.4024209Z    Compiling read-fonts v0.29.3
+2026-11-12T16:59:50.0583166Z    Compiling serde_json v1.0.154
+2026-11-12T16:59:52.4018924Z    Compiling rustx-core v0.1.0 (D:\a\rustx\rustx\crates\rustx-core)
+2026-11-12T16:59:55.7383164Z    Compiling skrifa v0.31.3
+2026-11-12T17:00:02.4000094Z    Compiling accesskit_windows v0.35.1
+2026-11-12T17:00:02.9506445Z    Compiling wgpu v24.0.5
+2026-11-12T17:00:03.2093709Z    Compiling swash v0.2.10
+2026-11-12T17:00:05.0903733Z    Compiling url v2.5.8
+2026-11-12T17:00:05.0955694Z    Compiling rustybuzz v0.14.1
+2026-11-12T17:00:06.6608824Z    Compiling tiny-skia-path v0.11.4
+2026-11-12T17:00:07.9417485Z    Compiling winit v0.30.12
+2026-11-12T17:00:09.6520824Z    Compiling cosmic-text v0.14.2
+2026-11-12T17:00:11.0122234Z    Compiling accesskit_winit v0.34.1
+2026-11-12T17:00:11.2030457Z    Compiling tiny-skia v0.11.4
+2026-11-12T17:00:11.3648708Z    Compiling ureq v2.12.1
+2026-11-12T17:00:13.2463458Z    Compiling vello v0.5.0
+2026-11-12T17:00:14.7680255Z    Compiling tungstenite v0.28.0
+2026-11-12T17:00:14.9781070Z    Compiling typed-builder-macro v0.20.1
+2026-11-12T17:00:15.1288493Z    Compiling rustx-macros v0.1.0 (D:\a\rustx\rustx\crates\rustx-macros)
+2026-11-12T17:00:16.1684202Z    Compiling rustx-engine v0.1.0 (D:\a\rustx\rustx\crates\rustx-engine)
+2026-11-12T17:00:17.0204329Z    Compiling typed-builder v0.20.1
+2026-11-12T17:00:17.0721182Z    Compiling rustx v0.1.0 (D:\a\rustx\rustx\crates\rustx)
+2026-11-12T17:00:18.7780272Z    Compiling rustx-web v0.1.0 (D:\a\rustx\rustx\crates\rustx-web)
+2026-11-12T17:00:24.1130989Z    Compiling rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)
+2026-11-12T17:00:34.7850860Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 47s
+2026-11-12T17:00:34.8048503Z      Running `target\debug\rustx-lab.exe`
+2026-11-12T17:00:36.5311036Z **********************************************************************
+2026-11-12T17:00:36.5315378Z ** Visual Studio 2026 Developer PowerShell v18.11.3
+2026-11-12T17:00:36.5317164Z ** Copyright (c) 2026 Microsoft Corporation
+2026-11-12T17:00:36.5319308Z **********************************************************************
+2026-11-12T17:00:38.8803912Z    Compiling quote v1.0.47
+2026-11-12T17:00:38.8805005Z    Compiling proc-macro2 v1.0.107
+2026-11-12T17:00:38.8805975Z    Compiling serde_core v1.0.229
+2026-11-12T17:00:38.8808278Z    Compiling windows-link v0.2.1
+2026-11-12T17:00:38.9635339Z    Compiling smallvec v1.16.3
+2026-11-12T17:00:39.2834252Z    Compiling arrayvec v0.7.8
+2026-11-12T17:00:39.3427979Z    Compiling cfg_aliases v0.2.2
+2026-11-12T17:00:39.4052012Z    Compiling cfg-if v1.0.5
+2026-11-12T17:00:39.4666989Z    Compiling zmij v1.0.23
+2026-11-12T17:00:39.5947347Z    Compiling itoa v1.0.18
+2026-11-12T17:00:39.8582971Z    Compiling windows-sys v0.61.2
+2026-11-12T17:00:39.8816827Z    Compiling serde_json v1.0.154
+2026-11-12T17:00:41.0565271Z    Compiling syn v3.0.9
+2026-11-12T17:00:41.0818647Z    Compiling syn v2.0.119
+2026-11-12T17:00:41.8460535Z    Compiling winapi-util v0.1.11
+2026-11-12T17:00:42.1723397Z    Compiling kurbo v0.11.3
+2026-11-12T17:00:42.9196146Z    Compiling memchr v2.8.3
+2026-11-12T17:00:44.9148239Z    Compiling termcolor v1.4.1
+2026-11-12T17:00:45.6351311Z    Compiling unicode-segmentation v1.13.3
+2026-11-12T17:00:46.3354961Z    Compiling serde v1.0.229
+2026-11-12T17:00:46.3978198Z    Compiling synstructure v0.14.0
+2026-11-12T17:00:46.9031834Z    Compiling version_check v0.9.5
+2026-11-12T17:00:47.5548671Z    Compiling windows_x86_64_msvc v0.52.6
+2026-11-12T17:00:47.7493741Z    Compiling thiserror v2.0.21
+2026-11-12T17:00:47.8335660Z    Compiling log v0.4.34
+2026-11-12T17:00:48.1252935Z    Compiling bitflags v2.13.2
+2026-11-12T17:00:48.3714140Z    Compiling windows-targets v0.52.6
+2026-11-12T17:00:48.3801757Z    Compiling bytemuck_derive v1.12.1
+2026-11-12T17:00:48.4316566Z    Compiling serde_derive v1.0.229
+2026-11-12T17:00:48.4739659Z    Compiling zerofrom-derive v0.1.8
+2026-11-12T17:00:50.8500364Z    Compiling zerofrom v0.1.8
+2026-11-12T17:00:51.0591835Z    Compiling yoke-derive v0.8.4
+2026-11-12T17:00:51.2471440Z    Compiling bytemuck v1.25.2
+2026-11-12T17:00:51.6003871Z    Compiling thiserror-impl v2.0.21
+2026-11-12T17:00:52.0379469Z    Compiling rustversion v1.0.23
+2026-11-12T17:00:52.6442310Z    Compiling stable_deref_trait v1.2.1
+2026-11-12T17:00:52.7779203Z    Compiling once_cell v1.21.4
+2026-11-12T17:00:53.2430735Z    Compiling yoke v0.8.4
+2026-11-12T17:00:53.4930983Z    Compiling zerovec-derive v0.11.7
+2026-11-12T17:00:54.2775378Z    Compiling autocfg v1.5.1
+2026-11-12T17:00:55.3665820Z    Compiling heck v0.5.0
+2026-11-12T17:00:55.3791522Z    Compiling num-traits v0.2.19
+2026-11-12T17:00:55.7122838Z    Compiling displaydoc v0.2.7
+2026-11-12T17:00:55.9312952Z    Compiling strum_macros v0.26.4
+2026-11-12T17:00:56.1383544Z    Compiling zerovec v0.11.9
+2026-11-12T17:00:56.7588970Z    Compiling rustx-core v0.1.0 (D:\a\rustx\rustx\crates\rustx-core)
+2026-11-12T17:00:56.9968757Z    Compiling shlex v2.0.1
+2026-11-12T17:00:57.3119111Z    Compiling find-msvc-tools v0.1.14
+2026-11-12T17:00:57.8921762Z    Compiling generic-array v0.14.7
+2026-11-12T17:00:58.1316951Z    Compiling cc v1.8.0
+2026-11-12T17:00:59.6326610Z    Compiling foldhash v0.2.0
+2026-11-12T17:00:59.8439543Z    Compiling simd-adler32 v0.3.10
+2026-11-12T17:01:00.1491254Z    Compiling khronos_api v3.1.0
+2026-11-12T17:01:00.6147862Z    Compiling hashbrown v0.17.1
+2026-11-12T17:01:01.6544337Z    Compiling libc v0.2.190
+2026-11-12T17:01:01.9049710Z    Compiling crc32fast v1.5.2
+2026-11-12T17:01:02.2787091Z    Compiling equivalent v1.0.3
+2026-11-12T17:01:02.3517942Z    Compiling typenum v1.20.1
+2026-11-12T17:01:02.5558192Z    Compiling adler2 v2.0.1
+2026-11-12T17:01:02.6562799Z    Compiling ring v0.17.14
+2026-11-12T17:01:02.6922884Z    Compiling zeroize v1.9.1
+2026-11-12T17:01:02.9084584Z    Compiling rustls-pki-types v1.15.1
+2026-11-12T17:01:04.1104730Z    Compiling tinystr v0.8.5
+2026-11-12T17:01:04.3733367Z    Compiling windows-result v0.2.0
+2026-11-12T17:01:04.4229035Z    Compiling utf_types v1.0.0
+2026-11-12T17:01:04.7250832Z    Compiling xml-rs v0.8.29
+2026-11-12T17:01:04.7654392Z    Compiling parking_lot_core v0.9.12
+2026-11-12T17:01:05.1204162Z    Compiling getrandom v0.3.4
+2026-11-12T17:01:05.6384282Z    Compiling zerocopy v0.8.63
+2026-11-12T17:01:05.7489084Z    Compiling writeable v0.6.4
+2026-11-12T17:01:06.0861611Z    Compiling litemap v0.8.3
+2026-11-12T17:01:06.3483283Z    Compiling icu_locale_core v2.4.0
+2026-11-12T17:01:06.4493600Z    Compiling gl_generator v0.14.0
+2026-11-12T17:01:06.9876841Z    Compiling utf8_iter v1.1.0
+2026-11-12T17:01:07.2000520Z    Compiling windows-strings v0.1.0
+2026-11-12T17:01:07.8115257Z    Compiling miniz_oxide v0.9.1
+2026-11-12T17:01:07.8170060Z    Compiling zerotrie v0.2.5
+2026-11-12T17:01:07.9183580Z    Compiling potential_utf v0.1.6
+2026-11-12T17:01:08.0992428Z    Compiling windows-interface v0.58.0
+2026-11-12T17:01:08.2635590Z    Compiling windows-implement v0.60.2
+2026-11-12T17:01:08.5593672Z    Compiling windows-implement v0.58.0
+2026-11-12T17:01:09.1097324Z    Compiling windows-interface v0.59.3
+2026-11-12T17:01:09.9743795Z    Compiling font-types v0.9.0
+2026-11-12T17:01:09.9756291Z    Compiling getrandom v0.2.17
+2026-11-12T17:01:10.0627903Z    Compiling windows-result v0.4.1
+2026-11-12T17:01:10.1194608Z    Compiling windows-strings v0.5.1
+2026-11-12T17:01:10.4640251Z    Compiling icu_normalizer_data v2.4.0
+2026-11-12T17:01:10.5364039Z    Compiling untrusted v0.9.0
+2026-11-12T17:01:10.6776416Z    Compiling icu_properties_data v2.4.0
+2026-11-12T17:01:10.6971460Z    Compiling thiserror v1.0.69
+2026-11-12T17:01:10.7133025Z    Compiling allocator-api2 v0.2.21
+2026-11-12T17:01:10.9468426Z    Compiling foldhash v0.1.5
+2026-11-12T17:01:11.0187015Z    Compiling scopeguard v1.2.0
+2026-11-12T17:01:11.1156853Z    Compiling raw-window-handle v0.6.2
+2026-11-12T17:01:11.1638308Z    Compiling lock_api v0.4.14
+2026-11-12T17:01:11.2678587Z    Compiling hashbrown v0.15.5
+2026-11-12T17:01:11.2895822Z    Compiling windows-core v0.62.2
+2026-11-12T17:01:11.4943790Z    Compiling windows-core v0.58.0
+2026-11-12T17:01:12.0831084Z    Compiling flate2 v1.1.10
+2026-11-12T17:01:12.1734285Z    Compiling icu_provider v2.4.0
+2026-11-12T17:01:12.3822242Z    Compiling icu_collections v2.4.0
+2026-11-12T17:01:12.6896326Z    Compiling glutin_wgl_sys v0.6.1
+2026-11-12T17:01:13.4350682Z    Compiling block-buffer v0.10.4
+2026-11-12T17:01:13.5727385Z    Compiling crypto-common v0.1.7
+2026-11-12T17:01:13.7146357Z    Compiling thiserror-impl v1.0.69
+2026-11-12T17:01:14.9261855Z    Compiling naga v24.0.0
+2026-11-12T17:01:15.5917938Z    Compiling libloading v0.8.9
+2026-11-12T17:01:15.8531891Z    Compiling ash v0.38.0+1.3.281
+2026-11-12T17:01:16.0495611Z    Compiling unicode-width v0.1.14
+2026-11-12T17:01:16.3918593Z    Compiling bit-vec v0.8.0
+2026-11-12T17:01:16.7258545Z    Compiling rustc-hash v1.1.0
+2026-11-12T17:01:16.8130683Z    Compiling rustls v0.23.46
+2026-11-12T17:01:17.0542543Z    Compiling khronos-egl v6.0.0
+2026-11-12T17:01:17.2364121Z    Compiling bit-set v0.8.0
+2026-11-12T17:01:17.4079016Z    Compiling indexmap v2.14.2
+2026-11-12T17:01:17.5141618Z    Compiling codespan-reporting v0.11.1
+2026-11-12T17:01:17.9679914Z    Compiling digest v0.10.7
+2026-11-12T17:01:18.2163529Z    Compiling rustls-webpki v0.103.16
+2026-11-12T17:01:18.4166149Z    Compiling rand_core v0.9.5
+2026-11-12T17:01:18.4314594Z    Compiling parking_lot v0.12.5
+2026-11-12T17:01:18.6970378Z    Compiling windows v0.58.0
+2026-11-12T17:01:19.5748697Z    Compiling ppv-lite86 v0.2.21
+2026-11-12T17:01:19.6117671Z    Compiling webpki-roots v1.0.11
+2026-11-12T17:01:20.0741265Z    Compiling strum v0.26.3
+2026-11-12T17:01:20.3037087Z    Compiling gpu-descriptor-types v0.2.0
+2026-11-12T17:01:20.3937014Z    Compiling gpu-alloc-types v0.3.1
+2026-11-12T17:01:20.5852124Z    Compiling spirv v0.3.0+sdk-1.3.268.0
+2026-11-12T17:01:20.7232103Z    Compiling slotmap v1.1.1
+2026-11-12T17:01:20.7708270Z    Compiling wgpu-hal v24.0.4
+2026-11-12T17:01:20.9998434Z    Compiling hexf-parse v0.2.1
+2026-11-12T17:01:21.1664338Z    Compiling presser v0.3.1
+2026-11-12T17:01:21.3146179Z    Compiling subtle v2.6.1
+2026-11-12T17:01:21.3260800Z    Compiling cpufeatures v0.2.17
+2026-11-12T17:01:21.4196969Z    Compiling httparse v1.10.1
+2026-11-12T17:01:21.4997704Z    Compiling unicode-xid v0.2.6
+2026-11-12T17:01:37.2016845Z    Compiling gpu-allocator v0.27.0
+2026-11-12T17:01:38.1657862Z    Compiling gpu-alloc v0.6.2
+2026-11-12T17:01:38.5530479Z    Compiling gpu-descriptor v0.3.2
+2026-11-12T17:01:38.8551847Z    Compiling rand_chacha v0.9.0
+2026-11-12T17:01:38.9500679Z    Compiling webpki-roots v0.26.11
+2026-11-12T17:01:39.0248851Z    Compiling icu_properties v2.4.0
+2026-11-12T17:01:39.7638942Z    Compiling icu_normalizer v2.4.0
+2026-11-12T17:01:42.0017868Z    Compiling read-fonts v0.33.1
+2026-11-12T17:01:43.1799003Z    Compiling ordered-float v4.6.0
+2026-11-12T17:01:43.6908010Z    Compiling euclid v0.22.14
+2026-11-12T17:01:44.8696053Z    Compiling font-types v0.12.6
+2026-11-12T17:01:45.5472261Z    Compiling wgpu-types v24.0.0
+2026-11-12T17:01:48.4979004Z    Compiling wgpu-core v24.0.5
+2026-11-12T17:01:48.9918757Z    Compiling windows-threading v0.2.1
+2026-11-12T17:01:49.1479571Z    Compiling range-alloc v0.1.5
+2026-11-12T17:01:49.2805910Z    Compiling color v0.3.3
+2026-11-12T17:01:49.6418345Z    Compiling renderdoc-sys v1.1.0
+2026-11-12T17:01:49.8101421Z    Compiling litrs v1.0.1
+2026-11-12T17:01:50.4495708Z    Compiling linebender_resource_handle v0.1.1
+2026-11-12T17:01:50.5951017Z    Compiling libm v0.2.16
+2026-11-12T17:01:50.8256911Z    Compiling svg_fmt v0.4.5
+2026-11-12T17:01:51.1115722Z    Compiling glow v0.16.0
+2026-11-12T17:01:51.1900331Z    Compiling profiling v1.0.18
+2026-11-12T17:01:51.2551180Z    Compiling bytes v1.12.1
+2026-11-12T17:01:52.4601859Z    Compiling uuid v1.29.0
+2026-11-12T17:01:53.0169029Z    Compiling static_assertions v1.1.0
+2026-11-12T17:01:53.0837094Z    Compiling accesskit v0.25.1
+2026-11-12T17:01:54.1048953Z    Compiling http v1.5.0
+2026-11-12T17:01:54.7250712Z    Compiling skrifa v0.35.0
+2026-11-12T17:01:56.1329511Z    Compiling guillotiere v0.6.2
+2026-11-12T17:01:56.7092551Z    Compiling document-features v0.2.12
+2026-11-12T17:01:57.9140606Z    Compiling peniko v0.4.1
+2026-11-12T17:01:58.3472202Z    Compiling windows-future v0.3.2
+2026-11-12T17:01:59.4713465Z    Compiling read-fonts v0.41.0
+2026-11-12T17:02:03.7892665Z    Compiling vello_shaders v0.5.1
+2026-11-12T17:02:04.6146231Z    Compiling idna_adapter v1.2.2
+2026-11-12T17:02:04.7837274Z    Compiling rand v0.9.5
+2026-11-12T17:02:06.4180869Z    Compiling sha1 v0.10.7
+2026-11-12T17:02:06.5587215Z    Compiling windows-numerics v0.3.1
+2026-11-12T17:02:06.7425447Z    Compiling windows-collections v0.3.2
+2026-11-12T17:02:06.8065905Z    Compiling miniz_oxide v0.8.9
+2026-11-12T17:02:07.4195796Z    Compiling fdeflate v0.3.7
+2026-11-12T17:02:08.0825610Z    Compiling wgpu v24.0.5
+2026-11-12T17:02:08.1470873Z    Compiling winit v0.30.12
+2026-11-12T17:02:08.6923997Z    Compiling data-encoding v2.11.1
+2026-11-12T17:02:08.7857704Z    Compiling tracing-core v0.1.36
+2026-11-12T17:02:09.6844396Z    Compiling ttf-parser v0.21.1
+2026-11-12T17:02:10.4132531Z    Compiling utf-8 v0.7.6
+2026-11-12T17:02:10.6362295Z    Compiling pin-project-lite v0.2.17
+2026-11-12T17:02:10.7218532Z    Compiling bitflags v1.3.2
+2026-11-12T17:02:10.8216157Z    Compiling smol_str v0.2.2
+2026-11-12T17:02:11.1535895Z    Compiling percent-encoding v2.3.2
+2026-11-12T17:02:11.4674617Z    Compiling form_urlencoded v1.2.2
+2026-11-12T17:02:11.6826264Z    Compiling png v0.17.16
+2026-11-12T17:02:13.6340976Z    Compiling tracing v0.1.44
+2026-11-12T17:02:13.9126891Z    Compiling tungstenite v0.28.0
+2026-11-12T17:02:16.3966417Z    Compiling skrifa v0.44.0
+2026-11-12T17:02:19.0021189Z    Compiling windows v0.62.2
+2026-11-12T17:02:22.8328576Z    Compiling idna v1.1.0
+2026-11-12T17:02:25.2034653Z    Compiling vello_encoding v0.5.1
+2026-11-12T17:02:28.5275437Z    Compiling accesskit_consumer v0.39.1
+2026-11-12T17:02:30.8276213Z    Compiling read-fonts v0.29.3
+2026-11-12T17:02:30.9160248Z    Compiling windows-sys v0.52.0
+2026-11-12T17:02:38.4360924Z    Compiling softbuffer v0.4.6
+2026-11-12T17:02:38.6931268Z    Compiling ttf-parser v0.20.0
+2026-11-12T17:02:39.0258797Z    Compiling tinyvec v1.13.3
+2026-11-12T17:02:39.5771200Z    Compiling memmap2 v0.9.11
+2026-11-12T17:02:39.8990583Z    Compiling arrayref v0.3.9
+2026-11-12T17:02:39.9753612Z    Compiling unicode-ccc v0.2.0
+2026-11-12T17:02:40.0988120Z    Compiling zeno v0.3.3
+2026-11-12T17:02:41.1607621Z    Compiling futures-core v0.3.34
+2026-11-12T17:02:41.3027798Z    Compiling cursor-icon v1.2.0
+2026-11-12T17:02:41.4268538Z    Compiling dpi v0.1.2
+2026-11-12T17:02:41.6390914Z    Compiling unicode-bidi-mirroring v0.2.0
+2026-11-12T17:02:41.7269437Z    Compiling yazi v0.2.1
+2026-11-12T17:02:42.1240636Z    Compiling unicode-script v0.5.8
+2026-11-12T17:02:42.6488060Z    Compiling strict-num v0.1.1
+2026-11-12T17:02:42.6578746Z    Compiling unicode-properties v0.1.4
+2026-11-12T17:02:42.7918898Z    Compiling tiny-skia-path v0.11.4
+2026-11-12T17:02:42.9076511Z    Compiling rustybuzz v0.14.1
+2026-11-12T17:02:43.0320943Z    Compiling swash v0.2.10
+2026-11-12T17:02:48.8319225Z    Compiling futures-intrusive v0.5.0
+2026-11-12T17:02:49.4261396Z    Compiling fontdb v0.16.2
+2026-11-12T17:02:49.5552614Z    Compiling skrifa v0.31.3
+2026-11-12T17:02:50.4632958Z    Compiling accesskit_windows v0.35.1
+2026-11-12T17:02:52.2817236Z    Compiling url v2.5.8
+2026-11-12T17:02:53.2030939Z    Compiling windows-sys v0.59.0
+2026-11-12T17:02:53.8135105Z    Compiling unicode-bidi v0.3.18
+2026-11-12T17:02:54.9483130Z    Compiling self_cell v1.3.0
+2026-11-12T17:02:55.0541125Z    Compiling base64 v0.22.1
+2026-11-12T17:02:55.5837360Z    Compiling rangemap v1.8.0
+2026-11-12T17:02:55.9747290Z    Compiling sys-locale v0.3.2
+2026-11-12T17:02:56.0280838Z    Compiling unicode-linebreak v0.1.5
+2026-11-12T17:02:56.1734639Z    Compiling grid v0.15.0
+2026-11-12T17:02:56.3885851Z    Compiling cosmic-text v0.14.2
+2026-11-12T17:02:56.4277214Z    Compiling taffy v0.7.7
+2026-11-12T17:02:58.4219349Z    Compiling ureq v2.12.1
+2026-11-12T17:02:59.0479254Z    Compiling vello v0.5.0
+2026-11-12T17:02:59.2953908Z    Compiling accesskit_winit v0.34.1
+2026-11-12T17:02:59.4904597Z    Compiling tiny-skia v0.11.4
+2026-11-12T17:03:01.6597721Z    Compiling fontdue v0.9.3
+2026-11-12T17:03:01.8678170Z    Compiling pollster v0.4.0
+2026-11-12T17:03:02.0147567Z    Compiling rustx-macros v0.1.0 (D:\a\rustx\rustx\crates\rustx-macros)
+2026-11-12T17:03:02.7811771Z    Compiling typed-builder-macro v0.20.1
+2026-11-12T17:03:02.9451296Z    Compiling rustx-engine v0.1.0 (D:\a\rustx\rustx\crates\rustx-engine)
+2026-11-12T17:03:03.4500150Z    Compiling winnow v1.0.4
+2026-11-12T17:03:04.0685730Z    Compiling target-triple v1.0.1
+2026-11-12T17:03:04.3820421Z    Compiling toml_parser v1.1.5+spec-1.1.0
+2026-11-12T17:03:04.6202128Z    Compiling serde_spanned v1.1.2
+2026-11-12T17:03:04.7848862Z    Compiling toml_datetime v0.7.5+spec-1.1.0
+2026-11-12T17:03:05.2694939Z    Compiling toml_writer v1.1.3+spec-1.1.0
+2026-11-12T17:03:05.5571666Z    Compiling winnow v0.7.15
+2026-11-12T17:03:05.8762295Z    Compiling glob v0.3.4
+2026-11-12T17:03:06.7452014Z    Compiling typed-builder v0.20.1
+2026-11-12T17:03:06.8417788Z    Compiling rustx v0.1.0 (D:\a\rustx\rustx\crates\rustx)
+2026-11-12T17:03:06.8900316Z    Compiling rustx-web v0.1.0 (D:\a\rustx\rustx\crates\rustx-web)
+2026-11-12T17:03:07.6533710Z    Compiling unicode-ident v1.0.27
+2026-11-12T17:03:07.7836283Z    Compiling alloc-no-stdlib v2.0.4
+2026-11-12T17:03:07.9703922Z    Compiling alloc-stdlib v0.2.4
+2026-11-12T17:03:08.2156340Z    Compiling toml v0.9.12+spec-1.1.0
+2026-11-12T17:03:08.3869259Z    Compiling brotli-decompressor v5.0.3
+2026-11-12T17:03:10.0672962Z    Compiling trybuild v1.0.115
+2026-11-12T17:03:11.1173461Z    Compiling rustx-cli v0.1.0 (D:\a\rustx\rustx\crates\rustx-cli)
+2026-11-12T17:03:12.1866691Z    Compiling brotli v8.0.2
+2026-11-12T17:03:17.6915630Z    Compiling sha2 v0.10.9
+2026-11-12T17:03:23.2667765Z warning: unused variable: `c`
+2026-11-12T17:03:23.2669256Z    --> crates\rustx-cli\src\playground.rs:206:13
+2026-11-12T17:03:23.2670201Z     |
+2026-11-12T17:03:23.2676669Z 206 |     let mut c: Command;
+2026-11-12T17:03:23.2678040Z     |             ^ help: if this is intentional, prefix it with an underscore: `_c`
+2026-11-12T17:03:23.2679077Z     |
+2026-11-12T17:03:23.2715632Z     = note: `#[warn(unused_variables)]` on by default
+2026-11-12T17:03:23.2718325Z 
+2026-11-12T17:03:23.3771806Z    Compiling rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)
+2026-11-12T17:03:26.4230934Z warning: `rustx-cli` (bin "rustx-cli" test) generated 1 warning
+2026-11-12T17:04:02.4109429Z warning: `rustx-cli` (bin "rustx" test) generated 1 warning (1 duplicate)
+2026-11-12T17:04:11.1246431Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 32s
+2026-11-12T17:04:11.1604565Z      Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx-83e06fc0f61e5ac3.exe)
+2026-11-12T17:04:11.1713220Z 
+2026-11-12T17:04:11.1713693Z running 0 tests
+2026-11-12T17:04:11.1713907Z 
+2026-11-12T17:04:11.1714607Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:11.1714987Z 
+2026-11-12T17:04:11.1732435Z      Running tests\compile.rs (target\x86_64-pc-windows-msvc\debug\deps\compile-3416893a9e1d250c.exe)
+2026-11-12T17:04:11.1829842Z 
+2026-11-12T17:04:11.1830453Z running 1 test
+2026-11-12T17:04:11.3243868Z     Checking rustx-tests v0.0.0 (D:\a\rustx\rustx\target\tests\trybuild\rustx)
+2026-11-12T17:04:11.3680603Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+2026-11-12T17:04:11.4371923Z 
+2026-11-12T17:04:11.4371945Z 
+2026-11-12T17:04:11.7616795Z test [0m[1mtests\ui\duplicate_alias.rs[0m ... [0m[32mok
+2026-11-12T17:04:11.7617731Z [0mtest [0m[1mtests\ui\missing_prop.rs[0m ... [0m[32mok
+2026-11-12T17:04:11.7618499Z [0mtest [0m[1mtests\ui\nesting.rs[0m ... [0m[32mok
+2026-11-12T17:04:11.7619247Z [0mtest [0m[1mtests\ui\wrong_prop.rs[0m ... [0m[32mok
+2026-11-12T17:04:11.7619812Z [0m
+2026-11-12T17:04:11.7620061Z 
+2026-11-12T17:04:11.7620337Z test compile_diagnostics ... ok
+2026-11-12T17:04:11.7620605Z 
+2026-11-12T17:04:11.7621179Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s
+2026-11-12T17:04:11.7621695Z 
+2026-11-12T17:04:11.7637021Z      Running tests\editing_forms.rs (target\x86_64-pc-windows-msvc\debug\deps\editing_forms-740fd85bbce4ac4b.exe)
+2026-11-12T17:04:11.7739073Z 
+2026-11-12T17:04:11.7739423Z running 16 tests
+2026-11-12T17:04:11.7749497Z test composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text ... ok
+2026-11-12T17:04:11.7753482Z test browser_composition_sync_commits_once_and_invalid_input_does_not_mutate ... ok
+2026-11-12T17:04:11.7755280Z test async_validation_preserves_form_level_field_errors_without_touching_other_fields ... ok
+2026-11-12T17:04:11.7758690Z test composition_is_one_undo_transaction_and_cancel_restores_selection ... ok
+2026-11-12T17:04:11.7760264Z test async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors ... ok
+2026-11-12T17:04:11.7761415Z test form_tracks_dirty_touched_validation_and_reset ... ok
+2026-11-12T17:04:11.7762535Z test form_level_validation_and_sensitive_debug_use_declared_associations ... ok
+2026-11-12T17:04:11.7764871Z test grapheme_motion_and_deletion_preserve_joined_emoji_and_combining_marks ... ok
+2026-11-12T17:04:11.7765917Z test insertion_caret_stays_on_a_grapheme_boundary_when_neighbors_join ... ok
+2026-11-12T17:04:11.7767034Z test readonly_and_password_never_expose_secret_in_diagnostics_or_clipboard ... ok
+2026-11-12T17:04:11.7768406Z test readonly_deletion_preserves_selection_and_editable_deletion_undo_restores_it ... ok
+2026-11-12T17:04:11.7771300Z test stale_validation_and_submission_are_rejected_after_edit_reset_and_disposal ... ok
+2026-11-12T17:04:11.7772599Z test tickets_cannot_cross_forms_and_controlledness_changes_are_diagnosed ... ok
+2026-11-12T17:04:11.7773834Z test utf16_validation_is_atomic_and_bidi_selections_keep_source_ranges ... ok
+2026-11-12T17:04:11.7775069Z test word_navigation_uses_unicode_words_and_extends_grapheme_safe_ranges ... ok
+2026-11-12T17:04:11.7800501Z test editing_history_is_bounded_and_new_edit_discards_redo_branch ... ok
+2026-11-12T17:04:11.7800965Z 
+2026-11-12T17:04:11.7801293Z test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-11-12T17:04:11.7801654Z 
+2026-11-12T17:04:11.7822921Z      Running tests\host.rs (target\x86_64-pc-windows-msvc\debug\deps\host-1da5059dffa55054.exe)
+2026-11-12T17:04:11.7916714Z 
+2026-11-12T17:04:11.7917180Z running 5 tests
+2026-11-12T17:04:11.7923833Z test handshake_rejects_skew_and_invalid_limits ... ok
+2026-11-12T17:04:11.7929719Z test missing_or_denied_host_never_enqueues_work ... ok
+2026-11-12T17:04:11.7930569Z test reentrant_callbacks_can_start_work_and_small_host_limits_apply ... ok
+2026-11-12T17:04:11.7931147Z test skewed_stale_and_oversized_completions_are_safe ... ok
+2026-11-12T17:04:11.8300711Z test queue_and_scope_cleanup_stay_bounded_under_adversarial_churn ... ok
+2026-11-12T17:04:11.8301620Z 
+2026-11-12T17:04:11.8302176Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+2026-11-12T17:04:11.8302635Z 
+2026-11-12T17:04:11.8322754Z      Running tests\runtime.rs (target\x86_64-pc-windows-msvc\debug\deps\runtime-6771d94a221b333b.exe)
+2026-11-12T17:04:11.8424066Z 
+2026-11-12T17:04:11.8424461Z running 15 tests
+2026-11-12T17:04:11.8438406Z test cancel_once ... ok
+2026-11-12T17:04:11.8439112Z test context_children_fragments ... ok
+2026-11-12T17:04:11.8442257Z test batches ... ok
+2026-11-12T17:04:11.8443482Z test disposed_http_completion_rejected ... ok
+2026-11-12T17:04:11.8445401Z test default_generic_named_slots ... ok
+2026-11-12T17:04:11.8447804Z test completed_requests_release_cleanup ... ok
+2026-11-12T17:04:11.8451075Z test duplicate_keys - should panic ... ok
+2026-11-12T17:04:11.8451849Z test imported_reactive_and_initial_props ... ok
+2026-11-12T17:04:11.8456467Z test effect_cycles_are_bounded - should panic ... ok
+2026-11-12T17:04:11.8457651Z test node_refs_clear_on_disposal ... ok
+2026-11-12T17:04:11.8458862Z test memo_effect_cleanup ... ok
+2026-11-12T17:04:11.8461588Z test setup_mounts_once ... ok
+2026-11-12T17:04:11.8462773Z test keyed_state_and_disposal ... ok
+2026-11-12T17:04:11.8463851Z test semantic_text_includes_literal_and_reactive_children ... ok
+2026-11-12T17:04:11.8465291Z test stale_dependencies_removed ... ok
+2026-11-12T17:04:11.8465568Z 
+2026-11-12T17:04:11.8465963Z test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:11.8466304Z 
+2026-11-12T17:04:11.8485232Z      Running tests\stage2.rs (target\x86_64-pc-windows-msvc\debug\deps\stage2-f5e938a14c4a329e.exe)
+2026-11-12T17:04:11.8581370Z 
+2026-11-12T17:04:11.8581753Z running 10 tests
+2026-11-12T17:04:11.8593520Z test drawing_queries_include_stroke_overhang_and_reject_unsafe_path_bounds ... ok
+2026-11-12T17:04:11.8596629Z test drawing_large_coordinates_and_transformed_topmost_hits_are_stable ... ok
+2026-11-12T17:04:11.8598861Z test drawing_hits_follow_rounded_and_path_geometry_not_only_bounds ... ok
+2026-11-12T17:04:11.8601096Z test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
+2026-11-12T17:04:11.8602270Z test responsive_queries_are_ordered_and_theme_tokens_resolve ... ok
+2026-11-12T17:04:11.8607695Z test virtual_scroll_clamps_and_ignores_nonfinite_input ... ok
+2026-11-12T17:04:11.8667078Z test virtual_scrolling_from_a_row_routes_to_the_owning_list ... ok
+2026-11-12T17:04:11.8698904Z test direct_virtual_offsets_and_invalid_viewports_do_not_overflow ... ok
+2026-11-12T17:04:11.8803266Z test spatial_drawing_queries_cull_ten_thousand_shapes_without_reordering ... ok
+2026-11-12T17:04:13.2200756Z test virtual_list_bounds_materialized_scopes_and_retains_focused_state ... ok
+2026-11-12T17:04:13.2201127Z 
+2026-11-12T17:04:13.2201490Z test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.36s
+2026-11-12T17:04:13.2201876Z 
+2026-11-12T17:04:13.2225729Z      Running tests\stage3_assets.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_assets-7679526f24efdcbd.exe)
+2026-11-12T17:04:13.2327161Z 
+2026-11-12T17:04:13.2327594Z running 2 tests
+2026-11-12T17:04:13.2334597Z test asset_manifest_rejects_ambiguous_names_and_versions_fetch_urls ... ok
+2026-11-12T17:04:13.2335889Z test asset_load_preserves_identity_bounds_payload_and_cancels_on_disposal ... ok
+2026-11-12T17:04:13.2336312Z 
+2026-11-12T17:04:13.2336835Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:13.2337213Z 
+2026-11-12T17:04:13.2357524Z      Running tests\stage3_events_widgets.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_events_widgets-e85727bfb7a58756.exe)
+2026-11-12T17:04:13.2451749Z 
+2026-11-12T17:04:13.2452322Z running 16 tests
+2026-11-12T17:04:13.2470834Z test committed_event_path_has_capture_target_bubble_and_cancelled_default ... ok
+2026-11-12T17:04:13.2472682Z test controlled_checkbox_slider_and_choices_emit_typed_values ... ok
+2026-11-12T17:04:13.2476838Z test combobox_filters_then_commits_without_overwriting_value_while_typing ... ok
+2026-11-12T17:04:13.2477903Z test disabled_and_readonly_controls_reject_default_actions ... ok
+2026-11-12T17:04:13.2480477Z test combobox_keyboard_navigation_skips_disabled_options ... ok
+2026-11-12T17:04:13.2484455Z test editor_identity_and_selection_survive_controlled_patches ... ok
+2026-11-12T17:04:13.2486544Z test immediate_stop_keeps_later_handlers_and_ancestors_from_running ... ok
+2026-11-12T17:04:13.2487580Z test controlled_combobox_updates_its_label_and_closes_a_stale_search ... ok
+2026-11-12T17:04:13.2488745Z test full_widget_markup_and_typed_semantics_are_available ... ok
+2026-11-12T17:04:13.2491906Z test ordinary_paragraph_selection_is_readonly_keyed_and_reactive_without_duplicate_text ... ok
+2026-11-12T17:04:13.2493372Z test nested_scroll_consumes_once_and_chains_at_boundary ... ok
+2026-11-12T17:04:13.2495136Z test pointer_capture_routes_move_and_releases_on_cancel_or_disposal ... ok
+2026-11-12T17:04:13.2499628Z test password_values_are_masked_in_every_snapshot_and_semantic_dump ... ok
+2026-11-12T17:04:13.2501303Z test table_sort_and_selection_remain_keyed_and_controlled ... ok
+2026-11-12T17:04:13.2502116Z test select_popup_commits_named_options_and_closes_with_escape ... ok
+2026-11-12T17:04:13.2506648Z test tooltip_describes_trigger_and_toasts_stay_bounded ... ok
+2026-11-12T17:04:13.2507117Z 
+2026-11-12T17:04:13.2507639Z test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-11-12T17:04:13.2508374Z 
+2026-11-12T17:04:13.2525701Z      Running tests\stage3_pointer_capture.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_pointer_capture-132a4b4ce7a725a6.exe)
+2026-11-12T17:04:13.2624668Z 
+2026-11-12T17:04:13.2625345Z running 1 test
+2026-11-12T17:04:13.2638508Z test terminal_pointer_events_release_capture_when_target_becomes_ineligible ... ok
+2026-11-12T17:04:13.2639035Z 
+2026-11-12T17:04:13.2639390Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:13.2639724Z 
+2026-11-12T17:04:13.2657388Z      Running tests\stage3_services.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_services-cb247a14136c2722.exe)
+2026-11-12T17:04:13.2755434Z 
+2026-11-12T17:04:13.2755790Z running 7 tests
+2026-11-12T17:04:13.2776744Z test invalid_headers_methods_status_decode_and_diagnostics ... ok
+2026-11-12T17:04:13.2778600Z test scheduling_future_cancels_and_capability_denial_stays_distinct ... ok
+2026-11-12T17:04:13.2779461Z test request_policy_future_drop_and_scoped_tasks ... ok
+2026-11-12T17:04:13.2781227Z test query_dedup_stale_supersede_and_invalidation ... ok
+2026-11-12T17:04:13.2782127Z test storage_schema_and_secret_command_redaction ... ok
+2026-11-12T17:04:13.2783036Z test typed_routes_percent_queries_hash_and_not_found ... ok
+2026-11-12T17:04:13.2786590Z test services_reject_stale_skew_and_bound_scope_resources ... ok
+2026-11-12T17:04:13.2787053Z 
+2026-11-12T17:04:13.2787471Z test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:13.2787838Z 
+2026-11-12T17:04:13.2806278Z      Running tests\stage3_spinner.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_spinner-48dda63a3edd6779.exe)
+2026-11-12T17:04:13.2902745Z 
+2026-11-12T17:04:13.2903135Z running 1 test
+2026-11-12T17:04:13.2912674Z test spinner_uses_scoped_timers_and_unmount_cancels_the_pending_tick ... ok
+2026-11-12T17:04:13.2913179Z 
+2026-11-12T17:04:13.2913519Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:13.2913892Z 
+2026-11-12T17:04:13.2931070Z      Running unittests src\main.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx-769c42cb824acc66.exe)
+2026-11-12T17:04:13.3028087Z 
+2026-11-12T17:04:13.3028585Z running 4 tests
+2026-11-12T17:04:13.6521904Z test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+2026-11-12T17:04:13.6547971Z test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+2026-11-12T17:04:13.7539090Z test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+2026-11-12T17:04:13.7553556Z test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+2026-11-12T17:04:13.7554030Z 
+2026-11-12T17:04:13.7554351Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+2026-11-12T17:04:13.7554719Z 
+2026-11-12T17:04:13.7575955Z      Running unittests src\legacy.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_cli-844ba06f16eb5ece.exe)
+2026-11-12T17:04:13.7677362Z 
+2026-11-12T17:04:13.7677719Z running 4 tests
+2026-11-12T17:04:14.0246166Z test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+2026-11-12T17:04:14.0267664Z test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+2026-11-12T17:04:14.1246190Z test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+2026-11-12T17:04:14.1259679Z test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+2026-11-12T17:04:14.1260384Z 
+2026-11-12T17:04:14.1261246Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+2026-11-12T17:04:14.1261859Z 
+2026-11-12T17:04:14.1283090Z      Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_core-8cbec24ff9a9f44f.exe)
+2026-11-12T17:04:14.1380779Z 
+2026-11-12T17:04:14.1381411Z running 2 tests
+2026-11-12T17:04:14.1387956Z test events::tests::pointer_type_preserves_known_host_inputs_and_defaults_unknown ... ok
+2026-11-12T17:04:14.1389964Z test errors::tests::recoverable_error_disposes_then_remounts_child ... ok
+2026-11-12T17:04:14.1390307Z 
+2026-11-12T17:04:14.1390622Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:14.1391002Z 
+2026-11-12T17:04:14.1408545Z      Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_engine-675b7fbedfe68c5d.exe)
+2026-11-12T17:04:14.1521339Z 
+2026-11-12T17:04:14.1521812Z running 3 tests
+2026-11-12T17:04:14.1524006Z test host::services::tests::actual_native_pull_stream_and_socket_echo ... ignored, requires permission to bind loopback TCP
+2026-11-12T17:04:14.1533381Z test host::services::tests::native_navigation_preserves_history_and_hash_route_modes ... ok
+2026-11-12T17:04:14.1604958Z test editing::tests::bidi_selection_uses_visual_cluster_rectangles ... ok
+2026-11-12T17:04:14.1605282Z 
+2026-11-12T17:04:14.1605633Z test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-11-12T17:04:14.1605992Z 
+2026-11-12T17:04:14.1628685Z      Running tests\cpu.rs (target\x86_64-pc-windows-msvc\debug\deps\cpu-5ac31d6b0af0fe48.exe)
+2026-11-12T17:04:14.1729200Z 
+2026-11-12T17:04:14.1729620Z running 1 test
+2026-11-12T17:04:14.1812863Z test opacity_composites_the_group_once_and_border_stays_inside ... ok
+2026-11-12T17:04:14.1813200Z 
+2026-11-12T17:04:14.1813557Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-11-12T17:04:14.1813919Z 
+2026-11-12T17:04:14.1841238Z      Running tests\stage2.rs (target\x86_64-pc-windows-msvc\debug\deps\stage2-391cc54c57b7fcad.exe)
+2026-11-12T17:04:14.1947257Z 
+2026-11-12T17:04:14.1947687Z running 17 tests
+2026-11-12T17:04:14.1955757Z test budget_cache_obeys_byte_entry_and_lru_constraints ... ok
+2026-11-12T17:04:14.2121376Z test cpu_culling_keeps_visible_shadow_of_an_offscreen_clipped_node ... ok
+2026-11-12T17:04:14.2125062Z test cpu_image_alpha_multiplier_matches_the_shared_asset_contract ... ok
+2026-11-12T17:04:14.2130693Z test drawing_geometry_rebases_large_coordinates_before_backend_float_conversion ... ok
+2026-11-12T17:04:14.2135400Z test cpu_drawings_honor_canvas_clip_path_fill_and_camera ... ok
+2026-11-12T17:04:14.2157165Z test cpu_image_pixels_use_straight_rgba_source_alpha ... ok
+2026-11-12T17:04:14.2164967Z test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
+2026-11-12T17:04:14.2181140Z test image_registration_rejects_invalid_sizes_and_removal_invalidates_caches ... ok
+2026-11-12T17:04:14.2188363Z test image_resource_updates_repaint_an_otherwise_idle_engine ... ok
+2026-11-12T17:04:14.2195488Z test explicit_text_direction_preserves_trailing_paragraphs ... ok
+2026-11-12T17:04:14.2225576Z test layout_alignment_growth_and_width_constraints_are_applied ... ok
+2026-11-12T17:04:14.2266196Z test font_readiness_invalidates_existing_layout_once ... ok
+2026-11-12T17:04:14.2286414Z test layout_reflows_at_breakpoints_and_theme_changes_do_not_remount ... ok
+2026-11-12T17:04:14.2304989Z test retained_layout_avoids_invalidation_for_color_only_updates ... ok
+2026-11-12T17:04:14.2315761Z test text_coordinates_remain_finite_for_unbounded_measurement ... ok
+2026-11-12T17:04:14.2411701Z test text_direction_alignment_clusters_and_utf16_boundaries_share_the_model ... ok
+2026-11-12T17:04:15.2373244Z test text_cache_reuses_shapes_reflows_and_invalidation_follows_font_readiness ... ok
+2026-11-12T17:04:15.2373904Z 
+2026-11-12T17:04:15.2374422Z test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.04s
+2026-11-12T17:04:15.2375267Z 
+2026-11-12T17:04:15.2418802Z      Running tests\stage2_contracts.rs (target\x86_64-pc-windows-msvc\debug\deps\stage2_contracts-0bbd95cef86a9184.exe)
+2026-11-12T17:04:15.2559546Z 
+2026-11-12T17:04:15.2560246Z running 4 tests
+2026-11-12T17:04:15.2718945Z test percentages_constraints_and_physical_logical_spacing_share_retained_layout ... ok
+2026-11-12T17:04:15.2720985Z test absolute_percent_offsets_and_z_order_agree_between_pixels_and_hit_testing ... ok
+2026-11-12T17:04:15.2754702Z test editing_never_elides_text_and_asymmetric_padding_is_shared_with_painted_caret ... ok
+2026-11-12T17:04:15.3241382Z test typography_cache_line_height_and_grapheme_ellipsis_keep_original_source_offsets ... ok
+2026-11-12T17:04:15.3242050Z 
+2026-11-12T17:04:15.3242416Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+2026-11-12T17:04:15.3242755Z 
+2026-11-12T17:04:15.3289763Z      Running tests\stage3_assets.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_assets-5a580e5ddda74a5d.exe)
+2026-11-12T17:04:15.3400457Z 
+2026-11-12T17:04:15.3401267Z running 4 tests
+2026-11-12T17:04:15.3429614Z test png_decoder_expands_color_alpha_palette_and_sixteen_bit_samples ... ok
+2026-11-12T17:04:15.3434620Z test png_decoder_rejects_malformed_truncated_and_oversized_images ... ok
+2026-11-12T17:04:15.3488349Z test asset_registry_rejects_resource_kind_changes_without_orphaning_resources ... ok
+2026-11-12T17:04:15.3489815Z test asset_registry_replaces_revisions_removes_images_and_rolls_back_failed_installs ... ok
+2026-11-12T17:04:15.3490713Z 
+2026-11-12T17:04:15.3491481Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-11-12T17:04:15.3493185Z 
+2026-11-12T17:04:15.3525193Z      Running tests\stage3_controls.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_controls-467c5fede6f63409.exe)
+2026-11-12T17:04:15.3637677Z 
+2026-11-12T17:04:15.3638259Z running 1 test
+2026-11-12T17:04:15.6871897Z test indicators_reserve_intrinsic_label_width_and_paint_state_without_changing_labels ... ok
+2026-11-12T17:04:15.6872330Z 
+2026-11-12T17:04:15.6872643Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+2026-11-12T17:04:15.6873069Z 
+2026-11-12T17:04:15.6905888Z      Running tests\stage3_host_events.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_host_events-b3677a607c29e12b.exe)
+2026-11-12T17:04:15.7014849Z 
+2026-11-12T17:04:15.7015282Z running 3 tests
+2026-11-12T17:04:15.7211061Z test resize_and_resource_notifications_target_root_and_preserve_typed_payloads ... ok
+2026-11-12T17:04:15.7221497Z test drop_metadata_is_bounded_redacted_and_cancellable_over_the_committed_path ... ok
+2026-11-12T17:04:15.7222576Z test scroll_events_report_actual_committed_offsets_once_and_ignore_cancelled_wheels_and_boundaries ... ok
+2026-11-12T17:04:15.7223010Z 
+2026-11-12T17:04:15.7223323Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-11-12T17:04:15.7223678Z 
+2026-11-12T17:04:15.7255741Z      Running tests\stage3_interaction.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_interaction-f7b2b446f81920df.exe)
+2026-11-12T17:04:15.7361652Z 
+2026-11-12T17:04:15.7362005Z running 11 tests
+2026-11-12T17:04:15.7585956Z test event_local_coordinates_follow_each_committed_translated_box ... ok
+2026-11-12T17:04:15.7632574Z test editor_input_selection_and_undo_invalidate_retained_boxes ... ok
+2026-11-12T17:04:15.7639860Z test engine_dispatch_blocks_modal_background_and_releases_earlier_capture ... ok
+2026-11-12T17:04:15.7641671Z test modal_traps_keyboard_blocks_background_and_restores_focus ... ok
+2026-11-12T17:04:15.7652291Z test ordinary_text_native_projection_accepts_selection_and_rejects_replacement ... ok
+2026-11-12T17:04:15.7716914Z test shared_editor_word_and_vertical_line_keys_preserve_unicode_and_preferred_column ... ok
+2026-11-12T17:04:15.7719223Z test ordinary_text_pointer_drag_uses_shaped_graphemes_capture_and_cancellable_defaults ... ok
+2026-11-12T17:04:15.7762627Z test slider_pointer_drag_obeys_range_and_keyboard_default_can_be_cancelled ... ok
+2026-11-12T17:04:15.7767839Z test preventing_pointerdown_focus_keeps_native_popup_option_click_usable ... ok
+2026-11-12T17:04:15.7769006Z test ordinary_text_supports_keyboard_selection_copy_reflow_and_route_disposal ... ok
+2026-11-12T17:04:15.7819170Z test tab_roving_focus_skips_disabled_and_activates_selected_panel ... ok
+2026-11-12T17:04:15.7819539Z 
+2026-11-12T17:04:15.7819899Z test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+2026-11-12T17:04:15.7820255Z 
+2026-11-12T17:04:15.7852811Z      Running tests\stage3_layout.rs (target\x86_64-pc-windows-msvc\debug\deps\stage3_layout-5e4951243bd60b0a.exe)
+2026-11-12T17:04:15.7956323Z 
+2026-11-12T17:04:15.7956715Z running 4 tests
+2026-11-12T17:04:15.8171888Z test stack_children_overlap_and_reserve_the_largest_child_extent ... ok
+2026-11-12T17:04:15.8179640Z test modal_is_centered_after_resize_and_stays_fixed_when_background_scrolls ... ok
+2026-11-12T17:04:15.8180328Z test anchored_popup_follows_outer_scroll_and_flips_inside_the_viewport ... ok
+2026-11-12T17:04:15.8185901Z test popup_is_measured_at_viewport_and_painted_outside_its_clipped_parent ... ok
+2026-11-12T17:04:15.8186519Z 
+2026-11-12T17:04:15.8186927Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+2026-11-12T17:04:15.8187294Z 
+2026-11-12T17:04:15.8215753Z      Running tests\stage4_diagnostics_editing.rs (target\x86_64-pc-windows-msvc\debug\deps\stage4_diagnostics_editing-4bca68c7744658d8.exe)
+2026-11-12T17:04:15.8323497Z 
+2026-11-12T17:04:15.8323832Z running 2 tests
+2026-11-12T17:04:15.9214432Z test diagnostics_are_opt_in_bounded_redacted_and_source_linked ... ok
+2026-11-12T17:04:16.3350259Z test multiline_viewport_reveals_caret_scrolls_and_invalidates_both_scene_and_pixels ... ok
+2026-11-12T17:04:16.3351386Z 
+2026-11-12T17:04:16.3351918Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+2026-11-12T17:04:16.3352281Z 
+2026-11-12T17:04:16.3393214Z      Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_lab-40ee273af8e7b345.exe)
+2026-11-12T17:04:16.3494385Z 
+2026-11-12T17:04:16.3494752Z running 0 tests
+2026-11-12T17:04:16.3494928Z 
+2026-11-12T17:04:16.3495308Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.3495680Z 
+2026-11-12T17:04:16.3512251Z      Running unittests src\main.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_lab-612d3ef1864a477a.exe)
+2026-11-12T17:04:16.3607141Z 
+2026-11-12T17:04:16.3607584Z running 0 tests
+2026-11-12T17:04:16.3607821Z 
+2026-11-12T17:04:16.3608448Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.3608792Z 
+2026-11-12T17:04:16.3626047Z      Running unittests src\lib.rs (target\debug\deps\rustx_macros-ccc3b72e1ca111fa.exe)
+2026-11-12T17:04:16.3861789Z 
+2026-11-12T17:04:16.3862267Z running 0 tests
+2026-11-12T17:04:16.3862818Z 
+2026-11-12T17:04:16.3864280Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.3864655Z 
+2026-11-12T17:04:16.3886100Z      Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\debug\deps\rustx_web-cd72cc18396e910f.exe)
+2026-11-12T17:04:16.3978631Z 
+2026-11-12T17:04:16.3978926Z running 1 test
+2026-11-12T17:04:16.3982189Z test host_ids_are_exact ... ok
+2026-11-12T17:04:16.3982559Z 
+2026-11-12T17:04:16.3983335Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.3983698Z 
+2026-11-12T17:04:16.3997587Z    Doc-tests rustx
+2026-11-12T17:04:16.4849052Z 
+2026-11-12T17:04:16.4850444Z running 0 tests
+2026-11-12T17:04:16.4850991Z 
+2026-11-12T17:04:16.4854892Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.4855776Z 
+2026-11-12T17:04:16.4942341Z    Doc-tests rustx_core
+2026-11-12T17:04:16.7405556Z 
+2026-11-12T17:04:16.7406103Z running 0 tests
+2026-11-12T17:04:16.7406398Z 
+2026-11-12T17:04:16.7406956Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.7407468Z 
+2026-11-12T17:04:16.7495513Z    Doc-tests rustx_engine
+2026-11-12T17:04:16.9221821Z 
+2026-11-12T17:04:16.9222400Z running 0 tests
+2026-11-12T17:04:16.9222688Z 
+2026-11-12T17:04:16.9223216Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:16.9223758Z 
+2026-11-12T17:04:16.9313970Z    Doc-tests rustx_lab
+2026-11-12T17:04:17.1193031Z 
+2026-11-12T17:04:17.1193919Z running 0 tests
+2026-11-12T17:04:17.1194190Z 
+2026-11-12T17:04:17.1194911Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:17.1195285Z 
+2026-11-12T17:04:17.1289203Z    Doc-tests rustx_macros
+2026-11-12T17:04:17.1926457Z 
+2026-11-12T17:04:17.1927309Z running 0 tests
+2026-11-12T17:04:17.1927760Z 
+2026-11-12T17:04:17.1928490Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:17.1929668Z 
+2026-11-12T17:04:17.2009101Z    Doc-tests rustx_web
+2026-11-12T17:04:17.2994873Z 
+2026-11-12T17:04:17.2995877Z running 0 tests
+2026-11-12T17:04:17.2996398Z 
+2026-11-12T17:04:17.2997030Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+2026-11-12T17:04:17.2997448Z 
+2026-11-12T17:04:17.6342333Z warning: output filename collision.
+2026-11-12T17:04:17.6344282Z The bin target `rustx-lab` in package `rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)` has the same output filename as the lib target `rustx_lab` in package `rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)`.
+2026-11-12T17:04:17.6346312Z Colliding filename is: D:\a\rustx\rustx\target\x86_64-pc-windows-msvc\release\deps\rustx_lab.pdb
+2026-11-12T17:04:17.6347286Z The output filenames should be unique.
+2026-11-12T17:04:17.6348147Z Consider changing their names to be unique or compiling them separately.
+2026-11-12T17:04:17.6349380Z This may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>.
+2026-11-12T17:04:17.6350585Z If this looks unexpected, it may be a bug in Cargo. Please file a bug report at
+2026-11-12T17:04:17.6351638Z https://github.com/rust-lang/cargo/issues/ with as much information as you
+2026-11-12T17:04:17.6352309Z can provide.
+2026-11-12T17:04:17.6353087Z cargo 1.90.0 (840b83a10 2025-07-30) running on `x86_64-pc-windows-msvc` target `x86_64-pc-windows-msvc`
+2026-11-12T17:04:17.6358705Z First unit: Unit { pkg: Package { id: PackageId { name: "rustx-lab", version: "0.1.0", source: "D:\\a\\rustx\\rustx\\examples\\lab" }, ..: ".." }, target: TargetInner { name: "rustx-lab", doc: true, ..: with_path("D:\\a\\rustx\\rustx\\examples\\lab\\src\\main.rs", Edition2021) }, profile: Profile { opt_level: "s", lto: Named("thin"), codegen_units: Some(1), strip: Resolved(Named("debuginfo")), ..: default_release() }, kind: Target(CompileTarget { name: "x86_64-pc-windows-msvc" }), mode: Build, features: [], rustflags: ["-C", "target-feature=+crt-static"], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 11098036445591080736 }
+2026-11-12T17:04:17.6367077Z Second unit: Unit { pkg: Package { id: PackageId { name: "rustx-lab", version: "0.1.0", source: "D:\\a\\rustx\\rustx\\examples\\lab" }, ..: ".." }, target: TargetInner { name_inferred: true, ..: lib_target("rustx_lab", ["cdylib", "rlib"], "D:\\a\\rustx\\rustx\\examples\\lab\\src\\lib.rs", Edition2021) }, profile: Profile { opt_level: "s", lto: Named("thin"), codegen_units: Some(1), strip: Resolved(Named("debuginfo")), ..: default_release() }, kind: Target(CompileTarget { name: "x86_64-pc-windows-msvc" }), mode: Build, features: [], rustflags: ["-C", "target-feature=+crt-static"], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 13227832853343049338 }
+2026-11-12T17:04:17.7674267Z    Compiling cfg-if v1.0.5
+2026-11-12T17:04:17.7675409Z    Compiling windows-link v0.2.1
+2026-11-12T17:04:17.7681681Z    Compiling serde_core v1.0.229
+2026-11-12T17:04:17.7683474Z    Compiling syn v3.0.9
+2026-11-12T17:04:17.8144506Z    Compiling syn v2.0.119
+2026-11-12T17:04:17.8745287Z    Compiling smallvec v1.16.3
+2026-11-12T17:04:18.2575491Z    Compiling windows_x86_64_msvc v0.52.6
+2026-11-12T17:04:18.4965785Z    Compiling log v0.4.34
+2026-11-12T17:04:18.8788383Z    Compiling windows-targets v0.52.6
+2026-11-12T17:04:18.9353398Z    Compiling stable_deref_trait v1.2.1
+2026-11-12T17:04:18.9975505Z    Compiling arrayvec v0.7.8
+2026-11-12T17:04:19.2818240Z    Compiling once_cell v1.21.4
+2026-11-12T17:04:19.5665871Z    Compiling shlex v2.0.1
+2026-11-12T17:04:19.7958717Z    Compiling find-msvc-tools v0.1.14
+2026-11-12T17:04:21.0676403Z    Compiling synstructure v0.14.0
+2026-11-12T17:04:21.4398844Z    Compiling bitflags v2.13.2
+2026-11-12T17:04:21.7722347Z    Compiling cc v1.8.0
+2026-11-12T17:04:22.0014878Z    Compiling num-traits v0.2.19
+2026-11-12T17:04:22.1509833Z    Compiling generic-array v0.14.7
+2026-11-12T17:04:22.3665902Z    Compiling foldhash v0.2.0
+2026-11-12T17:04:22.6564205Z    Compiling khronos_api v3.1.0
+2026-11-12T17:04:22.7406151Z    Compiling bytemuck_derive v1.12.1
+2026-11-12T17:04:22.9175016Z    Compiling zerofrom-derive v0.1.8
+2026-11-12T17:04:24.0840049Z    Compiling zerofrom v0.1.8
+2026-11-12T17:04:24.2265515Z    Compiling thiserror-impl v2.0.21
+2026-11-12T17:04:24.4783286Z    Compiling yoke-derive v0.8.4
+2026-11-12T17:04:24.5106459Z    Compiling bytemuck v1.25.2
+2026-11-12T17:04:24.8899627Z    Compiling zerovec-derive v0.11.7
+2026-11-12T17:04:25.0375673Z    Compiling strum_macros v0.26.4
+2026-11-12T17:04:25.5973948Z    Compiling yoke v0.8.4
+2026-11-12T17:04:25.8633069Z    Compiling displaydoc v0.2.7
+2026-11-12T17:04:26.1171676Z    Compiling simd-adler32 v0.3.10
+2026-11-12T17:04:26.5287799Z    Compiling zerovec v0.11.9
+2026-11-12T17:04:26.5300242Z    Compiling ring v0.17.14
+2026-11-12T17:04:26.9098398Z    Compiling hashbrown v0.17.1
+2026-11-12T17:04:27.5016144Z    Compiling thiserror v2.0.21
+2026-11-12T17:04:27.6175786Z    Compiling adler2 v2.0.1
+2026-11-12T17:04:27.8138878Z    Compiling zeroize v1.9.1
+2026-11-12T17:04:27.8551445Z    Compiling equivalent v1.0.3
+2026-11-12T17:04:27.9083725Z    Compiling libc v0.2.190
+2026-11-12T17:04:27.9232454Z    Compiling typenum v1.20.1
+2026-11-12T17:04:28.0667638Z    Compiling rustls-pki-types v1.15.1
+2026-11-12T17:04:28.4715968Z    Compiling crc32fast v1.5.2
+2026-11-12T17:04:28.5107658Z    Compiling tinystr v0.8.5
+2026-11-12T17:04:29.2663302Z    Compiling windows-result v0.2.0
+2026-11-12T17:04:29.5264836Z    Compiling windows-sys v0.61.2
+2026-11-12T17:04:29.7861338Z    Compiling writeable v0.6.4
+2026-11-12T17:04:30.1913547Z    Compiling litemap v0.8.3
+2026-11-12T17:04:30.2154277Z    Compiling getrandom v0.3.4
+2026-11-12T17:04:30.4990216Z    Compiling zerocopy v0.8.63
+2026-11-12T17:04:30.5986578Z    Compiling xml-rs v0.8.29
+2026-11-12T17:04:31.0174542Z    Compiling utf_types v1.0.0
+2026-11-12T17:04:31.3645934Z    Compiling utf8_iter v1.1.0
+2026-11-12T17:04:31.5828471Z    Compiling gl_generator v0.14.0
+2026-11-12T17:04:31.5957174Z    Compiling winapi-util v0.1.11
+2026-11-12T17:04:31.6880729Z    Compiling icu_locale_core v2.4.0
+2026-11-12T17:04:31.9645417Z    Compiling parking_lot_core v0.9.12
+2026-11-12T17:04:31.9780266Z    Compiling windows-strings v0.1.0
+2026-11-12T17:04:32.4671748Z    Compiling miniz_oxide v0.9.1
+2026-11-12T17:04:32.6263628Z    Compiling potential_utf v0.1.6
+2026-11-12T17:04:32.6518904Z    Compiling zerotrie v0.2.5
+2026-11-12T17:04:32.8360172Z    Compiling windows-implement v0.60.2
+2026-11-12T17:04:33.2835724Z    Compiling windows-interface v0.59.3
+2026-11-12T17:04:33.8211271Z    Compiling windows-implement v0.58.0
+2026-11-12T17:04:34.3806496Z    Compiling windows-interface v0.58.0
+2026-11-12T17:04:34.7752356Z    Compiling font-types v0.9.0
+2026-11-12T17:04:34.7806056Z    Compiling getrandom v0.2.17
+2026-11-12T17:04:34.9392540Z    Compiling windows-result v0.4.1
+2026-11-12T17:04:35.4242990Z    Compiling windows-strings v0.5.1
+2026-11-12T17:04:35.4845526Z    Compiling raw-window-handle v0.6.2
+2026-11-12T17:04:35.4846424Z    Compiling foldhash v0.1.5
+2026-11-12T17:04:35.5665603Z    Compiling allocator-api2 v0.2.21
+2026-11-12T17:04:35.7286072Z    Compiling itoa v1.0.18
+2026-11-12T17:04:35.8756337Z    Compiling scopeguard v1.2.0
+2026-11-12T17:04:35.9631424Z    Compiling icu_normalizer_data v2.4.0
+2026-11-12T17:04:36.0225868Z    Compiling untrusted v0.9.0
+2026-11-12T17:04:36.1089232Z    Compiling thiserror v1.0.69
+2026-11-12T17:04:36.1477376Z    Compiling icu_properties_data v2.4.0
+2026-11-12T17:04:36.1618126Z    Compiling zmij v1.0.23
+2026-11-12T17:04:36.2030475Z    Compiling hashbrown v0.15.5
+2026-11-12T17:04:36.4013606Z    Compiling lock_api v0.4.14
+2026-11-12T17:04:36.5388217Z    Compiling windows-core v0.62.2
+2026-11-12T17:04:36.7101815Z    Compiling windows-core v0.58.0
+2026-11-12T17:04:37.1525047Z    Compiling flate2 v1.1.10
+2026-11-12T17:04:37.6388181Z    Compiling icu_provider v2.4.0
+2026-11-12T17:04:37.9429967Z    Compiling icu_collections v2.4.0
+2026-11-12T17:04:38.0400273Z    Compiling glutin_wgl_sys v0.6.1
+2026-11-12T17:04:38.8625967Z    Compiling termcolor v1.4.1
+2026-11-12T17:04:39.3340915Z    Compiling crypto-common v0.1.7
+2026-11-12T17:04:39.4504687Z    Compiling block-buffer v0.10.4
+2026-11-12T17:04:39.6052874Z    Compiling thiserror-impl v1.0.69
+2026-11-12T17:04:39.7542900Z    Compiling kurbo v0.11.3
+2026-11-12T17:04:41.3616766Z    Compiling libloading v0.8.9
+2026-11-12T17:04:41.7152110Z    Compiling naga v24.0.0
+2026-11-12T17:04:42.1013772Z    Compiling ash v0.38.0+1.3.281
+2026-11-12T17:04:42.3203391Z    Compiling unicode-width v0.1.14
+2026-11-12T17:04:42.3842192Z    Compiling bit-vec v0.8.0
+2026-11-12T17:04:42.6568017Z    Compiling khronos-egl v6.0.0
+2026-11-12T17:04:42.7263471Z    Compiling rustls v0.23.46
+2026-11-12T17:04:42.8546162Z    Compiling rustc-hash v1.1.0
+2026-11-12T17:04:42.9533255Z    Compiling bit-set v0.8.0
+2026-11-12T17:04:42.9694077Z    Compiling codespan-reporting v0.11.1
+2026-11-12T17:04:43.1556445Z    Compiling serde_json v1.0.154
+2026-11-12T17:04:43.3865174Z    Compiling digest v0.10.7
+2026-11-12T17:04:43.6541301Z    Compiling rand_core v0.9.5
+2026-11-12T17:04:44.0909951Z    Compiling parking_lot v0.12.5
+2026-11-12T17:04:44.1812437Z    Compiling rustls-webpki v0.103.16
+2026-11-12T17:04:44.5468256Z    Compiling windows v0.58.0
+2026-11-12T17:04:45.3963822Z    Compiling ppv-lite86 v0.2.21
+2026-11-12T17:04:46.0125539Z    Compiling webpki-roots v1.0.11
+2026-11-12T17:04:46.1698506Z    Compiling indexmap v2.14.2
+2026-11-12T17:04:46.1886629Z    Compiling strum v0.26.3
+2026-11-12T17:04:46.3910973Z    Compiling gpu-descriptor-types v0.2.0
+2026-11-12T17:04:46.7678307Z    Compiling gpu-alloc-types v0.3.1
+2026-11-12T17:04:47.2393002Z    Compiling spirv v0.3.0+sdk-1.3.268.0
+2026-11-12T17:04:47.2465025Z    Compiling wgpu-hal v24.0.4
+2026-11-12T17:04:47.6191139Z    Compiling hexf-parse v0.2.1
+2026-11-12T17:04:47.8362372Z    Compiling cpufeatures v0.2.17
+2026-11-12T17:04:47.8985315Z    Compiling presser v0.3.1
+2026-11-12T17:04:48.0470106Z    Compiling unicode-xid v0.2.6
+2026-11-12T17:04:48.1398407Z    Compiling subtle v2.6.1
+2026-11-12T17:04:48.1701792Z    Compiling unicode-segmentation v1.13.3
+2026-11-12T17:04:48.3034537Z    Compiling httparse v1.10.1
+2026-11-12T17:04:48.7187118Z    Compiling memchr v2.8.3
+2026-11-12T17:05:02.3857080Z    Compiling gpu-allocator v0.27.0
+2026-11-12T17:05:03.8735136Z    Compiling slotmap v1.1.1
+2026-11-12T17:05:03.9638341Z    Compiling gpu-alloc v0.6.2
+2026-11-12T17:05:04.5457660Z    Compiling gpu-descriptor v0.3.2
+2026-11-12T17:05:04.8828216Z    Compiling webpki-roots v0.26.11
+2026-11-12T17:05:04.9302422Z    Compiling icu_normalizer v2.4.0
+2026-11-12T17:05:04.9433333Z    Compiling rand_chacha v0.9.0
+2026-11-12T17:05:06.3251869Z    Compiling icu_properties v2.4.0
+2026-11-12T17:05:10.1800475Z    Compiling read-fonts v0.33.1
+2026-11-12T17:05:17.1694821Z    Compiling euclid v0.22.14
+2026-11-12T17:05:18.2957621Z    Compiling ordered-float v4.6.0
+2026-11-12T17:05:18.8122020Z    Compiling font-types v0.12.6
+2026-11-12T17:05:19.6123300Z    Compiling wgpu-types v24.0.0
+2026-11-12T17:05:23.2853105Z    Compiling windows-threading v0.2.1
+2026-11-12T17:05:23.5305785Z    Compiling wgpu-core v24.0.5
+2026-11-12T17:05:23.8794521Z    Compiling glow v0.16.0
+2026-11-12T17:05:28.2775103Z    Compiling profiling v1.0.18
+2026-11-12T17:05:28.3374927Z    Compiling renderdoc-sys v1.1.0
+2026-11-12T17:05:28.5464941Z    Compiling uuid v1.29.0
+2026-11-12T17:05:29.3174071Z    Compiling range-alloc v0.1.5
+2026-11-12T17:05:29.4201466Z    Compiling linebender_resource_handle v0.1.1
+2026-11-12T17:05:29.5283314Z    Compiling static_assertions v1.1.0
+2026-11-12T17:05:29.5911208Z    Compiling bytes v1.12.1
+2026-11-12T17:05:30.1762736Z    Compiling color v0.3.3
+2026-11-12T17:05:30.9109482Z    Compiling svg_fmt v0.4.5
+2026-11-12T17:05:31.3612060Z    Compiling guillotiere v0.6.2
+2026-11-12T17:05:32.2482495Z    Compiling peniko v0.4.1
+2026-11-12T17:05:32.2691143Z    Compiling http v1.5.0
+2026-11-12T17:05:32.8346653Z    Compiling libm v0.2.16
+2026-11-12T17:05:32.8502671Z    Compiling serde v1.0.229
+2026-11-12T17:05:35.0846316Z    Compiling accesskit v0.25.1
+2026-11-12T17:05:36.7665752Z    Compiling windows-future v0.3.2
+2026-11-12T17:05:37.9537852Z    Compiling skrifa v0.35.0
+2026-11-12T17:05:43.9862080Z    Compiling read-fonts v0.41.0
+2026-11-12T17:05:51.7093508Z    Compiling idna_adapter v1.2.2
+2026-11-12T17:05:51.8397812Z    Compiling rand v0.9.5
+2026-11-12T17:05:53.6210103Z    Compiling vello_shaders v0.5.1
+2026-11-12T17:05:55.3889430Z    Compiling sha1 v0.10.7
+2026-11-12T17:05:55.8441768Z    Compiling windows-collections v0.3.2
+2026-11-12T17:05:56.5681658Z    Compiling windows-numerics v0.3.1
+2026-11-12T17:05:56.9021992Z    Compiling miniz_oxide v0.8.9
+2026-11-12T17:05:58.8296830Z    Compiling fdeflate v0.3.7
+2026-11-12T17:05:59.0727826Z    Compiling serde_derive v1.0.229
+2026-11-12T17:05:59.9370865Z    Compiling pin-project-lite v0.2.17
+2026-11-12T17:06:00.0292759Z    Compiling data-encoding v2.11.1
+2026-11-12T17:06:03.6125512Z    Compiling bitflags v1.3.2
+2026-11-12T17:06:03.6779043Z    Compiling tracing-core v0.1.36
+2026-11-12T17:06:03.9086588Z    Compiling ttf-parser v0.21.1
+2026-11-12T17:06:04.8665059Z    Compiling utf-8 v0.7.6
+2026-11-12T17:06:05.0635958Z    Compiling smol_str v0.2.2
+2026-11-12T17:06:05.4657254Z    Compiling percent-encoding v2.3.2
+2026-11-12T17:06:05.8039709Z    Compiling form_urlencoded v1.2.2
+2026-11-12T17:06:06.0817070Z    Compiling tungstenite v0.28.0
+2026-11-12T17:06:07.4970998Z    Compiling tracing v0.1.44
+2026-11-12T17:06:08.9018287Z    Compiling png v0.17.16
+2026-11-12T17:06:09.8594275Z    Compiling winit v0.30.12
+2026-11-12T17:06:09.8736385Z    Compiling wgpu v24.0.5
+2026-11-12T17:06:09.8871560Z    Compiling windows v0.62.2
+2026-11-12T17:06:12.5482073Z    Compiling skrifa v0.44.0
+2026-11-12T17:06:12.6532719Z    Compiling idna v1.1.0
+2026-11-12T17:06:15.5033992Z    Compiling vello_encoding v0.5.1
+2026-11-12T17:06:20.8220718Z    Compiling accesskit_consumer v0.39.1
+2026-11-12T17:06:28.5404423Z    Compiling read-fonts v0.29.3
+2026-11-12T17:06:33.0551281Z    Compiling windows-sys v0.52.0
+2026-11-12T17:06:37.1613213Z    Compiling dpi v0.1.2
+2026-11-12T17:06:37.4000384Z    Compiling arrayref v0.3.9
+2026-11-12T17:06:37.4611894Z    Compiling futures-core v0.3.34
+2026-11-12T17:06:37.6473136Z    Compiling unicode-bidi-mirroring v0.2.0
+2026-11-12T17:06:37.7777582Z    Compiling proc-macro2 v1.0.107
+2026-11-12T17:06:38.1705220Z    Compiling zeno v0.3.3
+2026-11-12T17:06:39.5999986Z    Compiling ttf-parser v0.20.0
+2026-11-12T17:06:39.7891409Z    Compiling cursor-icon v1.2.0
+2026-11-12T17:06:39.9427731Z    Compiling yazi v0.2.1
+2026-11-12T17:06:41.7366564Z    Compiling memmap2 v0.9.11
+2026-11-12T17:06:42.1073884Z    Compiling strict-num v0.1.1
+2026-11-12T17:06:42.2548482Z    Compiling unicode-ccc v0.2.0
+2026-11-12T17:06:42.4577244Z    Compiling tinyvec v1.13.3
+2026-11-12T17:06:43.0339573Z    Compiling unicode-script v0.5.8
+2026-11-12T17:06:43.9522027Z    Compiling unicode-properties v0.1.4
+2026-11-12T17:06:44.2574463Z    Compiling rustybuzz v0.14.1
+2026-11-12T17:06:47.2461387Z    Compiling fontdb v0.16.2
+2026-11-12T17:06:48.8649534Z    Compiling tiny-skia-path v0.11.4
+2026-11-12T17:06:51.0896176Z    Compiling swash v0.2.10
+2026-11-12T17:06:58.9881151Z    Compiling skrifa v0.31.3
+2026-11-12T17:07:06.2193694Z    Compiling futures-intrusive v0.5.0
+2026-11-12T17:07:07.0277435Z    Compiling softbuffer v0.4.6
+2026-11-12T17:07:07.0428953Z    Compiling accesskit_windows v0.35.1
+2026-11-12T17:07:10.7795128Z    Compiling url v2.5.8
+2026-11-12T17:07:12.3570127Z    Compiling rustx-core v0.1.0 (D:\a\rustx\rustx\crates\rustx-core)
+2026-11-12T17:07:13.9141966Z    Compiling windows-sys v0.59.0
+2026-11-12T17:07:16.4338954Z    Compiling unicode-ident v1.0.27
+2026-11-12T17:07:16.5796601Z    Compiling alloc-no-stdlib v2.0.4
+2026-11-12T17:07:16.7151239Z    Compiling self_cell v1.3.0
+2026-11-12T17:07:16.7240844Z    Compiling grid v0.15.0
+2026-11-12T17:07:16.8216271Z    Compiling base64 v0.22.1
+2026-11-12T17:07:16.9714820Z    Compiling sys-locale v0.3.2
+2026-11-12T17:07:17.2002577Z    Compiling unicode-bidi v0.3.18
+2026-11-12T17:07:17.3719629Z    Compiling rangemap v1.8.0
+2026-11-12T17:07:17.4972396Z    Compiling unicode-linebreak v0.1.5
+2026-11-12T17:07:17.7770566Z    Compiling ureq v2.12.1
+2026-11-12T17:07:17.8953248Z    Compiling cosmic-text v0.14.2
+2026-11-12T17:07:18.8351897Z    Compiling taffy v0.7.7
+2026-11-12T17:07:21.2882404Z    Compiling alloc-stdlib v0.2.4
+2026-11-12T17:07:23.9307360Z    Compiling vello v0.5.0
+2026-11-12T17:07:25.8049944Z    Compiling accesskit_winit v0.34.1
+2026-11-12T17:07:25.9948829Z    Compiling tiny-skia v0.11.4
+2026-11-12T17:07:28.0386581Z    Compiling fontdue v0.9.3
+2026-11-12T17:07:29.5412456Z    Compiling typed-builder-macro v0.20.1
+2026-11-12T17:07:29.8049245Z    Compiling quote v1.0.47
+2026-11-12T17:07:29.8480672Z    Compiling pollster v0.4.0
+2026-11-12T17:07:30.0049575Z    Compiling rustx-engine v0.1.0 (D:\a\rustx\rustx\crates\rustx-engine)
+2026-11-12T17:07:30.7685214Z    Compiling brotli-decompressor v5.0.3
+2026-11-12T17:07:31.5688819Z    Compiling typed-builder v0.20.1
+2026-11-12T17:07:31.6409764Z    Compiling rustx-macros v0.1.0 (D:\a\rustx\rustx\crates\rustx-macros)
+2026-11-12T17:07:32.4124148Z    Compiling rustx-cli v0.1.0 (D:\a\rustx\rustx\crates\rustx-cli)
+2026-11-12T17:07:32.9117854Z    Compiling rustx-web v0.1.0 (D:\a\rustx\rustx\crates\rustx-web)
+2026-11-12T17:07:34.4241642Z    Compiling rustx v0.1.0 (D:\a\rustx\rustx\crates\rustx)
+2026-11-12T17:07:34.4974206Z    Compiling brotli v8.0.2
+2026-11-12T17:07:37.0398114Z    Compiling sha2 v0.10.9
+2026-11-12T17:07:52.7816353Z warning: unused variable: `c`
+2026-11-12T17:07:52.7838979Z    --> crates\rustx-cli\src\playground.rs:206:13
+2026-11-12T17:07:52.7896670Z     |
+2026-11-12T17:07:52.8013189Z 206 |     let mut c: Command;
+2026-11-12T17:07:52.8014295Z     |             ^ help: if this is intentional, prefix it with an underscore: `_c`
+2026-11-12T17:07:52.8015062Z     |
+2026-11-12T17:07:52.8015676Z     = note: `#[warn(unused_variables)]` on by default
+2026-11-12T17:07:52.8016219Z 
+2026-11-12T17:07:55.1650865Z    Compiling rustx-lab v0.1.0 (D:\a\rustx\rustx\examples\lab)
+2026-11-12T17:08:25.9117095Z warning: `rustx-cli` (bin "rustx-cli") generated 1 warning
+2026-11-12T17:08:36.0567898Z warning: `rustx-cli` (bin "rustx") generated 1 warning (1 duplicate)
+2026-11-12T17:09:14.0931514Z     Finished `release` profile [optimized] target(s) in 4m 56s
+2026-11-12T17:09:15.5965576Z Built Windows candidate. Clean-machine/manual acceptance still required.

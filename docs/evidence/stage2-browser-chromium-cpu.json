@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T16:10:59.482Z",
+  "date": "2026-11-13T07:20:47.365Z",
   "engine": "chromium",
   "backend": "Rust CPU",
   "platform": "darwin",
@@ -18,26 +18,26 @@
     "No Windows, actual Safari, physical mobile, OS IME or screen-reader acceptance",
     "API counters and local samples are not full platform/performance certification"
   ],
-  "version": "157.0.8103.40",
-  "wasmSha256": "519e597acdce33e1b829caf531bc16e05a40f5e4039f6b0390e6d5e9d0c27c9a",
+  "version": "156.0.8078.4",
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
   "drawingVisible": 133,
   "result": "passed",
   "finalMetrics": {
     "cpu_culled": 1,
-    "cpu_visited": 48,
-    "glyph_bytes": 80836,
-    "glyph_entries": 374,
+    "cpu_visited": 49,
+    "glyph_bytes": 81105,
+    "glyph_entries": 376,
     "image_bytes": 0,
     "image_entries": 0,
     "layout_changed": 3,
-    "layout_nodes": 132,
-    "scene_cache_bytes": 52131,
-    "scene_cache_entries": 48,
+    "layout_nodes": 133,
+    "scene_cache_bytes": 53776,
+    "scene_cache_entries": 49,
     "scene_painted": 20,
-    "scene_reused": 19,
+    "scene_reused": 20,
     "shapes_visible": 133,
-    "text_cache_bytes": 515911,
-    "text_cache_entries": 438,
-    "text_shapes": 438
+    "text_cache_bytes": 523395,
+    "text_cache_entries": 446,
+    "text_shapes": 446
   }
 }

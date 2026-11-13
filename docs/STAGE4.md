@@ -1,5 +1,7 @@
 # Stage 4 candidate — tooling and delivery
 
+The 13 November completion follow-up adds the RustX-authored `#/capabilities` guide and actual Chromium/WebKit navigation/responsive evidence. Windows packaging now freezes its checksum payload and validates each row, while Windows CI collects available notices before creating the candidate. See the completion section of ACCEPTANCE.md for fresh outcomes, retained failures and remaining gates.
+
 12 November 2026, branch `stage-4`, starting at `0fdf4ca`. This is the implementation/delivery candidate for RX-33–RX-46. It does **not** certify the Stage 4 exit gate: that gate requires every v1 row, actual Windows/native distribution, physical mobile/Safari, OS IME, human assistive-technology tasks and the full frozen performance matrix. The authoritative outcomes and hashes are in [ACCEPTANCE.md](ACCEPTANCE.md) and BUILD-INFO.json.
 
 ## Authoring and installed CLI
@@ -24,7 +26,9 @@ Default production builds do not install inspector files/buttons or `window.rust
 
 [stage4/DEPLOYMENT.md](stage4/DEPLOYMENT.md) documents hashed web assets, CSP, gzip, offline behavior and atomic deployment. [stage4/PLAYGROUND.md](stage4/PLAYGROUND.md) documents the actual local compiler and its limits. [stage4/SUPPORT.md](stage4/SUPPORT.md) separates tested paths from missing target/manual evidence. [stage4/SECURITY.md](stage4/SECURITY.md) records advisories, licenses and unsafe boundaries. [TUTORIAL.md](TUTORIAL.md) covers new project authoring and migration.
 
-`scripts/build-windows.ps1` and a manually triggered pinned-action workflow prepare an x64/MSVC candidate with static CRT, embedded fonts, notices, DLL dependency output and checksums. They have not executed on this Mac. A CI file or cross-compile is not a Windows distribution acceptance result. Clean-Windows launch, CPU/GPU/DPI, services, UIA/NVDA and IME remain required; no fabricated Windows executable is included.
+`scripts/build-windows.ps1`, the manual candidate workflow and the PR stage-checks workflow prepare an x64/MSVC candidate with static CRT, embedded fonts, available notices, DLL dependency output and checksums. The PR workflow passes actual Windows CPU Applications startup, builds the package and launches its executable for two frames. It also passes workspace tests, formatting, rebuilt Wasm and loopback services on Linux/macOS/Windows; a separate Linux Chromium job replays the browser, standalone CLI and deployment tasks in sequence. See REVIEW.md for exact run provenance. Windows clean-machine launch, GPU/DPI/services/UIA/NVDA and OS IME remain required. A runner with Rust/MSVC installed is not a clean-machine distribution result.
+
+The four-stage review also adds typed edge/unit/stacking and typography/ellipsis APIs, preserves logical keyboard order independently of paint order, suppresses duplicate compiled-preview keyboard defaults, normalizes formatter output to LF on Windows and resolves the initial deep link before the first actual pixel frame. Brotli and a consumed Wasm preload improve transfer/startup without changing budgets. See STAGE2.md and ACCEPTANCE.md for finite contracts and retained failures.
 
 `npm run snapshot` identifies reusable source content. `npm run package` requires a committed, clean tree, validates source and bundle identities, and creates a complete versioned ZIP with source, lockfiles, CLI/editor packages, prebuilt browser distributions, tests/evidence, notices, Git history and payload checksums. Build/dependency/compiler caches and credentials are excluded. The archive's GIT-REVISION.txt is the exact delivery commit.
 

@@ -647,6 +647,9 @@ fn Home(cx: Scope) -> View {
                 </Column>
             </Div>
             <Row style={ Style::row().gap(12.).wrap() }>
+                <Link id="open-capabilities" href="#/capabilities" style={ primary() }>
+                    "See what you can build →"
+                </Link>
                 <Link id="open-playground" href="#/playground">
                     "Open the source playground"
                 </Link>
@@ -718,7 +721,6 @@ fn Home(cx: Scope) -> View {
 }
 #[component]
 pub fn App(cx: Scope) -> View {
-    let page = cx.signal(crate::start_page());
     let router = Router::new(
         &cx,
         cx.context::<ServiceClient>().unwrap(),
@@ -730,6 +732,7 @@ pub fn App(cx: Scope) -> View {
             ("/engine".into(), 3),
             ("/applications".into(), 4),
             ("/playground".into(), 6),
+            ("/capabilities".into(), 7),
         ],
     )
     .expect("route configuration");
@@ -742,24 +745,18 @@ pub fn App(cx: Scope) -> View {
         let _ = router.navigate(path, true);
     }
     let current = router.current.clone();
-    let routed = page.clone();
-    cx.effect(move || {
-        match current.get() {
-            RouteState::Found(r) => {
-                let _ = routed.set(r.route);
-            }
-            RouteState::NotFound(p) if !p.is_empty() => {
-                let _ = routed.set(5);
-            }
-            _ => {}
-        }
-        Box::new(|| {})
+    let page = cx.memo(move || match current.get() {
+        RouteState::Found(route) => route.route,
+        RouteState::NotFound(path) if !path.is_empty() => 5,
+        RouteState::Error(_) => 5,
+        _ => crate::start_page(),
     });
     let hr = router.clone();
     let pr = router.clone();
     let lr = router.clone();
     let vr = router.clone();
     let ar = router.clone();
+    let cr = router.clone();
     let h = page.clone();
     let p = page.clone();
     let l = page.clone();
@@ -789,6 +786,17 @@ pub fn App(cx: Scope) -> View {
                     }
                 >
                     { "Overview" }
+                </Button>
+                <Button
+                    id="nav-capabilities"
+                    style={ primary() }
+                    on_click={
+                        move |_| {
+                            let _ = cr.navigate("/capabilities", false);
+                        }
+                    }
+                >
+                    "What can I build?"
                 </Button>
                 <Button
                     id="nav-people"
@@ -841,6 +849,7 @@ pub fn App(cx: Scope) -> View {
             </Row>
             {
                 move || match page.get() {
+                    7 => Node::component("Capabilities", crate::capabilities::application),
                     6 => Node::component("Playground", crate::playground::application),
                     5 => Node::text("Page not found. Choose a page above."),
                     4 => Node::component("Applications", crate::applications::application),

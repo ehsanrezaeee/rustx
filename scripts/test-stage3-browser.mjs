@@ -25,6 +25,15 @@ try {
   page = await context.newPage();
   page.setDefaultTimeout(20000);
   page.on('pageerror', (e) => errors.push(e.message));
+  await page.addInitScript(() => {
+    const original = CanvasRenderingContext2D.prototype.putImageData;
+    CanvasRenderingContext2D.prototype.putImageData = function (...args) {
+      if (!window.firstRustFrameIds && window.rustx) {
+        window.firstRustFrameIds = window.rustx.inspect().nodes.map((node) => node.id);
+      }
+      return original.apply(this, args);
+    };
+  });
   report.version = browser.version();
   await page.goto(`${base}/?renderer=cpu#/applications`);
   await page.waitForFunction(() => window.rustx?.draws() > 0);
@@ -46,6 +55,8 @@ try {
     await frames();
   };
   await page.waitForSelector('[data-testid="profile-name"]');
+  assert((await page.evaluate(() => window.firstRustFrameIds)).includes('profile-name'));
+  report.checks.push('initial deep link is selected before the first actual Rust pixel frame');
   report.checks.push('hash deep link mounts the public Rust application');
   const dropPrevented = await page.getByTestId('profile-name').evaluate((el) => {
     const transfer = new DataTransfer();

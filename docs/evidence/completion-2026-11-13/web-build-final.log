@@ -1,0 +1,5 @@
+info: component rust-std for target wasm32-unknown-unknown is up to date
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.04s
+   Compiling rustx-lab v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/examples/lab)
+    Finished `release` profile [optimized] target(s) in 2.61s
+Built /Users/ehsan-mac/Downloads/rustx-stage-01/dist (fa39617b52a94ce9729f74cb964cc401c4262458e8b4db502275f7741d6c06d8)

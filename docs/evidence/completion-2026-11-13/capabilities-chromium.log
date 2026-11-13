@@ -1,0 +1,709 @@
+
+> test:capabilities
+> node scripts/test-capabilities.mjs
+
+{
+  "date": "2026-11-13T07:22:24.215Z",
+  "engine": "chromium",
+  "checks": [
+    "direct capabilities link selects its content before the first Rust pixel upload",
+    "1200px: all Rust layout boxes fit the viewport; keyboard links and scroll-to-limits work"
+  ],
+  "limitations": [
+    "Desktop responsive emulation; no physical mobile, OS IME or human screen-reader acceptance"
+  ],
+  "version": "156.0.8078.4",
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
+  "result": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     id: null,\n+     rect: [\n+       0,\n+       -1059,\n+       1200,\n+       2059\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       0,\n+       -1059,\n+       1200,\n+       2059\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -1027,\n+       1136,\n+       60\n+     ]\n+   },\n+   {\n+     id: 'nav-capabilities',\n+     rect: [\n+       265,\n+       -1027,\n+       158,\n+       60\n+     ]\n+   },\n+   {\n+     id: 'nav-people',\n+     rect: [\n+       435,\n+       -1027,\n+       145,\n+       60\n+     ]\n+   },\n+   {\n+     id: 'nav-lab',\n+     rect: [\n+       592,\n+       -1027,\n+       119,\n+       60\n+     ]\n+   },\n+   {\n+     id: 'nav-engine',\n+     rect: [\n+       723,\n+       -1027,\n+       129,\n+       60\n+     ]\n+   },\n+   {\n+     id: 'nav-applications',\n+     rect: [\n+       864,\n+       -1027,\n+       120,\n+       60\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -937,\n+       1136,\n+       1905\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -937,\n+       1136,\n+       387\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       62,\n+       -907,\n+       1076,\n+       19\n+     ]\n+   },\n+   {\n+     id: 'capabilities-title',\n+     rect: [\n+       62,\n+       -866,\n+       1076,\n+       152\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       62,\n+       -692,\n+       1076,\n+       51\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       62,\n+       -619,\n+       1076,\n+       39\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       388,\n+       -619,\n+       159,\n+       39\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -518,\n+       1136,\n+       75\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -518,\n+       1136,\n+       42\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -466,\n+       1136,\n+       23\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -411,\n+       1136,\n+       624\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -411,\n+       559,\n+       303\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -385,\n+       507,\n+       17\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -350,\n+       507,\n+       38\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -294,\n+       507,\n+       45\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -231,\n+       507,\n+       19\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -194,\n+       507,\n+       37\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       609,\n+       -411,\n+       559,\n+       303\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -385,\n+       507,\n+       17\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -350,\n+       507,\n+       38\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -294,\n+       507,\n+       68\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -208,\n+       507,\n+       19\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -171,\n+       507,\n+       37\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       -90,\n+       559,\n+       303\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -64,\n+       507,\n+       17\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       -29,\n+       507,\n+       38\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       27,\n+       507,\n+       68\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       113,\n+       507,\n+       19\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       150,\n+       507,\n+       37\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       609,\n+       -90,\n+       559,\n+       303\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -64,\n+       507,\n+       17\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       -29,\n+       507,\n+       38\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       27,\n+       507,\n+       68\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       113,\n+       507,\n+       19\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       635,\n+       150,\n+       507,\n+       37\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       245,\n+       1136,\n+       287\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       271,\n+       1084,\n+       17\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       306,\n+       1084,\n+       40\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       364,\n+       1084,\n+       142\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       364,\n+       346.6666564941406,\n+       142\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       364,\n+       346.6666564941406,\n+       27\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       401,\n+       346.6666564941406,\n+       63\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       426.6666564941406,\n+       364,\n+       346.6666564941406,\n+       142\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       426.6666564941406,\n+       364,\n+       346.6666564941406,\n+       27\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       426.6666564941406,\n+       401,\n+       346.6666564941406,\n+       105\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       795.3333129882812,\n+       364,\n+       346.66668701171875,\n+       142\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       795.3333129882812,\n+       364,\n+       346.66668701171875,\n+       27\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       795.3333129882812,\n+       401,\n+       346.66668701171875,\n+       84\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       564,\n+       1136,\n+       220\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       590,\n+       1084,\n+       40\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       648,\n+       1084,\n+       45\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       58,\n+       711,\n+       1084,\n+       47\n+     ]\n+   },\n+   {\n+     id: 'capabilities-docs',\n+     rect: [\n+       347,\n+       711,\n+       290,\n+       47\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       32,\n+       816,\n+       1136,\n+       152\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       44,\n+       828,\n+       1112,\n+       28\n+     ]\n+   },\n+   {\n+     id: 'capabilities-limits',\n+     rect: [\n+       44,\n+       866,\n+       1112,\n+       40\n+     ]\n+   },\n+   {\n+     id: null,\n+     rect: [\n+       44,\n+       916,\n+       1112,\n+       40\n+     ]\n+   }\n+ ]\n- []\n"
+}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   {
++     id: null,
++     rect: [
++       0,
++       -1059,
++       1200,
++       2059
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       0,
++       -1059,
++       1200,
++       2059
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -1027,
++       1136,
++       60
++     ]
++   },
++   {
++     id: 'nav-capabilities',
++     rect: [
++       265,
++       -1027,
++       158,
++       60
++     ]
++   },
++   {
++     id: 'nav-people',
++     rect: [
++       435,
++       -1027,
++       145,
++       60
++     ]
++   },
++   {
++     id: 'nav-lab',
++     rect: [
++       592,
++       -1027,
++       119,
++       60
++     ]
++   },
++   {
++     id: 'nav-engine',
++     rect: [
++       723,
++       -1027,
++       129,
++       60
++     ]
++   },
++   {
++     id: 'nav-applications',
++     rect: [
++       864,
++       -1027,
++       120,
++       60
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -937,
++       1136,
++       1905
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -937,
++       1136,
++       387
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       62,
++       -907,
++       1076,
++       19
++     ]
++   },
++   {
++     id: 'capabilities-title',
++     rect: [
++       62,
++       -866,
++       1076,
++       152
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       62,
++       -692,
++       1076,
++       51
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       62,
++       -619,
++       1076,
++       39
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       388,
++       -619,
++       159,
++       39
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -518,
++       1136,
++       75
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -518,
++       1136,
++       42
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -466,
++       1136,
++       23
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -411,
++       1136,
++       624
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -411,
++       559,
++       303
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -385,
++       507,
++       17
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -350,
++       507,
++       38
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -294,
++       507,
++       45
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -231,
++       507,
++       19
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -194,
++       507,
++       37
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       609,
++       -411,
++       559,
++       303
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -385,
++       507,
++       17
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -350,
++       507,
++       38
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -294,
++       507,
++       68
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -208,
++       507,
++       19
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -171,
++       507,
++       37
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       -90,
++       559,
++       303
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -64,
++       507,
++       17
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       -29,
++       507,
++       38
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       27,
++       507,
++       68
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       113,
++       507,
++       19
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       150,
++       507,
++       37
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       609,
++       -90,
++       559,
++       303
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -64,
++       507,
++       17
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       -29,
++       507,
++       38
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       27,
++       507,
++       68
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       113,
++       507,
++       19
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       635,
++       150,
++       507,
++       37
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       245,
++       1136,
++       287
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       271,
++       1084,
++       17
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       306,
++       1084,
++       40
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       364,
++       1084,
++       142
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       364,
++       346.6666564941406,
++       142
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       364,
++       346.6666564941406,
++       27
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       401,
++       346.6666564941406,
++       63
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       426.6666564941406,
++       364,
++       346.6666564941406,
++       142
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       426.6666564941406,
++       364,
++       346.6666564941406,
++       27
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       426.6666564941406,
++       401,
++       346.6666564941406,
++       105
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       795.3333129882812,
++       364,
++       346.66668701171875,
++       142
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       795.3333129882812,
++       364,
++       346.66668701171875,
++       27
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       795.3333129882812,
++       401,
++       346.66668701171875,
++       84
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       564,
++       1136,
++       220
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       590,
++       1084,
++       40
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       648,
++       1084,
++       45
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       58,
++       711,
++       1084,
++       47
++     ]
++   },
++   {
++     id: 'capabilities-docs',
++     rect: [
++       347,
++       711,
++       290,
++       47
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       32,
++       816,
++       1136,
++       152
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       44,
++       828,
++       1112,
++       28
++     ]
++   },
++   {
++     id: 'capabilities-limits',
++     rect: [
++       44,
++       866,
++       1112,
++       40
++     ]
++   },
++   {
++     id: null,
++     rect: [
++       44,
++       916,
++       1112,
++       40
++     ]
++   }
++ ]
+- []
+
+    at file:///Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-capabilities.mjs:57:12 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    { id: null, rect: [ 0, -1059, 1200, 2059 ] },
+    { id: null, rect: [ 0, -1059, 1200, 2059 ] },
+    { id: null, rect: [ 32, -1027, 1136, 60 ] },
+    { id: 'nav-capabilities', rect: [ 265, -1027, 158, 60 ] },
+    { id: 'nav-people', rect: [ 435, -1027, 145, 60 ] },
+    { id: 'nav-lab', rect: [ 592, -1027, 119, 60 ] },
+    { id: 'nav-engine', rect: [ 723, -1027, 129, 60 ] },
+    { id: 'nav-applications', rect: [ 864, -1027, 120, 60 ] },
+    { id: null, rect: [ 32, -937, 1136, 1905 ] },
+    { id: null, rect: [ 32, -937, 1136, 387 ] },
+    { id: null, rect: [ 62, -907, 1076, 19 ] },
+    { id: 'capabilities-title', rect: [ 62, -866, 1076, 152 ] },
+    { id: null, rect: [ 62, -692, 1076, 51 ] },
+    { id: null, rect: [ 62, -619, 1076, 39 ] },
+    { id: null, rect: [ 388, -619, 159, 39 ] },
+    { id: null, rect: [ 32, -518, 1136, 75 ] },
+    { id: null, rect: [ 32, -518, 1136, 42 ] },
+    { id: null, rect: [ 32, -466, 1136, 23 ] },
+    { id: null, rect: [ 32, -411, 1136, 624 ] },
+    { id: null, rect: [ 32, -411, 559, 303 ] },
+    { id: null, rect: [ 58, -385, 507, 17 ] },
+    { id: null, rect: [ 58, -350, 507, 38 ] },
+    { id: null, rect: [ 58, -294, 507, 45 ] },
+    { id: null, rect: [ 58, -231, 507, 19 ] },
+    { id: null, rect: [ 58, -194, 507, 37 ] },
+    { id: null, rect: [ 609, -411, 559, 303 ] },
+    { id: null, rect: [ 635, -385, 507, 17 ] },
+    { id: null, rect: [ 635, -350, 507, 38 ] },
+    { id: null, rect: [ 635, -294, 507, 68 ] },
+    { id: null, rect: [ 635, -208, 507, 19 ] },
+    { id: null, rect: [ 635, -171, 507, 37 ] },
+    { id: null, rect: [ 32, -90, 559, 303 ] },
+    { id: null, rect: [ 58, -64, 507, 17 ] },
+    { id: null, rect: [ 58, -29, 507, 38 ] },
+    { id: null, rect: [ 58, 27, 507, 68 ] },
+    { id: null, rect: [ 58, 113, 507, 19 ] },
+    { id: null, rect: [ 58, 150, 507, 37 ] },
+    { id: null, rect: [ 609, -90, 559, 303 ] },
+    { id: null, rect: [ 635, -64, 507, 17 ] },
+    { id: null, rect: [ 635, -29, 507, 38 ] },
+    { id: null, rect: [ 635, 27, 507, 68 ] },
+    { id: null, rect: [ 635, 113, 507, 19 ] },
+    { id: null, rect: [ 635, 150, 507, 37 ] },
+    { id: null, rect: [ 32, 245, 1136, 287 ] },
+    { id: null, rect: [ 58, 271, 1084, 17 ] },
+    { id: null, rect: [ 58, 306, 1084, 40 ] },
+    { id: null, rect: [ 58, 364, 1084, 142 ] },
+    { id: null, rect: [ 58, 364, 346.6666564941406, 142 ] },
+    { id: null, rect: [ 58, 364, 346.6666564941406, 27 ] },
+    { id: null, rect: [ 58, 401, 346.6666564941406, 63 ] },
+    {
+      id: null,
+      rect: [ 426.6666564941406, 364, 346.6666564941406, 142 ]
+    },
+    {
+      id: null,
+      rect: [ 426.6666564941406, 364, 346.6666564941406, 27 ]
+    },
+    {
+      id: null,
+      rect: [ 426.6666564941406, 401, 346.6666564941406, 105 ]
+    },
+    {
+      id: null,
+      rect: [ 795.3333129882812, 364, 346.66668701171875, 142 ]
+    },
+    {
+      id: null,
+      rect: [ 795.3333129882812, 364, 346.66668701171875, 27 ]
+    },
+    {
+      id: null,
+      rect: [ 795.3333129882812, 401, 346.66668701171875, 84 ]
+    },
+    { id: null, rect: [ 32, 564, 1136, 220 ] },
+    { id: null, rect: [ 58, 590, 1084, 40 ] },
+    { id: null, rect: [ 58, 648, 1084, 45 ] },
+    { id: null, rect: [ 58, 711, 1084, 47 ] },
+    { id: 'capabilities-docs', rect: [ 347, 711, 290, 47 ] },
+    { id: null, rect: [ 32, 816, 1136, 152 ] },
+    { id: null, rect: [ 44, 828, 1112, 28 ] },
+    { id: 'capabilities-limits', rect: [ 44, 866, 1112, 40 ] },
+    { id: null, rect: [ 44, 916, 1112, 40 ] }
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

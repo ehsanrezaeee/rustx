@@ -1,6 +1,6 @@
-# Remaining Stage 1 acceptance tasks
+# Remaining platform acceptance tasks
 
-Stage 1 cannot be accepted until actual Windows execution, real screen-reader/button use and real OS IME input are recorded. Browser automation and text injection do not substitute for these tasks. Do not advance to Stage 2 based only on the automated results.
+Stages 1–4 cannot receive full acceptance until the required Windows interactions, real screen-reader tasks and real OS IME input are recorded. Windows CI CPU startup is recorded separately; it does not complete this manual matrix. Browser automation and text injection do not substitute for these tasks.
 
 Use the same source revision and web bundle. Record Git revision (`git rev-parse HEAD`), OS/browser/tool versions, GPU/driver/backend, viewport/DPR, tester, task results, logs and screenshots. Store results under `docs/evidence/`; update ACCEPTANCE.md after the tasks have actually run. Record failures as well as passes.
 
@@ -14,15 +14,15 @@ cargo test --workspace --locked
 ./scripts/build-windows.ps1
 cargo run -p rustx-cli --locked -- serve dist 3000
 # Another terminal:
-./dist/windows/rustx-lab.exe
+./releases/rustx-0.1.0-windows-x64/rustx-lab.exe
 # Repeat with the CPU renderer:
 $env:RUSTX_RENDERER='cpu'
-./dist/windows/rustx-lab.exe
+./releases/rustx-0.1.0-windows-x64/rustx-lab.exe
 ```
 
 Verify both native backends and the browser counter. In Runtime lab, edit both keyed tasks, increase their counters, reverse order and unmount/remount. Verify identity, cleanup and reset. Resize the window, move between monitors with different DPI, Tab/Shift+Tab through controls, enter mixed Persian/English text and use local HTTP success/error/cancel. Capture the OS, adapter/driver, backend and actual behavior. A successful build is insufficient.
 
-Native selection/caret/navigation and preedit remain incomplete; record the actual limitations. Native UI Automation is a Stage 3 gap and must not be reported as working.
+Rust-painted selection, caret, navigation and preedit and the AccessKit projection now have implementation and deterministic coverage. Their actual native Windows/IME/UI Automation behavior still requires these tasks and must not be inferred from the implementation.
 
 ## Browser input and assistive technology
 
@@ -32,9 +32,9 @@ With the rebuilt fixture server running, open `http://127.0.0.1:3000/?renderer=c
 2. Edit the task, reverse the list while editing, and check text/selection/focus stay with the same key. Unmount/remount and check old controls disappear and state resets.
 3. Use a real installed OS IME/input source. Record its exact name/version. Start composition, update preedit, cancel it, then start again and commit Persian/English mixed text. Check the Rust canvas result and semantic editing value agree without duplicate text or focus loss. DOM input/composition event injection does not count.
 4. Check Tab/Shift+Tab, scroll-to-focus and narrow viewports. The semantic root must not independently scroll (`#semantic.scrollTop` stays zero). Verify only one editing representation is announced.
-5. Note the known absence of Rust-painted selection/caret/preedit and full editing commands. Fix any feasibility failure before accepting RX-09. Do not certify full RX-22/RX-24 from this small spike.
+5. Check the Rust-painted selection/caret/preedit and editing commands against the actual input and announcements. Record any mismatch. Fix feasibility failures before accepting RX-09; full RX-22/RX-24 additionally require the complete form/editing matrix.
 
-No physical Windows machine, human screen-reader session, or real OS IME task was available to this implementation run. Actual mobile keyboard/touch/AT tasks are also unverified. Browser WebKit automation is distinct from Safari.
+Actual Windows CI CPU/package startup is recorded in ACCEPTANCE.md. No human screen-reader session, real OS IME task or clean external Windows machine completed these manual tasks. Physical mobile keyboard/touch/AT tasks are also unverified. Browser WebKit automation is distinct from Safari.
 
 ## Reproducible automated browser checks
 

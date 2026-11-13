@@ -1,21 +1,25 @@
 # RustX — Framework Specification and Build Blueprint
 
-**Specification:** 1.1 · **Implementation update:** 12 November 2026 · **Prepared:** 30 October 2026
+**Specification:** 1.1 · **Implementation update:** 13 November 2026 · **Prepared:** 30 October 2026
 **Working name:** RustX · **Authoring language:** Rust · **UI syntax:** `rustx! { ... }`  
 **Targets:** browser WebAssembly first; shared native Windows x64 application second  
 **Document status:** implementation contract with the Stage 4 delivery candidate; full v1 acceptance remains open.
 
-## 0. Current source and continuation — 12 November 2026
+## 0. Current source and continuation — 13 November 2026
 
-The user requested continued Stage 4 work and a full delivery with readable, consistently indented code. Work is on `stage-4`, continuing `0fdf4ca` and the existing Stage 1–3 implementation. Application setup remains mount-once; Rust owns retained layout, text, editing and scene.
+The completion follow-up adds a public-API RustX capabilities guide at `#/capabilities`, with concrete application ideas, working examples and honest limits. Chromium/WebKit wide/narrow layout, keyboard navigation and first-frame deep-link checks pass. Windows packaging excludes its checksum manifest from the frozen payload and verifies emitted checksums; CI collects available dependency notices first. New four-stage evidence is in docs/evidence/completion-2026-11-13/. PR #2 is the authorized merge to main; consult its final check/merge state. Full v1 acceptance still requires the remaining target/manual/release gates.
+
+The user requested continued Stage 4 work, a full delivery with readable, consistently indented code, sequential testing/fixes across all four stages, and a pull request from `stage-4` to `main` followed by merge. [PR #2](https://github.com/ehsanrezaeee/rustx/pull/2) records that delivery. Work continues `0fdf4ca` and the existing Stage 1–3 implementation. Application setup remains mount-once; Rust owns retained layout, text, editing and scene.
 
 **Stage 4 candidate:** self-contained CLI/SDK scaffolding, doctor/check/fmt/test/build/dev/reload; Rust/RustX formatting and VS Code completion/navigation/source diagnostics; bounded owner/layout/semantics inspection, CPU profiles and event tracing; hashed web assets, gzip/MIME/CSP/deep links and offline shell; Windows packaging source/workflow; support, security, performance, deployment and tutorial records; expanded People failure states and live public API; and an editable-source playground that runs real isolated rustc and executes the resulting Wasm in an opaque worker/frame. Readability covers Rust, markup expression groups, browser hosts, scripts, editor code and templates, with repeatable formatting checks. See docs/STAGE4.md for finite contracts and limits.
 
 **Stages 1–3 remain present:** scoped reactive identity/lifecycles; shared Taffy/text/CPU/GPU engine, themes, drawing and virtualization; typed events, widgets, Unicode editing/forms, semantics, bounded networking/services/resources/routes/assets and recoverable errors. Their inherited target/manual gates remain open. Source, locks, fixtures, tests, evidence, notices, tools and prebuilt browser bundles are delivered together.
 
-**Acceptance remains open.** The Stage 4 exit requires all v1 register rows and cannot be certified on this Mac alone. Real Windows/native distribution and UI Automation, human NVDA/VoiceOver and real OS IME, physical Android/iOS/Safari, clean external-machine replay, complete cross-target conformance, performance budgets/comparative baselines and remaining supply-chain findings are still gates. Earlier offscreen board timing is not drawing performance evidence. Actual commands, hashes, retained failures and limits are in docs/ACCEPTANCE.md and BUILD-INFO.json. No unavailable target is inferred from mocks or compilation, and no public compiler/deployment has been published.
+**Four-stage review:** 134 Rust tests pass. The recorded Linux/macOS/Windows CI run passes deterministic, formatting, Wasm and scoped host/service contracts; Linux Chromium replays browser/standalone-CLI/deployment tasks. Actual Windows CPU Applications startup and packaged-executable startup pass on the runner. Review adds percentage/auto/edge/absolute/stacking and typography/ellipsis contracts; separates logical keyboard order from paint order; prevents duplicate preview keyboard activation; fixes Windows LF formatting; and selects the deep link before the first pixel frame. Brotli/preload delivery brings the counter and full dashboard below their unchanged transfer and five-sample local cold-start limits. See docs/REVIEW.md for evidence and exact limits.
 
-**Continue:** read AGENTS.md, docs/STATUS.md, docs/ACCEPTANCE.md, docs/STAGE4.md and docs/NEXT_AGENT.md. Stay on `stage-4` unless instructed otherwise. Rebuild CLI/Wasm after relevant source changes, preserve failures, and complete real target/manual gates before declaring Stage 4 or v1 accepted.
+**Acceptance remains open.** The Stage 4 exit requires all v1 register rows. Windows clean-machine/full GPU/DPI/services/UIA/NVDA and real OS IME, human VoiceOver, physical Android/iOS/Safari, independent installation, complete cross-target conformance, the 16.7 ms GPU frame gate, comparative/device baselines and remaining supply-chain findings are still gates. Earlier offscreen board timing is not drawing performance evidence. Actual commands, hashes, retained failures and limits are in docs/ACCEPTANCE.md and BUILD-INFO.json. No unavailable target is inferred from mocks or compilation, and no public compiler/deployment has been published.
+
+**Continue:** read AGENTS.md, docs/STATUS.md, docs/ACCEPTANCE.md, docs/STAGE4.md and docs/NEXT_AGENT.md. The user authorizes merging `stage-4` to `main` after checks. Rebuild CLI/Wasm after relevant source changes, preserve failures, and complete real target/manual gates before declaring Stage 4 or v1 accepted.
 
 ## 1. The product and its finish line
 

@@ -1,0 +1,27 @@
+
+> test:browser
+> node scripts/test-browser.mjs
+
+{
+  "result": "passed",
+  "date": "2026-11-12T17:16:03.594Z",
+  "engine": "chromium",
+  "version": "156.0.8078.4",
+  "platform": "darwin",
+  "arch": "arm64",
+  "backend": "Rust CPU",
+  "wasmSha256": "a84d96d7f82ece342b8647d5f5c43d4a25217f68b1bdf3459a2db20155461dc0",
+  "checks": [
+    "pointer, Enter and Space each activate once",
+    "keyed text/counter state, active input and selection survive reorder",
+    "Tab follows reordered committed tree",
+    "unmount disposes keyed text and counter",
+    "browser text editing, retained focus and Rust scroll-to-focus (no OS IME claim)",
+    "real fixture Fetch success, HTTP failure, cancellation, supersede and disposal",
+    "idle has no repeated canvas frames",
+    "390px viewport, DPR 2 sizing and scrolling away from a focused editor; no mobile-device claim"
+  ],
+  "limitations": [
+    "No real OS IME, screen reader, Windows or mobile-device tasks"
+  ]
+}

@@ -1,0 +1,24 @@
+
+> test:capabilities
+> node scripts/test-capabilities.mjs
+
+{
+  "date": "2026-11-13T07:23:22.613Z",
+  "engine": "webkit",
+  "checks": [
+    "direct capabilities link selects its content before the first Rust pixel upload",
+    "1200px: all Rust layout boxes fit the viewport; keyboard links and scroll-to-limits work",
+    "390px: all Rust layout boxes fit the viewport; keyboard links and scroll-to-limits work",
+    "keyboard activation opens working /applications example",
+    "keyboard activation opens working /people example",
+    "keyboard activation opens working /engine example",
+    "keyboard activation opens working /lab example",
+    "persistent navigation and playground CTA open the real Rust pages"
+  ],
+  "limitations": [
+    "Desktop responsive emulation; no physical mobile, OS IME or human screen-reader acceptance"
+  ],
+  "version": "27.2",
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
+  "result": "passed"
+}

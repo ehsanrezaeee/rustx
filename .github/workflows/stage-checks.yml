@@ -62,6 +62,8 @@ jobs:
           $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
           Import-Module (Join-Path $vs 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')
           Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
+          npm run audit:dependencies
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency notice collection failed' }
           ./scripts/build-windows.ps1
           & ./releases/rustx-0.1.0-windows-x64/rustx-lab.exe
           if ($LASTEXITCODE -ne 0) { throw 'Packaged Windows CPU startup failed' }
@@ -103,6 +105,7 @@ jobs:
           npm run test:browser
           npm run test:stage2:browser
           npm run test:stage3:browser
+          npm run test:capabilities
           npm run test:stage4:cli
           target/debug/rustx build --target web --release --out dist-release
           target/debug/rustx serve dist-release 3011 > production-server.log 2>&1 &

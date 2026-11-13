@@ -27,7 +27,16 @@ DPI/resize, CPU/GPU rendering or native clipboard/files/permissions tasks.
 Record those real tasks using docs/PLATFORM_CHECKS.md before RX-37 acceptance.
 '@ | Set-Content (Join-Path $bundle 'RUN.txt')
 git rev-parse HEAD | Set-Content (Join-Path $bundle 'GIT-REVISION.txt')
-Get-ChildItem $bundle -Recurse -File | ForEach-Object { $relative = $_.FullName.Substring((Resolve-Path $bundle).Path.Length + 1); "$(($_ | Get-FileHash -Algorithm SHA256).Hash.ToLower())  $relative" } | Set-Content (Join-Path $bundle 'SHA256SUMS.txt')
+# Freeze the payload before opening the manifest, so it never hashes itself.
+$payloadFiles = @(Get-ChildItem $bundle -Recurse -File | Sort-Object FullName)
+$payloadFiles | ForEach-Object { $relative = $_.FullName.Substring((Resolve-Path $bundle).Path.Length + 1); "$(($_ | Get-FileHash -Algorithm SHA256).Hash.ToLower())  $relative" } | Set-Content (Join-Path $bundle 'SHA256SUMS.txt')
+# Validate every emitted row before archiving the candidate.
+Get-Content (Join-Path $bundle 'SHA256SUMS.txt') | ForEach-Object {
+    $digest, $relative = $_ -split '  ', 2
+    if ($relative -eq 'SHA256SUMS.txt') { throw 'Checksum manifest includes itself' }
+    $actual = (Get-FileHash -Algorithm SHA256 (Join-Path $bundle $relative)).Hash.ToLower()
+    if ($actual -ne $digest) { throw "Payload checksum mismatch: $relative" }
+}
 Compress-Archive -Path $bundle -DestinationPath "$bundle.zip" -Force
 Get-FileHash "$bundle.zip" -Algorithm SHA256 | Format-List | Out-File "$bundle.zip.sha256"
 Write-Host 'Built Windows candidate. Clean-machine/manual acceptance still required.'

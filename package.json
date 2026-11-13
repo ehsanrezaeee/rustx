@@ -5,6 +5,7 @@
   "scripts": {
     "test:wasm": "node scripts/test-wasm.mjs",
     "test:browser": "node scripts/test-browser.mjs",
+    "test:capabilities": "node scripts/test-capabilities.mjs",
     "test:http": "cargo build -p rustx-cli --locked && node scripts/test-http.mjs",
     "test:host": "node scripts/test-host.mjs",
     "test:gpu": "node scripts/test-gpu.mjs",

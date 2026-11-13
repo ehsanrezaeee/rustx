@@ -1,9 +1,10 @@
 {
-  "date": "2026-11-12T15:08:12.624Z",
+  "date": "2026-11-13T07:23:32.170Z",
   "engine": "webkit",
   "checks": [
     "edited source is compiled to real interactive Wasm; counter changes 7 to 8 inside opaque script-only iframe; parent DOM and storage denied",
     "independently compiled API template fetches real loopback fixture through restricted worker host",
+    "compiled absolute/z-index controls share Rust paint/pointer order while retaining logical Tab order",
     "actual rustc type error and Go to error select the original main.rustx source",
     "reset restores source; cancelling actual compilation rejects late preview",
     "infinite visitor Rust loop is stopped by frame watchdog; main editor stays interactive",
@@ -19,38 +20,38 @@
     "Loopback compiler isolation and runtime limits are not a public security certification"
   ],
   "version": "27.2",
-  "wasmSha256": "0d00b7999818e3cb7f7511a3ac62b742e318cf2006aaad5e87e1beb7df6d6579",
+  "wasmSha256": "59e8c6b339a4c44634bf93828717b48505920152d2221d2daa39dae73d2a84da",
   "liveApi": {
     "result": "passed",
     "url": "https://jsonplaceholder.typicode.com/users",
     "state": "10 people / request completed"
   },
   "profiler": {
-    "frames": 88,
+    "frames": 95,
     "hotspots": [
       {
-        "calls": 3,
-        "node": 1226,
-        "text_measure_ms": 0
-      },
-      {
         "calls": 4,
-        "node": 986,
+        "node": 1104,
         "text_measure_ms": 0
       },
       {
         "calls": 3,
-        "node": 1314,
+        "node": 1344,
         "text_measure_ms": 0
       },
       {
-        "calls": 8,
-        "node": 1053,
+        "calls": 3,
+        "node": 1408,
+        "text_measure_ms": 0
+      },
+      {
+        "calls": 5,
+        "node": 20,
         "text_measure_ms": 0
       },
       {
         "calls": 4,
-        "node": 1033,
+        "node": 1111,
         "text_measure_ms": 0
       }
     ]

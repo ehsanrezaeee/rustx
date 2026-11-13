@@ -2,8 +2,8 @@
 > test:stage4:cli
 > node scripts/test-stage4-cli.mjs
 
-Created /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample
-Next: cd /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample && rustx dev --target web
+Created /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample
+Next: cd /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample && rustx dev --target web
 {
   "bindings_match": true,
   "compiler_sandbox": true,
@@ -21,20 +21,20 @@ Next: cd /var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJIm
   "wasm_target": true,
   "windows_build_runner": false
 }
-    Checking rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-core)
-   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-macros)
-    Checking rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-engine)
-    Checking rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx)
-    Checking rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-web)
-    Checking sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.72s
-   Compiling rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-core)
-   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-macros)
-   Compiling rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-engine)
-   Compiling rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx)
-   Compiling rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-web)
-   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample)
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.71s
+    Checking rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-core)
+   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-macros)
+    Checking rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-engine)
+    Checking rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx)
+    Checking rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-web)
+    Checking sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.73s
+   Compiling rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-core)
+   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-macros)
+   Compiling rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx)
+   Compiling rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-web)
+   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.96s
      Running unittests src/lib.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/rustx-a42d8a4d8b98d737)
 
 running 0 tests
@@ -45,11 +45,11 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 1 test
      Locking 24 packages to latest compatible versions
-   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-macros)
-    Checking rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-core)
-    Checking rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx)
+   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-macros)
+    Checking rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-core)
+    Checking rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx)
     Checking rustx-tests v0.0.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/target/tests/trybuild/rustx)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.89s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.04s
 
 
 test tests/ui/duplicate_alias.rs ... ok
@@ -60,25 +60,25 @@ test tests/ui/wrong_prop.rs ... ok
 
 test compile_diagnostics ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.78s
 
      Running tests/editing_forms.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/editing_forms-765c74543165386d)
 
 running 16 tests
-test form_tracks_dirty_touched_validation_and_reset ... ok
 test browser_composition_sync_commits_once_and_invalid_input_does_not_mutate ... ok
-test form_level_validation_and_sensitive_debug_use_declared_associations ... ok
 test composition_is_one_undo_transaction_and_cancel_restores_selection ... ok
 test composition_caret_preserves_joined_graphemes_without_consuming_neighbor_text ... ok
 test async_validation_preserves_form_level_field_errors_without_touching_other_fields ... ok
+test form_tracks_dirty_touched_validation_and_reset ... ok
 test async_validation_preserves_synchronous_errors_and_can_clear_async_only_errors ... ok
+test form_level_validation_and_sensitive_debug_use_declared_associations ... ok
 test grapheme_motion_and_deletion_preserve_joined_emoji_and_combining_marks ... ok
 test insertion_caret_stays_on_a_grapheme_boundary_when_neighbors_join ... ok
 test readonly_and_password_never_expose_secret_in_diagnostics_or_clipboard ... ok
 test readonly_deletion_preserves_selection_and_editable_deletion_undo_restores_it ... ok
-test utf16_validation_is_atomic_and_bidi_selections_keep_source_ranges ... ok
 test stale_validation_and_submission_are_rejected_after_edit_reset_and_disposal ... ok
 test tickets_cannot_cross_forms_and_controlledness_changes_are_diagnosed ... ok
+test utf16_validation_is_atomic_and_bidi_selections_keep_source_ranges ... ok
 test word_navigation_uses_unicode_words_and_extends_grapheme_safe_ranges ... ok
 test editing_history_is_bounded_and_new_edit_discards_redo_branch ... ok
 
@@ -89,11 +89,11 @@ test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fin
 running 5 tests
 test handshake_rejects_skew_and_invalid_limits ... ok
 test missing_or_denied_host_never_enqueues_work ... ok
-test skewed_stale_and_oversized_completions_are_safe ... ok
 test reentrant_callbacks_can_start_work_and_small_host_limits_apply ... ok
+test skewed_stale_and_oversized_completions_are_safe ... ok
 test queue_and_scope_cleanup_stay_bounded_under_adversarial_churn ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
 
      Running tests/runtime.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/runtime-7221f058a57be086)
 
@@ -120,9 +120,9 @@ test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fin
 
 running 10 tests
 test responsive_queries_are_ordered_and_theme_tokens_resolve ... ok
+test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
 test drawing_queries_include_stroke_overhang_and_reject_unsafe_path_bounds ... ok
 test drawing_large_coordinates_and_transformed_topmost_hits_are_stable ... ok
-test drawing_rejects_duplicate_ids_invalid_geometry_and_path_limits ... ok
 test drawing_hits_follow_rounded_and_path_geometry_not_only_bounds ... ok
 test virtual_scroll_clamps_and_ignores_nonfinite_input ... ok
 test virtual_scrolling_from_a_row_routes_to_the_owning_list ... ok
@@ -130,7 +130,7 @@ test direct_virtual_offsets_and_invalid_viewports_do_not_overflow ... ok
 test spatial_drawing_queries_cull_ten_thousand_shapes_without_reordering ... ok
 test virtual_list_bounds_materialized_scopes_and_retains_focused_state ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.82s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.85s
 
      Running tests/stage3_assets.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/stage3_assets-2057d96e7c42d14f)
 
@@ -144,21 +144,21 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 16 tests
 test committed_event_path_has_capture_target_bubble_and_cancelled_default ... ok
-test disabled_and_readonly_controls_reject_default_actions ... ok
 test controlled_checkbox_slider_and_choices_emit_typed_values ... ok
-test full_widget_markup_and_typed_semantics_are_available ... ok
+test disabled_and_readonly_controls_reject_default_actions ... ok
 test editor_identity_and_selection_survive_controlled_patches ... ok
+test full_widget_markup_and_typed_semantics_are_available ... ok
 test combobox_filters_then_commits_without_overwriting_value_while_typing ... ok
 test immediate_stop_keeps_later_handlers_and_ancestors_from_running ... ok
-test nested_scroll_consumes_once_and_chains_at_boundary ... ok
-test controlled_combobox_updates_its_label_and_closes_a_stale_search ... ok
 test combobox_keyboard_navigation_skips_disabled_options ... ok
+test nested_scroll_consumes_once_and_chains_at_boundary ... ok
 test ordinary_paragraph_selection_is_readonly_keyed_and_reactive_without_duplicate_text ... ok
+test controlled_combobox_updates_its_label_and_closes_a_stale_search ... ok
 test pointer_capture_routes_move_and_releases_on_cancel_or_disposal ... ok
 test password_values_are_masked_in_every_snapshot_and_semantic_dump ... ok
-test tooltip_describes_trigger_and_toasts_stay_bounded ... ok
-test select_popup_commits_named_options_and_closes_with_escape ... ok
 test table_sort_and_selection_remain_keyed_and_controlled ... ok
+test select_popup_commits_named_options_and_closes_with_escape ... ok
+test tooltip_describes_trigger_and_toasts_stay_bounded ... ok
 
 test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
@@ -172,12 +172,12 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
      Running tests/stage3_services.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/stage3_services-34408177b23b2e7b)
 
 running 7 tests
-test storage_schema_and_secret_command_redaction ... ok
 test invalid_headers_methods_status_decode_and_diagnostics ... ok
 test typed_routes_percent_queries_hash_and_not_found ... ok
+test storage_schema_and_secret_command_redaction ... ok
 test scheduling_future_cancels_and_capability_denial_stays_distinct ... ok
-test query_dedup_stale_supersede_and_invalidation ... ok
 test request_policy_future_drop_and_scoped_tasks ... ok
+test query_dedup_stale_supersede_and_invalidation ... ok
 test services_reject_stale_skew_and_bound_scope_resources ... ok
 
 test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
@@ -221,13 +221,13 @@ test drawing_geometry_rebases_large_coordinates_before_backend_float_conversion 
 test image_registration_rejects_invalid_sizes_and_removal_invalidates_caches ... ok
 test image_resource_updates_repaint_an_otherwise_idle_engine ... ok
 test cpu_culling_keeps_visible_shadow_of_an_offscreen_clipped_node ... ok
-test cpu_image_alpha_multiplier_matches_the_shared_asset_contract ... ok
-test layout_alignment_growth_and_width_constraints_are_applied ... ok
 test cpu_image_pixels_use_straight_rgba_source_alpha ... ok
+test layout_alignment_growth_and_width_constraints_are_applied ... ok
+test cpu_image_alpha_multiplier_matches_the_shared_asset_contract ... ok
 test cpu_drawings_honor_canvas_clip_path_fill_and_camera ... ok
 test explicit_text_direction_preserves_trailing_paragraphs ... ok
-test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
 test text_coordinates_remain_finite_for_unbounded_measurement ... ok
+test cpu_cropped_opacity_preserves_parent_clip_and_global_geometry ... ok
 test layout_reflows_at_breakpoints_and_theme_changes_do_not_remount ... ok
 test font_readiness_invalidates_existing_layout_once ... ok
 test retained_layout_avoids_invalidation_for_color_only_updates ... ok
@@ -261,7 +261,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 1 test
 test indicators_reserve_intrinsic_label_width_and_paint_state_without_changing_labels ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
 
      Running tests/stage3_host_events.rs (/Users/ehsan-mac/Downloads/rustx-stage-01/target/debug/deps/stage3_host_events-f05a49ef93ff238c)
 
@@ -277,14 +277,14 @@ test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 11 tests
 test event_local_coordinates_follow_each_committed_translated_box ... ok
 test ordinary_text_native_projection_accepts_selection_and_rejects_replacement ... ok
-test ordinary_text_pointer_drag_uses_shaped_graphemes_capture_and_cancellable_defaults ... ok
-test slider_pointer_drag_obeys_range_and_keyboard_default_can_be_cancelled ... ok
-test engine_dispatch_blocks_modal_background_and_releases_earlier_capture ... ok
 test editor_input_selection_and_undo_invalidate_retained_boxes ... ok
 test modal_traps_keyboard_blocks_background_and_restores_focus ... ok
-test shared_editor_word_and_vertical_line_keys_preserve_unicode_and_preferred_column ... ok
 test ordinary_text_supports_keyboard_selection_copy_reflow_and_route_disposal ... ok
 test preventing_pointerdown_focus_keeps_native_popup_option_click_usable ... ok
+test shared_editor_word_and_vertical_line_keys_preserve_unicode_and_preferred_column ... ok
+test slider_pointer_drag_obeys_range_and_keyboard_default_can_be_cancelled ... ok
+test engine_dispatch_blocks_modal_background_and_releases_earlier_capture ... ok
+test ordinary_text_pointer_drag_uses_shaped_graphemes_capture_and_cancellable_defaults ... ok
 test tab_roving_focus_skips_disabled_and_activates_selected_panel ... ok
 
 test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
@@ -368,22 +368,22 @@ running 0 tests
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
-   Compiling rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-core)
-   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-macros)
-   Compiling rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-engine)
-   Compiling rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx)
-   Compiling rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/vendor/crates/rustx-web)
-   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample)
-    Finished `release` profile [optimized] target(s) in 8.03s
-Built /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/dist (9b7551c1573985beeaac29ca5b92d2545445221eb9d2ad65822d8c789b706615)
-RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/dist at http://127.0.0.1:3010
+   Compiling rustx-core v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-core)
+   Compiling rustx-macros v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-macros)
+   Compiling rustx-engine v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-engine)
+   Compiling rustx v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx)
+   Compiling rustx-web v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/vendor/crates/rustx-web)
+   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample)
+    Finished `release` profile [optimized] target(s) in 6.81s
+Built /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/dist (6daab647e14dff4bb02bbb86b7e23ad042ee5270728fadd74319d9a5c4db5702)
+RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/dist at http://127.0.0.1:3010
     Finished `release` profile [optimized] target(s) in 0.09s
-Built /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/dist (83ceacc65d7b6411419db40de3e92d5509822cac5914e14cef6ff2459aca6745)
-RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample/dist at http://127.0.0.1:3010
-   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample)
+Built /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/dist (ed10227fcb748dc5a0b4fc72f2338f54b0c42b74896f784a760dbd791ba7a6d8)
+RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample/dist at http://127.0.0.1:3010
+   Compiling sample v0.1.0 (/private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample)
     Finished `release` profile [optimized] target(s) in 1.00s
 {
-  "date": "2026-11-12T16:29:12.860Z",
+  "date": "2026-11-12T16:39:28.408Z",
   "checks": [
     "embedded SDK creates independent vendored project from unrelated directory",
     "new, doctor, formatter, locked check/test and standalone web build"
@@ -391,18 +391,18 @@ RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-sta
   "limitations": [
     "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation"
   ],
-  "counterCompressedBytes": 2658027,
+  "counterCompressedBytes": 2659707,
   "counterCompression": "br",
-  "counterGzipBytes": 3059555,
+  "counterGzipBytes": 3062327,
   "counterTransferGate": true,
-  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-2wJImg/sample",
+  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-IF5M2V/sample",
   "counterColdStartup": {
     "rawMs": [
-      2659.8449159999946,
-      2662.7438330000004,
-      2660.458332999995,
-      2661.0111250000045,
-      2659.743291999999
+      2664.8754580000023,
+      2665.1087920000064,
+      2664.3590419999964,
+      2658.504624999987,
+      2657.1887499999866
     ],
     "encodings": [
       "br",
@@ -411,15 +411,15 @@ RustX serving /private/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-sta
       "br",
       "br"
     ],
-    "medianMs": 2660.458332999995,
-    "p95Ms": 2662.7438330000004,
+    "medianMs": 2664.3590419999964,
+    "p95Ms": 2665.1087920000064,
     "budgetMs": 3000,
     "passed": true,
     "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
     "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
   },
   "result": "failed",
-  "error": "Error: page.waitForFunction: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-0PcwT6 --remote-debugging-pipe --no-startup-window\n<launched> pid=16878\n[pid=16878][err] Trying to load the allocator multiple times. This is *not* supported.\n[pid=16878][err] [16884:2294008:1112/200011.060868:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.061040:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200011.064393:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.064460:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200011.064588:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200011.064639:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.822268:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.822328:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.822550:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.822584:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200013.826581:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200013.826674:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613127:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613185:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613551:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613598:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200016.613691:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200016.613729:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.377587:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.377645:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.378199:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.378242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200019.380993:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200019.381041:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.157146:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.157200:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.160044:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.160107:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200022.160242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200022.160282:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.518257:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.518318:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.518663:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.518704:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294008:1112/200037.520286:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=16878][err] [16884:2294060:1112/200037.520367:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670"
+  "error": "Error: page.waitForFunction: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-hML5c5 --remote-debugging-pipe --no-startup-window\n<launched> pid=40800\n[pid=40800][err] Trying to load the allocator multiple times. This is *not* supported.\n[pid=40800][err] [40806:2348331:1112/201028.925217:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201028.925415:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201028.928503:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201028.928556:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201028.928682:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201028.928740:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201031.702128:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201031.702192:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201031.702711:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201031.702749:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201031.705488:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201031.705531:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201034.471023:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201034.471081:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201034.471578:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201034.471622:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201034.474066:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201034.474120:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201037.273782:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201037.273845:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201037.274287:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201037.274343:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201037.274474:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201037.274517:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201040.054008:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201040.054067:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201040.054873:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201040.054912:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201040.058267:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201040.058326:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201055.375862:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201055.375918:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201055.376295:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201055.376348:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348331:1112/201055.377905:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670\n[pid=40800][err] [40806:2348394:1112/201055.377949:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670"
 }
 node:internal/modules/run_main:107
     triggerUncaughtException(
@@ -428,45 +428,45 @@ node:internal/modules/run_main:107
 page.waitForFunction: Target page, context or browser has been closed
 Browser logs:
 
-<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-0PcwT6 --remote-debugging-pipe --no-startup-window
-<launched> pid=16878
-[pid=16878][err] Trying to load the allocator multiple times. This is *not* supported.
-[pid=16878][err] [16884:2294008:1112/200011.060868:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200011.061040:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200011.064393:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200011.064460:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200011.064588:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200011.064639:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200013.822268:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200013.822328:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200013.822550:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200013.822584:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200013.826581:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200013.826674:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200016.613127:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200016.613185:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200016.613551:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200016.613598:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200016.613691:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200016.613729:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200019.377587:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200019.377645:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200019.378199:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200019.378242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200019.380993:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200019.381041:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200022.157146:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200022.157200:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200022.160044:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200022.160107:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200022.160242:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200022.160282:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200037.518257:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200037.518318:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200037.518663:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200037.518704:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294008:1112/200037.520286:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
-[pid=16878][err] [16884:2294060:1112/200037.520367:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+<launching> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/playwright_chromiumdev_profile-hML5c5 --remote-debugging-pipe --no-startup-window
+<launched> pid=40800
+[pid=40800][err] Trying to load the allocator multiple times. This is *not* supported.
+[pid=40800][err] [40806:2348331:1112/201028.925217:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201028.925415:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201028.928503:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201028.928556:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201028.928682:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201028.928740:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201031.702128:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201031.702192:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201031.702711:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201031.702749:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201031.705488:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201031.705531:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201034.471023:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201034.471081:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201034.471578:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201034.471622:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201034.474066:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201034.474120:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201037.273782:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201037.273845:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201037.274287:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201037.274343:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201037.274474:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201037.274517:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201040.054008:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201040.054067:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201040.054873:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201040.054912:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201040.058267:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201040.058326:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201055.375862:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201055.375918:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201055.376295:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201055.376348:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348331:1112/201055.377905:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
+[pid=40800][err] [40806:2348394:1112/201055.377949:ERROR:ui/display/mac/cv_display_link_mac.mm:188] CVDisplayLinkCreateWithCGDisplay failed. CVReturn: -6670
     at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-cli.mjs:78:14 {
   log: []
 }

@@ -3,11 +3,15 @@
 > node scripts/test-stage4-browser.mjs
 
 {
-  "date": "2026-11-12T16:34:42.788Z",
+  "date": "2026-11-12T16:38:35.479Z",
   "engine": "chromium",
   "checks": [
     "edited source is compiled to real interactive Wasm; counter changes 7 to 8 inside opaque script-only iframe; parent DOM and storage denied",
-    "independently compiled API template fetches real loopback fixture through restricted worker host"
+    "independently compiled API template fetches real loopback fixture through restricted worker host",
+    "compiled absolute/z-index controls share Rust paint/pointer order while retaining logical Tab order",
+    "actual rustc type error and Go to error select the original main.rustx source",
+    "reset restores source; cancelling actual compilation rejects late preview",
+    "infinite visitor Rust loop is stopped by frame watchdog; main editor stays interactive"
   ],
   "limitations": [
     "Automated browser keyboard only; no human screen-reader or OS IME task",
@@ -17,19 +21,19 @@
   "version": "157.0.8103.40",
   "wasmSha256": "d9fbccc5882f5f899f2efbf54a1f4d03233b6c080806ed14d53252c1f7706378",
   "result": "failed",
-  "error": "Error: locator.waitFor: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible\u001b[22m\n"
+  "error": "Error: page.waitForSelector: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for locator('#rustx-compiled-output[data-ready=true]') to be visible\u001b[22m\n"
 }
 node:internal/modules/run_main:107
     triggerUncaughtException(
     ^
 
-locator.waitFor: Target page, context or browser has been closed
+page.waitForSelector: Target page, context or browser has been closed
 Call log:
-[2m  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible[22m
+[2m  - waiting for locator('#rustx-compiled-output[data-ready=true]') to be visible[22m
 
-    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-browser.mjs:138:66 {
+    at /Users/ehsan-mac/Downloads/rustx-stage-01/scripts/test-stage4-browser.mjs:189:16 {
   log: [
-    "  - waiting for locator('#rustx-compiled-output').contentFrame().getByTestId('result').filter({ hasText: /^101$/ }) to be visible"
+    "  - waiting for locator('#rustx-compiled-output[data-ready=true]') to be visible"
   ]
 }
 

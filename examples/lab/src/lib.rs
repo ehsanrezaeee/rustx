@@ -6,6 +6,8 @@ static ALLOCATOR: rustx::allocation::CountingAllocator<std::alloc::System> =
     rustx::allocation::CountingAllocator(std::alloc::System);
 #[path = "applications.rustx"]
 pub mod applications;
+#[path = "capabilities.rustx"]
+pub mod capabilities;
 #[path = "playground.rustx"]
 pub mod playground;
 #[path = "visual.rustx"]

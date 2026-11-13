@@ -203,6 +203,7 @@ fn prepare(framework: &Path) -> Result<Cache, String> {
     Ok(cache)
 }
 fn isolated(cache: &Cache, job: &Path, program: &Path) -> Result<Command, String> {
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     let mut c: Command;
     #[cfg(target_os = "macos")]
     {

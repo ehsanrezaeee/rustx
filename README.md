@@ -2,7 +2,7 @@
 
 Rust-authored components, WebAssembly, and a Rust-owned canvas engine. This delivery adds the project CLI, `.rustx` formatting and VS Code tools, inspector/profiler, hashed web bundles and offline shell, and an editable Rust compilation playground. Source code uses consistent indentation and spacing; `npm run format:check` checks Rust/RustX and the browser/tooling sources.
 
-The complete source, locks, fixtures, tests, evidence, prebuilt browser bundles, local CLI package, editor extension and available dependency notices are included. **Stage 4 and v1 acceptance remain open.** Actual Windows distribution, human screen-reader/OS IME tasks, physical mobile/Safari support, performance budgets and dependency findings remain in [the acceptance ledger](docs/ACCEPTANCE.md). No public deployment was performed.
+The complete source, locks, fixtures, tests, evidence, prebuilt browser bundles, local CLI package, editor extension and available dependency notices are included. [The four-stage review](docs/REVIEW.md) records the fixes, 134 passing Rust tests and successful Linux/macOS/Windows CI. [PR #2](https://github.com/ehsanrezaeee/rustx/pull/2) delivers this branch to main. **Stage 4 and v1 acceptance remain open:** human screen-reader/OS IME tasks, physical mobile/Safari support, Windows clean-machine/full interaction tasks, the GPU frame budget and dependency findings remain in [the acceptance ledger](docs/ACCEPTANCE.md). No public deployment was performed.
 
 ## Run the supplied browser application
 
@@ -21,6 +21,7 @@ The delivery archive also includes a prebuilt Apple Silicon Mac CLI:
 Open **http://127.0.0.1:3000/?renderer=cpu**. Remove `?renderer=cpu` to request WebGPU with CPU fallback. The server binds loopback. Previewing the supplied bundle needs no Node or Wasm rebuild.
 
 - [People Explorer](http://127.0.0.1:3000/?renderer=cpu#/people): live JSONPlaceholder or deterministic fixtures, search, person details, retry/error/empty/timeout/cancel/offline states, copy and printable export.
+- [What can I build?](http://127.0.0.1:3000/?renderer=cpu#/capabilities): a RustX-rendered guide to dashboards, API clients, drawing tools and utilities, with supported building blocks, working examples and current limits.
 - [Rust playground](http://127.0.0.1:3000/?renderer=cpu#/playground): edit counter/API source, compile to actual Wasm, run, inspect source-linked errors and reset. Start the separate compiler below.
 - [Applications](http://127.0.0.1:3000/?renderer=cpu#/applications): Persian/English forms, validation, password/multiline editing, dialog, drafts, files and services.
 - [Visual engine](http://127.0.0.1:3000/?renderer=cpu#/engine): themes, 100,000 virtual records and a 10,000-object drawing board with pan, zoom, editing and export.
@@ -69,7 +70,7 @@ Use `rustx dev` or `build --devtools` for the bounded inspector and event/layout
 bash scripts/build-web.sh --compiler-url http://127.0.0.1:3002
 ```
 
-[Deployment instructions](docs/stage4/DEPLOYMENT.md) cover hashes, MIME, gzip, CSP, root hosting, deep links, offline caching and rollback. The offline shell does not cache API data or provide offline compilation.
+[Deployment instructions](docs/stage4/DEPLOYMENT.md) cover hashes, MIME, Brotli/gzip, CSP, root hosting, deep links, offline caching and rollback. The offline shell does not cache API data or provide offline compilation.
 
 ## Native application
 
@@ -77,7 +78,7 @@ bash scripts/build-web.sh --compiler-url http://127.0.0.1:3002
 RUSTX_DEMO=applications cargo run -p rustx-lab --bin rustx-lab --locked
 ```
 
-`RUSTX_RENDERER=cpu` forces software rendering. Keep the fixture server on port 3000 for relative native API URLs. On an actual Windows x64/MSVC machine, run `scripts/build-windows.ps1`. It prepares a native candidate, notices, DLL report and checksums; no verified Windows executable is supplied by this Mac delivery. Real Windows launch, DPI, services, UIA/NVDA and IME tasks remain in [PLATFORM_CHECKS.md](docs/PLATFORM_CHECKS.md).
+`RUSTX_RENDERER=cpu` forces software rendering. Keep the fixture server on port 3000 for relative native API URLs. On Windows x64/MSVC, run `scripts/build-windows.ps1`. The PR workflow also supplies `rustx-0.1.0-windows-x64.zip` in its `contracts-windows-2025` artifact, with native app/CLI, font notices, DLL report and checksums. An actual Windows runner passes CPU two-frame startup of both the build and packaged app. Review the recorded DLL report and remaining notice-copy gaps before redistribution. Clean Windows without development tools, GPU/DPI/services/UIA/NVDA and OS IME tasks remain in [PLATFORM_CHECKS.md](docs/PLATFORM_CHECKS.md).
 
 ## Verify and identify the delivery
 

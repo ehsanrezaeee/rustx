@@ -1,0 +1,10 @@
+RustX
+  rustx new my-app [--framework PATH]
+  rustx doctor [--json]
+  rustx dev --target web|native|windows [--port 3000] [--compiler-url ORIGIN]
+  rustx check [--json]
+  rustx fmt [--check|--stdin]
+  rustx test
+  rustx build --target web|native|windows --release [--out dist] [--devtools]
+  rustx playground [--port 3002] [--app-origin http://127.0.0.1:3000]
+  rustx serve dist 3000

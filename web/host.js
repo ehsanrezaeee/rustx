@@ -276,6 +276,9 @@ try {
   app.configure_playground?.(config.compiler || '');
   if (config.compiler)
     preview = await import('./playground.js').then((m) => m.install(app, config, schedule));
+  // Initial location/capability work belongs before the first Rust layout/paint.
+  // This prevents a deep link from briefly painting the default home route.
+  pump();
   ready = true;
   status.textContent =
     renderer === 'gpu'

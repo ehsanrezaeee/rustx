@@ -1,0 +1,307 @@
+
+> test:stage4:budgets
+> node scripts/test-stage4-budgets.mjs
+
+{
+  "date": "2026-11-12T17:13:28.759Z",
+  "profile": {
+    "device": "Apple M3 MacBook Air, 16 GiB",
+    "os": "macOS 27.0.1 arm64",
+    "viewport": [
+      1280,
+      720
+    ],
+    "dpr": 1,
+    "objects": 10000,
+    "visibleLimit": 1000,
+    "backend": "gpu",
+    "samples": 5,
+    "framesPerSample": 180,
+    "refreshTargetHz": 60
+  },
+  "budgets": {
+    "frameP95Ms": 16.7,
+    "inputP95Ms": 100,
+    "lifecycleGrowthPercent": 10,
+    "cycles": 100
+  },
+  "limitations": [
+    "Desktop local lab profile frozen for this candidate; original blueprint hardware freeze was incomplete",
+    "Frame intervals are requestAnimationFrame observations; event response uses next animation frame after Rust result, not physical scanout",
+    "Counting allocator includes framework/app allocations; Wasm capacity is recorded separately",
+    "No mobile/iOS/Windows certification or equivalent React/canvas baseline; no universal speed claim"
+  ],
+  "checks": [],
+  "browser": "157.0.8103.52",
+  "wasmSha256": "46c9b7e2bcaed2c095b54c4f95289c3fa63248668149ec9957c39acbcb9041d8",
+  "visible": 140,
+  "frameSamples": [
+    {
+      "p95": 16.700000000000273
+    },
+    {
+      "p95": 16.800000000000182
+    },
+    {
+      "p95": 16.799999999999272
+    },
+    {
+      "p95": 16.799999999999272
+    },
+    {
+      "p95": 16.700000000000728
+    }
+  ],
+  "frameP95Ms": 16.799999999999272,
+  "gpu": {
+    "submits": 1804,
+    "adapters": [
+      {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      }
+    ]
+  },
+  "inputRawMs": [
+    25,
+    33.3999999910593,
+    33.29999999701977,
+    33.30000001192093,
+    33.29999999701977,
+    33.3999999910593,
+    33.400000005960464,
+    33.29999999701977,
+    33.29999999701977,
+    33.30000001192093,
+    33.3999999910593,
+    33.29999999701977,
+    33.30000001192093,
+    33.29999999701977,
+    33.400000005960464,
+    33.29999999701977,
+    33.29999999701977,
+    33.20000000298023,
+    33.5,
+    33.29999999701977,
+    33.29999999701977,
+    33.400000005960464,
+    33.29999999701977,
+    33.29999999701977,
+    33.400000005960464,
+    33.29999999701977,
+    33.29999999701977,
+    33.30000001192093,
+    33.3999999910593,
+    33.29999999701977
+  ],
+  "inputP95Ms": 33.400000005960464,
+  "memoryBaseline": {
+    "counts": [
+      89,
+      7,
+      5
+    ],
+    "allocations": {
+      "live_bytes": 7869004,
+      "peak_bytes": 12477450,
+      "live_blocks": 6478
+    },
+    "capacity": 18087936,
+    "metrics": {
+      "cpu_culled": 0,
+      "cpu_visited": 0,
+      "glyph_bytes": 0,
+      "glyph_entries": 0,
+      "image_bytes": 0,
+      "image_entries": 0,
+      "layout_changed": 41,
+      "layout_nodes": 49,
+      "scene_cache_bytes": 37271,
+      "scene_cache_entries": 32,
+      "scene_painted": 25,
+      "scene_reused": 7,
+      "shapes_visible": 0,
+      "text_cache_bytes": 518959,
+      "text_cache_entries": 512,
+      "text_shapes": 1505
+    }
+  },
+  "lifecycle": [
+    {
+      "cycle": 10,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868375,
+        "peak_bytes": 12477450,
+        "live_blocks": 6493
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 20,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868384,
+        "peak_bytes": 12477450,
+        "live_blocks": 6493
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 30,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868076,
+        "peak_bytes": 12477450,
+        "live_blocks": 6490
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 40,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868168,
+        "peak_bytes": 12477450,
+        "live_blocks": 6491
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 50,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868437,
+        "peak_bytes": 12477450,
+        "live_blocks": 6494
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 60,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7868225,
+        "peak_bytes": 12477450,
+        "live_blocks": 6493
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 70,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7938272,
+        "peak_bytes": 12477450,
+        "live_blocks": 6493
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 80,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7938269,
+        "peak_bytes": 12477450,
+        "live_blocks": 6493
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 90,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7938277,
+        "peak_bytes": 12477450,
+        "live_blocks": 6492
+      },
+      "capacity": 18087936
+    },
+    {
+      "cycle": 100,
+      "counts": [
+        89,
+        7,
+        5
+      ],
+      "allocations": {
+        "live_bytes": 7938157,
+        "peak_bytes": 12477450,
+        "live_blocks": 6492
+      },
+      "capacity": 18087936
+    }
+  ],
+  "memoryFinal": {
+    "cycle": 100,
+    "counts": [
+      89,
+      7,
+      5
+    ],
+    "allocations": {
+      "live_bytes": 7938157,
+      "peak_bytes": 12477450,
+      "live_blocks": 6492
+    },
+    "capacity": 18087936
+  },
+  "liveGrowthPercent": 0.8788024507294656,
+  "countsReturned": true,
+  "idle": {
+    "before": {
+      "draws": 1557,
+      "submits": 3114
+    },
+    "after": {
+      "draws": 1557,
+      "submits": 3114
+    },
+    "passed": true
+  },
+  "gates": {
+    "desktopGpuFrame": false,
+    "inputEstimate": true,
+    "lifecycleCounts": true,
+    "lifecycleAllocation": true,
+    "idle": true
+  },
+  "result": "failed-local-gates"
+}

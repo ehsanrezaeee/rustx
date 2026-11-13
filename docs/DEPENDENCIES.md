@@ -44,7 +44,7 @@ Stage 3 adds typed Serde/serde_json service envelopes, versioned storage values 
 
 ## Stage 4 candidate — 12 November 2026
 
-The CLI adds pinned flate2 1.1.10, sha2 0.10.9, getrandom 0.3.4 and libc 0.2.190 for compressed distribution, content identity, unguessable local jobs and OS isolation/resource accounting. syn/proc-macro2/quote reuse the compiler's parser ecosystem. The compatible rustix lock update is 1.1.6. Cargo.lock remains authoritative.
+The CLI adds pinned flate2 1.1.10, brotli 8.0.2, sha2 0.10.9, getrandom 0.3.4 and libc 0.2.190 for compressed distribution, content identity, unguessable local jobs and OS isolation/resource accounting. Brotli generation adds locked alloc-no-stdlib 2.0.4, alloc-stdlib 0.2.4 and brotli-decompressor 5.0.3. syn/proc-macro2/quote reuse the compiler's parser ecosystem. The compatible rustix lock update is 1.1.6. Cargo.lock remains authoritative. The refreshed inventory contains 392 Cargo packages and queries all 385 registry resolutions; the same four maintenance findings and seven missing notice-copy records remain. Upstream notice recovery uses fresh locked Cargo metadata and rejects a stale inventory.
 
 Contributor formatting uses exact Prettier 3.6.2 alongside Rust 1.90.0 rustfmt and the RustX macro formatter. Prettier, Playwright and sharp are optional Node tooling; they are not RustX application build/runtime dependencies. Python and Docker are not project build/runtime dependencies.
 

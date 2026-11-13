@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T16:26:31.504Z",
+  "date": "2026-11-13T07:22:37.424Z",
   "cargoLockSha256": "e155dfa8f3ef7441034d05cebca38ae70aef6f83c0bdd1c1a490eb4417117120",
   "packages": [
     {
@@ -1427,18 +1427,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/jni-rs/jni-rs",
       "license_files": [
-        "jni-0.22.4/LICENSE-APACHE",
-        "jni-0.22.4/LICENSE-MIT"
+        "jni-0.22.4/LICENSE-MIT",
+        "jni-0.22.4/LICENSE-APACHE"
       ],
       "upstream_notices": [
         {
-          "file": "jni-0.22.4/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-APACHE",
+          "file": "jni-0.22.4/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-MIT",
           "vcs_commit": "5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7"
         },
         {
-          "file": "jni-0.22.4/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-MIT",
+          "file": "jni-0.22.4/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/jni-rs/jni-rs/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-APACHE",
           "vcs_commit": "5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7"
         }
       ]
@@ -1495,18 +1495,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/jni-rs/jni-sys",
       "license_files": [
-        "jni-sys-macros-0.4.1/LICENSE-APACHE",
-        "jni-sys-macros-0.4.1/LICENSE-MIT"
+        "jni-sys-macros-0.4.1/LICENSE-MIT",
+        "jni-sys-macros-0.4.1/LICENSE-APACHE"
       ],
       "upstream_notices": [
         {
-          "file": "jni-sys-macros-0.4.1/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/jni-rs/jni-sys/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-APACHE",
+          "file": "jni-sys-macros-0.4.1/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/jni-rs/jni-sys/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-MIT",
           "vcs_commit": "64d77b7a5f119d7b55b4e2c169a4668067ff59e6"
         },
         {
-          "file": "jni-sys-macros-0.4.1/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/jni-rs/jni-sys/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-MIT",
+          "file": "jni-sys-macros-0.4.1/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/jni-rs/jni-sys/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-APACHE",
           "vcs_commit": "64d77b7a5f119d7b55b4e2c169a4668067ff59e6"
         }
       ]
@@ -1794,18 +1794,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/rust-mobile/ndk",
       "license_files": [
-        "ndk-0.9.0/LICENSE-MIT",
-        "ndk-0.9.0/LICENSE-APACHE"
+        "ndk-0.9.0/LICENSE-APACHE",
+        "ndk-0.9.0/LICENSE-MIT"
       ],
       "upstream_notices": [
         {
-          "file": "ndk-0.9.0/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-MIT",
+          "file": "ndk-0.9.0/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-APACHE",
           "vcs_commit": "49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25"
         },
         {
-          "file": "ndk-0.9.0/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-APACHE",
+          "file": "ndk-0.9.0/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-MIT",
           "vcs_commit": "49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25"
         }
       ]
@@ -1863,18 +1863,18 @@
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "repository": "https://github.com/rust-mobile/ndk",
       "license_files": [
-        "ndk-sys-0.6.0+11769913/LICENSE-MIT",
-        "ndk-sys-0.6.0+11769913/LICENSE-APACHE"
+        "ndk-sys-0.6.0+11769913/LICENSE-APACHE",
+        "ndk-sys-0.6.0+11769913/LICENSE-MIT"
       ],
       "upstream_notices": [
         {
-          "file": "ndk-sys-0.6.0+11769913/LICENSE-MIT",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-MIT",
+          "file": "ndk-sys-0.6.0+11769913/LICENSE-APACHE",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-APACHE",
           "vcs_commit": "49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25"
         },
         {
-          "file": "ndk-sys-0.6.0+11769913/LICENSE-APACHE",
-          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-APACHE",
+          "file": "ndk-sys-0.6.0+11769913/LICENSE-MIT",
+          "url": "https://raw.githubusercontent.com/rust-mobile/ndk/49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25/LICENSE-MIT",
           "vcs_commit": "49bbbba16c58ff63cb8a0ad0eca5a9fb7ecaec25"
         }
       ]
