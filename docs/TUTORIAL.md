@@ -71,3 +71,28 @@ Open #/playground. Counter and API templates are editable source, compiled by re
 ## Migrating from React/HTML
 
 Replace JSX functions with Rust components and typed props; replace hooks with scoped signals/memo/effects. Move visible CSS geometry into typed Style values. Replace DOM events with synchronous typed Rust events and native/browser services. HTML/SVG/React libraries do not import unchanged. Use explicit Link, form, semantic labels and error relationships. The canvas does not reproduce browser Find, translation, document selection or SEO behavior. This optional indexed documentation mirror is separate from the RustX-authored visual application. No performance advantage is claimed without matched workloads and actual measurements.
+
+## Scoped context and reactive providers
+
+Use `cx.provide(value)` to make a typed value available to descendants. `cx.context::<T>()` clones the nearest value of that exact type; an inner provider shadows its ancestors without affecting siblings. Wrapper types let you provide different values with the same underlying type. Context does not cross independent Runtime roots.
+
+Provide a signal when descendants need reactive updates:
+
+```rust
+use rustx::prelude::*;
+
+let mut app = Runtime::new(|cx| {
+    let count = cx.signal(0u32);
+    cx.provide(count);
+    Node::component("readout", |cx| {
+        let count = cx.context::<Signal<u32>>().expect("count provider");
+        dynamic(move || count.get().to_string())
+    })
+});
+app.flush();
+assert_eq!(app.snapshot().text_content(), "0");
+```
+
+Replacing a plain provided value does not schedule an update or rerun component setup. Replacing a provided signal also does not redirect a signal already held by a consumer; mutate the original signal for shared updates. A later lookup observes the replacement. Only tracked signal reads subscribe; looking up or cloning a Signal handle does not subscribe by itself.
+
+On owner removal, retained Scope handles report `is_alive() == false` and context lookup returns None. Retained signals return `Err(Disposed)` from `try_get`/`set`; `get` panics on a disposed signal. Providing into a disposed scope is a programming error and panics with `disposed scope`. Cleanup occurs child-before-parent; callback order within one owner is unspecified. See ADR-013 in DECISIONS.md for context resource destruction and reentrant Clone/Drop behavior. These contracts do not imply React-style reactive provider replacement or a cross-runtime external-store subscription API.

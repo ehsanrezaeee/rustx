@@ -26,7 +26,7 @@ Each grouped row explicitly names its entries; splitting a group into per-entry 
 | Reference surface | RustX mapping / status | Required next evidence |
 | --- | --- | --- |
 | `useState`, `useReducer` | Signal get/set/update, partial; reducer can be authored in Rust | Reentrant update semantics, reducer example, atomic commit contract |
-| `useContext`, `createContext` | Scope provide/context with TypeId and parent lookup, partial | Nearest-provider shadowing, runtime isolation, disposal and reactive-provider tests; plain provide replacement does not subscribe consumers |
+| `useContext`, `createContext` | Scope provide/context with TypeId and parent lookup, partial | RP-003 verifies nearest-provider shadowing, runtime isolation, disposal and signal contexts in Rust tests; reactive provider replacement and full target demos remain open |
 | `useRef`, `useImperativeHandle` | NodeRef plus Rust handles, partial | Ref reset/rebinding and disposed imperative API tests |
 | `useMemo`, `useCallback`, `memo` | Scope memo and mount-once closures, partial | Dependency diamonds, equality and reactive-prop invalidation; no rerender-hook simulation |
 | `useEffect`, `useLayoutEffect`, `useInsertionEffect`, `useEffectEvent` | Scope effect and cleanup, partial | Engine post-layout phase absent; document non-reactive reads and style insertion equivalent; effect timing is not browser layout timing |

@@ -1,0 +1,26 @@
+   Compiling rustx-macros v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-macros)
+   Compiling rustx-core v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-core)
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+error[E0507]: cannot move out of `foreign`, a captured variable in an `Fn` closure
+  --> crates/rustx/tests/context.rs:59:17
+   |
+55 |     let foreign = signal.clone();
+   |         -------   -------------- move occurs because `foreign` has type `rustx::Signal<u32>`, which does not implement the `Copy` trait
+   |         |
+   |         captured outer variable
+56 |     let b = Runtime::new(move |cx| {
+   |                          --------- captured by this `Fn` closure
+...
+59 |         dynamic(move || format!("{}:{}", cx.context::<u32>().unwrap(), foreign.get()))
+   |                 ^^^^^^^ `foreign` is moved here                        ------- variable moved due to use in closure
+   |
+help: consider cloning the value before moving it into the closure
+   |
+59 ~         dynamic({
+60 +         let value = foreign.clone();
+61 ~         move || format!("{}:{}", cx.context::<u32>().unwrap(), value.get())
+62 ~         })
+   |
+
+For more information about this error, try `rustc --explain E0507`.
+error: could not compile `rustx` (test "context") due to 1 previous error

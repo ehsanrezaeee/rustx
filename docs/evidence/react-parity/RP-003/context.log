@@ -1,0 +1,17 @@
+   Compiling rustx v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.34s
+     Running tests/context.rs (target/debug/deps/context-958ba2d81968c428)
+
+running 10 tests
+test context_clone_can_read_a_live_signal ... ok
+test plain_replacement_is_lookup_only_and_does_not_remount ... ok
+test disposing_context_drops_after_owner_invalidation_without_borrow ... ok
+test context_resources_drop_before_owner_cleanup_and_children_before_parents ... ok
+test provided_signals_track_only_current_dynamic_reads ... ok
+test nearest_provider_shadows_without_leaking_to_siblings ... ok
+test independent_roots_and_cross_runtime_reads_do_not_subscribe ... ok
+test replacing_a_provided_signal_does_not_rebind_existing_consumers ... ok
+test replacing_context_drops_old_value_outside_runtime_borrow ... ok
+test provider_unmount_invalidates_handles_and_remounts_fresh ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

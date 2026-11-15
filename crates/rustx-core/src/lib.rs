@@ -363,7 +363,7 @@ struct Owner {
     signals: Vec<u64>,
     observers: Vec<u64>,
     cleanups: HashMap<u64, Cleanup>,
-    context: HashMap<TypeId, Box<dyn Any>>,
+    context: HashMap<TypeId, Rc<dyn Any>>,
 }
 struct Value {
     value: Box<dyn Any>,
@@ -528,26 +528,39 @@ impl Scope {
             .and_then(|i| i.borrow().owners.get(&self.id).map(|o| o.cleanups.len()))
             .unwrap_or(0)
     }
+    /// Provide a value in this owner, replacing only its entry of the same type.
+    /// Replacement does not notify consumers. Provide a `Signal<T>` for reactive reads.
+    /// Panics with `disposed scope` if this owner is no longer alive.
     pub fn provide<T: 'static>(&self, value: T) {
         let i = self.inner.upgrade().expect("disposed scope");
-        i.borrow_mut()
-            .owners
-            .get_mut(&self.id)
-            .unwrap()
-            .context
-            .insert(TypeId::of::<T>(), Box::new(value));
+        let previous = {
+            let mut b = i.borrow_mut();
+            b.owners
+                .get_mut(&self.id)
+                .expect("disposed scope")
+                .context
+                .insert(TypeId::of::<T>(), Rc::new(value))
+        };
+        // A context destructor is user code and may inspect the runtime.
+        drop(previous);
     }
+    /// Clone the nearest provided value, or return None for missing/disposed owners.
+    /// Lookup itself is not reactive; reading a returned signal tracks normally.
+    /// User-defined Clone code runs outside the runtime borrow.
     pub fn context<T: Clone + 'static>(&self) -> Option<T> {
         let i = self.inner.upgrade()?;
-        let b = i.borrow();
-        let mut id = self.id;
-        loop {
-            let o = b.owners.get(&id)?;
-            if let Some(v) = o.context.get(&TypeId::of::<T>()) {
-                return v.downcast_ref::<T>().cloned();
+        let value = {
+            let b = i.borrow();
+            let mut id = self.id;
+            loop {
+                let o = b.owners.get(&id)?;
+                if let Some(v) = o.context.get(&TypeId::of::<T>()) {
+                    break Rc::clone(v);
+                }
+                id = o.parent?;
             }
-            id = o.parent?;
-        }
+        };
+        value.downcast_ref::<T>().cloned()
     }
 }
 impl<T: Clone + 'static> Signal<T> {
@@ -608,7 +621,7 @@ fn dispose(i: &Rc<RefCell<Inner>>, m: &Mount) {
     for c in children {
         dispose(i, &c)
     }
-    let cleanups = {
+    let (cleanups, context) = {
         let mut b = i.borrow_mut();
         let Some(mut o) = b.owners.remove(&id) else {
             return;
@@ -628,8 +641,11 @@ fn dispose(i: &Rc<RefCell<Inner>>, m: &Mount) {
             }
         }
         b.stats.scopes_unmounted += 1;
-        o.cleanups
+        (o.cleanups, o.context)
     };
+    // Context resources may inspect scopes during Drop. The owner has already
+    // been invalidated, and no runtime borrow may span user destruction.
+    drop(context);
     for (_, cleanup) in cleanups {
         cleanup()
     }
