@@ -27,6 +27,8 @@ export class SemanticProjection {
   constructor(root, app, schedule, pump, reveal) {
     Object.assign(this, { root, app, schedule, pump, reveal });
     this.elements = new Map();
+    this.listeners = new WeakMap();
+    this.disposed = false;
     this.composing = new Set();
     this.lastModal = null;
     this.restoreFocus = null;
@@ -124,6 +126,7 @@ export class SemanticProjection {
     }
   }
   create(n) {
+    if (this.disposed) throw new Error('Semantic projection is disposed');
     const c = n.control || {},
       tag =
         n.role === 'textbox' || c.editable
@@ -136,25 +139,29 @@ export class SemanticProjection {
               ? 'button'
               : 'span';
     const el = document.createElement(tag);
+    const controller = new AbortController();
+    this.listeners.set(el, controller);
+    const listen = (type, handler) =>
+      el.addEventListener(type, handler, { signal: controller.signal });
     el.id = `rustx-${n.id}`;
     el.dataset.node = n.id;
     el.className = tag === 'span' ? 'text' : 'control';
     if (tag === 'button') el.type = 'button';
-    el.addEventListener('focus', () => {
+    listen('focus', () => {
       this.app.focus(n.id);
       this.reveal(n.id);
       this.schedule();
     });
-    el.addEventListener('blur', () => {
+    listen('blur', () => {
       this.app.blur?.(n.id);
       this.event(el, 'blur');
     });
-    el.addEventListener('dragover', (e) => e.preventDefault());
-    el.addEventListener('drop', (e) => this.drop(el, e));
+    listen('dragover', (e) => e.preventDefault());
+    listen('drop', (e) => this.drop(el, e));
     if (tag === 'input' || tag === 'textarea') {
       el.autocomplete = c.input_type === 'password' ? 'current-password' : 'off';
       el.spellcheck = false;
-      el.addEventListener('beforeinput', (e) =>
+      listen('beforeinput', (e) =>
         this.event(
           el,
           'before_input',
@@ -162,29 +169,28 @@ export class SemanticProjection {
           e,
         ),
       );
-      el.addEventListener('input', (e) => {
+      listen('input', (e) => {
         if (this.app.edit_sync) this.selection(el);
         else this.app.input(n.id, el.value, e.isComposing);
         this.pump();
         this.schedule();
       });
-      el.addEventListener('select', () => this.selection(el));
-      el.addEventListener('compositionstart', (e) => {
+      listen('select', () => this.selection(el));
+      listen('compositionstart', (e) => {
         this.composing.add(el);
         this.event(el, 'composition_start', { value: e.data || '' });
       });
-      el.addEventListener('compositionupdate', (e) =>
+      listen('compositionupdate', (e) =>
         this.event(el, 'composition_update', { value: e.data || '' }),
       );
-      el.addEventListener('compositionend', (e) => {
+      listen('compositionend', (e) => {
         this.composing.delete(el);
         this.selection(el);
         this.event(el, 'composition_end', { value: e.data || '' });
       });
-      for (const kind of ['copy', 'cut', 'paste'])
-        el.addEventListener(kind, (e) => this.event(el, kind, {}, e));
+      for (const kind of ['copy', 'cut', 'paste']) listen(kind, (e) => this.event(el, kind, {}, e));
     } else if (n.focusable) {
-      el.addEventListener('click', (e) => {
+      listen('click', (e) => {
         if (tag === 'a') {
           this.event(
             el,
@@ -199,7 +205,7 @@ export class SemanticProjection {
         this.schedule();
       });
     }
-    el.addEventListener('keydown', (e) => {
+    listen('keydown', (e) => {
       // Browser/OS shortcuts keep their native behavior unless Rust handles them.
       const prevented = this.event(
         el,
@@ -217,7 +223,7 @@ export class SemanticProjection {
       if (prevented || handled) this.syncEditor(el);
       this.schedule();
     });
-    el.addEventListener('keyup', (e) =>
+    listen('keyup', (e) =>
       this.event(
         el,
         'key_up',
@@ -233,7 +239,7 @@ export class SemanticProjection {
       ['pointerenter', 'pointer_enter'],
       ['pointerleave', 'pointer_leave'],
     ]) {
-      el.addEventListener(native, (e) =>
+      listen(native, (e) =>
         this.event(
           el,
           kind,
@@ -255,14 +261,14 @@ export class SemanticProjection {
     }
     if (n.role === 'img' && n.focusable) {
       let pointer;
-      el.addEventListener('pointerdown', (e) => {
+      listen('pointerdown', (e) => {
         if (e.defaultPrevented) return;
         pointer = [e.clientX, e.clientY, false];
         el.setPointerCapture(e.pointerId);
         el.focus({ preventScroll: true });
         e.preventDefault();
       });
-      el.addEventListener('pointermove', (e) => {
+      listen('pointermove', (e) => {
         if (e.defaultPrevented) return;
         if (!pointer) return;
         const dx = e.clientX - pointer[0],
@@ -273,7 +279,7 @@ export class SemanticProjection {
           this.schedule();
         }
       });
-      el.addEventListener('pointerup', (e) => {
+      listen('pointerup', (e) => {
         if (e.defaultPrevented) {
           pointer = null;
           return;
@@ -282,7 +288,7 @@ export class SemanticProjection {
         pointer = null;
         this.schedule();
       });
-      el.addEventListener('pointercancel', () => {
+      listen('pointercancel', () => {
         pointer = null;
       });
     }
@@ -291,6 +297,7 @@ export class SemanticProjection {
     return el;
   }
   sync(semantic, inspection) {
+    if (this.disposed) return;
     const boxes = new Map(inspection.nodes.map((n) => [n.node, n])),
       seen = new Set(),
       ownership = new Map(),
@@ -403,6 +410,9 @@ export class SemanticProjection {
     }
     for (const [id, el] of this.elements) {
       if (!seen.has(id)) {
+        this.listeners.get(el)?.abort();
+        this.listeners.delete(el);
+        this.composing.delete(el);
         el.remove();
         this.elements.delete(id);
       } else {
@@ -479,7 +489,19 @@ export class SemanticProjection {
     }
   }
   dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
     document.removeEventListener('selectionchange', this.onSelection);
+    for (const el of this.elements.values()) {
+      this.listeners.get(el)?.abort();
+      this.listeners.delete(el);
+      el.remove();
+    }
     this.elements.clear();
+    this.composing.clear();
+    this.flat = [];
+    this.modal = null;
+    this.lastModal = null;
+    this.restoreFocus = null;
   }
 }

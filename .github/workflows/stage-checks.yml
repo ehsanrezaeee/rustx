@@ -102,6 +102,7 @@ jobs:
           target/debug/rustx serve dist 3000 > browser-server.log 2>&1 &
           server=$!
           trap 'kill "$server" 2>/dev/null || true' EXIT
+          npm run test:semantics:lifecycle
           npm run test:browser
           npm run test:stage2:browser
           npm run test:stage3:browser

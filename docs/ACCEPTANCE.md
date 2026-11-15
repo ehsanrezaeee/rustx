@@ -1,5 +1,9 @@
 # Acceptance ledger — 13 November 2026
 
+React parity first increment (16 November 2026): [REACT_PARITY_MATRIX.md](REACT_PARITY_MATRIX.md), [DOM_EXCEPTIONS.md](DOM_EXCEPTIONS.md) and [REACT_PARITY_TASKS.md](REACT_PARITY_TASKS.md) now record source gaps and the next tasks. RP-001 remains implementing: exhaustive tag/property/event coverage and runnable comparative baselines are unfinished. RP-002 fixes semantic projection DOM/listener teardown; finite validation and limitations are in [evidence/react-parity/RP-002/README.md](evidence/react-parity/RP-002/README.md). No full React/platform parity or benchmark advantage is claimed. After committing this increment, wait for owner confirmation before RP-003 (context/owner isolation).
+
+Browser scope clarification: REACT_PARITY_PLAN.md now requires full stable React/React DOM behavioral coverage in the browser, Rust-owned canvas UI, a bounded DOM exception register, real desktop/mobile browser conformance, and browser-to-browser advantage evidence. Native architectural priority does not defer or narrow this browser track. Documentation only; no new implementation or verification is claimed.
+
 Authoritative register: BLUEPRINT.md RX-01–RX-46. Exact snapshot: SOURCE-REVISION.txt (SHA-256 of SOURCE_MANIFEST.sha256). **Stages 1–4 full platform/manual/release acceptance remains open.** Five of 46 requirements are verified at their core contract level: checklist coverage, not effort completed or platform certification.
 
 ## Executed checks
@@ -143,6 +147,10 @@ The capabilities page uses public RustX components; Rust owns layout/text/pixels
 The README now explains RustX's purpose/goals and installs pinned prerequisites, builds tracked source and only then serves generated `dist/`. Archive-only startup and prebuilt-tool assumptions are removed from checkout instructions. `.gitignore` documents generated outputs and SDK packaging. Project MIT attribution names only ehsanrezaeee; font/dependency notices remain separate.
 
 Evidence: [checkout-2026-11-16/README.md](evidence/checkout-2026-11-16/README.md). A temporary copy from tracked Git files, initially without local build outputs, bundles, SDK archive or node_modules, builds a fresh CLI/Wasm bundle and passes 134 Rust tests, both formatter checks, host contracts, actual Wasm/CPU Stage 1/2 checks, loopback HTTP/services and actual Chromium 156.0.8078.4 CPU browser tasks. Module SHA-256: `fbe810f55b01925bdcab038935c00315a3c64c7ea27323c291d8a5339bc47365`. Sandbox DNS/fixture-bind failures are retained beside successful network/loopback-enabled replays. Installed tools and Cargo registry cache were available. This supports source-checkout reproducibility on this Mac, without closing RX-01/RX-34/RX-42 independent clean-machine/Windows gates or any GPU, IME, human AT, mobile or full v1 gate. Historical artifact manifests remain unchanged.
+
+## React parity planning — 16 November 2026
+
+[REACT_PARITY_PLAN.md](REACT_PARITY_PLAN.md) records the owner's native-first direction, outcome coverage, dependency-ordered milestones, comparative measurement gates and agent task protocol. This is documentation-only planning, checked for local reference paths and whitespace. No implementation, runtime test, platform verification or RX status change is claimed. Begin with RP-001 to audit current capabilities and create the detailed parity matrix/task ledger.
 
 ## Requirement states
 
