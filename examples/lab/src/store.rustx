@@ -1,0 +1,83 @@
+use rustx::prelude::*;
+
+fn consumer(cx: Scope, a: ExternalStore<(u32, u32)>, b: ExternalStore<(u32, u32)>) -> View {
+    let sub = a.subscribe(&cx).expect("demo subscription");
+    let output = sub.clone();
+    let alternate = cx.signal(false);
+    rustx! {
+        <Column style={ Style::column().gap(12.) }>
+            <Text id="store-value">
+                {
+                    move || {
+                        let s = output.get();
+                        format!("revision {}: {} / {}", s.revision, s.value.0, s.value.1)
+                    }
+                }
+            </Text>
+            <Button
+                id="store-switch"
+                on_click={
+                    move |_| {
+                        let next = !alternate.get();
+                        sub.replace_source(if next { &b } else { &a })
+                            .expect("event outside commit");
+                        let _ = alternate.set(next);
+                    }
+                }
+            >
+                "Switch source"
+            </Button>
+        </Column>
+    }
+}
+
+/// Same public store API on native and Wasm; no DOM-backed state or layout.
+pub fn application(cx: Scope) -> View {
+    let a = ExternalStore::new((0u32, 0u32));
+    let b = ExternalStore::new((100u32, 200u32));
+    let publish = a.clone();
+    let visible = cx.signal(true);
+    let toggle = visible.clone();
+    rustx! {
+        <Column style={ Style::column().gap(16.).padding(24.).color(0xf1f5ff) }>
+            <Heading>
+                "External store snapshots"
+            </Heading>
+            <Text>
+                "Publish a whole pair; the second value is always twice the first. Remount reads the latest source."
+            </Text>
+            <Button
+                id="store-publish"
+                on_click={
+                    move |_| {
+                        let n = publish.snapshot().value.0 + 1;
+                        publish.publish((n, n * 2)).expect("event outside commit");
+                    }
+                }
+            >
+                "Publish primary"
+            </Button>
+            <Button
+                id="store-toggle"
+                on_click={
+                    move |_| {
+                        let _ = toggle.set(!toggle.get());
+                    }
+                }
+            >
+                "Unmount / remount reader"
+            </Button>
+            {
+                move || {
+                    if visible.get() {
+                        let a = a.clone();
+                        let b = b.clone();
+                        Node::component("StoreReader", move |cx| consumer(cx, a.clone(), b.clone()))
+                    } else {
+                        Node::text("Reader unmounted; primary store still accepts updates.")
+                    }
+                }
+            }
+        </Column>
+    }
+}

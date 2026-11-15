@@ -8,7 +8,9 @@ pub mod events;
 pub mod widgets;
 pub use errors::*;
 pub mod editing;
+mod external_store;
 pub mod forms;
+pub use external_store::*;
 mod resources;
 mod router;
 mod services;
@@ -379,7 +381,20 @@ struct Observer {
     job: Job,
     cleanup: Option<Cleanup>,
 }
+struct CommitGuard(Rc<Cell<bool>>);
+impl CommitGuard {
+    fn enter(flag: Rc<Cell<bool>>) -> Self {
+        assert!(!flag.replace(true), "runtime commit is reentrant");
+        Self(flag)
+    }
+}
+impl Drop for CommitGuard {
+    fn drop(&mut self) {
+        self.0.set(false);
+    }
+}
 struct Inner {
+    committing: Rc<Cell<bool>>,
     next: u64,
     owners: HashMap<u64, Owner>,
     values: HashMap<u64, Value>,
@@ -841,6 +856,7 @@ pub struct Runtime {
 impl Runtime {
     pub fn new(f: impl Fn(Scope) -> View + 'static) -> Self {
         let i = Rc::new(RefCell::new(Inner {
+            committing: Rc::new(Cell::new(false)),
             next: 1,
             owners: HashMap::new(),
             values: HashMap::new(),
@@ -849,7 +865,10 @@ impl Runtime {
             wake: None,
             stats: Commit::default(),
         }));
-        let root = reconcile(&i, None, Node::component("$root", f), None);
+        let root = {
+            let _commit = CommitGuard::enter(i.borrow().committing.clone());
+            reconcile(&i, None, Node::component("$root", f), None)
+        };
         let mut rt = Self {
             inner: i,
             root,
@@ -864,6 +883,7 @@ impl Runtime {
         self.inner.borrow_mut().wake = Some(Rc::new(f));
     }
     pub fn flush(&mut self) -> Commit {
+        let _commit = CommitGuard::enter(self.inner.borrow().committing.clone());
         self.inner.borrow_mut().stats = Commit::default();
         for _ in 0..1000 {
             let next = {

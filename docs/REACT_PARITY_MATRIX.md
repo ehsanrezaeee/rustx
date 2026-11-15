@@ -31,7 +31,7 @@ Each grouped row explicitly names its entries; splitting a group into per-entry 
 | `useMemo`, `useCallback`, `memo` | Scope memo and mount-once closures, partial | Dependency diamonds, equality and reactive-prop invalidation; no rerender-hook simulation |
 | `useEffect`, `useLayoutEffect`, `useInsertionEffect`, `useEffectEvent` | Scope effect and cleanup, partial | Engine post-layout phase absent; document non-reactive reads and style insertion equivalent; effect timing is not browser layout timing |
 | `useId`, `useDebugValue`, `captureOwnerStack` | Runtime IDs, inspection and source locations, partial | Cross-root/hydration-safe stable IDs, user diagnostic labels and owner stack API |
-| `useSyncExternalStore` | Missing subscription/snapshot contract | Coherent snapshots, subscription replacement, cleanup and tearing regression |
+| `useSyncExternalStore` | Partial: RP-006 UI-thread push store with versioned coherent snapshots, scoped subscriptions, deduplication, replacement and commit Busy guard | Arbitrary getSnapshot/subscribe adapters, server snapshots/hydration and React compatibility remain open; see ADR-014 and RP-006 evidence |
 | `useTransition`, `startTransition`, `useDeferredValue` | Missing priority/deferred scheduling contract | Urgent input during heavy updates, starvation and atomic commits |
 | `useOptimistic`, `useActionState`, DOM `useFormStatus`, `requestFormReset` | Forms, Mutation and reset state, partial | Pending action sequencing, optimistic rollback preserving newer edits, nested form status |
 | `use`, `lazy`, `Suspense` | QueryState and error boundary are partial building blocks | Nested loading boundaries, refresh retention, real code splitting and resource reads |

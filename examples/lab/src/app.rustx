@@ -733,11 +733,13 @@ pub fn App(cx: Scope) -> View {
             ("/applications".into(), 4),
             ("/playground".into(), 6),
             ("/capabilities".into(), 7),
+            ("/store".into(), 8),
         ],
     )
     .expect("route configuration");
     if crate::start_page() > 0 {
         let path = match crate::start_page() {
+            8 => "/store",
             3 => "/engine",
             4 => "/applications",
             _ => "/",
@@ -849,6 +851,7 @@ pub fn App(cx: Scope) -> View {
             </Row>
             {
                 move || match page.get() {
+                    8 => Node::component("ExternalStore", crate::store::application),
                     7 => Node::component("Capabilities", crate::capabilities::application),
                     6 => Node::component("Playground", crate::playground::application),
                     5 => Node::text("Page not found. Choose a page above."),

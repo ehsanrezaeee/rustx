@@ -96,3 +96,42 @@ assert_eq!(app.snapshot().text_content(), "0");
 Replacing a plain provided value does not schedule an update or rerun component setup. Replacing a provided signal also does not redirect a signal already held by a consumer; mutate the original signal for shared updates. A later lookup observes the replacement. Only tracked signal reads subscribe; looking up or cloning a Signal handle does not subscribe by itself.
 
 On owner removal, retained Scope handles report `is_alive() == false` and context lookup returns None. Retained signals return `Err(Disposed)` from `try_get`/`set`; `get` panics on a disposed signal. Providing into a disposed scope is a programming error and panics with `disposed scope`. Cleanup occurs child-before-parent; callback order within one owner is unspecified. See ADR-013 in DECISIONS.md for context resource destruction and reentrant Clone/Drop behavior. These contracts do not imply React-style reactive provider replacement or a cross-runtime external-store subscription API.
+
+## External state snapshots (RP-006)
+
+Use `ExternalStore<T>` when a host/data adapter owns state outside component lifetimes. It is single-threaded and independent of Runtime; clone it into multiple roots. Publish whole logically immutable values (`PartialEq` must be pure; do not mutate snapshot values through interior mutability). Equal values do not notify or advance revision. Component setup subscribes once; reactive views read the subscription:
+
+```rust
+let store = ExternalStore::new((0u32, 0u32));
+let source = store.clone();
+let mut runtime = Runtime::new(move |cx| {
+    let subscription = source.subscribe(&cx).expect("subscription capacity");
+    dynamic(move || {
+        let snapshot = subscription.get();
+        format!("{} / {}", snapshot.value.0, snapshot.value.1)
+    })
+});
+store.publish((1, 2)).unwrap(); // host event, outside a commit
+runtime.flush();
+assert_eq!(runtime.snapshot().text_content(), "1 / 2");
+```
+
+`snapshot()` is an untracked read. `StoreSubscription::get()` tracks the ordinary RustX signal dependency. All subscribers receive the same revision before any runtime is woken. Each runtime wakes at most once per publication; pending notifications coalesce through its existing dirty set. This is per-store coherence, not a transaction across separate stores.
+
+Scope disposal unsubscribes even if the application retains the handle. Dropping a handle alone does not unsubscribe: the scope owns it. `disconnect()` is idempotent; later `try_get()` fails. Signal storage remains until scope disposal. `replace_source(&other)` reuses the signal and cleanup registration and immediately exposes the new snapshot. Failure preserves the old source. A store admits at most `MAX_STORE_SUBSCRIPTIONS` (64); admission returns `Capacity` rather than growing indefinitely.
+
+Changed publication during a subscribed runtime's mount/flush returns `ExternalStoreError::Busy` without changing any snapshot. Reentrant publication also returns Busy. Replacement during commit/publication is rejected. Handle Busy by retrying from a later host event/task after the commit; never spin inside an effect. There is no automatic retry queue. Equal publication outside reentrant publication returns `Ok(false)`, including during a commit. `Disposed`, `Capacity` and checked identifier/revision `Exhausted` are explicit errors. This push adapter does not yet implement arbitrary third-party getSnapshot/subscribe callbacks, server snapshots/hydration, multithreaded publication or React hook compatibility.
+
+Run the public-API canvas example after building the checkout:
+
+```sh
+bash scripts/build-web.sh
+target/debug/rustx serve dist 3000
+# Open http://127.0.0.1:3000/?renderer=cpu#/store
+# In another terminal, exercise actual browser pointer interaction:
+node scripts/test-external-store-browser.mjs
+# Native Mac window (close normally when finished):
+RUSTX_DEMO=store RUSTX_RENDERER=cpu cargo run -p rustx-lab --bin rustx-lab --locked
+```
+
+Publish, switch sources, unmount the reader, publish again and remount. The displayed pair remains coherent and remount reads the latest primary snapshot. Rust owns the layout/text and canvas pixels; this example adds no DOM UI or core browser dependency. See ADR-014 and the RP-006 evidence ledger for verification limits.

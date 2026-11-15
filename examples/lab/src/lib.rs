@@ -10,10 +10,16 @@ pub mod applications;
 pub mod capabilities;
 #[path = "playground.rustx"]
 pub mod playground;
+#[path = "store.rustx"]
+pub mod store;
 #[path = "visual.rustx"]
 pub mod visual;
 use rustx::prelude::*;
 pub fn start_page() -> i32 {
+    #[cfg(not(target_arch = "wasm32"))]
+    if std::env::var("RUSTX_DEMO").as_deref() == Ok("store") {
+        return 8;
+    }
     #[cfg(not(target_arch = "wasm32"))]
     if std::env::var("RUSTX_DEMO").as_deref() == Ok("engine") {
         return 3;
