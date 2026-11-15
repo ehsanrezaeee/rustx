@@ -1,14 +1,22 @@
+# Local dependency and compiler caches; lockfiles and source assets are tracked.
 /target/
 /node_modules/
-/dist/
-*.log
-!/docs/evidence/*.log
-!/docs/evidence/**/*.log
-/releases/
-.DS_Store
-/.rustx/
 
+# Generated web bundles. Build from a checkout before serving (see README.md).
+/dist/
 /dist-release/
 /dist-bench/
 /dist-native/
+
+*.log
+!/docs/evidence/*.log
+!/docs/evidence/**/*.log
+# Generated delivery archives, binaries, editor packages and dependency notices.
+/releases/
+.DS_Store
+# Local compiler jobs, development state and temporary bundle output.
+/.rustx/
+
+# SDK archive for cargo packaging only. Checkout builds embed tracked source
+# directly; node scripts/prepare-cli.mjs regenerates this before cargo package.
 /crates/rustx-cli/assets/

@@ -1,4 +1,6 @@
-# Status — 13 November 2026
+# Status — 16 November 2026
+
+Source-checkout follow-up: LICENSE now names ehsanrezaeee as the sole project copyright holder; separate third-party font/dependency notices remain. README explains the framework, goals, architecture and developer workflow, and builds `dist/` before serving it. Its previous archive-only startup assumption is corrected; ignored bundles/tools/caches remain reproducible generated outputs. A tracked-files-only temporary copy with a fresh target directory builds successfully, passes 134 workspace tests, formatting, actual Wasm/CPU checks, loopback HTTP/services and real Chromium CPU browser tasks. Existing tool installations and the Cargo registry cache were available; this does not close independent fresh-machine or Windows onboarding gates. Evidence and retained sandbox failures are in [evidence/checkout-2026-11-16/README.md](evidence/checkout-2026-11-16/README.md). Earlier delivery manifests identify historical artifacts.
 
 The completion follow-up adds the RustX-authored **What can I build?** guide at `#/capabilities`, linked from the homepage and persistent navigation. It explains dashboards/admin tools, API/data explorers, drawing/diagram tools and utilities through current public features, with working example links and explicit limits. Actual Chromium/WebKit first-frame deep-link, keyboard and 1200px/390px layout tasks pass. New four-stage replay logs, JSON and screenshots are in `evidence/completion-2026-11-13/`; see ACCEPTANCE.md for actual outcomes and retained failures.
 

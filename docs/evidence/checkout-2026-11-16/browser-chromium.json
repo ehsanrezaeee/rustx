@@ -1,0 +1,23 @@
+{
+  "result": "passed",
+  "date": "2026-11-15T22:40:16.432Z",
+  "engine": "chromium",
+  "version": "156.0.8078.4",
+  "platform": "darwin",
+  "arch": "arm64",
+  "backend": "Rust CPU",
+  "wasmSha256": "fbe810f55b01925bdcab038935c00315a3c64c7ea27323c291d8a5339bc47365",
+  "checks": [
+    "pointer, Enter and Space each activate once",
+    "keyed text/counter state, active input and selection survive reorder",
+    "Tab follows reordered committed tree",
+    "unmount disposes keyed text and counter",
+    "browser text editing, retained focus and Rust scroll-to-focus (no OS IME claim)",
+    "real fixture Fetch success, HTTP failure, cancellation, supersede and disposal",
+    "idle has no repeated canvas frames",
+    "390px viewport, DPR 2 sizing and scrolling away from a focused editor; no mobile-device claim"
+  ],
+  "limitations": [
+    "No real OS IME, screen reader, Windows or mobile-device tasks"
+  ]
+}

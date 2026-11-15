@@ -138,6 +138,12 @@ The user requests completion of the four-stage review, fixes, merge of PR #2 to 
 
 The capabilities page uses public RustX components; Rust owns layout/text/pixels. Windows checksum changes remain source until the PR's actual Windows check executes them; that check collects available notices before packaging. PLATFORM_CHECKS.md now names the real Windows package path and current editing/AccessKit implementation. Repository merge is separate from accepting Stage 4/v1: unexecuted physical/manual/target and unresolved performance/dependency gates remain open.
 
+## Source-checkout follow-up — 16 November 2026
+
+The README now explains RustX's purpose/goals and installs pinned prerequisites, builds tracked source and only then serves generated `dist/`. Archive-only startup and prebuilt-tool assumptions are removed from checkout instructions. `.gitignore` documents generated outputs and SDK packaging. Project MIT attribution names only ehsanrezaeee; font/dependency notices remain separate.
+
+Evidence: [checkout-2026-11-16/README.md](evidence/checkout-2026-11-16/README.md). A temporary copy from tracked Git files, initially without local build outputs, bundles, SDK archive or node_modules, builds a fresh CLI/Wasm bundle and passes 134 Rust tests, both formatter checks, host contracts, actual Wasm/CPU Stage 1/2 checks, loopback HTTP/services and actual Chromium 156.0.8078.4 CPU browser tasks. Module SHA-256: `fbe810f55b01925bdcab038935c00315a3c64c7ea27323c291d8a5339bc47365`. Sandbox DNS/fixture-bind failures are retained beside successful network/loopback-enabled replays. Installed tools and Cargo registry cache were available. This supports source-checkout reproducibility on this Mac, without closing RX-01/RX-34/RX-42 independent clean-machine/Windows gates or any GPU, IME, human AT, mobile or full v1 gate. Historical artifact manifests remain unchanged.
+
 ## Requirement states
 
 | ID | Status | Evidence / remaining gate |
