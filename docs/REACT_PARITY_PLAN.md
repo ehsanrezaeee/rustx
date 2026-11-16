@@ -239,3 +239,11 @@ Checked 16 November 2026. Recheck the official stable API inventory and pin the 
 - [Server React DOM APIs](https://react.dev/reference/react-dom/server): HTML/server delivery responsibilities for broad web replacement.
 
 Routing, query caches, component libraries, native packaging and most developer workflows require ecosystem comparisons in addition to React core. Audit those independently in M0; do not attribute every application feature to React itself.
+
+## 8. Native execution priority and outstanding work — RP-007 correction
+
+Native priority must produce named deliverables, not remain an architectural slogan. The next tasks are **RP-007 native build/package delivery**, **RP-008 native interaction conformance**, **RP-009 native text/accessibility**, and **RP-010 native rendering/performance**. Their contracts and status live in REACT_PARITY_TASKS.md. Windows is a required target; macOS is the locally available verification target. A successful Mac package does not complete Windows acceptance. Linux/native mobile support remains separately gated.
+
+The M0–M7 headings above are broad milestones, not RP-000–RP-007 task completion labels. RP numbering started at RP-001; RP-000 was never assigned. RP-001's exhaustive audit and RP-005's matched benchmarks remain unfinished. RP-002/003/004/006 have verified finite slices, with the limits recorded in the task table. No new task silently closes those gaps. The earlier proposed browser-input RP-007 is superseded by native RP-007; browser input/AT remains tracked as RP-011 and in the full browser matrix.
+
+Execution order: implement and verify RP-007's available-platform package workflow; retain its Windows/signing/clean-machine gaps until actual evidence arrives. Then pursue RP-008 native interaction, RP-009 text/AT and RP-010 rendering. Maintain RP-001 inventory updates with each delivered feature. RP-005 remains a prerequisite to claiming performance advantage, and should begin matched runnable workloads before RP-010 optimization; unsupported workload features stay explicit blockers. RP-011 browser conformance and RP-004 actual BFCache follow-up remain required alongside native work, not replacements for it. Before every increment, review the entire status table and report what remains open; do not equate a higher RP number with completion of lower numbers.

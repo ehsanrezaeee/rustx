@@ -32,7 +32,8 @@
     "test:dom:production": "node scripts/test-dom-production.mjs",
     "test:host:ownership": "node scripts/test-host-ownership.mjs",
     "test:docker": "node scripts/test-docker-demo.mjs",
-    "test:server:bind": "node scripts/test-server-bind.mjs"
+    "test:server:bind": "node scripts/test-server-bind.mjs",
+    "test:native:package": "node scripts/test-native-package.mjs"
   },
   "devDependencies": {
     "playwright": "1.64.1",

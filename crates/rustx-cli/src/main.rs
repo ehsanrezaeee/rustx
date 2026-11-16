@@ -18,6 +18,7 @@ fn validate(args: &[String]) -> Result<(), String> {
         "fmt" => (&["--check", "--stdin"], &[], 0),
         "check" => (&["--json", "--message-format=json"], &[], 0),
         "test" | "symbols" | "version" | "--version" | "help" | "--help" | "-h" => (&[], &[], 0),
+        "package" => (&[], &["--target", "--out"], 0),
         "serve" => (&[], &["--host"], 2),
         "playground" => (&[], &["--framework", "--port", "--app-origin"], 0),
         "build" => (
@@ -136,6 +137,11 @@ fn execute() -> Result<(), String> {
             tooling::run("cargo", &a, &root)
         }
         Some("test") => tooling::run("cargo", &["test", "--workspace", "--locked"], &root),
+        Some("package") => tooling::native::bundle(
+            &root,
+            option(&args, "--target").unwrap_or("native"),
+            &root.join(option(&args, "--out").unwrap_or("dist-native")),
+        ),
         Some("build") => tooling::build(
             &root,
             option(&args, "--target").unwrap_or("web"),
@@ -156,7 +162,7 @@ fn execute() -> Result<(), String> {
             Ok(())
         }
         None | Some("help" | "--help" | "-h") => {
-            println!("RustX\n  rustx new my-app [--framework PATH]\n  rustx doctor [--json]\n  rustx dev --target web|native|windows [--port 3000] [--compiler-url ORIGIN]\n  rustx check [--json]\n  rustx fmt [--check|--stdin]\n  rustx test\n  rustx build --target web|native|windows --release [--out dist] [--devtools]\n  rustx playground [--port 3002] [--app-origin http://127.0.0.1:3000]\n  rustx serve dist 3000 [--host 127.0.0.1]");
+            println!("RustX\n  rustx new my-app [--framework PATH]\n  rustx doctor [--json]\n  rustx dev --target web|native|windows [--port 3000] [--compiler-url ORIGIN]\n  rustx check [--json]\n  rustx fmt [--check|--stdin]\n  rustx test\n  rustx build --target web|native|windows --release [--out dist] [--devtools]\n  rustx package --target native|macos|windows [--out dist-native]\n  rustx playground [--port 3002] [--app-origin http://127.0.0.1:3000]\n  rustx serve dist 3000 [--host 127.0.0.1]");
             Ok(())
         }
         Some(command) => Err(format!("Unknown command {command}; use rustx --help")),

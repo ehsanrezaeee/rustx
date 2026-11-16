@@ -1,4 +1,8 @@
-# Continue here — Stage 4 candidate
+# Continue here — native delivery and open RP work
+
+RP-007 native delivery (16 November 2026): added generic `rustx package` for host-native macOS .app/ZIP and Windows portable ZIP, explicit binary/host selection, static Windows CRT, direct dependency inspection, license inventory and checksums. A fresh scaffold was packaged/extracted and reached two native CPU frames on macOS with source hidden and no Rust on PATH. Windows CI and independent clean-machine/signing/installer gates remain open; this is not full RP-007 completion. [Native guide](NATIVE_PACKAGING.md) and [evidence](evidence/react-parity/RP-007/README.md). The revised task ledger accounts for every RP ID: RP-001 and RP-005 remain unfinished; native priorities are RP-007–010 and browser input is retained as RP-011. Review open work before selecting the next increment.
+
+Historical entries below retain their original sequence; the current RP-007 entry and complete table in REACT_PARITY_TASKS.md govern the next task. Do not treat earlier “pause before” notes as the current backlog.
 
 Docker demo onboarding (16 November 2026): a source-only multi-stage Dockerfile and Compose workflow build and serve the production browser examples and fixture APIs without host Rust/Node tools. The explicit `serve --host` option supports container networking while preserving local loopback defaults. README now covers Docker/PowerShell setup, post–Stage 4 RP increments, native-first/full-browser goals and remaining parity gates. Live compiler/native Windows execution are excluded from this container. See [container evidence](evidence/docker-demo/README.md) for actual verification and limits.
 

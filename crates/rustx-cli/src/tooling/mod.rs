@@ -1,4 +1,5 @@
 pub mod format;
+pub mod native;
 pub mod symbols;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -164,7 +165,7 @@ codegen-units = 1
         &destination.join("src/lib.rs"),
         include_str!("../../templates/scaffold-lib.rs"),
     )?;
-    write(&destination.join("src/main.rs"),format!("#[cfg(not(target_arch=\"wasm32\"))]\nfn main() {{ {}::native(); }}\n#[cfg(target_arch=\"wasm32\")]\nfn main() {{}}\n",name.replace('-',"_")))?;
+    write(&destination.join("src/main.rs"),format!("#![cfg_attr(target_os=\"windows\", windows_subsystem=\"windows\")]\n#[cfg(not(target_arch=\"wasm32\"))]\nfn main() {{ {}::native(); }}\n#[cfg(target_arch=\"wasm32\")]\nfn main() {{}}\n",name.replace('-',"_")))?;
     for file in ["src/lib.rs", "src/main.rs", "src/app.rustx"] {
         let path = destination.join(file);
         write(
@@ -178,10 +179,10 @@ codegen-units = 1
     )?;
     write(
         &destination.join(".gitignore"),
-        "/target/\n/dist/\n/.rustx/\n",
+        "/target/\n/dist/\n/dist-native/\n/releases/\n/.rustx/\n",
     )?;
     write(&destination.join(".vscode/settings.json"),"{\"files.associations\":{\"*.rustx\":\"rust\"},\"editor.formatOnSave\":true,\"rust-analyzer.check.command\":\"check\"}\n")?;
-    write(&destination.join("README.md"),format!("# {name}\n\nCreated from complete local RustX source. Edit `src/app.rustx`; setup runs once per mount.\n\n```sh\nrustx doctor\nrustx dev --target web\nrustx fmt --check\nrustx check\nrustx test\nrustx build --target web --release\n```\n\nNo Node/Python/Docker runtime is required. Rust 1.90.0, the wasm32 target and wasm-bindgen 0.2.100 are required for web builds. Native Windows needs MSVC/C++ build tools. `rustx build --target windows` must run on Windows. Vendored framework source and licenses make this project independent of the original checkout. Install the supplied VS Code extension for markup formatting/completions; rust-analyzer supplies Rust diagnostics/navigation.\n"))?;
+    write(&destination.join("README.md"),format!("# {name}\n\nCreated from complete local RustX source. Edit `src/app.rustx`; setup runs once per mount.\n\n```sh\nrustx doctor\nrustx dev --target native\nrustx package --target native\n# Optional browser target:\nrustx dev --target web\nrustx fmt --check\nrustx check\nrustx test\nrustx build --target web --release\n```\n\nNo Node/Python/Docker runtime is required. Rust 1.90.0, the wasm32 target and wasm-bindgen 0.2.100 are required for web builds. Native Windows needs MSVC/C++ build tools (use a developer shell for packaging). `rustx package --target native` produces a macOS .app or Windows portable ZIP in dist-native, with dependency inspection, licenses and checksums. Recipients do not need Rust installed. Packages are unsigned; signing/clean-machine acceptance remains separate. Existing package directories are never overwritten; use --out to select a new output. `rustx build --target windows` must run on Windows. Vendored framework source and licenses make this project independent of the original checkout. Install the supplied VS Code extension for markup formatting/completions; rust-analyzer supplies Rust diagnostics/navigation.\n"))?;
     fs::copy(framework.join("Cargo.lock"), destination.join("Cargo.lock"))
         .map_err(|e| e.to_string())?;
     let dest = destination.canonicalize().map_err(|e| e.to_string())?;
@@ -189,7 +190,7 @@ codegen-units = 1
         run("cargo", &["generate-lockfile"], &dest)?;
     }
     println!(
-        "Created {}\nNext: cd {} && rustx dev --target web",
+        "Created {}\nNext: cd {} && rustx dev --target native",
         dest.display(),
         destination.display()
     );

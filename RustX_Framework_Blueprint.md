@@ -2,10 +2,12 @@
 
 **Specification:** 1.1 · **Implementation update:** 13 November 2026 · **Prepared:** 30 October 2026
 **Working name:** RustX · **Authoring language:** Rust · **UI syntax:** `rustx! { ... }`  
-**Targets:** browser WebAssembly first; shared native Windows x64 application second  
+**Targets:** post–Stage 4 native-first Windows/macOS delivery with full browser WebAssembly/canvas coverage; Linux expansion separately gated
 **Document status:** implementation contract with the Stage 4 delivery candidate; full v1 acceptance remains open.
 
 ## 0. Current source and continuation — 13 November 2026
+
+Post–Stage 4 execution correction, 16 November 2026: native delivery now has explicit RP-007 packaging, RP-008 interaction, RP-009 text/accessibility and RP-010 rendering/performance milestones. Browser conformance remains RP-011. REACT_PARITY_TASKS.md accounts for all task IDs and retains unfinished RP-001/RP-005 and platform gates. This changes future work priority, not the historical RX acceptance results below. See NATIVE_PACKAGING.md for the implemented native package workflow and its actual-target limits.
 
 The completion follow-up adds a public-API RustX capabilities guide at `#/capabilities`, with concrete application ideas, working examples and honest limits. Chromium/WebKit wide/narrow layout, keyboard navigation and first-frame deep-link checks pass. Windows packaging excludes its checksum manifest from the frozen payload and verifies emitted checksums; CI collects available dependency notices first. New four-stage evidence is in docs/evidence/completion-2026-11-13/. PR #2 is the authorized merge to main; consult its final check/merge state. Full v1 acceptance still requires the remaining target/manual/release gates.
 
@@ -25,7 +27,7 @@ The user requested continued Stage 4 work, a full delivery with readable, consis
 
 RustX is a Rust-authored, declarative UI framework for building interactive applications. Developers import typed components such as `<Button>`, compose them with JSX-like markup, express behavior in Rust, and compile their application into WebAssembly. Rust owns application state, component identity, layout, text shaping, hit testing, and the visual scene. A renderer draws that scene into a browser canvas. A small browser host provides networking and other browser capabilities.
 
-The same application and engine must also compile to native Windows machine code, presented in a native window without an embedded browser. This preserves the previous RustUI project's browser/Windows direction. The browser experience is the primary design and delivery priority.
+The same application and engine must also compile to native Windows machine code, presented in a native window without an embedded browser. This preserves the previous RustUI project's browser/Windows direction. For post–Stage 4 work, native applications have architectural and delivery priority while full browser application coverage remains a required parallel track.
 
 **RustX v1 is complete when a developer unfamiliar with the implementation can install its CLI, create a project, build the reference applications, run them in the supported browsers and Windows, and pass every required acceptance gate in this document.** A working counter, a GPU screenshot, or a successful cross-compile alone does not satisfy this definition.
 

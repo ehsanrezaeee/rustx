@@ -25,11 +25,12 @@ Stage 4 established the CLI, editor tooling, production web builds and applicati
 | RP-003 scoped context | Hardened nearest-provider lookup, replacement and owner disposal; added isolation and reentrant lifetime regressions |
 | RP-006 external stores | Added coherent versioned snapshots, bounded scoped subscriptions, deduplication, source replacement and explicit commit-time rejection; this is a UI-thread push API, not full React hook compatibility |
 | RP-004 browser host | Added repeatable DOM budgets and CI checks, complete singleton host teardown/restart, pending-request cleanup, and production status-badge removal |
+| RP-007 native packaging | Added a generic native package command, macOS .app/ZIP and Windows portable ZIP paths, dependency inspection, license inventory and checksums; actual target acceptance is tracked separately |
 | Demo onboarding | Added the optional Docker source-build workflow so trying the browser examples does not require a local Rust toolchain |
 
 Our goal is to become a practical alternative to React + TSX and demonstrate a measurable advantage on equivalent applications. Native applications are the architectural priority, with a long-term goal of removing the DOM as far as platform capabilities permit. Browser behavior remains a full workstream: RustX draws ordinary UI on canvas while retaining the browser bridges needed for accessibility, text input and platform services. We will not remove those bridges merely to reduce a DOM count.
 
-Next work includes broader browser input/accessibility conformance, stronger core semantics, remaining application features, and matched React benchmarks. **RustX has not yet demonstrated full React parity or a benchmark win.** Actual BFCache restoration, physical IME/screen-reader/mobile tasks and the existing release gates remain open. The latest core suite has 154 passing Rust tests; bounded Chromium/WebKit checks are evidence for their tested tasks, not universal platform certification.
+Next native priorities are **RP-007 packaging/target verification**, **RP-008 native interaction**, **RP-009 native text/accessibility**, and **RP-010 native rendering/performance**. Browser input/AT remains **RP-011**. RP-001's exhaustive audit and RP-005's matched React benchmarks are still unfinished; starting a higher-numbered task does not complete them. **RustX has not yet demonstrated full React parity or a benchmark win.** Actual BFCache restoration, physical IME/screen-reader/mobile tasks and the existing release gates remain open. The latest core suite has 158 passing Rust tests; bounded Chromium/WebKit checks are evidence for their tested tasks, not universal platform certification.
 
 Follow the [React parity roadmap](docs/REACT_PARITY_PLAN.md), [capability matrix](docs/REACT_PARITY_MATRIX.md), [execution ledger](docs/REACT_PARITY_TASKS.md), and [DOM exception budgets](docs/DOM_EXCEPTIONS.md). Existing Stage 4 acceptance criteria remain binding.
 
@@ -167,7 +168,24 @@ Wait for `isolated compiler serving`, then open `http://127.0.0.1:3000/?renderer
 
 Compilation requires the pinned toolchain, dependencies and a functioning OS sandbox. macOS Seatbelt is the locally exercised provider; the Linux bubblewrap provider remains unverified, and Windows compiler isolation is unavailable. Missing isolation fails closed. Compiled output runs in an opaque iframe and bounded worker. See the [playground guide](docs/stage4/PLAYGROUND.md) for resource bounds and isolation limits.
 
-## Native application
+## Native application and packages
+
+Create and package your own native app (developer machines need Rust and native build tools):
+
+```sh
+cargo install --path crates/rustx-cli --bin rustx --locked
+rustx new my-native-app
+cd my-native-app
+rustx dev --target native
+# Close the development window, then:
+rustx package --target native
+```
+
+On Windows, run packaging from Developer PowerShell for Visual Studio with the MSVC toolchain and `dumpbin` available. No Node/wasm-bindgen is needed for native packaging. The generated `dist-native/` contains a macOS .app or Windows portable executable, ZIP, dependency report, license inventory and checksums. **Recipients launch the extracted app without Rust, Node or a browser runtime.** The output targets the build machine's OS/architecture; it is not a cross-build or signed installer. Existing output is preserved: choose `--out releases/native-v2` for another package.
+
+Read the [native packaging guide](docs/NATIVE_PACKAGING.md) for exact prerequisites, artifact layout, verification and open signing/clean-machine gates. [RP-007 evidence](docs/evidence/react-parity/RP-007/README.md) distinguishes actual macOS startup from Windows CI and pending platform checks.
+
+To run the repository's shared demo directly:
 
 From the repository root on macOS/Linux:
 
