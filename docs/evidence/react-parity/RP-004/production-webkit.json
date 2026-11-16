@@ -1,0 +1,15 @@
+{
+  "engine": "webkit",
+  "date": "2026-11-16T16:31:25.193Z",
+  "checks": [
+    "actual production bundle renders canvas with working semantic input; no status/tooling/audit API even when requested",
+    "browser performed fresh back navigation; no actual BFCache success claimed for this engine",
+    "blocked Wasm startup retains accessible emergency reload UI without ordinary DOM widgets"
+  ],
+  "version": "27.2",
+  "bfcache": {
+    "persisted": false,
+    "sameDocument": false
+  },
+  "result": "pass"
+}

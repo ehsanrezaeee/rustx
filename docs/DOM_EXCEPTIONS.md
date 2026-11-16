@@ -1,18 +1,56 @@
-# Browser DOM exception register — initial source audit
+# Browser DOM exception register — RP-004
 
-16 November 2026. Owner: browser host adapter. These are actual source dependencies, not a claim that the current DOM-minimization goal is achieved. Measure live counts/mutations in RP-004. Normal component layout/text remains Rust-owned.
+16 November 2026. Browser host ownership is specified in ADR-015. Rust owns ordinary application state, layout, text and canvas pixels. The DOM below provides bounded browser capabilities; removing it must not remove accessible content or input behavior.
 
-| ID / source | Capability and owner/lifetime | Cardinality / updates | Alternative and remaining evidence |
+| ID / source | Capability and owner/lifetime | Bound / accounting category | Remaining evidence |
 | --- | --- | --- | --- |
-| DOM-01 `web/index.html`, `web/host.js` | Document, surface canvas, bootstrap script/style and semantic root; page lifetime | Fixed shell per current singleton host; canvas replaced on recovery | Required browser shell; multiple roots/disposal unverified |
-| DOM-02 `web/semantics.js` | Transparent inputs/textareas/buttons/anchors/spans from Rust semantics; projection owns nodes/listeners | One per projected semantic node; geometry/properties updated at sync | Cannot remove without AT/input evidence; pooling not yet justified; RP-002 fixes disposal, RP-004 measures mutation cost |
-| DOM-03 `web/index.html`, `web/host.js` | Visible status badge and fatal reload UI; page/failed runtime lifetime | One status region, fatal message/button | Status is visible DOM outside canvas; migrate normal status to Rust or devtools-only. Fatal recovery needs an explicit host exception when Rust cannot run |
-| DOM-04 `web/services.js` | File input, download anchor/object URLs, printable popup | Operation lifetime; verify cancellation/cleanup | Browser picker/download/print capabilities; test actual permission/print behavior |
-| DOM-05 `web/playground.js`, `playground/preview.html` | Opaque sandbox iframe runs compiled canvas app | At most current preview; replaced/removed on navigation/pagehide | Security isolation, not normal DOM widget rendering; audit inner host separately |
-| DOM-06 `web/inspector.html`, `web/inspector.js`, `web/devtools.js` | Developer inspection UI | Development-only; separate tool lifetime | Tooling exception; prove production defaults and listeners |
-| DOM-07 generated bundle head/service worker | Resource hints, metadata, script loading | Build-time and host lifecycle | Partial: no general typed metadata/resource API |
-| DOM-08 future semantic/server/print exports | Not yet implemented full content projection | No approved count budget until design | Must share Rust content model, avoid duplicate announcements; full browser parity blocker |
+| DOM-01 `web/index.html`, `web/host.js` | Document and singleton canvas/semantic/fatal shell; page lifetime | `shell`: 7 elements in reference document; surface replaced on recovery/disposal | Simultaneous roots in one Wasm module are unsupported; independent documents own separate hosts |
+| DOM-02 `web/semantics.js` | Transparent semantic/input projection; host owns elements and listener controllers | `semantic`: scales with Rust accessible content; exact eight-route baselines below | No pooling; physical IME/AT acceptance remains open |
+| DOM-03 `web/host.js` | Emergency reload UI when Rust cannot run | `emergency`: two children in fatal container; ordinary production status badge removed | Actual blocked-Wasm startup tested; not every fatal failure mode |
+| DOM-04 `web/services.js` | File input, download anchor/object URL, printable popup; operation lifetime | `service`: tagged transient inputs/anchors; existing service admission bounds apply | Main-document audit excludes popup contents; real permission/print UI remains a separate gate |
+| DOM-05 `web/playground.js`, `playground/preview.html` | Opaque compiled app iframe; preview adapter lifetime | `preview`: at most one frame; host disposal removes it and its message/click listeners | 100 actual-DOM adapter cycles use a stub receiver; no new compiled-preview/inner-host certification |
+| DOM-06 `web/devtools.js`, inspector files | Status, highlight, optional launcher/error overlay and separate inspector page | `tooling`: two elements in default dev host; zero after dispose and in production | Inspector popup owns a separate document; not included in main-document counts |
+| DOM-07 generated bundle head/worker | Metadata, resource hints, script/style loading; document lifetime | `resource`: 6 elements in measured dev shell | Production hashed resources differ; no general typed metadata API yet |
+| DOM-08 future semantic/server/print exports | Full content projection remains unimplemented | No approved budget until design | Must share Rust content and avoid duplicate announcements; browser parity blocker |
 
-Required budget before optimization: zero ordinary visible application controls rendered by DOM; enumerate host emergency/tooling/embedded exceptions separately. Current status badge is a recorded gap, not an accepted ordinary-widget exception. Semantic-node budgets scale with accessible content; preserve focused virtual rows. RP-004 must freeze counts for each reference app, mutations per semantic change and 100-cycle teardown baselines before optimizing. Do not disable accessibility to meet budgets.
+## Frozen reference budgets
 
-RP-002 removes projection-owned elements and event listeners on disposal, clears composition/focus references, preserves unrelated root children, and rejects recreation after disposal. Real-browser adapter checks use a stub Rust receiver, so they prove DOM lifecycle only. Full host disposal and BFCache restoration remain separate work.
+Run a development build at 1280×720, DPR 1, CPU renderer. `fixtures/dom-budget-chromium.json` and `fixtures/dom-budget-webkit.json` freeze exact category counts and mutation ceilings. They agree on current semantic elements:
+
+| Route | Semantic elements |
+| --- | ---: |
+| `/` | 36 |
+| `/people` | 21 |
+| `/lab` | 26 |
+| `/engine` | 99 |
+| `/applications` | 67 |
+| `/playground` (no compiler configured) | 18 |
+| `/capabilities` | 50 |
+| `/store` | 13 |
+
+Each has shell 7, resource 6 and tooling 2; service, preview, emergency and unregistered counts are zero in these settled workloads. After root disposal only shell 7 and resource 6 remain. This is not a universal maximum for applications, a matched React benchmark, or proof that optional service/preview branches allocate nothing.
+
+One `/store` publication has zero added/removed elements. Attribute/text/child-list mutation ceilings use the recorded baseline plus 10% rounded up and 10 records where nonzero, to allow bounded browser bookkeeping variance. Addition/removal ceilings have no slack. Initial creation records and 100-cycle results are retained separately. No semantic diff/pooling optimization was made to obtain these numbers.
+
+`?dom-audit=1` on a devtools build exposes `window.rustx.dom()`: main-document live element counts, cumulative MutationObserver record counts by category, and any semantic elements whose own computed opacity is nonzero. The observer is page-owned across host restarts. It drains records into numeric totals and retains no removed nodes or text. Attribute records count writes, not distinct value changes; textContent updates can appear as child-list records. Transient service/emergency nodes are counted even if detached before delivery. Unknown elements are reported as `unregistered`; this is diagnostic accounting, not a security boundary or a complete visual-paint audit. Iframe/popup interiors, GPU/native resources and browser heap memory are outside this counter.
+
+## Ownership and enforcement
+
+`window.rustx.dispose()` is dev-only, idempotent and immediately releases host registrations, semantic nodes, network admission entries, service resources and tool/preview DOM. Pending GPU initialization, if present, is awaited before `restart()` mounts a replacement. Concurrent restarts share one promise; captured old controls/development methods cannot call the new runtime. Rust app disposal is exported by both the lab and the shared scaffold macro. The page shell and foreign semantic-root children remain document-owned.
+
+Persisted `pagehide` pauses painting and keeps Rust/semantic state; persisted `pageshow` invalidates/resizes/resumes. Non-persisted `pagehide` disposes. Synthetic lifecycle checks pass, but actual back navigation in both tested engines created a fresh document: BFCache restoration/eligibility is **unverified**, including live services and embedded tools. No unload hook or blanket BFCache support claim is introduced.
+
+After `bash scripts/build-web.sh`, serve `dist` on port 3000 and run:
+
+```sh
+npm run test:dom:budget
+npm run test:host:ownership
+RUSTX_BROWSER=webkit npm run test:dom:budget
+RUSTX_BROWSER=webkit npm run test:host:ownership
+# Build production, serve it on 3011, then:
+RUSTX_URL=http://127.0.0.1:3011 npm run test:dom:production
+```
+
+Budget checks reject unexplained count changes, ordinary unregistered DOM, visible semantic projection elements and excessive mutation records. They execute 100 route cycles and 100 full Rust root dispose/restart cycles, not mocked application trees. The ownership runner also tests pending HTTP cancellation and isolated preview-adapter cleanup. Linux Chromium CI invokes these checks and the production test; its new run result must be read from CI, not inferred from local macOS success. Only intentionally re-baseline with `RUSTX_RECORD_DOM=1` after reviewing a changed workload, updating the register and retaining old evidence. Never raise bounds merely to hide a regression or disable accessibility to meet them.
+
+Actual evidence and verification limits: [RP-004](evidence/react-parity/RP-004/README.md). RP-002's foreign-child/listener lifecycle checks remain binding. Physical screen-reader, OS IME, mobile and multi-root acceptance remain separate work.

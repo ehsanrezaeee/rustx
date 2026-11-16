@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-16T16:28:08.505Z",
+  "checks": [
+    "embedded SDK creates independent vendored project from unrelated directory",
+    "new, doctor, formatter, locked check/test and standalone web build",
+    "real source edit rebuilds Wasm and reloads browser with matching output",
+    "real Cargo error overlay and recovery after source correction"
+  ],
+  "limitations": [
+    "Uses this runner's dependency/toolchain cache; not an independent first-ever-download installation"
+  ],
+  "counterCompressedBytes": 2661527,
+  "counterCompression": "br",
+  "counterGzipBytes": 3064143,
+  "counterTransferGate": true,
+  "project": "/var/folders/gh/9qdnzv9s5wn8n0cj724y3lfh0000gn/T/rustx-stage4-cli-A4Gu20/sample",
+  "counterColdStartup": {
+    "rawMs": [
+      2664.692292000007,
+      2650.712667,
+      2648.5871669999906,
+      2648.6637499999924,
+      2650.1573329999956
+    ],
+    "encodings": [
+      "br",
+      "br",
+      "br",
+      "br",
+      "br"
+    ],
+    "medianMs": 2650.1573329999956,
+    "p95Ms": 2664.692292000007,
+    "budgetMs": 3000,
+    "passed": true,
+    "method": "Fresh Chromium contexts, CPU renderer, no cache/SW, 10 Mbps down / 100 ms RTT; first usable semantic control",
+    "limitations": "Automation timing; hardware/power/device matrix and physical presentation remain separate acceptance"
+  },
+  "result": "passed"
+}

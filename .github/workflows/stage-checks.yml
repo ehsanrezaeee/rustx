@@ -106,12 +106,15 @@ jobs:
           npm run test:browser
           npm run test:stage2:browser
           npm run test:stage3:browser
+          npm run test:dom:budget
+          npm run test:host:ownership
           npm run test:capabilities
           npm run test:stage4:cli
           target/debug/rustx build --target web --release --out dist-release
           target/debug/rustx serve dist-release 3011 > production-server.log 2>&1 &
           production=$!
           trap 'kill "$server" "$production" 2>/dev/null || true' EXIT
+          RUSTX_URL=http://127.0.0.1:3011 npm run test:dom:production
           npm run test:stage4:deploy
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
@@ -120,5 +123,6 @@ jobs:
           path: |
             browser-server.log
             production-server.log
+            docs/evidence/react-parity/RP-004/
             docs/evidence/*.json
             docs/evidence/*chromium*.png

@@ -100,6 +100,8 @@ export class HostNetwork {
       error = 'timeout';
       controller.abort();
     }, command.timeout_ms);
+    const stopTimeout = () => clearTimeout(timer);
+    controller.signal.addEventListener('abort', stopTimeout, { once: true });
     try {
       const url = this.base ? new URL(command.url, this.base) : command.url;
       const response = await this.fetcher.call(globalThis, url, {
@@ -150,6 +152,7 @@ export class HostNetwork {
       error = error || (controller.signal.aborted ? 'cancelled' : 'Network request failed');
     } finally {
       clearTimeout(timer);
+      controller.signal.removeEventListener('abort', stopTimeout);
       this.active.delete(command.id);
     }
     if (!this.disposed) this.complete(command.id, status, body, error, HOST_VERSION, headers);
@@ -157,6 +160,7 @@ export class HostNetwork {
   dispose() {
     this.disposed = true;
     for (const controller of this.active.values()) controller.abort();
+    this.active.clear();
   }
 }
 
@@ -409,6 +413,7 @@ export class HostServices {
           const resource = this.admit(c.id, { kind: 'file' });
           const input = e.document.createElement('input');
           resource.cancel = () => input.remove();
+          input.setAttribute?.('data-rustx-dom', 'service');
           input.type = 'file';
           input.accept = c.accept;
           input.style.position = 'fixed';
@@ -454,6 +459,7 @@ export class HostServices {
             blob = new e.Blob([bytes], { type: c.mime }),
             url = e.URL.createObjectURL(blob),
             a = e.document.createElement('a');
+          a.setAttribute?.('data-rustx-dom', 'service');
           a.href = url;
           a.download = c.name;
           e.document.body.append(a);

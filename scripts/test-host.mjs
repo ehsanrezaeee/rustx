@@ -52,6 +52,7 @@ calls = [];
 const disposing = new HostNetwork((...args) => calls.push(args), pendingFetch, 'http://localhost/');
 const job = disposing.request(command(1));
 disposing.dispose();
+assert.equal(disposing.active.size, 0, 'dispose releases request registrations synchronously');
 await job;
 await disposing.request(command(2));
 assert.equal(calls.length, 0);

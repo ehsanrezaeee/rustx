@@ -13,6 +13,12 @@ macro_rules! export_app {
                 static GPU: RefCell<Option<WebGpu>> = const { RefCell::new(None) };
             }
             #[wasm_bindgen]
+            pub fn dispose_app() {
+                GPU.with(|g| drop(g.borrow_mut().take()));
+                let app = APP.with(|a| a.borrow_mut().take());
+                drop(app);
+            }
+            #[wasm_bindgen]
             pub fn init_app(capabilities: &str) -> Result<(), JsValue> {
                 let capabilities = serde_json::from_str(capabilities)
                     .map_err(|e| JsValue::from_str(&format!("Invalid host report: {e}")))?;

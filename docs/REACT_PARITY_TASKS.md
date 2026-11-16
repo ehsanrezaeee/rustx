@@ -1,6 +1,6 @@
 # React parity execution ledger — revision 1
 
-16 November 2026. This ledger adds RP tasks without changing RX verification. The roadmap is REACT_PARITY_PLAN.md; source findings are REACT_PARITY_MATRIX.md. Current milestone: RP-003 context/owner isolation, authorized for commit and push after verification. Pause before the next increment.
+16 November 2026. This ledger adds RP tasks without changing RX verification. The roadmap is REACT_PARITY_PLAN.md; source findings are REACT_PARITY_MATRIX.md. Current milestone: RP-004 DOM accounting and host ownership, authorized for commit and push after verification. Pause before the next increment.
 
 ## RP-001 — Capability audit and comparative baseline contract
 
@@ -30,7 +30,7 @@ Acceptance: exact expected values/identity and cleanup counts across all cases; 
 
 ## RP-004 — DOM accounting and host lifecycle
 
-Milestone M2; owner next browser agent; state **proposed**; depends on RP-002. Sources: DOM_EXCEPTIONS.md, web/host.js, web/semantics.js, scripts/test-stage4-budgets.mjs. Outcome: measured bridge resource bounds and reusable host teardown. No input pooling before actual AT/IME checks.
+Milestone M2; owner current browser agent; state **verified for the measured CPU host/DOM contract**; depends on RP-002. Delivered ADR-015, opt-in main-document category/mutation counters, frozen eight-route budgets, dev-only status, singleton host disposal/restart, scoped preview/tools, Rust runtime disposal exports and synchronous HTTP registration/timeout cleanup. Chromium/WebKit execute 100 route and 100 real Rust root cycles plus production/recovery checks. [Evidence](evidence/react-parity/RP-004/README.md). Actual BFCache restoration, GPU, physical IME/AT/mobile and simultaneous roots remain open; this is not full browser lifecycle certification. Sources: DOM_EXCEPTIONS.md, web/host.js, web/semantics.js, scripts/test-stage4-budgets.mjs. Outcome: measured bridge resource bounds and reusable host teardown. No input pooling before actual AT/IME checks.
 
 Implement opt-in category/count/mutation instrumentation, then 100 route/root cycles with real Rust app. Specify pagehide/pageshow/BFCache semantics and multi-root ownership before changing listeners. Move ordinary status rendering to Rust or confine to devtools. Preserve fatal-host recovery exception. Acceptance: owned live counts return to baseline, no stale runtime callbacks, no ordinary DOM visual widgets and no semantic loss. Freeze workload DOM budgets before optimization. Evidence needs real browsers; mocks only test accounting helpers. Next: input/AT platform conformance.
 

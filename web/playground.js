@@ -1,9 +1,12 @@
 // The containing rectangle is supplied by Rust. Visitor code runs in an opaque frame's worker.
 export function install(app, config, schedule) {
+  const lifetime = new AbortController();
+  let disposed = false;
   let iframe,
     current = '',
     nodeId;
   function sync(inspection) {
+    if (disposed) return;
     const node = inspection.nodes.find((n) => n.id === 'playground-surface');
     const value = node?.text || '';
     let valid = false;
@@ -49,7 +52,7 @@ export function install(app, config, schedule) {
           : 'inset(100%)',
     });
   }
-  addEventListener('message', (event) => {
+  const onMessage = (event) => {
     if (
       !iframe ||
       event.source !== iframe.contentWindow ||
@@ -66,8 +69,8 @@ export function install(app, config, schedule) {
       app.input(nodeId, event.data.message.slice(0, 1000), false);
       schedule();
     }
-  });
-  document.addEventListener('click', (event) => {
+  };
+  const onClick = (event) => {
     if (event.target?.dataset?.testid === 'playground-go-error') {
       const node = JSON.parse(app.inspect()).nodes.find((n) => n.id === 'playground-source');
       if (node) {
@@ -75,7 +78,17 @@ export function install(app, config, schedule) {
         schedule();
       }
     }
-  });
-  addEventListener('pagehide', () => iframe?.remove(), { once: true });
-  return { sync };
+  };
+  addEventListener('message', onMessage, { signal: lifetime.signal });
+  document.addEventListener('click', onClick, { signal: lifetime.signal });
+  return {
+    sync,
+    dispose() {
+      disposed = true;
+      lifetime.abort();
+      iframe?.remove();
+      iframe = null;
+      current = '';
+    },
+  };
 }
