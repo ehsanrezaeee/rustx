@@ -18,7 +18,7 @@ fn validate(args: &[String]) -> Result<(), String> {
         "fmt" => (&["--check", "--stdin"], &[], 0),
         "check" => (&["--json", "--message-format=json"], &[], 0),
         "test" | "symbols" | "version" | "--version" | "help" | "--help" | "-h" => (&[], &[], 0),
-        "serve" => (&[], &[], 2),
+        "serve" => (&[], &["--host"], 2),
         "playground" => (&[], &["--framework", "--port", "--app-origin"], 0),
         "build" => (
             &["--release", "--devtools", "--instrument", "--benchmark"],
@@ -72,10 +72,22 @@ fn execute() -> Result<(), String> {
         .canonicalize()
         .map_err(|e| e.to_string())?;
     match args.first().map(String::as_str) {
-        Some("serve") => server::serve(
-            Path::new(args.get(1).map(String::as_str).unwrap_or("dist")),
-            args.get(2).map(String::as_str).unwrap_or("3000"),
-        ),
+        Some("serve") => {
+            let mut positional = Vec::new();
+            let mut iter = args.iter().skip(1);
+            while let Some(arg) = iter.next() {
+                if arg == "--host" {
+                    iter.next();
+                } else {
+                    positional.push(arg.as_str());
+                }
+            }
+            server::serve_on(
+                Path::new(positional.first().copied().unwrap_or("dist")),
+                positional.get(1).copied().unwrap_or("3000"),
+                option(&args, "--host").unwrap_or("127.0.0.1"),
+            )
+        }
         Some("new") => tooling::scaffold(
             Path::new(
                 args.get(1)
@@ -144,7 +156,7 @@ fn execute() -> Result<(), String> {
             Ok(())
         }
         None | Some("help" | "--help" | "-h") => {
-            println!("RustX\n  rustx new my-app [--framework PATH]\n  rustx doctor [--json]\n  rustx dev --target web|native|windows [--port 3000] [--compiler-url ORIGIN]\n  rustx check [--json]\n  rustx fmt [--check|--stdin]\n  rustx test\n  rustx build --target web|native|windows --release [--out dist] [--devtools]\n  rustx playground [--port 3002] [--app-origin http://127.0.0.1:3000]\n  rustx serve dist 3000");
+            println!("RustX\n  rustx new my-app [--framework PATH]\n  rustx doctor [--json]\n  rustx dev --target web|native|windows [--port 3000] [--compiler-url ORIGIN]\n  rustx check [--json]\n  rustx fmt [--check|--stdin]\n  rustx test\n  rustx build --target web|native|windows --release [--out dist] [--devtools]\n  rustx playground [--port 3002] [--app-origin http://127.0.0.1:3000]\n  rustx serve dist 3000 [--host 127.0.0.1]");
             Ok(())
         }
         Some(command) => Err(format!("Unknown command {command}; use rustx --help")),

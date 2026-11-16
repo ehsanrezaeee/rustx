@@ -1,0 +1,13 @@
+services:
+  demo:
+    build:
+      context: .
+      target: demo
+    ports:
+      - '127.0.0.1:${RUSTX_PORT:-3000}:3000'
+    init: true
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

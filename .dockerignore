@@ -1,0 +1,23 @@
+# Source-only build context. Host tools, caches, bundles and credentials stay out.
+**
+!Cargo.toml
+!Cargo.lock
+!rust-toolchain.toml
+!LICENSE
+!NOTICE.md
+!crates/
+!crates/**
+!examples/
+!examples/**
+!web/
+!web/**
+!playground/
+!playground/**
+!fixtures/
+!fixtures/**
+!docs/
+!docs/**
+crates/rustx-cli/assets/
+docs/evidence/
+**/target/
+**/.DS_Store

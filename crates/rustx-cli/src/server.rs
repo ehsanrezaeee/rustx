@@ -386,14 +386,21 @@ fn respond(mut stream: TcpStream, root: &Path) {
     }
 }
 pub fn serve(root: &Path, port: &str) -> Result<(), String> {
+    serve_on(root, port, "127.0.0.1")
+}
+pub fn serve_on(root: &Path, port: &str, host: &str) -> Result<(), String> {
+    let host: std::net::IpAddr = host
+        .parse()
+        .map_err(|_| "Invalid bind IP address".to_owned())?;
     let root = root
         .canonicalize()
         .map_err(|e| format!("Build the bundle first: {e}"))?;
     let port: u16 = port.parse().map_err(|_| "Invalid port".to_owned())?;
-    let listener = TcpListener::bind(("127.0.0.1", port)).map_err(|e| e.to_string())?;
+    let listener = TcpListener::bind((host, port)).map_err(|e| e.to_string())?;
     println!(
-        "RustX serving {} at http://127.0.0.1:{port}",
-        root.display()
+        "RustX serving {} at http://{}",
+        root.display(),
+        listener.local_addr().map_err(|e| e.to_string())?
     );
     for stream in listener.incoming() {
         let root = root.clone();

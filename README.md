@@ -1,6 +1,6 @@
 # RustX
 
-RustX is an experimental declarative UI framework for writing interactive applications in Rust. Compose typed components with `rustx!` markup, manage state in Rust, and compile to WebAssembly for the browser or a shared native application. The browser is the primary target; native Windows is the second target.
+RustX is an experimental declarative UI framework for writing interactive applications in Rust. Compose typed components with `rustx!` markup, manage state in Rust, and compile to WebAssembly for the browser or a shared native application. The current demos run in browsers and as a shared native application. Our post–Stage 4 direction is native-first architecture with full browser application coverage on canvas.
 
 Rust owns component identity, reactive state, layout, text shaping, editing, hit testing and the rendered scene. A canvas displays the UI through WebGPU or a CPU renderer. A small browser host connects platform features such as input, accessibility semantics, networking, storage and clipboard. Component setup runs once per mount; reactive updates change retained state and views.
 
@@ -14,7 +14,62 @@ Rust owns component identity, reactive state, layout, text shaping, editing, hit
 
 This is a Stage 4 implementation candidate, **not an accepted v1 release**. Full Windows interaction and clean-machine installation, real OS IME, human screen-reader tasks, physical mobile/Safari coverage, the strict GPU frame budget and dependency findings remain open. See the [acceptance ledger](docs/ACCEPTANCE.md) and [support matrix](docs/stage4/SUPPORT.md) for evidence and limits.
 
-## Run from a GitHub checkout
+## Since Stage 4: toward React/TSX application parity
+
+Stage 4 established the CLI, editor tooling, production web builds and application demos. Subsequent work is strengthening that foundation rather than declaring a finished React replacement:
+
+| Delivered increment | What changed |
+| --- | --- |
+| RP-001 initial audit | A React capability matrix, explicit gaps, DOM exception register and comparative workload plan; the exhaustive audit is still unfinished |
+| RP-002 semantic lifetime | Removed projection-owned DOM nodes and listeners on disposal, preserving unrelated children |
+| RP-003 scoped context | Hardened nearest-provider lookup, replacement and owner disposal; added isolation and reentrant lifetime regressions |
+| RP-006 external stores | Added coherent versioned snapshots, bounded scoped subscriptions, deduplication, source replacement and explicit commit-time rejection; this is a UI-thread push API, not full React hook compatibility |
+| RP-004 browser host | Added repeatable DOM budgets and CI checks, complete singleton host teardown/restart, pending-request cleanup, and production status-badge removal |
+| Demo onboarding | Added the optional Docker source-build workflow so trying the browser examples does not require a local Rust toolchain |
+
+Our goal is to become a practical alternative to React + TSX and demonstrate a measurable advantage on equivalent applications. Native applications are the architectural priority, with a long-term goal of removing the DOM as far as platform capabilities permit. Browser behavior remains a full workstream: RustX draws ordinary UI on canvas while retaining the browser bridges needed for accessibility, text input and platform services. We will not remove those bridges merely to reduce a DOM count.
+
+Next work includes broader browser input/accessibility conformance, stronger core semantics, remaining application features, and matched React benchmarks. **RustX has not yet demonstrated full React parity or a benchmark win.** Actual BFCache restoration, physical IME/screen-reader/mobile tasks and the existing release gates remain open. The latest core suite has 154 passing Rust tests; bounded Chromium/WebKit checks are evidence for their tested tasks, not universal platform certification.
+
+Follow the [React parity roadmap](docs/REACT_PARITY_PLAN.md), [capability matrix](docs/REACT_PARITY_MATRIX.md), [execution ledger](docs/REACT_PARITY_TASKS.md), and [DOM exception budgets](docs/DOM_EXCEPTIONS.md). Existing Stage 4 acceptance criteria remain binding.
+
+## Quick demo with Docker (Windows, macOS or Linux)
+
+To try RustX, you do **not** need Rust, rustup, Visual Studio Build Tools, Node or wasm-bindgen on your computer. Install and start [Docker Desktop](https://docs.docker.com/compose/install/) (or Docker Engine with Compose on Linux). On Windows, use Docker Desktop's **Linux containers** mode; follow its [Windows setup requirements](https://docs.docker.com/desktop/setup/install/windows-install/) if WSL 2/virtualization needs enabling.
+
+From PowerShell or a macOS/Linux terminal:
+
+```sh
+git clone https://github.com/ehsanrezaeee/rustx.git
+cd rustx
+docker compose up --build -d --wait
+```
+
+You can also download and extract the repository ZIP instead of installing Git. Run the Compose command from the extracted directory containing `compose.yaml`.
+
+Open **http://127.0.0.1:3000/?renderer=cpu#/capabilities**. Start with the Applications form demo, People Explorer's **Load local sample**, the Visual engine, and the external-store demo at `#/store`. The container builds the pinned Rust/Wasm toolchain and all browser assets from source, then runs a production server with the fixture APIs. The actual UI renders in your host browser; Docker does not need GPU passthrough. Remove `renderer=cpu` to let the browser try WebGPU.
+
+The first build downloads Linux images, Rust dependencies and tools and can take several minutes; allow sufficient Docker disk space and memory. Later builds reuse layers and compiler caches. No prebuilt checkout files, source bind mounts or Windows-specific paths are required. Ports are published only on your computer's loopback interface.
+
+```sh
+docker compose logs -f demo          # View server output; Ctrl+C stops following logs
+docker compose down                  # Stop and remove this demo's container/network
+git pull
+docker compose up --build -d --wait   # Rebuild after pulling source changes
+```
+
+If port 3000 is already in use, choose another host port in PowerShell:
+
+```powershell
+$env:RUSTX_PORT = '3010'
+docker compose up --build -d --wait
+```
+
+On macOS/Linux: `RUSTX_PORT=3010 docker compose up --build -d --wait`. Then open `http://127.0.0.1:3010/?renderer=cpu#/capabilities`. Use the same port setting for subsequent Compose commands. If Docker reports that it cannot connect to its daemon, start Docker Desktop and wait for the engine to be ready.
+
+This image serves the browser examples, including local data/error/cancel fixtures. It does **not** run a native Windows window or enable live playground compilation; the latter still requires the separately documented, sandboxed compiler service. It also does not provide automatic source watching: rebuild with Compose after edits. See [container verification](docs/evidence/docker-demo/README.md) for the actual tested platform and remaining Windows verification.
+
+## Build from source without Docker
 
 Install Git and Rust through rustup, including the native linker/build tools for your OS. macOS needs Xcode Command Line Tools; Windows needs the MSVC Rust toolchain and Visual Studio C++ Build Tools. Linux builds of the native workspace need its X11 development libraries. Initial setup needs network access to download the pinned toolchain and locked dependencies. Node is optional for application builds; contributor tests and packaging use Node 24 and npm.
 
@@ -51,6 +106,8 @@ The homepage links these RustX-authored applications:
 
 | Route | What it demonstrates |
 | --- | --- |
+| `#/lab` | Reactive state, keyed identity, mount/unmount and runtime behavior |
+| `#/store` | Coherent external-store snapshots, source switching and scoped subscription lifetime |
 | `#/capabilities` | Application ideas, working examples and current limits |
 | `#/people` | API data explorer, search, details, loading/error/cancel states, copy and printable export |
 | `#/applications` | Persian/English forms, validation, password/multiline editing, dialogs, drafts and files |
@@ -143,7 +200,7 @@ npm run test:http
 npm run test:stage3:services
 ```
 
-Stop the demo server before `test:http` (it starts its own server on port 3000), or set `RUSTX_TEST_PORT` to a free port. Browser tests require a real browser installation; install the test engines with `npx playwright install`. Detailed browser, compiler, deployment and benchmark commands are in [NEXT_AGENT.md](docs/NEXT_AGENT.md). Automated checks do not certify OS IME or human assistive-technology use. Python and Docker are not project build/runtime dependencies.
+Stop the demo server before `test:http` (it starts its own server on port 3000), or set `RUSTX_TEST_PORT` to a free port. Browser tests require a real browser installation; install the test engines with `npx playwright install`. Detailed browser, compiler, deployment and benchmark commands are in [NEXT_AGENT.md](docs/NEXT_AGENT.md). Automated checks do not certify OS IME or human assistive-technology use. Python is not a project build/runtime dependency. Docker is an optional way to build and serve the demos; native source development does not require it.
 
 Build the optional VS Code extension with `npm run package:editor`, then install the generated `releases/rustx-editor-0.1.0.vsix` and rust-analyzer. See [editor instructions](editors/vscode/README.md). To package the standalone CLI crate, first generate its SDK archive with `node scripts/prepare-cli.mjs`, then run `cargo package -p rustx-cli --locked`. Delivery archives may contain prebuilt bundles and tools; those are separate from a source checkout. Existing build manifests and evidence identify those historical deliveries, not newly rebuilt artifacts.
 

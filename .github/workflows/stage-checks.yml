@@ -126,3 +126,37 @@ jobs:
             docs/evidence/react-parity/RP-004/
             docs/evidence/*.json
             docs/evidence/*chromium*.png
+
+  docker-demo:
+    name: Source-only Docker demo (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      RUSTX_PORT: '3041'
+      RUSTX_URL: http://127.0.0.1:3041
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+      - name: Build and start without a host Rust toolchain
+        run: docker compose up --build -d --wait
+      - name: Real container-served browser demos
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          node scripts/test-docker-demo.mjs
+      - name: Collect container state and stop
+        if: always()
+        run: |
+          mkdir -p docs/evidence/docker-demo
+          docker compose ps --format json > docs/evidence/docker-demo/compose.json
+          docker compose logs --no-color > docs/evidence/docker-demo/container.log
+          docker compose down
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: docker-demo-evidence
+          path: docs/evidence/docker-demo/
