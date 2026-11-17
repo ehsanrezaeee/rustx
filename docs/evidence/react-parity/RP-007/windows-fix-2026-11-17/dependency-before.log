@@ -1,0 +1,22 @@
+   Compiling rustx-cli v0.1.0 (/Users/ehsan-mac/Downloads/rustx-stage-01/crates/rustx-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.77s
+     Running unittests src/main.rs (target/debug/deps/rustx-4789c1e6a79bf3e2)
+
+running 1 test
+test tooling::native::tests::dependency_audit_accepts_recorded_windows_system_imports ... FAILED
+
+failures:
+
+---- tooling::native::tests::dependency_audit_accepts_recorded_windows_system_imports stdout ----
+
+thread 'tooling::native::tests::dependency_audit_accepts_recorded_windows_system_imports' panicked at crates/rustx-cli/src/tooling/native.rs:547:48:
+called `Result::unwrap()` on an `Err` value: "Non-system dependency combase.dll; bundle/resolve it explicitly before packaging"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tooling::native::tests::dependency_audit_accepts_recorded_windows_system_imports
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p rustx-cli --bin rustx`

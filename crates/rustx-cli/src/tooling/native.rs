@@ -115,6 +115,7 @@ fn dependencies(text: &str, mac: bool) -> Result<Vec<String>, String> {
                     | "advapi32.dll"
                     | "ole32.dll"
                     | "oleaut32.dll"
+                    | "combase.dll"
                     | "shell32.dll"
                     | "shlwapi.dll"
                     | "bcrypt.dll"
@@ -358,7 +359,8 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
             root,
         )?
     };
-    let libraries = dependencies(&audit, mac)?;
+    let libraries =
+        dependencies(&audit, mac).map_err(|e| format!("{e}\nDependency inspection:\n{audit}"))?;
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|e| e.to_string())?
@@ -539,6 +541,13 @@ mod tests {
         assert!(dependencies(" KERNEL32.dll\n VCRUNTIME140.dll", false).is_err());
         assert!(dependencies(" KERNEL32.dll\n custom.dll", false).is_err());
         assert!(dependencies("missing output", false).is_err());
+    }
+    #[test]
+    fn dependency_audit_accepts_recorded_windows_system_imports() {
+        // Actual Windows CI import report from d80ef49 (run 43387127048).
+        let report = include_str!("fixtures/windows-dependents.txt");
+        assert_eq!(dependencies(report, false).unwrap().len(), 19);
+        assert!(dependencies(&format!("{report}\n VCRUNTIME140.dll"), false).is_err());
     }
     #[test]
     fn package_output_rejects_escape() {

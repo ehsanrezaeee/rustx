@@ -1,0 +1,6 @@
+
+> test:host
+> node scripts/test-host.mjs
+
+PASS: JS protocol/capabilities, malformed IDs/versions/limits/batches, concurrency bound, duplicate rejection, cancellation and disposal. Fake Fetch contract tests only.
+PASS: synchronous bounded metadata-only drop forwarding, navigation cancellation, invalid-metadata rejection and typed viewport forwarding (adapter contracts).

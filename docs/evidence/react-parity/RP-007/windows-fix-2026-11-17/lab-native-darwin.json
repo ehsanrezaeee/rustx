@@ -1,0 +1,16 @@
+{
+  "result": "pass",
+  "source": "d0759beeceba847930d9f0580ed10e3aa80dc5b8",
+  "date": "2026-11-17T20:23:24.431Z",
+  "archive": "releases/RP-007/rustx-lab-d0759be/rustx-lab-0.1.0-aarch64-apple-darwin.zip",
+  "sha256": "7d5e8766b11dca6faac4f31b1ffffe08bda41944f838c9e5e99e7900e0d6a546",
+  "checkedPayloadFiles": 416,
+  "checks": [
+    "full lab ZIP extracted and all checksums verified",
+    "actual native CPU Applications window reaches two frames from extracted package with unrelated cwd and toolchain-free PATH"
+  ],
+  "limits": [
+    "source directory was not hidden for this full-lab replay",
+    "developer machine; startup only; no clean-machine/input/IME/AT/GPU claim"
+  ]
+}

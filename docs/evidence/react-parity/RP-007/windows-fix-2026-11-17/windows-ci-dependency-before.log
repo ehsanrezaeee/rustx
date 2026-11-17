@@ -1,0 +1,848 @@
+﻿2026-11-17T20:18:40.3953266Z Current runner version: '2.338.2'
+2026-11-17T20:18:40.4177786Z ##[group]Runner Image Provisioner
+2026-11-17T20:18:40.4179592Z Hosted Compute Agent
+2026-11-17T20:18:40.4180647Z Version: 20261103.629
+2026-11-17T20:18:40.4181665Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T20:18:40.4182863Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T20:18:40.4184059Z Worker ID: {4e6579b3-304c-413c-87f0-458bf35ad563}
+2026-11-17T20:18:40.4185289Z Region: westus
+2026-11-17T20:18:40.4186185Z Cloud: Azure
+2026-11-17T20:18:40.4187035Z ##[endgroup]
+2026-11-17T20:18:40.4189218Z ##[group]Operating System
+2026-11-17T20:18:40.4190329Z Microsoft Windows Server 2025
+2026-11-17T20:18:40.4191273Z 10.0.26100
+2026-11-17T20:18:40.4192062Z Datacenter
+2026-11-17T20:18:40.4192844Z ##[endgroup]
+2026-11-17T20:18:40.4193683Z ##[group]Runner Image
+2026-11-17T20:18:40.4194799Z Image: windows-2025-vs2026
+2026-11-17T20:18:40.4195812Z Version: 20261103.298.1
+2026-11-17T20:18:40.4198316Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261103.298/images/windows/Windows2025-VS2026-Readme.md
+2026-11-17T20:18:40.4201665Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261103.298
+2026-11-17T20:18:40.4203464Z ##[endgroup]
+2026-11-17T20:18:40.4205231Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T20:18:40.4207739Z Contents: read
+2026-11-17T20:18:40.4208675Z Metadata: read
+2026-11-17T20:18:40.4209608Z ##[endgroup]
+2026-11-17T20:18:40.4214027Z Secret source: Actions
+2026-11-17T20:18:40.4215408Z Cache mode: write
+2026-11-17T20:18:40.4216552Z Prepare workflow directory
+2026-11-17T20:18:40.5329269Z Prepare all required actions
+2026-11-17T20:18:40.5378367Z Getting action download info
+2026-11-17T20:18:40.9085473Z Download action repository 'actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10' (SHA:df4cb1c069e1874edd31b4311f1884172cec0e10)
+2026-11-17T20:18:41.0920761Z Download action repository 'actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38' (SHA:249970729cb0ef3589644e2896645e5dc5ba9c38)
+2026-11-17T20:18:41.3166547Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-17T20:18:42.0101144Z Complete job name: package (windows-2025)
+2026-11-17T20:18:42.6351354Z ##[group]Run actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+2026-11-17T20:18:42.6353158Z with:
+2026-11-17T20:18:42.6353737Z   persist-credentials: false
+2026-11-17T20:18:42.6354524Z   repository: ehsanrezaeee/rustx
+2026-11-17T20:18:42.6364849Z   token: ***
+2026-11-17T20:18:42.6365438Z   ssh-strict: true
+2026-11-17T20:18:42.6366031Z   ssh-user: git
+2026-11-17T20:18:42.6366597Z   clean: true
+2026-11-17T20:18:42.6367200Z   sparse-checkout-cone-mode: true
+2026-11-17T20:18:42.6367964Z   fetch-depth: 1
+2026-11-17T20:18:42.6368548Z   fetch-tags: false
+2026-11-17T20:18:42.6369160Z   show-progress: true
+2026-11-17T20:18:42.6369774Z   lfs: false
+2026-11-17T20:18:42.6370328Z   submodules: false
+2026-11-17T20:18:42.6370993Z   set-safe-directory: true
+2026-11-17T20:18:42.6371927Z env:
+2026-11-17T20:18:42.6372877Z   RUSTX_NATIVE_EVIDENCE_DIR: docs/evidence/react-parity/RP-007/ci-44167929706
+2026-11-17T20:18:42.6373945Z ##[endgroup]
+2026-11-17T20:18:42.8205926Z Syncing repository: ehsanrezaeee/rustx
+2026-11-17T20:18:42.8207967Z ##[group]Getting Git version info
+2026-11-17T20:18:42.8208750Z Working directory is 'D:\a\rustx\rustx'
+2026-11-17T20:18:42.9151024Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-17T20:18:43.2266948Z git version 2.56.0.windows.4
+2026-11-17T20:18:43.2322254Z ##[endgroup]
+2026-11-17T20:18:43.2358925Z Temporarily overriding HOME='D:\a\_temp\fcb08bc6-afd2-4796-945b-3be426c8a26e' before making global git config changes
+2026-11-17T20:18:43.2361917Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T20:18:43.2364086Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\rustx\rustx
+2026-11-17T20:18:43.2982721Z Deleting the contents of 'D:\a\rustx\rustx'
+2026-11-17T20:18:43.2990164Z ##[group]Determining repository object format
+2026-11-17T20:18:43.2994013Z ##[endgroup]
+2026-11-17T20:18:43.2996090Z ##[group]Initializing the repository
+2026-11-17T20:18:43.3002249Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\rustx\rustx
+2026-11-17T20:18:43.3800522Z Initialized empty Git repository in D:/a/rustx/rustx/.git/
+2026-11-17T20:18:43.3856957Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/ehsanrezaeee/rustx
+2026-11-17T20:18:43.4582358Z ##[endgroup]
+2026-11-17T20:18:43.4585349Z ##[group]Disabling automatic garbage collection
+2026-11-17T20:18:43.4593751Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-17T20:18:43.5022367Z ##[endgroup]
+2026-11-17T20:18:43.5025067Z ##[group]Setting up auth
+2026-11-17T20:18:43.5026884Z Removing SSH command configuration
+2026-11-17T20:18:43.5035969Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T20:18:43.5571967Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-17T20:18:44.8674881Z Removing HTTP extra header
+2026-11-17T20:18:44.8686688Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T20:18:44.9081697Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-17T20:18:45.4631559Z Removing includeIf entries pointing to credentials config files
+2026-11-17T20:18:45.4644033Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T20:18:45.5040051Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-17T20:18:46.0600299Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-17T20:18:46.1004201Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/rustx/rustx/.git.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:46.1395700Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:46.1833930Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:46.2277100Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:46.2659230Z ##[endgroup]
+2026-11-17T20:18:46.2659772Z ##[group]Fetching the repository
+2026-11-17T20:18:46.2672498Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d0759beeceba847930d9f0580ed10e3aa80dc5b8:refs/remotes/origin/main
+2026-11-17T20:18:48.2274445Z From https://github.com/ehsanrezaeee/rustx
+2026-11-17T20:18:48.2275657Z  * [new ref]         d0759beeceba847930d9f0580ed10e3aa80dc5b8 -> origin/main
+2026-11-17T20:18:48.2345391Z [command]"C:\Program Files\Git\bin\git.exe" branch --list --remote origin/main
+2026-11-17T20:18:48.2978492Z   origin/main
+2026-11-17T20:18:48.3036510Z [command]"C:\Program Files\Git\bin\git.exe" rev-parse refs/remotes/origin/main
+2026-11-17T20:18:48.3545599Z d0759beeceba847930d9f0580ed10e3aa80dc5b8
+2026-11-17T20:18:48.3584510Z ##[endgroup]
+2026-11-17T20:18:48.3585027Z ##[group]Determining the checkout info
+2026-11-17T20:18:48.3586720Z ##[endgroup]
+2026-11-17T20:18:48.3596476Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-17T20:18:48.4164978Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-17T20:18:48.4587367Z ##[group]Checking out the ref
+2026-11-17T20:18:48.4603368Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B main refs/remotes/origin/main
+2026-11-17T20:18:48.8423031Z Switched to a new branch 'main'
+2026-11-17T20:18:48.8512233Z branch 'main' set up to track 'origin/main'.
+2026-11-17T20:18:48.8575284Z ##[endgroup]
+2026-11-17T20:18:48.9084950Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-17T20:18:48.9448213Z d0759beeceba847930d9f0580ed10e3aa80dc5b8
+2026-11-17T20:18:48.9502586Z ##[group]Removing auth
+2026-11-17T20:18:48.9503271Z Removing SSH command configuration
+2026-11-17T20:18:48.9512625Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T20:18:48.9920621Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-17T20:18:49.5591871Z Removing HTTP extra header
+2026-11-17T20:18:49.5601928Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T20:18:49.5990224Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-17T20:18:50.1645624Z Removing includeIf entries pointing to credentials config files
+2026-11-17T20:18:50.1654306Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T20:18:50.1994717Z includeif.gitdir:D:/a/rustx/rustx/.git.path
+2026-11-17T20:18:50.1996865Z includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path
+2026-11-17T20:18:50.1997561Z includeif.gitdir:/github/workspace/.git.path
+2026-11-17T20:18:50.1998168Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T20:18:50.2039026Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/rustx/rustx/.git.path
+2026-11-17T20:18:50.2372761Z D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.2419247Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/rustx/rustx/.git.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.2798266Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path
+2026-11-17T20:18:50.3132183Z D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.3177527Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.3554025Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-17T20:18:50.3886115Z /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.3933358Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.4328748Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-17T20:18:50.4660927Z /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.4706982Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:18:50.5094678Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-17T20:18:51.0932772Z Removing credentials config 'D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config'
+2026-11-17T20:18:51.0946455Z ##[endgroup]
+2026-11-17T20:18:51.1483961Z ##[group]Run actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+2026-11-17T20:18:51.1484422Z with:
+2026-11-17T20:18:51.1484630Z   node-version: 24
+2026-11-17T20:18:51.1485205Z   check-latest: false
+2026-11-17T20:18:51.1488444Z   token: ***
+2026-11-17T20:18:51.1488666Z   package-manager-cache: true
+2026-11-17T20:18:51.1488932Z env:
+2026-11-17T20:18:51.1489250Z   RUSTX_NATIVE_EVIDENCE_DIR: docs/evidence/react-parity/RP-007/ci-44167929706
+2026-11-17T20:18:51.1489668Z ##[endgroup]
+2026-11-17T20:18:51.3365524Z Found in cache @ C:\hostedtoolcache\windows\node\24.22.2\x64
+2026-11-17T20:18:51.3371974Z ##[group]Environment details
+2026-11-17T20:18:55.5388398Z node: v24.22.2
+2026-11-17T20:18:55.5388756Z npm: 11.19.1
+2026-11-17T20:18:55.5389041Z yarn: 1.22.22
+2026-11-17T20:18:55.5389722Z ##[endgroup]
+2026-11-17T20:18:55.5738868Z ##[group]Run rustup toolchain install 1.90.0 --profile minimal --component rustfmt
+2026-11-17T20:18:55.5739686Z rustup toolchain install 1.90.0 --profile minimal --component rustfmt
+2026-11-17T20:18:55.5740231Z cargo test -p rustx-cli --locked
+2026-11-17T20:18:55.5740635Z cargo build -p rustx-cli --bin rustx --locked
+2026-11-17T20:18:55.5763543Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2026-11-17T20:18:55.5764010Z env:
+2026-11-17T20:18:55.5764340Z   RUSTX_NATIVE_EVIDENCE_DIR: docs/evidence/react-parity/RP-007/ci-44167929706
+2026-11-17T20:18:55.5764748Z ##[endgroup]
+2026-11-17T20:18:56.3311409Z info: syncing channel updates for 1.90.0-x86_64-pc-windows-msvc
+2026-11-17T20:18:56.7972883Z info: latest update on 2025-09-18 for version 1.90.0 (1159e78c4 2025-09-14)
+2026-11-17T20:18:56.8084932Z info: downloading 4 components
+2026-11-17T20:19:06.3421642Z 
+2026-11-17T20:19:06.3757848Z   1.90.0-x86_64-pc-windows-msvc installed - rustc 1.90.0 (1159e78c4 2025-09-14)
+2026-11-17T20:19:06.3758441Z 
+2026-11-17T20:19:07.1297365Z     Updating crates.io index
+2026-11-17T20:19:08.4429602Z  Downloading crates ...
+2026-11-17T20:19:08.5414814Z   Downloaded alloc-stdlib v0.2.4
+2026-11-17T20:19:08.5562655Z   Downloaded utf-8 v0.7.6
+2026-11-17T20:19:08.5711196Z   Downloaded tungstenite v0.28.0
+2026-11-17T20:19:08.6091975Z   Downloaded zmij v1.0.23
+2026-11-17T20:19:08.6236245Z   Downloaded version_check v0.9.5
+2026-11-17T20:19:08.6351551Z   Downloaded thiserror-impl v2.0.21
+2026-11-17T20:19:08.6522180Z   Downloaded unicode-ident v1.0.27
+2026-11-17T20:19:08.6776268Z   Downloaded miniz_oxide v0.9.1
+2026-11-17T20:19:08.7002026Z   Downloaded getrandom v0.3.4
+2026-11-17T20:19:08.7323344Z   Downloaded typenum v1.20.1
+2026-11-17T20:19:08.7622437Z   Downloaded serde_json v1.0.154
+2026-11-17T20:19:08.8427809Z   Downloaded zlib-rs v0.6.8
+2026-11-17T20:19:08.8923798Z   Downloaded rand v0.9.5
+2026-11-17T20:19:08.9236873Z   Downloaded log v0.4.34
+2026-11-17T20:19:08.9451504Z   Downloaded crc32fast v1.5.2
+2026-11-17T20:19:08.9610595Z   Downloaded serde_core v1.0.229
+2026-11-17T20:19:08.9871735Z   Downloaded memchr v2.8.3
+2026-11-17T20:19:09.0402445Z   Downloaded httparse v1.10.1
+2026-11-17T20:19:09.0605853Z   Downloaded http v1.5.0
+2026-11-17T20:19:09.0960102Z   Downloaded syn v3.0.9
+2026-11-17T20:19:09.1999170Z   Downloaded thiserror v2.0.21
+2026-11-17T20:19:09.2972843Z   Downloaded syn v2.0.119
+2026-11-17T20:19:09.4023980Z   Downloaded zerocopy v0.8.63
+2026-11-17T20:19:10.2342808Z   Downloaded rand_core v0.9.5
+2026-11-17T20:19:10.2493630Z   Downloaded bytes v1.12.1
+2026-11-17T20:19:10.2826396Z   Downloaded brotli-decompressor v5.0.3
+2026-11-17T20:19:10.3178857Z   Downloaded block-buffer v0.10.4
+2026-11-17T20:19:10.3269675Z   Downloaded alloc-no-stdlib v2.0.4
+2026-11-17T20:19:10.3464881Z   Downloaded simd-adler32 v0.3.10
+2026-11-17T20:19:10.3656276Z   Downloaded sha1 v0.10.7
+2026-11-17T20:19:10.3787268Z   Downloaded itoa v1.0.18
+2026-11-17T20:19:10.3966059Z   Downloaded generic-array v0.14.7
+2026-11-17T20:19:10.4136900Z   Downloaded flate2 v1.1.10
+2026-11-17T20:19:10.4689039Z   Downloaded crypto-common v0.1.7
+2026-11-17T20:19:10.4816255Z   Downloaded cfg-if v1.0.5
+2026-11-17T20:19:10.4947232Z   Downloaded quote v1.0.47
+2026-11-17T20:19:10.5241502Z   Downloaded proc-macro2 v1.0.107
+2026-11-17T20:19:10.5512082Z   Downloaded ppv-lite86 v0.2.21
+2026-11-17T20:19:10.5619470Z   Downloaded data-encoding v2.11.1
+2026-11-17T20:19:10.5718352Z   Downloaded brotli v8.0.2
+2026-11-17T20:19:10.6418982Z   Downloaded adler2 v2.0.1
+2026-11-17T20:19:10.6529783Z   Downloaded sha2 v0.10.9
+2026-11-17T20:19:10.7052295Z   Downloaded rand_chacha v0.9.0
+2026-11-17T20:19:10.7154979Z   Downloaded digest v0.10.7
+2026-11-17T20:19:10.7532629Z   Downloaded cpufeatures v0.2.17
+2026-11-17T20:19:11.0827366Z   Downloaded libc v0.2.190
+2026-11-17T20:19:12.9023040Z    Compiling cfg-if v1.0.5
+2026-11-17T20:19:12.9026307Z    Compiling version_check v0.9.5
+2026-11-17T20:19:12.9026954Z    Compiling unicode-ident v1.0.27
+2026-11-17T20:19:12.9027463Z    Compiling quote v1.0.47
+2026-11-17T20:19:12.9666844Z    Compiling proc-macro2 v1.0.107
+2026-11-17T20:19:13.0356105Z    Compiling typenum v1.20.1
+2026-11-17T20:19:13.3149900Z    Compiling generic-array v0.14.7
+2026-11-17T20:19:13.8668837Z    Compiling zerocopy v0.8.63
+2026-11-17T20:19:14.8846659Z    Compiling getrandom v0.3.4
+2026-11-17T20:19:16.0230254Z    Compiling crypto-common v0.1.7
+2026-11-17T20:19:16.1358888Z    Compiling block-buffer v0.10.4
+2026-11-17T20:19:16.2808765Z    Compiling digest v0.10.7
+2026-11-17T20:19:16.4946525Z    Compiling syn v3.0.9
+2026-11-17T20:19:16.5054241Z    Compiling rand_core v0.9.5
+2026-11-17T20:19:16.6147927Z    Compiling httparse v1.10.1
+2026-11-17T20:19:16.7812420Z    Compiling itoa v1.0.18
+2026-11-17T20:19:17.0494459Z    Compiling serde_core v1.0.229
+2026-11-17T20:19:17.0496268Z    Compiling zmij v1.0.23
+2026-11-17T20:19:17.3730798Z    Compiling alloc-no-stdlib v2.0.4
+2026-11-17T20:19:17.4223325Z    Compiling cpufeatures v0.2.17
+2026-11-17T20:19:17.4853116Z    Compiling thiserror v2.0.21
+2026-11-17T20:19:17.4907319Z    Compiling crc32fast v1.5.2
+2026-11-17T20:19:17.9941922Z    Compiling alloc-stdlib v0.2.4
+2026-11-17T20:19:18.2956930Z    Compiling simd-adler32 v0.3.10
+2026-11-17T20:19:18.7707151Z    Compiling serde_json v1.0.154
+2026-11-17T20:19:19.5656115Z    Compiling adler2 v2.0.1
+2026-11-17T20:19:19.7049454Z    Compiling libc v0.2.190
+2026-11-17T20:19:20.3961270Z    Compiling bytes v1.12.1
+2026-11-17T20:19:20.7733955Z    Compiling miniz_oxide v0.9.1
+2026-11-17T20:19:21.6305127Z    Compiling thiserror-impl v2.0.21
+2026-11-17T20:19:21.8427703Z    Compiling http v1.5.0
+2026-11-17T20:19:22.2393432Z    Compiling ppv-lite86 v0.2.21
+2026-11-17T20:19:22.8669805Z    Compiling rand_chacha v0.9.0
+2026-11-17T20:19:23.4283920Z    Compiling rand v0.9.5
+2026-11-17T20:19:23.9782878Z    Compiling brotli-decompressor v5.0.3
+2026-11-17T20:19:24.4457229Z    Compiling sha1 v0.10.7
+2026-11-17T20:19:24.5786906Z    Compiling utf-8 v0.7.6
+2026-11-17T20:19:24.7545573Z    Compiling data-encoding v2.11.1
+2026-11-17T20:19:24.7981333Z    Compiling memchr v2.8.3
+2026-11-17T20:19:25.9935499Z    Compiling log v0.4.34
+2026-11-17T20:19:26.1284015Z    Compiling rustx-cli v0.1.0 (D:\a\rustx\rustx\crates\rustx-cli)
+2026-11-17T20:19:26.2242515Z    Compiling tungstenite v0.28.0
+2026-11-17T20:19:26.6149522Z    Compiling brotli v8.0.2
+2026-11-17T20:19:26.9200920Z    Compiling flate2 v1.1.10
+2026-11-17T20:19:27.6306194Z    Compiling syn v2.0.119
+2026-11-17T20:19:28.5149635Z    Compiling sha2 v0.10.9
+2026-11-17T20:19:34.9674396Z     Finished `test` profile [unoptimized + debuginfo] target(s) in 27.90s
+2026-11-17T20:19:35.0383506Z      Running unittests src\main.rs (target\debug\deps\rustx-e48f64282589f799.exe)
+2026-11-17T20:19:35.0497768Z 
+2026-11-17T20:19:35.0498026Z running 7 tests
+2026-11-17T20:19:35.3434831Z test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+2026-11-17T20:19:35.3452678Z test tooling::native::tests::application_matches_canonical_project_directory ... ok
+2026-11-17T20:19:35.3456302Z test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+2026-11-17T20:19:35.3457413Z test tooling::native::tests::dependency_audit_rejects_unbundled_libraries ... ok
+2026-11-17T20:19:35.3458988Z test tooling::native::tests::package_output_rejects_escape ... ok
+2026-11-17T20:19:35.4460180Z test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+2026-11-17T20:19:35.4467744Z test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+2026-11-17T20:19:35.4468236Z 
+2026-11-17T20:19:35.4468631Z test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+2026-11-17T20:19:35.4469021Z 
+2026-11-17T20:19:35.4491199Z      Running unittests src\legacy.rs (target\debug\deps\rustx_cli-f1f87812c49b7ca5.exe)
+2026-11-17T20:19:35.4597962Z 
+2026-11-17T20:19:35.4598358Z running 7 tests
+2026-11-17T20:19:35.7273241Z test tooling::format::tests::adjacent_tags_are_not_rust_shift_operators ... ok
+2026-11-17T20:19:35.7274861Z test tooling::format::tests::windows_input_produces_consistent_idempotent_lf_output ... ok
+2026-11-17T20:19:35.7292966Z test tooling::native::tests::dependency_audit_rejects_unbundled_libraries ... ok
+2026-11-17T20:19:35.7296585Z test tooling::native::tests::application_matches_canonical_project_directory ... ok
+2026-11-17T20:19:35.7299594Z test tooling::native::tests::package_output_rejects_escape ... ok
+2026-11-17T20:19:35.8336332Z test tooling::format::tests::multiline_props_format_nested_rust_and_preserve_literal_contents ... ok
+2026-11-17T20:19:35.8352151Z test tooling::format::tests::markup_format_preserves_rust_raw_strings_comments_closures_and_unicode ... ok
+2026-11-17T20:19:35.8352856Z 
+2026-11-17T20:19:35.8353418Z test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+2026-11-17T20:19:35.8353795Z 
+2026-11-17T20:19:36.0672087Z    Compiling rustx-cli v0.1.0 (D:\a\rustx\rustx\crates\rustx-cli)
+2026-11-17T20:19:40.2963420Z     Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.39s
+2026-11-17T20:19:40.3386569Z ##[group]Run $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+2026-11-17T20:19:40.3387700Z $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath
+2026-11-17T20:19:40.3388592Z Import-Module (Join-Path $vs 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')
+2026-11-17T20:19:40.3389439Z Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
+2026-11-17T20:19:40.3390095Z node scripts/test-native-package.mjs
+2026-11-17T20:19:40.3390573Z if ($LASTEXITCODE -ne 0) { throw 'Native package verification failed' }
+2026-11-17T20:19:40.3952933Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-17T20:19:40.3953465Z env:
+2026-11-17T20:19:40.3953940Z   RUSTX_NATIVE_EVIDENCE_DIR: docs/evidence/react-parity/RP-007/ci-44167929706
+2026-11-17T20:19:40.3954595Z ##[endgroup]
+2026-11-17T20:19:41.3305042Z **********************************************************************
+2026-11-17T20:19:41.3308080Z ** Visual Studio 2026 Developer PowerShell v18.11.3
+2026-11-17T20:19:41.3310404Z ** Copyright (c) 2026 Microsoft Corporation
+2026-11-17T20:19:41.3311430Z **********************************************************************
+2026-11-17T20:19:45.0042084Z Created \\?\C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo
+2026-11-17T20:19:45.0043115Z Next: cd C:\Users\RUNNER~1\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo && rustx dev --target native
+2026-11-17T20:19:45.8224194Z  Downloading crates ...
+2026-11-17T20:19:45.9809031Z   Downloaded unicode-script v0.5.9
+2026-11-17T20:19:46.0148375Z   Downloaded percent-encoding v2.3.2
+2026-11-17T20:19:46.0243395Z   Downloaded profiling v1.0.18
+2026-11-17T20:19:46.0379507Z   Downloaded rustc-hash v1.1.0
+2026-11-17T20:19:46.0474988Z   Downloaded pollster v0.4.0
+2026-11-17T20:19:46.0674640Z   Downloaded renderdoc-sys v1.1.0
+2026-11-17T20:19:46.0787907Z   Downloaded zerovec-derive v0.11.7
+2026-11-17T20:19:46.0996194Z   Downloaded unicode-xid v0.2.6
+2026-11-17T20:19:46.1156300Z   Downloaded zerotrie v0.2.5
+2026-11-17T20:19:46.1601434Z   Downloaded wgpu-core v24.0.5
+2026-11-17T20:19:46.2301664Z   Downloaded zerofrom v0.1.8
+2026-11-17T20:19:46.2434506Z   Downloaded windows-targets v0.52.6
+2026-11-17T20:19:46.2528767Z   Downloaded zerofrom-derive v0.1.8
+2026-11-17T20:19:46.2632045Z   Downloaded uuid v1.29.3
+2026-11-17T20:19:46.2937104Z   Downloaded windows-strings v0.5.1
+2026-11-17T20:19:46.3147852Z   Downloaded windows-future v0.3.2
+2026-11-17T20:19:46.3326136Z   Downloaded zerovec v0.11.9
+2026-11-17T20:19:46.4245167Z   Downloaded tinyvec v1.13.3
+2026-11-17T20:19:46.4587206Z   Downloaded skrifa v0.35.0
+2026-11-17T20:19:46.5386613Z   Downloaded skrifa v0.44.0
+2026-11-17T20:19:46.6217632Z   Downloaded wgpu-hal v24.0.4
+2026-11-17T20:19:46.6924562Z   Downloaded rustls v0.23.46
+2026-11-17T20:19:46.8050983Z   Downloaded utf8_iter v1.1.0
+2026-11-17T20:19:46.8188395Z   Downloaded vello_shaders v0.5.1
+2026-11-17T20:19:46.9023756Z   Downloaded unicode-width v0.1.14
+2026-11-17T20:19:46.9230092Z   Downloaded unicode-segmentation v1.13.3
+2026-11-17T20:19:47.8467595Z   Downloaded read-fonts v0.33.1
+2026-11-17T20:19:47.9940909Z   Downloaded ash v0.38.0+1.3.281
+2026-11-17T20:19:48.1025643Z   Downloaded read-fonts v0.29.3
+2026-11-17T20:19:48.2469377Z   Downloaded skrifa v0.31.3
+2026-11-17T20:19:48.3137430Z   Downloaded rustybuzz v0.14.1
+2026-11-17T20:19:48.6502839Z   Downloaded strum_macros v0.26.4
+2026-11-17T20:19:48.6738322Z   Downloaded serde v1.0.229
+2026-11-17T20:19:48.6992947Z   Downloaded rustls-webpki v0.103.17
+2026-11-17T20:19:48.7284165Z   Downloaded read-fonts v0.41.0
+2026-11-17T20:19:48.8705518Z   Downloaded tiny-skia v0.11.4
+2026-11-17T20:19:49.0073650Z   Downloaded khronos_api v3.1.0
+2026-11-17T20:19:49.0954263Z   Downloaded naga v24.0.0
+2026-11-17T20:19:49.2030845Z   Downloaded icu_normalizer v2.4.0
+2026-11-17T20:19:49.2390228Z   Downloaded yoke v0.8.4
+2026-11-17T20:19:49.2543295Z   Downloaded unicode-bidi v0.3.18
+2026-11-17T20:19:49.2746029Z   Downloaded guillotiere v0.6.2
+2026-11-17T20:19:49.2865307Z   Downloaded vello_encoding v0.5.1
+2026-11-17T20:19:49.3011036Z   Downloaded typed-builder-macro v0.20.1
+2026-11-17T20:19:49.3124465Z   Downloaded thiserror-impl v1.0.69
+2026-11-17T20:19:49.3244935Z   Downloaded svg_fmt v0.4.5
+2026-11-17T20:19:49.3334389Z   Downloaded shlex v2.0.1
+2026-11-17T20:19:49.3450298Z   Downloaded windows-numerics v0.3.1
+2026-11-17T20:19:49.3566202Z   Downloaded winit v0.30.12
+2026-11-17T20:19:49.5247740Z   Downloaded windows-implement v0.58.0
+2026-11-17T20:19:49.5317345Z   Downloaded wgpu v24.0.5
+2026-11-17T20:19:49.6609759Z   Downloaded webpki-roots v0.26.11
+2026-11-17T20:19:49.6709513Z   Downloaded untrusted v0.9.0
+2026-11-17T20:19:49.6850874Z   Downloaded unicode-bidi-mirroring v0.2.0
+2026-11-17T20:19:49.6931345Z   Downloaded spirv v0.3.0+sdk-1.3.268.0
+2026-11-17T20:19:49.7020453Z   Downloaded url v2.5.8
+2026-11-17T20:19:49.7207207Z   Downloaded ureq v2.12.1
+2026-11-17T20:19:50.2679119Z   Downloaded tiny-skia-path v0.11.4
+2026-11-17T20:19:50.2845058Z   Downloaded static_assertions v1.1.0
+2026-11-17T20:19:50.2984411Z   Downloaded rustls-pki-types v1.16.0
+2026-11-17T20:19:50.3255660Z   Downloaded icu_properties_data v2.4.0
+2026-11-17T20:19:50.4289693Z   Downloaded fontdue v0.9.3
+2026-11-17T20:19:50.4638155Z   Downloaded cc v1.11.2
+2026-11-17T20:19:50.4924588Z   Downloaded yazi v0.2.2
+2026-11-17T20:19:50.5030364Z   Downloaded windows_x86_64_msvc v0.52.6
+2026-11-17T20:19:50.5232095Z   Downloaded windows-core v0.62.2
+2026-11-17T20:19:50.5530119Z   Downloaded windows-collections v0.3.2
+2026-11-17T20:19:50.5622843Z   Downloaded vello v0.5.0
+2026-11-17T20:19:50.5770305Z   Downloaded unicode-linebreak v0.1.5
+2026-11-17T20:19:50.5852757Z   Downloaded typed-builder v0.20.1
+2026-11-17T20:19:50.6017711Z   Downloaded taffy v0.7.7
+2026-11-17T20:19:50.6618423Z   Downloaded softbuffer v0.4.6
+2026-11-17T20:19:50.6879493Z   Downloaded smallvec v1.16.5
+2026-11-17T20:19:50.6968780Z   Downloaded slotmap v1.1.1
+2026-11-17T20:19:50.7125686Z   Downloaded serde_derive v1.0.229
+2026-11-17T20:19:50.7404398Z   Downloaded indexmap v2.14.2
+2026-11-17T20:19:50.7718048Z   Downloaded idna v1.1.0
+2026-11-17T20:19:50.7900632Z   Downloaded hashbrown v0.17.1
+2026-11-17T20:19:50.8290997Z   Downloaded hashbrown v0.15.5
+2026-11-17T20:19:50.8621154Z   Downloaded glow v0.16.0
+2026-11-17T20:19:50.8792258Z   Downloaded windows-strings v0.1.0
+2026-11-17T20:19:50.8945093Z   Downloaded windows-link v0.2.1
+2026-11-17T20:19:50.9018831Z   Downloaded windows-implement v0.60.2
+2026-11-17T20:19:50.9105791Z   Downloaded windows-core v0.58.0
+2026-11-17T20:19:50.9384513Z   Downloaded winapi-util v0.1.11
+2026-11-17T20:19:50.9514526Z   Downloaded windows-sys v0.61.2
+2026-11-17T20:19:51.8041085Z   Downloaded unicode-ccc v0.2.0
+2026-11-17T20:19:51.8140387Z   Downloaded tracing v0.1.44
+2026-11-17T20:19:51.8908497Z   Downloaded tinystr v0.8.5
+2026-11-17T20:19:51.9081327Z   Downloaded termcolor v1.4.1
+2026-11-17T20:19:51.9178588Z   Downloaded synstructure v0.14.0
+2026-11-17T20:19:51.9252073Z   Downloaded strum v0.26.3
+2026-11-17T20:19:51.9319239Z   Downloaded stable_deref_trait v1.2.1
+2026-11-17T20:19:51.9406072Z   Downloaded smol_str v0.2.2
+2026-11-17T20:19:51.9526471Z   Downloaded ring v0.17.14
+2026-11-17T20:19:52.2543682Z   Downloaded cosmic-text v0.14.2
+2026-11-17T20:19:52.3294235Z   Downloaded self_cell v1.3.0
+2026-11-17T20:19:52.3397035Z   Downloaded rustversion v1.0.23
+2026-11-17T20:19:52.3670964Z   Downloaded libm v0.2.16
+2026-11-17T20:19:52.5872152Z   Downloaded kurbo v0.11.3
+2026-11-17T20:19:52.8724483Z   Downloaded font-types v0.12.7
+2026-11-17T20:19:52.8892907Z   Downloaded yoke-derive v0.8.4
+2026-11-17T20:19:52.8979245Z   Downloaded xml-rs v0.8.29
+2026-11-17T20:19:52.9267269Z   Downloaded writeable v0.6.4
+2026-11-17T20:19:52.9436807Z   Downloaded windows-threading v0.2.1
+2026-11-17T20:19:52.9520330Z   Downloaded windows-result v0.4.1
+2026-11-17T20:19:52.9645476Z   Downloaded windows-interface v0.59.3
+2026-11-17T20:19:52.9716679Z   Downloaded wgpu-types v24.0.0
+2026-11-17T20:19:52.9827425Z   Downloaded thiserror v1.0.69
+2026-11-17T20:19:53.0452440Z   Downloaded swash v0.2.10
+2026-11-17T20:19:53.0990612Z   Downloaded png v0.17.16
+2026-11-17T20:19:53.1274130Z   Downloaded icu_properties v2.4.0
+2026-11-17T20:19:53.1477450Z   Downloaded icu_collections v2.4.0
+2026-11-17T20:19:53.2082306Z   Downloaded fontdb v0.16.2
+2026-11-17T20:19:53.2211567Z   Downloaded webpki-roots v1.0.12
+2026-11-17T20:19:53.2334729Z   Downloaded ttf-parser v0.21.1
+2026-11-17T20:19:53.3145892Z   Downloaded ttf-parser v0.20.0
+2026-11-17T20:19:53.4000182Z   Downloaded futures-intrusive v0.5.0
+2026-11-17T20:19:53.4391931Z   Downloaded color v0.3.3
+2026-11-17T20:19:53.4609755Z   Downloaded base64 v0.22.1
+2026-11-17T20:19:53.4900762Z   Downloaded zeroize v1.9.2
+2026-11-17T20:19:53.5034931Z   Downloaded zeno v0.3.3
+2026-11-17T20:19:53.5249729Z   Downloaded windows-result v0.2.0
+2026-11-17T20:19:53.5368780Z   Downloaded windows-interface v0.58.0
+2026-11-17T20:19:53.5444528Z   Downloaded utf_types v1.0.0
+2026-11-17T20:19:53.5554283Z   Downloaded unicode-properties v0.1.5
+2026-11-17T20:19:53.5673953Z   Downloaded tracing-core v0.1.36
+2026-11-17T20:19:53.5895292Z   Downloaded subtle v2.6.1
+2026-11-17T20:19:53.5987571Z   Downloaded strict-num v0.1.1
+2026-11-17T20:19:53.6070725Z   Downloaded icu_provider v2.4.0
+2026-11-17T20:19:53.6263070Z   Downloaded icu_normalizer_data v2.4.0
+2026-11-17T20:19:53.6408343Z   Downloaded euclid v0.22.14
+2026-11-17T20:19:53.6632733Z   Downloaded bitflags v2.13.2
+2026-11-17T20:19:53.7080561Z   Downloaded accesskit_windows v0.35.1
+2026-11-17T20:19:53.7228276Z   Downloaded sys-locale v0.3.2
+2026-11-17T20:19:53.7347171Z   Downloaded ordered-float v4.6.0
+2026-11-17T20:19:53.7457719Z   Downloaded num-traits v0.2.19
+2026-11-17T20:19:53.7671951Z   Downloaded litemap v0.8.3
+2026-11-17T20:19:53.7862277Z   Downloaded windows-sys v0.59.0
+2026-11-17T20:19:54.5236437Z   Downloaded icu_locale_core v2.4.0
+2026-11-17T20:19:54.5950216Z   Downloaded gpu-allocator v0.27.0
+2026-11-17T20:19:54.6180448Z   Downloaded getrandom v0.4.3
+2026-11-17T20:19:54.6512002Z   Downloaded bytemuck v1.25.2
+2026-11-17T20:19:54.6810411Z   Downloaded allocator-api2 v0.2.21
+2026-11-17T20:19:54.7010465Z   Downloaded accesskit v0.25.1
+2026-11-17T20:19:54.7089757Z   Downloaded scopeguard v1.2.0
+2026-11-17T20:19:54.7188973Z   Downloaded peniko v0.4.1
+2026-11-17T20:19:54.7335717Z   Downloaded parking_lot_core v0.9.12
+2026-11-17T20:19:54.7518284Z   Downloaded parking_lot v0.12.5
+2026-11-17T20:19:54.7716132Z   Downloaded miniz_oxide v0.8.9
+2026-11-17T20:19:54.7917311Z   Downloaded memmap2 v0.9.12
+2026-11-17T20:19:54.8051000Z   Downloaded lock_api v0.4.14
+2026-11-17T20:19:54.8136223Z   Downloaded libloading v0.8.9
+2026-11-17T20:19:54.8342758Z   Downloaded jobserver v0.1.35
+2026-11-17T20:19:54.8505409Z   Downloaded grid v0.15.0
+2026-11-17T20:19:54.8596260Z   Downloaded autocfg v1.5.1
+2026-11-17T20:19:54.8751056Z   Downloaded raw-window-handle v0.6.2
+2026-11-17T20:19:54.8933088Z   Downloaded rangemap v1.8.0
+2026-11-17T20:19:54.9096832Z   Downloaded range-alloc v0.1.5
+2026-11-17T20:19:54.9190262Z   Downloaded pkg-config v0.3.34
+2026-11-17T20:19:54.9311555Z   Downloaded pin-project-lite v0.2.17
+2026-11-17T20:19:54.9957446Z   Downloaded litrs v1.0.1
+2026-11-17T20:19:55.0228154Z   Downloaded khronos-egl v6.0.0
+2026-11-17T20:19:55.0398790Z   Downloaded idna_adapter v1.2.2
+2026-11-17T20:19:55.0476445Z   Downloaded glutin_wgl_sys v0.6.1
+2026-11-17T20:19:55.0540664Z   Downloaded gl_generator v0.14.0
+2026-11-17T20:19:55.0683563Z   Downloaded font-types v0.9.0
+2026-11-17T20:19:55.0845326Z   Downloaded find-msvc-tools v0.1.15
+2026-11-17T20:19:55.0986390Z   Downloaded displaydoc v0.2.7
+2026-11-17T20:19:55.1188051Z   Downloaded bit-set v0.8.0
+2026-11-17T20:19:55.1289389Z   Downloaded accesskit_consumer v0.39.1
+2026-11-17T20:19:55.1412028Z   Downloaded once_cell v1.21.4
+2026-11-17T20:19:55.1639298Z   Downloaded hexf-parse v0.2.1
+2026-11-17T20:19:55.1690432Z   Downloaded gpu-descriptor-types v0.2.0
+2026-11-17T20:19:55.1754519Z   Downloaded gpu-alloc-types v0.3.1
+2026-11-17T20:19:55.1825926Z   Downloaded getrandom v0.2.17
+2026-11-17T20:19:55.2130965Z   Downloaded foldhash v0.2.0
+2026-11-17T20:19:55.2227928Z   Downloaded fdeflate v0.3.7
+2026-11-17T20:19:55.2379884Z   Downloaded bit-vec v0.8.0
+2026-11-17T20:19:55.2498548Z   Downloaded arrayref v0.3.9
+2026-11-17T20:19:55.3378771Z   Downloaded potential_utf v0.1.6
+2026-11-17T20:19:55.6519642Z   Downloaded linebender_resource_handle v0.1.1
+2026-11-17T20:19:55.6618456Z   Downloaded windows-sys v0.52.0
+2026-11-17T20:19:56.3543871Z   Downloaded dpi v0.1.2
+2026-11-17T20:19:56.3629605Z   Downloaded arrayvec v0.7.8
+2026-11-17T20:19:56.3797157Z   Downloaded presser v0.3.1
+2026-11-17T20:19:56.3950588Z   Downloaded futures-core v0.3.34
+2026-11-17T20:19:56.4057865Z   Downloaded form_urlencoded v1.2.2
+2026-11-17T20:19:56.4127837Z   Downloaded foldhash v0.1.5
+2026-11-17T20:19:56.4220176Z   Downloaded equivalent v1.0.3
+2026-11-17T20:19:56.4304442Z   Downloaded codespan-reporting v0.11.1
+2026-11-17T20:19:56.5088400Z   Downloaded cfg_aliases v0.2.2
+2026-11-17T20:19:56.5174351Z   Downloaded bytemuck_derive v1.12.1
+2026-11-17T20:19:56.5275219Z   Downloaded bitflags v1.3.2
+2026-11-17T20:19:56.5591628Z   Downloaded accesskit_winit v0.34.1
+2026-11-17T20:19:56.5718323Z   Downloaded heck v0.5.0
+2026-11-17T20:19:56.5840083Z   Downloaded gpu-descriptor v0.3.2
+2026-11-17T20:19:56.5905242Z   Downloaded gpu-alloc v0.6.2
+2026-11-17T20:19:56.6289609Z   Downloaded document-features v0.2.12
+2026-11-17T20:19:56.6436571Z   Downloaded cursor-icon v1.2.0
+2026-11-17T20:19:56.6691696Z   Downloaded windows v0.62.2
+2026-11-17T20:19:57.7641867Z   Downloaded windows v0.58.0
+2026-11-17T20:20:00.5983024Z warning: output filename collision.
+2026-11-17T20:20:00.5988231Z The bin target `native-demo` in package `native-demo v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo)` has the same output filename as the lib target `native_demo` in package `native-demo v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo)`.
+2026-11-17T20:20:00.5991224Z Colliding filename is: D:\a\rustx\rustx\target\x86_64-pc-windows-msvc\release\deps\native_demo.pdb
+2026-11-17T20:20:00.5992139Z The output filenames should be unique.
+2026-11-17T20:20:00.5992916Z Consider changing their names to be unique or compiling them separately.
+2026-11-17T20:20:00.5994065Z This may become a hard error in the future; see <https://github.com/rust-lang/cargo/issues/6313>.
+2026-11-17T20:20:00.5995196Z If this looks unexpected, it may be a bug in Cargo. Please file a bug report at
+2026-11-17T20:20:00.5996207Z https://github.com/rust-lang/cargo/issues/ with as much information as you
+2026-11-17T20:20:00.5996863Z can provide.
+2026-11-17T20:20:00.5997426Z cargo 1.90.0 (840b83a10 2025-07-30) running on `x86_64-pc-windows-msvc` target `x86_64-pc-windows-msvc`
+2026-11-17T20:20:00.6001751Z First unit: Unit { pkg: Package { id: PackageId { name: "native-demo", version: "0.1.0", source: "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\rustx-native-package-aLMKDm\\native-demo" }, ..: ".." }, target: TargetInner { name: "native-demo", doc: true, ..: with_path("C:\\Users\\runneradmin\\AppData\\Local\\Temp\\rustx-native-package-aLMKDm\\native-demo\\src\\main.rs", Edition2021) }, profile: Profile { opt_level: "s", lto: Named("thin"), codegen_units: Some(1), strip: Resolved(Named("debuginfo")), ..: default_release() }, kind: Target(CompileTarget { name: "x86_64-pc-windows-msvc" }), mode: Build, features: [], rustflags: ["-C", "target-feature=+crt-static"], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 10720809605514499529 }
+2026-11-17T20:20:00.6009383Z Second unit: Unit { pkg: Package { id: PackageId { name: "native-demo", version: "0.1.0", source: "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\rustx-native-package-aLMKDm\\native-demo" }, ..: ".." }, target: TargetInner { name_inferred: true, ..: lib_target("native_demo", ["cdylib", "rlib"], "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\rustx-native-package-aLMKDm\\native-demo\\src\\lib.rs", Edition2021) }, profile: Profile { opt_level: "s", lto: Named("thin"), codegen_units: Some(1), strip: Resolved(Named("debuginfo")), ..: default_release() }, kind: Target(CompileTarget { name: "x86_64-pc-windows-msvc" }), mode: Build, features: [], rustflags: ["-C", "target-feature=+crt-static"], rustdocflags: [], links_overrides: {}, artifact: false, artifact_target_for_features: None, is_std: false, dep_hash: 9654838991844350289 }
+2026-11-17T20:20:00.7483492Z    Compiling proc-macro2 v1.0.107
+2026-11-17T20:20:00.7484661Z    Compiling unicode-ident v1.0.27
+2026-11-17T20:20:00.7485315Z    Compiling quote v1.0.47
+2026-11-17T20:20:00.7486268Z    Compiling cfg_aliases v0.2.2
+2026-11-17T20:20:00.8183579Z    Compiling windows-link v0.2.1
+2026-11-17T20:20:00.8751655Z    Compiling cfg-if v1.0.5
+2026-11-17T20:20:00.8905414Z    Compiling serde_core v1.0.229
+2026-11-17T20:20:00.9524040Z    Compiling smallvec v1.16.5
+2026-11-17T20:20:01.2704814Z    Compiling windows_x86_64_msvc v0.52.6
+2026-11-17T20:20:01.3712808Z    Compiling thiserror v2.0.21
+2026-11-17T20:20:01.6318777Z    Compiling windows-targets v0.52.6
+2026-11-17T20:20:01.6981507Z    Compiling stable_deref_trait v1.2.1
+2026-11-17T20:20:01.7898199Z    Compiling log v0.4.34
+2026-11-17T20:20:01.8313214Z    Compiling version_check v0.9.5
+2026-11-17T20:20:02.0948169Z    Compiling rustversion v1.0.23
+2026-11-17T20:20:02.6451810Z    Compiling syn v3.0.9
+2026-11-17T20:20:02.7335939Z    Compiling syn v2.0.119
+2026-11-17T20:20:02.7823742Z    Compiling arrayvec v0.7.8
+2026-11-17T20:20:04.1896565Z    Compiling heck v0.5.0
+2026-11-17T20:20:04.7790038Z    Compiling autocfg v1.5.1
+2026-11-17T20:20:05.4820736Z    Compiling num-traits v0.2.19
+2026-11-17T20:20:05.7329079Z    Compiling bitflags v2.13.2
+2026-11-17T20:20:05.9706129Z    Compiling once_cell v1.21.4
+2026-11-17T20:20:06.4044522Z    Compiling khronos_api v3.1.0
+2026-11-17T20:20:06.4884365Z    Compiling foldhash v0.2.0
+2026-11-17T20:20:06.7671384Z    Compiling synstructure v0.14.0
+2026-11-17T20:20:06.7725600Z    Compiling hashbrown v0.17.1
+2026-11-17T20:20:07.9256423Z    Compiling shlex v2.0.1
+2026-11-17T20:20:08.2004782Z    Compiling find-msvc-tools v0.1.15
+2026-11-17T20:20:08.9172062Z    Compiling bytemuck_derive v1.12.1
+2026-11-17T20:20:09.2394802Z    Compiling zerofrom-derive v0.1.8
+2026-11-17T20:20:09.7136011Z    Compiling yoke-derive v0.8.4
+2026-11-17T20:20:10.6990153Z    Compiling zerofrom v0.1.8
+2026-11-17T20:20:10.8691317Z    Compiling thiserror-impl v2.0.21
+2026-11-17T20:20:11.1893475Z    Compiling yoke v0.8.4
+2026-11-17T20:20:11.2580811Z    Compiling bytemuck v1.25.2
+2026-11-17T20:20:11.5246406Z    Compiling zerovec-derive v0.11.7
+2026-11-17T20:20:11.7328607Z    Compiling displaydoc v0.2.7
+2026-11-17T20:20:11.8900804Z    Compiling strum_macros v0.26.4
+2026-11-17T20:20:13.1396568Z    Compiling equivalent v1.0.3
+2026-11-17T20:20:13.2925622Z    Compiling windows-sys v0.61.2
+2026-11-17T20:20:13.5196613Z    Compiling cc v1.11.2
+2026-11-17T20:20:13.7613122Z    Compiling zerovec v0.11.9
+2026-11-17T20:20:14.8269021Z    Compiling tinystr v0.8.5
+2026-11-17T20:20:15.2659375Z    Compiling windows-result v0.2.0
+2026-11-17T20:20:15.7067224Z    Compiling xml-rs v0.8.29
+2026-11-17T20:20:15.8358652Z    Compiling litemap v0.8.3
+2026-11-17T20:20:16.1722373Z    Compiling parking_lot_core v0.9.12
+2026-11-17T20:20:16.5121304Z    Compiling simd-adler32 v0.3.10
+2026-11-17T20:20:16.6831392Z    Compiling utf_types v1.0.0
+2026-11-17T20:20:16.9692490Z    Compiling writeable v0.6.4
+2026-11-17T20:20:17.1197912Z    Compiling utf8_iter v1.1.0
+2026-11-17T20:20:17.3555078Z    Compiling icu_locale_core v2.4.0
+2026-11-17T20:20:17.3559386Z    Compiling ring v0.17.14
+2026-11-17T20:20:17.4419350Z    Compiling gl_generator v0.14.0
+2026-11-17T20:20:18.0812895Z    Compiling winapi-util v0.1.11
+2026-11-17T20:20:18.1647831Z    Compiling windows-strings v0.1.0
+2026-11-17T20:20:18.5106450Z    Compiling potential_utf v0.1.6
+2026-11-17T20:20:18.7424934Z    Compiling zerotrie v0.2.5
+2026-11-17T20:20:18.7652755Z    Compiling windows-interface v0.59.3
+2026-11-17T20:20:18.9331056Z    Compiling windows-implement v0.60.2
+2026-11-17T20:20:19.4754509Z    Compiling windows-implement v0.58.0
+2026-11-17T20:20:20.0097361Z    Compiling windows-interface v0.58.0
+2026-11-17T20:20:20.1206057Z    Compiling font-types v0.9.0
+2026-11-17T20:20:20.6791199Z    Compiling generic-array v0.14.7
+2026-11-17T20:20:20.9429066Z    Compiling windows-strings v0.5.1
+2026-11-17T20:20:21.0376878Z    Compiling windows-result v0.4.1
+2026-11-17T20:20:21.2881967Z    Compiling scopeguard v1.2.0
+2026-11-17T20:20:21.4042074Z    Compiling adler2 v2.0.1
+2026-11-17T20:20:21.6067085Z    Compiling icu_properties_data v2.4.0
+2026-11-17T20:20:21.6205668Z    Compiling foldhash v0.1.5
+2026-11-17T20:20:21.8584385Z    Compiling libc v0.2.190
+2026-11-17T20:20:21.8642059Z    Compiling icu_normalizer_data v2.4.0
+2026-11-17T20:20:21.9246405Z    Compiling allocator-api2 v0.2.21
+2026-11-17T20:20:22.0235846Z    Compiling zeroize v1.9.2
+2026-11-17T20:20:22.1140079Z    Compiling thiserror v1.0.69
+2026-11-17T20:20:22.3059228Z    Compiling raw-window-handle v0.6.2
+2026-11-17T20:20:22.5304550Z    Compiling crc32fast v1.5.2
+2026-11-17T20:20:22.6159629Z    Compiling hashbrown v0.15.5
+2026-11-17T20:20:22.6840636Z    Compiling rustls-pki-types v1.16.0
+2026-11-17T20:20:22.8361818Z    Compiling lock_api v0.4.14
+2026-11-17T20:20:22.8945935Z    Compiling windows-core v0.58.0
+2026-11-17T20:20:23.1922754Z    Compiling windows-core v0.62.2
+2026-11-17T20:20:23.8310857Z    Compiling icu_provider v2.4.0
+2026-11-17T20:20:24.2242581Z    Compiling icu_collections v2.4.0
+2026-11-17T20:20:24.3711592Z    Compiling termcolor v1.4.1
+2026-11-17T20:20:24.4677504Z    Compiling glutin_wgl_sys v0.6.1
+2026-11-17T20:20:25.6345778Z    Compiling thiserror-impl v1.0.69
+2026-11-17T20:20:25.6436056Z    Compiling kurbo v0.11.3
+2026-11-17T20:20:25.8243645Z    Compiling libloading v0.8.9
+2026-11-17T20:20:26.1785794Z    Compiling naga v24.0.0
+2026-11-17T20:20:26.8400045Z    Compiling typenum v1.20.1
+2026-11-17T20:20:27.4509593Z    Compiling bit-vec v0.8.0
+2026-11-17T20:20:28.4322331Z    Compiling unicode-width v0.1.14
+2026-11-17T20:20:28.8025523Z    Compiling getrandom v0.3.4
+2026-11-17T20:20:29.6026672Z    Compiling ash v0.38.0+1.3.281
+2026-11-17T20:20:29.6499564Z    Compiling khronos-egl v6.0.0
+2026-11-17T20:20:29.8330039Z    Compiling rustc-hash v1.1.0
+2026-11-17T20:20:29.8514956Z    Compiling zerocopy v0.8.63
+2026-11-17T20:20:29.9778697Z    Compiling codespan-reporting v0.11.1
+2026-11-17T20:20:30.4564364Z    Compiling bit-set v0.8.0
+2026-11-17T20:20:30.6082209Z    Compiling indexmap v2.14.2
+2026-11-17T20:20:31.7719214Z    Compiling parking_lot v0.12.5
+2026-11-17T20:20:31.8482552Z    Compiling windows v0.58.0
+2026-11-17T20:20:32.2954256Z    Compiling miniz_oxide v0.9.1
+2026-11-17T20:20:32.3925989Z    Compiling strum v0.26.3
+2026-11-17T20:20:33.4924204Z    Compiling gpu-descriptor-types v0.2.0
+2026-11-17T20:20:33.8332915Z    Compiling spirv v0.3.0+sdk-1.3.268.0
+2026-11-17T20:20:33.9224330Z    Compiling gpu-alloc-types v0.3.1
+2026-11-17T20:20:34.4710090Z    Compiling slotmap v1.1.1
+2026-11-17T20:20:34.7409682Z    Compiling getrandom v0.2.17
+2026-11-17T20:20:34.8361974Z    Compiling wgpu-hal v24.0.4
+2026-11-17T20:20:34.9091745Z    Compiling unicode-xid v0.2.6
+2026-11-17T20:20:35.0286567Z    Compiling unicode-segmentation v1.13.3
+2026-11-17T20:20:35.2668375Z    Compiling zmij v1.0.23
+2026-11-17T20:20:35.7376882Z    Compiling untrusted v0.9.0
+2026-11-17T20:20:35.8758407Z    Compiling hexf-parse v0.2.1
+2026-11-17T20:20:36.2695195Z    Compiling itoa v1.0.18
+2026-11-17T20:20:36.4153670Z    Compiling presser v0.3.1
+2026-11-17T20:20:44.0731543Z    Compiling gpu-alloc v0.6.2
+2026-11-17T20:20:45.1573812Z    Compiling gpu-descriptor v0.3.2
+2026-11-17T20:20:45.6149478Z    Compiling flate2 v1.1.10
+2026-11-17T20:20:47.0757317Z    Compiling icu_normalizer v2.4.0
+2026-11-17T20:20:48.9886445Z    Compiling gpu-allocator v0.27.0
+2026-11-17T20:20:51.3630850Z    Compiling icu_properties v2.4.0
+2026-11-17T20:20:54.8030701Z    Compiling read-fonts v0.33.1
+2026-11-17T20:20:58.8725144Z    Compiling font-types v0.12.7
+2026-11-17T20:20:59.7009880Z    Compiling euclid v0.22.14
+2026-11-17T20:21:00.8821924Z    Compiling ordered-float v4.6.0
+2026-11-17T20:21:01.4827073Z    Compiling wgpu-types v24.0.0
+2026-11-17T20:21:05.3874311Z    Compiling windows-threading v0.2.1
+2026-11-17T20:21:05.5411199Z    Compiling wgpu-core v24.0.5
+2026-11-17T20:21:05.9906116Z    Compiling svg_fmt v0.4.5
+2026-11-17T20:21:06.4858200Z    Compiling litrs v1.0.1
+2026-11-17T20:21:07.3032739Z    Compiling range-alloc v0.1.5
+2026-11-17T20:21:07.4427935Z    Compiling rustls v0.23.46
+2026-11-17T20:21:07.6712996Z    Compiling serde v1.0.229
+2026-11-17T20:21:08.0558454Z    Compiling linebender_resource_handle v0.1.1
+2026-11-17T20:21:08.1801453Z    Compiling glow v0.16.0
+2026-11-17T20:21:12.9688687Z    Compiling static_assertions v1.1.0
+2026-11-17T20:21:13.0562967Z    Compiling profiling v1.0.18
+2026-11-17T20:21:13.1459061Z    Compiling serde_json v1.0.154
+2026-11-17T20:21:13.4975704Z    Compiling renderdoc-sys v1.1.0
+2026-11-17T20:21:13.7590036Z    Compiling uuid v1.29.3
+2026-11-17T20:21:14.6795299Z    Compiling libm v0.2.16
+2026-11-17T20:21:15.0724480Z    Compiling color v0.3.3
+2026-11-17T20:21:17.3273796Z    Compiling peniko v0.4.1
+2026-11-17T20:21:17.8565352Z    Compiling accesskit v0.25.1
+2026-11-17T20:21:19.6654189Z    Compiling document-features v0.2.12
+2026-11-17T20:21:20.4622289Z    Compiling guillotiere v0.6.2
+2026-11-17T20:21:21.4604621Z    Compiling windows-future v0.3.2
+2026-11-17T20:21:22.7710401Z    Compiling skrifa v0.35.0
+2026-11-17T20:21:35.1875094Z    Compiling read-fonts v0.41.0
+2026-11-17T20:21:38.8376790Z    Compiling ppv-lite86 v0.2.21
+2026-11-17T20:21:39.4295057Z    Compiling idna_adapter v1.2.2
+2026-11-17T20:21:39.5768720Z    Compiling rand_core v0.9.5
+2026-11-17T20:21:39.8988770Z    Compiling vello_shaders v0.5.1
+2026-11-17T20:21:42.3335336Z    Compiling rustls-webpki v0.103.17
+2026-11-17T20:21:45.2670093Z    Compiling block-buffer v0.10.4
+2026-11-17T20:21:45.4267983Z    Compiling crypto-common v0.1.7
+2026-11-17T20:21:45.5534265Z    Compiling windows-numerics v0.3.1
+2026-11-17T20:21:45.9004820Z    Compiling windows-collections v0.3.2
+2026-11-17T20:21:46.6906315Z    Compiling webpki-roots v1.0.12
+2026-11-17T20:21:46.8147020Z    Compiling miniz_oxide v0.8.9
+2026-11-17T20:21:46.8318329Z    Compiling fdeflate v0.3.7
+2026-11-17T20:21:48.0396957Z    Compiling serde_derive v1.0.229
+2026-11-17T20:21:49.1041986Z    Compiling winit v0.30.12
+2026-11-17T20:21:49.6505616Z    Compiling wgpu v24.0.5
+2026-11-17T20:21:50.1363330Z    Compiling httparse v1.10.1
+2026-11-17T20:21:50.5674634Z    Compiling ttf-parser v0.21.1
+2026-11-17T20:21:53.4507673Z    Compiling percent-encoding v2.3.2
+2026-11-17T20:21:53.8356494Z    Compiling pin-project-lite v0.2.17
+2026-11-17T20:21:53.9300018Z    Compiling subtle v2.6.1
+2026-11-17T20:21:54.1239522Z    Compiling tracing-core v0.1.36
+2026-11-17T20:21:55.1669014Z    Compiling memchr v2.8.3
+2026-11-17T20:21:55.3630651Z    Compiling smol_str v0.2.2
+2026-11-17T20:21:55.7991546Z    Compiling bitflags v1.3.2
+2026-11-17T20:21:55.9208155Z    Compiling png v0.17.16
+2026-11-17T20:21:59.6696421Z    Compiling tracing v0.1.44
+2026-11-17T20:22:00.1617269Z    Compiling form_urlencoded v1.2.2
+2026-11-17T20:22:00.9862451Z    Compiling webpki-roots v0.26.11
+2026-11-17T20:22:01.0587612Z    Compiling windows v0.62.2
+2026-11-17T20:22:01.6008983Z    Compiling skrifa v0.44.0
+2026-11-17T20:22:11.9488227Z    Compiling digest v0.10.7
+2026-11-17T20:22:12.7300955Z    Compiling rand_chacha v0.9.0
+2026-11-17T20:22:14.2765648Z    Compiling idna v1.1.0
+2026-11-17T20:22:17.4437846Z    Compiling vello_encoding v0.5.1
+2026-11-17T20:22:26.1428922Z    Compiling accesskit_consumer v0.39.1
+2026-11-17T20:22:27.7786844Z    Compiling read-fonts v0.29.3
+2026-11-17T20:22:29.9031304Z    Compiling windows-sys v0.52.0
+2026-11-17T20:22:31.0180437Z    Compiling softbuffer v0.4.6
+2026-11-17T20:22:31.4372935Z    Compiling ttf-parser v0.20.0
+2026-11-17T20:22:37.9594889Z    Compiling yazi v0.2.2
+2026-11-17T20:22:40.4841098Z    Compiling memmap2 v0.9.12
+2026-11-17T20:22:40.4963157Z    Compiling cpufeatures v0.2.17
+2026-11-17T20:22:40.5730514Z    Compiling bytes v1.12.1
+2026-11-17T20:22:40.9453658Z    Compiling zeno v0.3.3
+2026-11-17T20:22:42.1377011Z    Compiling unicode-ccc v0.2.0
+2026-11-17T20:22:42.3594139Z    Compiling tinyvec v1.13.3
+2026-11-17T20:22:42.6594793Z    Compiling strict-num v0.1.1
+2026-11-17T20:22:42.8354504Z    Compiling unicode-bidi-mirroring v0.2.0
+2026-11-17T20:22:42.9937505Z    Compiling futures-core v0.3.34
+2026-11-17T20:22:43.0645540Z    Compiling dpi v0.1.2
+2026-11-17T20:22:43.1859734Z    Compiling cursor-icon v1.2.0
+2026-11-17T20:22:43.3281447Z    Compiling unicode-script v0.5.9
+2026-11-17T20:22:43.3505037Z    Compiling arrayref v0.3.9
+2026-11-17T20:22:43.4196734Z    Compiling unicode-properties v0.1.5
+2026-11-17T20:22:43.7590703Z    Compiling tiny-skia-path v0.11.4
+2026-11-17T20:22:44.3406812Z    Compiling rustybuzz v0.14.1
+2026-11-17T20:22:56.0495982Z    Compiling futures-intrusive v0.5.0
+2026-11-17T20:22:57.0042177Z    Compiling fontdb v0.16.2
+2026-11-17T20:22:58.8648063Z    Compiling swash v0.2.10
+2026-11-17T20:22:59.9917323Z    Compiling http v1.5.0
+2026-11-17T20:23:03.4161440Z    Compiling sha1 v0.10.7
+2026-11-17T20:23:04.0505452Z    Compiling skrifa v0.31.3
+2026-11-17T20:23:14.1410441Z    Compiling accesskit_windows v0.35.1
+2026-11-17T20:23:20.4277142Z    Compiling url v2.5.8
+2026-11-17T20:23:21.8972136Z    Compiling rand v0.9.5
+2026-11-17T20:23:22.0460081Z    Compiling rustx-core v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo\vendor\crates\rustx-core)
+2026-11-17T20:23:24.0167609Z    Compiling windows-sys v0.59.0
+2026-11-17T20:23:24.2418640Z    Compiling grid v0.15.0
+2026-11-17T20:23:24.5514843Z    Compiling rangemap v1.8.0
+2026-11-17T20:23:25.0152451Z    Compiling self_cell v1.3.0
+2026-11-17T20:23:25.0686011Z    Compiling utf-8 v0.7.6
+2026-11-17T20:23:25.1380791Z    Compiling data-encoding v2.11.1
+2026-11-17T20:23:25.3181841Z    Compiling base64 v0.22.1
+2026-11-17T20:23:26.1205465Z    Compiling sys-locale v0.3.2
+2026-11-17T20:23:26.4109556Z    Compiling unicode-linebreak v0.1.5
+2026-11-17T20:23:26.8861441Z    Compiling unicode-bidi v0.3.18
+2026-11-17T20:23:27.6512164Z    Compiling cosmic-text v0.14.2
+2026-11-17T20:23:29.4272287Z    Compiling ureq v2.12.1
+2026-11-17T20:23:30.9406963Z    Compiling tungstenite v0.28.0
+2026-11-17T20:23:35.3042437Z    Compiling taffy v0.7.7
+2026-11-17T20:23:36.5130917Z    Compiling vello v0.5.0
+2026-11-17T20:23:38.1849498Z    Compiling accesskit_winit v0.34.1
+2026-11-17T20:23:38.3621515Z    Compiling tiny-skia v0.11.4
+2026-11-17T20:23:39.3202294Z    Compiling fontdue v0.9.3
+2026-11-17T20:23:41.1156402Z    Compiling typed-builder-macro v0.20.1
+2026-11-17T20:23:42.6704101Z    Compiling pollster v0.4.0
+2026-11-17T20:23:42.8583442Z    Compiling rustx-engine v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo\vendor\crates\rustx-engine)
+2026-11-17T20:23:43.5935292Z    Compiling typed-builder v0.20.1
+2026-11-17T20:23:43.6770915Z    Compiling rustx-macros v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo\vendor\crates\rustx-macros)
+2026-11-17T20:23:44.3960879Z    Compiling rustx v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo\vendor\crates\rustx)
+2026-11-17T20:23:45.5771696Z    Compiling rustx-web v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo\vendor\crates\rustx-web)
+2026-11-17T20:24:07.5042060Z    Compiling native-demo v0.1.0 (C:\Users\runneradmin\AppData\Local\Temp\rustx-native-package-aLMKDm\native-demo)
+2026-11-17T20:25:01.3669961Z     Finished `release` profile [optimized] target(s) in 5m 15s
+2026-11-17T20:25:01.4442478Z RustX: Non-system dependency combase.dll; bundle/resolve it explicitly before packaging
+2026-11-17T20:25:01.4623260Z node:internal/modules/run_main:107
+2026-11-17T20:25:01.4623910Z     triggerUncaughtException(
+2026-11-17T20:25:01.4627491Z     ^
+2026-11-17T20:25:01.4627720Z 
+2026-11-17T20:25:01.4628393Z Error: Command failed: D:\a\rustx\rustx\target\debug\rustx.exe package --target native
+2026-11-17T20:25:01.4629706Z     at genericNodeError (node:internal/errors:986:15)
+2026-11-17T20:25:01.4630411Z     at wrappedFn (node:internal/errors:540:14)
+2026-11-17T20:25:01.4631146Z     at checkExecSyncError (node:child_process:943:11)
+2026-11-17T20:25:01.4631863Z     at execFileSync (node:child_process:979:15)
+2026-11-17T20:25:01.4632674Z     at run (file:///D:/a/rustx/rustx/scripts/test-native-package.mjs:32:38)
+2026-11-17T20:25:01.4633585Z     at file:///D:/a/rustx/rustx/scripts/test-native-package.mjs:50:3 {
+2026-11-17T20:25:01.4634620Z   status: 1,
+2026-11-17T20:25:01.4635052Z   signal: null,
+2026-11-17T20:25:01.4635498Z   output: [ null, null, null ],
+2026-11-17T20:25:01.4635971Z   pid: 2040,
+2026-11-17T20:25:01.4636347Z   stdout: null,
+2026-11-17T20:25:01.4636869Z   stderr: null
+2026-11-17T20:25:01.4637387Z }
+2026-11-17T20:25:01.4637615Z 
+2026-11-17T20:25:01.4637782Z Node.js v24.22.2
+2026-11-17T20:25:01.7127931Z Exception: D:\a\_temp\cfb81cc9-8869-4147-ab4b-4ed4366e21e1.ps1:6
+2026-11-17T20:25:01.7128680Z Line |
+2026-11-17T20:25:01.7129653Z    6 |  …  ($LASTEXITCODE -ne 0) { throw 'Native package verification failed' }
+2026-11-17T20:25:01.7130595Z      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2026-11-17T20:25:01.7131485Z      | Native package verification failed
+2026-11-17T20:25:01.7372946Z ##[error]Process completed with exit code 1.
+2026-11-17T20:25:01.7624784Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-11-17T20:25:01.7625379Z with:
+2026-11-17T20:25:01.7625662Z   name: native-package-windows-2025
+2026-11-17T20:25:01.7626088Z   path: releases/RP-007/
+docs/evidence/react-parity/RP-007/
+
+2026-11-17T20:25:01.7626511Z   if-no-files-found: warn
+2026-11-17T20:25:01.7626811Z   compression-level: 6
+2026-11-17T20:25:01.7627092Z   overwrite: false
+2026-11-17T20:25:01.7627365Z   include-hidden-files: false
+2026-11-17T20:25:01.7627652Z env:
+2026-11-17T20:25:01.7628016Z   RUSTX_NATIVE_EVIDENCE_DIR: docs/evidence/react-parity/RP-007/ci-44167929706
+2026-11-17T20:25:01.7628464Z ##[endgroup]
+2026-11-17T20:25:01.9739173Z (node:10164) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-17T20:25:01.9740679Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-17T20:25:01.9936126Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-17T20:25:01.9940031Z The least common ancestor is D:\a\rustx\rustx. This will be the root directory of the artifact
+2026-11-17T20:25:01.9941253Z With the provided path, there will be 30 files uploaded
+2026-11-17T20:25:01.9948853Z Artifact name is valid!
+2026-11-17T20:25:01.9950811Z Root directory input is valid!
+2026-11-17T20:25:02.4314326Z Beginning upload of artifact content to blob storage
+2026-11-17T20:25:02.5039702Z (node:10164) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-17T20:25:02.8983823Z Uploaded bytes 60904
+2026-11-17T20:25:02.9744808Z Finished uploading artifact content to blob storage!
+2026-11-17T20:25:02.9746724Z SHA256 digest of uploaded artifact zip is d3d7b02f3ad3ad66ef51bc1e641293dd9d87f7c8b9570a66370526cab5aaff5e
+2026-11-17T20:25:02.9749525Z Finalizing artifact upload
+2026-11-17T20:25:03.4631778Z Artifact native-package-windows-2025.zip successfully finalized. Artifact ID 14366956376
+2026-11-17T20:25:03.4633594Z Artifact native-package-windows-2025 has been successfully uploaded! Final size is 60904 bytes. Artifact ID is 14366956376
+2026-11-17T20:25:03.4644281Z Artifact download URL: https://github.com/ehsanrezaeee/rustx/actions/runs/44167929706/artifacts/14366956376
+2026-11-17T20:25:03.5072477Z Post job cleanup.
+2026-11-17T20:25:03.7183014Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-17T20:25:03.7556556Z git version 2.56.0.windows.4
+2026-11-17T20:25:03.7636054Z Temporarily overriding HOME='D:\a\_temp\73c8f169-c7ad-4939-9d9a-1631b0847124' before making global git config changes
+2026-11-17T20:25:03.7637660Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T20:25:03.7647139Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\rustx\rustx
+2026-11-17T20:25:03.8042618Z Removing SSH command configuration
+2026-11-17T20:25:03.8055503Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T20:25:03.8464124Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-17T20:25:04.4475664Z Removing HTTP extra header
+2026-11-17T20:25:04.4487040Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T20:25:04.4885055Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-17T20:25:05.0739881Z Removing includeIf entries pointing to credentials config files
+2026-11-17T20:25:05.0753839Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T20:25:05.1112306Z includeif.gitdir:D:/a/rustx/rustx/.git.path
+2026-11-17T20:25:05.1112895Z includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path
+2026-11-17T20:25:05.1164530Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/rustx/rustx/.git.path
+2026-11-17T20:25:05.1526347Z D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:25:05.1579869Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/rustx/rustx/.git.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:25:05.1997390Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path
+2026-11-17T20:25:05.2354051Z D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:25:05.2403550Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/rustx/rustx/.git/worktrees/*.path D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config
+2026-11-17T20:25:05.2808687Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-17T20:25:05.8725598Z Removing credentials config 'D:\a\_temp\git-credentials-3453d0fc-bf62-4024-8195-e6a0a5dee2dc.config'
+2026-11-17T20:25:05.8940484Z Cleaning up orphan processes
+2026-11-17T20:25:05.9222173Z Terminate orphan process: pid (7088) (vctip)
+2026-11-17T20:25:05.9629931Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
