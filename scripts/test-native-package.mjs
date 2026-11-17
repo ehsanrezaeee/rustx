@@ -7,7 +7,10 @@ import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 const root = process.cwd();
 const cli = path.join(root, 'target/debug', process.platform === 'win32' ? 'rustx.exe' : 'rustx');
-const output = path.join(root, 'docs/evidence/react-parity/RP-007');
+const output = path.resolve(
+  root,
+  process.env.RUSTX_NATIVE_EVIDENCE_DIR || 'docs/evidence/react-parity/RP-007',
+);
 await fs.mkdir(output, { recursive: true });
 const base = await fs.mkdtemp(path.join(os.tmpdir(), 'rustx-native-package-'));
 const project = path.join(base, 'native-demo');
@@ -16,6 +19,12 @@ const report = {
   date: new Date().toISOString(),
   platform: process.platform,
   arch: process.arch,
+  osRelease: os.release(),
+  osVersion: os.version(),
+  source: process.env.GITHUB_SHA || 'local working tree',
+  cliSha256: createHash('sha256')
+    .update(await fs.readFile(cli))
+    .digest('hex'),
   checks: [],
   base,
 };

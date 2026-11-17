@@ -1,6 +1,6 @@
 # Native and browser parity execution ledger — revision 2
 
-16 November 2026. Native delivery is the current execution priority. RP-007 is authorized for implementation, commit and push. RX release gates remain binding; finite verification is not full platform acceptance.
+17 November 2026. Native delivery is the current execution priority. RP-007 is authorized for implementation, commit and push. Its Windows CI repair and replay are in progress; see [repair evidence](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md). RX release gates remain binding; finite verification is not full platform acceptance.
 
 ## Complete task accounting (review before each increment)
 

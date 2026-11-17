@@ -39,12 +39,20 @@ fn application(root: &Path) -> Result<(Value, String), String> {
         root,
     )?)
     .map_err(|e| e.to_string())?;
+    select_application(root, &metadata)
+}
+fn select_application(root: &Path, metadata: &Value) -> Result<(Value, String), String> {
     let packages = metadata["packages"]
         .as_array()
         .ok_or("Cargo returned no packages")?;
     let app = packages
         .iter()
-        .find(|p| Path::new(p["manifest_path"].as_str().unwrap_or("")).parent() == Some(root))
+        .find(|p| {
+            Path::new(p["manifest_path"].as_str().unwrap_or(""))
+                .parent()
+                .and_then(|p| p.canonicalize().ok())
+                .is_some_and(|p| p == root)
+        })
         .or_else(|| packages.iter().find(|p| p["name"] == "rustx-lab"))
         .ok_or("Run package from an application directory or the RustX repository root")?
         .clone();
@@ -273,8 +281,15 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
     }
     // Require native inspection/archive tools before spending time compiling.
     if cfg!(windows) {
-        output("dumpbin", &["/?"], root)
-            .map_err(|e| format!("Use an MSVC developer shell (dumpbin required): {e}"))?;
+        // MSVC's help command can exit unsuccessfully even when dumpbin works.
+        // Inspect this CLI's actual PE headers instead of treating help as a health check.
+        let cli = std::env::current_exe().map_err(|e| e.to_string())?;
+        output(
+            "dumpbin",
+            &["/HEADERS", cli.to_str().ok_or("Non-UTF8 CLI path")?],
+            root,
+        )
+        .map_err(|e| format!("Use an MSVC developer shell (dumpbin required): {e}"))?;
     }
     let (app, bin) = application(root)?;
     let name = app["name"].as_str().ok_or("Missing package name")?;
@@ -491,6 +506,31 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn application_matches_canonical_project_directory() {
+        let fixture = std::env::temp_dir().join(format!(
+            "rustx-native-selection-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir(&fixture).unwrap();
+        let stage = Staging(fixture);
+        let root = stage.0.canonicalize().unwrap();
+        // Cargo can report C:\\... while current_dir canonicalizes to \\\\?\\C:\\...
+        // on Windows. Exercise another spelling of the same directory on every OS.
+        let alternate = stage.0.join("..").join(stage.0.file_name().unwrap());
+        let metadata = json!({"packages":[{
+            "name":"independent-app",
+            "manifest_path":alternate.join("Cargo.toml"),
+            "targets":[{"name":"independent-app","kind":["bin"]}]
+        }]});
+        let (app, bin) = select_application(&root, &metadata).unwrap();
+        assert_eq!(app["name"], "independent-app");
+        assert_eq!(bin, "independent-app");
+    }
     #[test]
     fn dependency_audit_rejects_unbundled_libraries() {
         assert!(dependencies("app:\n /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1.0.0)", true).is_ok());

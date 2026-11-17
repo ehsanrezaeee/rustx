@@ -1,4 +1,6 @@
-# Status — 16 November 2026
+# Status — 17 November 2026
+
+RP-007 Windows CI repair (17 November 2026): the original native-package run failed because `dumpbin /?` returned a nonzero status in a working Visual Studio shell. The CLI now probes actual PE headers and canonicalizes Cargo application paths. The new path regression reproduces the old failure; 160 local workspace tests pass. Actual corrected Windows package/startup results remain pending until recorded in [repair evidence](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md). Full platform/release gates remain open.
 
 RP-007 native delivery (16 November 2026): added generic `rustx package` for host-native macOS .app/ZIP and Windows portable ZIP, explicit binary/host selection, static Windows CRT, direct dependency inspection, license inventory and checksums. A fresh scaffold was packaged/extracted and reached two native CPU frames on macOS with source hidden and no Rust on PATH. Windows CI and independent clean-machine/signing/installer gates remain open; this is not full RP-007 completion. [Native guide](NATIVE_PACKAGING.md) and [evidence](evidence/react-parity/RP-007/README.md). The revised task ledger accounts for every RP ID: RP-001 and RP-005 remain unfinished; native priorities are RP-007–010 and browser input is retained as RP-011. Review open work before selecting the next increment.
 

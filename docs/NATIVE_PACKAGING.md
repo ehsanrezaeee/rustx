@@ -56,4 +56,6 @@ These are portable **developer packages**, not signed installers or store releas
 
 The native-package CI workflow runs on actual macOS and Windows runners and uploads ZIPs and evidence. Runner-installed SDKs still prevent calling those runs independent clean-machine acceptance. Consult [RP-007 evidence](evidence/react-parity/RP-007/README.md) for actual results, not just the workflow definition.
 
+The 17 November Windows repair probes dumpbin with the CLI's real PE headers; help-command status is not a tool-availability check. Cargo package paths are canonicalized before application selection. CI runs the CLI regressions on both hosts and retains reports in a directory named for the run. Set `RUSTX_NATIVE_EVIDENCE_DIR` for a separate local replay. [Repair results](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md) distinguish pending and executed platform checks.
+
 The [task ledger](REACT_PARITY_TASKS.md) explicitly preserves unfinished RP-001/RP-005 and remaining platform gates. Next native milestones are RP-008 interaction, RP-009 text/accessibility and RP-010 rendering/performance. Browser conformance remains RP-011; it no longer occupies RP-007.
