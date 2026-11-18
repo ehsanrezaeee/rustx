@@ -17,3 +17,9 @@ The first repair replay, [run 44167929706](https://github.com/ehsanrezaeee/rustx
 - Actual macOS arm64 `node scripts/test-native-package.mjs`: pass, including ZIP/payload hashes, unrelated launch directory, hidden source and toolchain-free PATH; `native-macos.log`, `native-darwin.json`, `package-darwin.json`, `dependencies-darwin.txt`, `startup-darwin.log`. The sandboxed attempt passed packaging/hash checks but aborted at window startup; `*-sandbox-failure.*` retain that failure. Desktop-enabled replay reaches two CPU frames and exits successfully.
 
 The corrected actual Windows CI run is pending at this checkpoint. Only its completed result may establish Windows success. A restricted launch PATH on an SDK-equipped runner is not a clean-machine test. Native interaction, GPU/DPI, IME, human screen-reader, signing/notarization and installer gates remain open. RP-001/RP-005 remain unfinished; RP-008 follows the finite RP-007 platform check.
+
+## 18 November ZIP repair
+
+[Windows job 134344559162](https://github.com/ehsanrezaeee/rustx/actions/runs/44169523267/job/134344559162) on `9dd0724` built the application and passed DLL inspection. PowerShell's archive module then passed a null destination parent to `Join-Path` while resolving the canonical staging path. The CLI reported `Native ZIP archive failed`. The macOS job passed.
+
+The Windows writer now runs the system libarchive executable in the staging directory and passes the archive and payload names as individual relative arguments. The existing integration test still uses an independent reader (PowerShell Expand-Archive) to extract the ZIP and check its layout and contents before launching it.

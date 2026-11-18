@@ -54,7 +54,7 @@ These are portable **developer packages**, not signed installers or store releas
 
 `node scripts/test-native-package.mjs` creates a fresh scaffold, rejects unsafe/existing output, packages/extracts it, checks hashes, hides the source directory and starts the native CPU app from an unrelated directory with Rust/Node absent from `PATH`. It requires Node only as contributor test tooling. Two rendered frames and exit success prove startup, not keyboard/IME/accessibility/GPU correctness.
 
-The native-package CI workflow runs on actual macOS and Windows runners and uploads ZIPs and evidence. Runner-installed SDKs still prevent calling those runs independent clean-machine acceptance. Consult [RP-007 evidence](evidence/react-parity/RP-007/README.md) for actual results, not just the workflow definition.
+Windows packaging uses the system copy of `tar.exe` (libarchive) to write the ZIP from inside the staging directory. Recipients can extract it with Explorer or PowerShell. The native-package CI workflow runs on actual macOS and Windows runners and uploads ZIPs and evidence. Consult [RP-007 evidence](evidence/react-parity/RP-007/README.md) for actual results and clean-machine limits.
 
 The 17 November Windows repair probes dumpbin with the CLI's real PE headers; help-command status is not a tool-availability check. Cargo package paths are canonicalized before application selection. CI runs the CLI regressions on both hosts and retains reports in a directory named for the run. Set `RUSTX_NATIVE_EVIDENCE_DIR` for a separate local replay. [Repair results](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md) distinguish pending and executed platform checks.
 

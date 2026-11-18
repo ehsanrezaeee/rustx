@@ -479,12 +479,16 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
             &stage.0,
         )?;
     } else {
-        // Paths are environment data, never interpolated into PowerShell source.
-        let status = Command::new("powershell.exe").args(["-NoProfile", "-NonInteractive", "-Command", "$ErrorActionPreference='Stop'; Compress-Archive -LiteralPath $env:RUSTX_PACKAGE_SOURCE -DestinationPath $env:RUSTX_PACKAGE_ARCHIVE -CompressionLevel Optimal"])
-            .env("RUSTX_PACKAGE_SOURCE", &payload).env("RUSTX_PACKAGE_ARCHIVE", stage.0.join(&archive)).status().map_err(|e| e.to_string())?;
-        if !status.success() {
-            return Err("Native ZIP archive failed".into());
-        }
+        // Use the inbox libarchive tool. Relative entry names keep the staging
+        // path (which can have a Windows verbatim prefix) out of the ZIP.
+        let tar = PathBuf::from(std::env::var_os("SystemRoot").ok_or("Missing SystemRoot")?)
+            .join("System32")
+            .join("tar.exe");
+        run(
+            tar.to_str().ok_or("Non-UTF8 Windows system path")?,
+            &["--format", "zip", "-cf", &archive, "--", &stem],
+            &stage.0,
+        )?;
     }
     write(
         &stage.0.join("SHA256SUMS.txt"),
