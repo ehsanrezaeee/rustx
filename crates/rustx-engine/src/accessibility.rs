@@ -135,7 +135,10 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
             return;
         }
         let mut accessible = Node::new(role(node));
-        if !node.label.is_empty() {
+        if accessible.role() == Role::Label && !node.control.password() {
+            // AccessKit derives a static text node's platform name from its value.
+            accessible.set_value(node.label.clone());
+        } else if !node.label.is_empty() {
             accessible.set_label(node.label.clone());
         }
         // Password text is never published to platform diagnostics or AT.

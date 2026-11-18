@@ -7,6 +7,7 @@ on:
       - 'crates/rustx-cli/**'
       - 'crates/rustx-engine/**'
       - 'scripts/test-native-package.mjs'
+      - 'scripts/test-windows-interaction.ps1'
       - '.github/workflows/native-packages.yml'
   pull_request:
     branches: [main]
@@ -47,6 +48,16 @@ jobs:
           Enter-VsDevShell -VsInstallPath $vs -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64'
           node scripts/test-native-package.mjs
           if ($LASTEXITCODE -ne 0) { throw 'Native package verification failed' }
+      - name: RP-008 extracted Windows keyboard and resize
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $package = Get-Content -Raw (Join-Path $env:RUSTX_NATIVE_EVIDENCE_DIR 'native-win32.json') | ConvertFrom-Json
+          $stem = [IO.Path]::GetFileNameWithoutExtension($package.archive)
+          $exe = Join-Path $package.base "recipient\$stem\native-demo.exe"
+          & ./scripts/test-windows-interaction.ps1 -Executable $exe |
+            Set-Content -Encoding utf8 (Join-Path $env:RUSTX_NATIVE_EVIDENCE_DIR 'interaction-win32.json')
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
