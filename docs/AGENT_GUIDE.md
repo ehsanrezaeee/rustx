@@ -17,7 +17,7 @@ Keep visible UI layout, text, and editing in Rust. Keep platform APIs at the hos
 
 ## Continue RP-008
 
-Extend the existing Applications demo or use an ignored local scaffold for the multi-control form. Check forward and reverse Tab order, disabled controls, dialog focus confinement, and Escape restoring the opener. Use an actual native window and record the OS, renderer, input method, and expected versus actual results. Windows UI Automation can read back focus. For manual hardware or screen-reader coverage, record the device and assistive technology used.
+Use the Applications demo or an ignored local scaffold for the multi-control form. Continue with Windows Shift+Tab, then replay the full form on macOS, including disabled controls, dialog focus confinement, and Escape restoration. Use an actual native window and record the OS, renderer, input method, and expected versus actual results. Windows UI Automation can read back focus. For manual hardware or screen-reader coverage, record the device and assistive technology used.
 
 ## Validate and hand off
 

@@ -386,14 +386,16 @@ fn respond(mut stream: TcpStream, root: &Path) {
     }
 }
 pub fn serve_on(root: &Path, port: &str, host: &str) -> Result<(), String> {
-    let (root, listener) = bind(root, port, host)?;
-    serve_listener(root, listener);
-    Ok(())
+    serve_listener(root, bind(port, host)?)
 }
-pub fn bind(root: &Path, port: &str, host: &str) -> Result<(PathBuf, TcpListener), String> {
+pub fn bind(port: &str, host: &str) -> Result<TcpListener, String> {
     let host: std::net::IpAddr = host
         .parse()
         .map_err(|_| "Invalid bind IP address".to_owned())?;
+    let port: u16 = port.parse().map_err(|_| "Invalid port".to_owned())?;
+    TcpListener::bind((host, port)).map_err(|e| e.to_string())
+}
+pub fn serve_listener(root: &Path, listener: TcpListener) -> Result<(), String> {
     let root = root
         .canonicalize()
         .map_err(|e| format!("Build the bundle first: {e}"))?;
@@ -403,20 +405,16 @@ pub fn bind(root: &Path, port: &str, host: &str) -> Result<(PathBuf, TcpListener
             root.display()
         ));
     }
-    let port: u16 = port.parse().map_err(|_| "Invalid port".to_owned())?;
-    let listener = TcpListener::bind((host, port)).map_err(|e| e.to_string())?;
     println!(
         "RustX serving {} at http://{}",
         root.display(),
         listener.local_addr().map_err(|e| e.to_string())?
     );
-    Ok((root, listener))
-}
-pub fn serve_listener(root: PathBuf, listener: TcpListener) {
     for stream in listener.incoming() {
         let root = root.clone();
         if let Ok(stream) = stream {
             std::thread::spawn(move || respond(stream, &root));
         }
     }
+    Ok(())
 }

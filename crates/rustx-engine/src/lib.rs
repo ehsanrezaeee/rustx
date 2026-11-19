@@ -16,7 +16,7 @@ pub mod scene;
 pub mod text;
 pub mod world;
 use layout::{BoxNode, LayoutEngine};
-use rustx_core::{NodeId, Runtime, View};
+use rustx_core::{NodeId, Runtime, Snapshot, View};
 use scene::SceneEngine;
 use text::TextEngine;
 pub use vello;
@@ -28,6 +28,31 @@ use vello::{
 use world::World;
 pub fn color(rgb: u32) -> Color {
     Color::from_rgb8((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
+}
+fn find_visible(node: &Snapshot, id: NodeId) -> Option<&Snapshot> {
+    if node.control.hidden {
+        return None;
+    }
+    if node.id == id {
+        Some(node)
+    } else {
+        node.children
+            .iter()
+            .find_map(|child| find_visible(child, id))
+    }
+}
+fn tab_stop(node: &Snapshot) -> bool {
+    node.focusable() && node.control.tab_index.is_none_or(|index| index >= 0)
+}
+fn first_tab_stop(node: &Snapshot) -> Option<NodeId> {
+    if node.control.hidden {
+        return None;
+    }
+    if tab_stop(node) {
+        Some(node.id)
+    } else {
+        node.children.iter().find_map(first_tab_stop)
+    }
 }
 pub struct Engine {
     pub diagnostics: diagnostics::Diagnostics,
@@ -55,7 +80,7 @@ pub struct Engine {
     resource_epoch: u64,
     model_epoch: u64,
     modal: Option<NodeId>,
-    restore_focus: Option<NodeId>,
+    modal_openers: Vec<(NodeId, Option<NodeId>)>,
     text_drag: Option<(u64, NodeId, usize)>,
     preferred_caret_x: Option<(NodeId, f64, usize)>,
     editor_revision: Option<(NodeId, u64)>,
@@ -99,7 +124,7 @@ impl Engine {
             resource_epoch: 0,
             model_epoch: 0,
             modal: None,
-            restore_focus: None,
+            modal_openers: Vec::new(),
             text_drag: None,
             preferred_caret_x: None,
             editor_revision: None,
@@ -337,18 +362,11 @@ impl Engine {
     }
     pub fn focus_node(&mut self, id: NodeId) {
         let snapshot = self.runtime.snapshot();
-        fn find(s: &rustx_core::Snapshot, id: NodeId) -> Option<&rustx_core::Snapshot> {
-            if s.id == id {
-                Some(s)
-            } else {
-                s.children.iter().find_map(|c| find(c, id))
-            }
-        }
-        if !find(&snapshot, id).is_some_and(|s| s.focusable()) {
+        if !find_visible(&snapshot, id).is_some_and(Snapshot::focusable) {
             return;
         }
         if let Some(modal) = self.modal {
-            if !find(&snapshot, modal).is_some_and(|s| find(s, id).is_some()) {
+            if !find_visible(&snapshot, modal).is_some_and(|s| find_visible(s, id).is_some()) {
                 return;
             }
         }
@@ -485,19 +503,14 @@ impl Engine {
         } else {
             0.
         };
-        fn accepts_focus(s: &rustx_core::Snapshot, id: NodeId) -> bool {
-            if s.id == id {
-                s.focusable()
-            } else {
-                s.children.iter().any(|child| accepts_focus(child, id))
-            }
-        }
-        if self.focus.is_some_and(|id| !accepts_focus(&snapshot, id)) {
+        let accepts_focus = |id| find_visible(&snapshot, id).is_some_and(Snapshot::focusable);
+        if self.focus.is_some_and(|id| !accepts_focus(id)) {
             self.focus = None;
         }
-        if self.text_drag.is_some_and(|(_, id, _)| {
-            !accepts_focus(&snapshot, id) || self.runtime.editor(id).is_none()
-        }) {
+        if self
+            .text_drag
+            .is_some_and(|(_, id, _)| !accepts_focus(id) || self.runtime.editor(id).is_none())
+        {
             if let Some((pointer, id, _)) = self.text_drag.take() {
                 self.runtime.dispatch(
                     id,
@@ -510,35 +523,50 @@ impl Engine {
                 );
             }
         }
-        fn active_modal(s: &rustx_core::Snapshot) -> Option<&rustx_core::Snapshot> {
+        fn visible_modals<'a>(s: &'a Snapshot, out: &mut Vec<&'a Snapshot>) {
             if s.control.hidden {
-                return None;
+                return;
             }
-            s.children
-                .iter()
-                .rev()
-                .find_map(active_modal)
-                .or_else(|| s.control.modal.then_some(s))
+            if s.control.modal {
+                out.push(s);
+            }
+            for child in &s.children {
+                visible_modals(child, out);
+            }
         }
-        let modal = active_modal(&snapshot);
-        if self.modal != modal.map(|s| s.id) {
-            if let Some(modal) = modal {
-                self.restore_focus = self.focus;
-                self.modal = Some(modal.id);
-                fn first(s: &rustx_core::Snapshot) -> Option<NodeId> {
-                    if s.focusable() {
-                        Some(s.id)
-                    } else {
-                        s.children.iter().find_map(first)
-                    }
+        let mut modals = Vec::new();
+        visible_modals(&snapshot, &mut modals);
+        let retained = self
+            .modal_openers
+            .iter()
+            .zip(&modals)
+            .take_while(|((id, _), modal)| *id == modal.id)
+            .count();
+        if retained != self.modal_openers.len() || retained != modals.len() {
+            let mut target = self
+                .modal_openers
+                .get(retained)
+                .map_or(self.focus, |entry| entry.1);
+            self.modal_openers.truncate(retained);
+            for modal in &modals[retained..] {
+                self.modal_openers.push((modal.id, target));
+                target = first_tab_stop(modal);
+            }
+
+            let old_modal = self.modal;
+            let modal = modals.last().copied();
+            self.modal = modal.map(|s| s.id);
+            if self.modal != old_modal {
+                if let Some(modal) = modal {
+                    target = target
+                        .filter(|&id| find_visible(modal, id).is_some_and(Snapshot::focusable))
+                        .or_else(|| first_tab_stop(modal));
                 }
-                if let Some(id) = first(modal) {
+                if let Some(id) = target.filter(|&id| accepts_focus(id)) {
                     self.focus_node(id);
-                }
-            } else {
-                self.modal = None;
-                if let Some(id) = self.restore_focus.take() {
-                    self.focus_node(id);
+                } else if let Some(id) = self.focus.take() {
+                    self.runtime
+                        .dispatch(id, rustx_core::EventData::new(rustx_core::EventKind::Blur));
                 }
             }
             self.dirty = true;
@@ -860,18 +888,11 @@ impl Engine {
     }
     pub fn tab(&mut self, back: bool) {
         let snapshot = self.runtime.snapshot();
-        fn find(s: &rustx_core::Snapshot, id: NodeId) -> Option<&rustx_core::Snapshot> {
-            if s.id == id {
-                Some(s)
-            } else {
-                s.children.iter().find_map(|c| find(c, id))
-            }
-        }
         fn collect(s: &rustx_core::Snapshot, out: &mut Vec<NodeId>) {
             if s.control.hidden {
                 return;
             }
-            if s.focusable() && s.control.tab_index != Some(-1) {
+            if tab_stop(s) {
                 out.push(s.id);
             }
             for c in &s.children {
@@ -881,7 +902,7 @@ impl Engine {
         let mut ids = vec![];
         let root = self
             .modal
-            .and_then(|id| find(&snapshot, id))
+            .and_then(|id| find_visible(&snapshot, id))
             .unwrap_or(&snapshot);
         collect(root, &mut ids);
         if !ids.is_empty() {
@@ -1232,19 +1253,24 @@ impl Engine {
         }
     }
     pub fn scroll_at(&mut self, p: Point, dy: f64) {
+        self.wheel_at(p, 0., dy);
+    }
+    pub fn wheel_at(&mut self, p: Point, dx: f64, dy: f64) {
         if let Some(id) = self.painter.hit(p) {
             let mut event = rustx_core::EventData::new(rustx_core::EventKind::Wheel);
             event.x = p.x;
             event.y = p.y;
+            event.delta_x = dx;
             event.delta_y = dy;
             if self.runtime.dispatch(id, event).default_prevented {
                 return;
             }
         }
-        if !self
-            .painter
-            .hit(p)
-            .is_some_and(|id| self.runtime.scroll(id, dy))
+        if dy != 0.
+            && !self
+                .painter
+                .hit(p)
+                .is_some_and(|id| self.runtime.scroll(id, dy))
         {
             self.scroll(dy);
         }
@@ -1276,5 +1302,60 @@ impl Engine {
         }
         .unwrap_or_else(|| self.host_root());
         self.dispatch(target, event)
+    }
+}
+
+#[cfg(test)]
+mod focus_tests {
+    use super::*;
+    use rustx_core::{dialog, Node, OverlayState, Widget};
+    use std::{cell::RefCell, rc::Rc};
+
+    fn button(id: &str) -> Node {
+        Node::widget(Widget::Button).id(id).value(id)
+    }
+
+    #[test]
+    fn stacked_dialogs_restore_their_own_openers() {
+        let states = Rc::new(RefCell::new(None));
+        let saved = states.clone();
+        let mut engine = Engine::new(move |cx| {
+            let outer = OverlayState::new(&cx);
+            let inner = OverlayState::new(&cx);
+            *saved.borrow_mut() = Some((outer.clone(), inner.clone()));
+            Node::widget(Widget::Column).children(vec![
+                button("page-opener"),
+                Node::widget(Widget::Column)
+                    .hidden(true)
+                    .children(vec![button("hidden")]),
+                dialog(
+                    outer,
+                    "Outer",
+                    Node::widget(Widget::Column)
+                        .children(vec![button("outer-first"), button("inner-opener")]),
+                ),
+                dialog(inner, "Inner", button("inner-first")),
+            ])
+        });
+        engine.frame(600., 500., 1.);
+        let tree = engine.runtime.snapshot();
+        let opener = tree.find("page-opener").unwrap().id;
+        engine.focus_node(opener);
+        engine.focus_node(tree.find("hidden").unwrap().id);
+        assert_eq!(engine.focused_node(), Some(opener));
+
+        let (outer, inner) = states.borrow().as_ref().unwrap().clone();
+        outer.show();
+        engine.frame(600., 500., 1.);
+        let inner_opener = engine.runtime.snapshot().find("inner-opener").unwrap().id;
+        engine.focus_node(inner_opener);
+        inner.show();
+        engine.frame(600., 500., 1.);
+        assert!(engine.key("Escape", false, false, false, false));
+        engine.frame(600., 500., 1.);
+        assert_eq!(engine.focused_node(), Some(inner_opener));
+        assert!(engine.key("Escape", false, false, false, false));
+        engine.frame(600., 500., 1.);
+        assert_eq!(engine.focused_node(), Some(opener));
     }
 }

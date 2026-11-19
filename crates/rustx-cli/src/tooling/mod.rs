@@ -322,6 +322,28 @@ const HOST: &str = include_str!(concat!(env!("OUT_DIR"), "/host.js"));
 const INDEX: &str = include_str!(concat!(env!("OUT_DIR"), "/index.html"));
 const SERVICES: &str = include_str!(concat!(env!("OUT_DIR"), "/services.js"));
 const SEMANTICS: &str = include_str!(concat!(env!("OUT_DIR"), "/semantics.js"));
+fn check_web_output(out: &Path) -> Result<(), String> {
+    if !out.exists() {
+        return Ok(());
+    }
+    let manifest = fs::read(out.join("assets.json"))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<Value>(&bytes).ok());
+    if manifest.is_some_and(|manifest| {
+        manifest["version"] == 1
+            && manifest["files"].is_object()
+            && manifest["build"]
+                .as_str()
+                .is_some_and(|id| id.len() == 64 && id.bytes().all(|byte| byte.is_ascii_hexdigit()))
+    }) {
+        Ok(())
+    } else {
+        Err(format!(
+            "Refusing to replace {} without a RustX web bundle manifest",
+            out.display()
+        ))
+    }
+}
 pub fn build(
     root: &Path,
     target: &str,
@@ -342,7 +364,9 @@ pub fn build(
     {
         return Err("Output must be a real child directory of the project".into());
     }
-    if out.exists() && !out.join("assets.json").exists() && !out.join("pkg").exists() {
+    if target == "web" {
+        check_web_output(out)?;
+    } else if out.exists() && !out.join("assets.json").exists() && !out.join("pkg").exists() {
         return Err("Refusing to replace a directory without a RustX bundle manifest".into());
     }
     if let Some(origin) = compiler {
@@ -581,6 +605,7 @@ pub fn build(
     }
     fs::create_dir_all(out.parent().ok_or("Missing output parent")?).map_err(|e| e.to_string())?;
     let previous = stage.0.join("previous");
+    check_web_output(out)?;
     if out.exists() {
         fs::rename(out, &previous).map_err(|e| e.to_string())?;
     }
@@ -604,6 +629,12 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
     } else {
         "dist-native"
     });
+    // A second dev invocation must fail before replacing the bundle already being served.
+    let listener = if target == "web" {
+        Some(crate::server::bind(port, "127.0.0.1")?)
+    } else {
+        None
+    };
     build(root, target, &out, true, compiler, false, false)?;
     let fingerprint = || -> Result<String, String> {
         let mut paths = vec![];
@@ -661,8 +692,13 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
         }
     }
     write(&out.join("dev.json"), b"{\"revision\":0,\"error\":null}")?;
-    let (served, listener) = crate::server::bind(&out, port, "127.0.0.1")?;
-    std::thread::spawn(move || crate::server::serve_listener(served, listener));
+    let listener = listener.expect("web dev has a bound listener");
+    let served = out.clone();
+    std::thread::spawn(move || {
+        if let Err(error) = crate::server::serve_listener(&served, listener) {
+            eprintln!("{error}");
+        }
+    });
     loop {
         std::thread::sleep(Duration::from_millis(500));
         let next = fingerprint()?;

@@ -272,20 +272,18 @@ async function mountHost() {
     (e) => {
       if (!ready) return;
       const node = e.target.closest?.('[data-node]');
+      const unit = e.deltaMode;
+      const dx = e.deltaX * (unit === 1 ? 40 : unit === 2 ? innerWidth : 1);
+      const dy = e.deltaY * (unit === 1 ? 40 : unit === 2 ? innerHeight : 1);
       if (e.ctrlKey || e.metaKey) {
         if (node?.getAttribute('role') === 'img') {
           e.preventDefault();
-          app.canvas_zoom(
-            Number(node.dataset.node),
-            e.clientX,
-            e.clientY,
-            Math.exp(-e.deltaY * 0.01),
-          );
+          app.canvas_zoom(Number(node.dataset.node), e.clientX, e.clientY, Math.exp(-dy * 0.01));
           schedule();
         }
         return;
       }
-      wheel(node, e.deltaY, e.deltaX, e.clientX, e.clientY, e);
+      wheel(node, dy, dx, e.clientX, e.clientY, e);
       e.preventDefault();
     },
     { passive: false },

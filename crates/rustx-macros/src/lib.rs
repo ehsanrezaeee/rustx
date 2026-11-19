@@ -9,6 +9,18 @@ use syn::{
 };
 
 struct Markup(Tokens);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn builtin_input_aliases_report_duplicate_handlers() {
+        let result = syn::parse_str::<Markup>("<TextInput on_input={first} on_change={second} />");
+        assert!(matches!(result, Err(error) if error.to_string() == "duplicate property"));
+    }
+}
+
 fn children(input: ParseStream, close: bool) -> Result<Vec<Tokens>> {
     let mut out = vec![];
     while !input.is_empty() {
@@ -110,6 +122,7 @@ impl Parse for Markup {
             let canonical = match ident.to_string().as_str() {
                 "onClick" => "on_click".to_owned(),
                 "onInput" => "on_input".to_owned(),
+                "on_change" if builtin => "on_input".to_owned(),
                 _ => ident.to_string(),
             };
             if !seen.insert(canonical) {

@@ -193,13 +193,13 @@ impl<T: 'static> Binding<T> {
             self.scope.remove_cleanup(id);
         }
     }
-    fn write(&self, snapshot: StoreSnapshot<T>) -> Option<(Box<dyn Any>, Wake)> {
+    fn write(&self, snapshot: StoreSnapshot<T>) -> Option<(Option<Rc<dyn Any>>, Wake)> {
         let i = self.scope.inner.upgrade()?;
         let mut b = i.borrow_mut();
         let value = b.values.get_mut(&self.signal.id)?;
-        let retired = std::mem::replace(&mut value.value, Box::new(snapshot));
+        let retired = value.value.replace(Rc::new(snapshot));
         let subscribers = value.subscribers.clone();
-        b.dirty.extend(subscribers);
+        b.mark_dirty(subscribers);
         let wake = b.wake.clone().map(|wake| (Rc::as_ptr(&i) as usize, wake));
         Some((retired, wake))
     }

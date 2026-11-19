@@ -30,8 +30,6 @@ export class SemanticProjection {
     this.listeners = new WeakMap();
     this.disposed = false;
     this.composing = new Set();
-    this.lastModal = null;
-    this.restoreFocus = null;
     this.onSelection = () => {
       const el = document.activeElement;
       if (root.contains(el) && this.editable(el)) this.selection(el);
@@ -125,19 +123,16 @@ export class SemanticProjection {
       el.setSelectionRange(Math.min(a, b), Math.max(a, b), a > b ? 'backward' : 'forward');
     }
   }
+  tag(n) {
+    const c = n.control || {};
+    if (n.role === 'textbox' || c.editable) return c.multiline ? 'textarea' : 'input';
+    if (n.role === 'link') return 'a';
+    return n.focusable ? 'button' : 'span';
+  }
   create(n) {
     if (this.disposed) throw new Error('Semantic projection is disposed');
     const c = n.control || {},
-      tag =
-        n.role === 'textbox' || c.editable
-          ? c.multiline
-            ? 'textarea'
-            : 'input'
-          : n.role === 'link'
-            ? 'a'
-            : n.focusable
-              ? 'button'
-              : 'span';
+      tag = this.tag(n);
     const el = document.createElement(tag);
     const controller = new AbortController();
     this.listeners.set(el, controller);
@@ -296,6 +291,13 @@ export class SemanticProjection {
     this.elements.set(n.id, el);
     return el;
   }
+  remove(id, el) {
+    this.listeners.get(el)?.abort();
+    this.listeners.delete(el);
+    this.composing.delete(el);
+    el.remove();
+    this.elements.delete(id);
+  }
   sync(semantic, inspection) {
     if (this.disposed) return;
     const boxes = new Map(inspection.nodes.map((n) => [n.node, n])),
@@ -303,30 +305,39 @@ export class SemanticProjection {
       ownership = new Map(),
       flat = [];
     const walk = (n, owner = null) => {
+      if (n.control?.hidden) return;
       n.owner = owner;
       flat.push(n);
       for (const child of n.children || []) walk(child, n.role === 'group' ? owner : n.id);
     };
     walk(semantic);
+    const byAppId = new Map();
+    for (const n of flat) {
+      if (n.app_id && !byAppId.has(n.app_id)) byAppId.set(n.app_id, n.id);
+    }
     const relation = (value) =>
       value
         ?.split(/\s+/)
         .filter(Boolean)
         .map((id) => {
-          const target = flat.find((n) => n.app_id === id);
-          return target ? `rustx-${target.id}` : id;
+          const target = byAppId.get(id);
+          return target === undefined ? id : `rustx-${target}`;
         })
         .join(' ');
     let modal;
     this.flat = flat;
     for (const n of flat) {
-      if (n.control?.hidden) continue;
       if (n.role === 'group' && !n.label && !n.control?.modal) continue;
       const g = boxes.get(n.id);
       if (!g) continue;
       seen.add(n.id);
       const c = n.control || {};
-      let el = this.elements.get(n.id) || this.create(n);
+      let el = this.elements.get(n.id);
+      if (el && el.localName !== this.tag(n)) {
+        this.remove(n.id, el);
+        el = null;
+      }
+      if (!el) el = this.create(n);
       el.dataset.testid = n.app_id || '';
       el.dataset.scrollNode = g.scroll_parent || '';
       if (n.owner) {
@@ -410,11 +421,7 @@ export class SemanticProjection {
     }
     for (const [id, el] of this.elements) {
       if (!seen.has(id)) {
-        this.listeners.get(el)?.abort();
-        this.listeners.delete(el);
-        this.composing.delete(el);
-        el.remove();
-        this.elements.delete(id);
+        this.remove(id, el);
       } else {
         const owned = ownership.get(id);
         if (owned?.length) el.setAttribute('aria-owns', owned.join(' '));
@@ -435,15 +442,6 @@ export class SemanticProjection {
       arrange(order.slice(active + 1), null);
     } else arrange(order, null);
     if (active >= 0 && active !== old) this.reveal(document.activeElement.dataset.node);
-    if (modal?.id !== this.lastModal) {
-      if (modal) {
-        this.restoreFocus = document.activeElement;
-        const target = this.controls(modal)[0];
-        target?.focus({ preventScroll: true });
-      } else if (this.lastModal && this.restoreFocus?.isConnected)
-        this.restoreFocus.focus({ preventScroll: true });
-      this.lastModal = modal?.id || null;
-    }
     this.modal = modal;
     this.flat = flat;
     const allowed = new Set();
@@ -456,6 +454,7 @@ export class SemanticProjection {
       if (tree) walk(tree);
     }
     for (const el of this.elements.values()) el.inert = !!modal && !allowed.has(el.dataset.node);
+    // Rust owns dialog focus and restores the correct opener when a layer closes.
     const focused = inspection.focused && this.elements.get(inspection.focused);
     if (focused && focused !== document.activeElement && !focused.inert)
       focused.focus({ preventScroll: true });
@@ -476,7 +475,7 @@ export class SemanticProjection {
     );
   }
   tab(e) {
-    if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.defaultPrevented || e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return;
     if (document.activeElement !== document.body && !this.root.contains(document.activeElement))
       return;
     const list = this.controls(),
@@ -492,16 +491,8 @@ export class SemanticProjection {
     if (this.disposed) return;
     this.disposed = true;
     document.removeEventListener('selectionchange', this.onSelection);
-    for (const el of this.elements.values()) {
-      this.listeners.get(el)?.abort();
-      this.listeners.delete(el);
-      el.remove();
-    }
-    this.elements.clear();
-    this.composing.clear();
+    for (const [id, el] of this.elements) this.remove(id, el);
     this.flat = [];
     this.modal = null;
-    this.lastModal = null;
-    this.restoreFocus = null;
   }
 }

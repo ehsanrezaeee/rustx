@@ -456,11 +456,13 @@ impl ApplicationHandler<()> for App {
                 w.request_redraw();
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                let y = match delta {
-                    MouseScrollDelta::LineDelta(_, y) => y as f64 * 40.,
-                    MouseScrollDelta::PixelDelta(p) => p.y / w.scale_factor(),
+                let (x, y) = match delta {
+                    MouseScrollDelta::LineDelta(x, y) => (x as f64 * 40., y as f64 * 40.),
+                    MouseScrollDelta::PixelDelta(p) => {
+                        (p.x / w.scale_factor(), p.y / w.scale_factor())
+                    }
                 };
-                self.engine.scroll_at(self.pointer, -y);
+                self.engine.wheel_at(self.pointer, -x, -y);
                 w.request_redraw();
             }
             WindowEvent::Ime(Ime::Commit(s)) => {

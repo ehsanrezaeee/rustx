@@ -69,7 +69,8 @@ impl<T: Clone + 'static> Router<T> {
         if !url.starts_with('/') || url.starts_with("//") || url.len() > 8192 {
             return Err(ServiceError::Invalid);
         }
-        if self.guard.borrow().as_ref().is_some_and(|g| !g(&url)) {
+        let guard = self.guard.borrow().clone();
+        if guard.is_some_and(|g| !g(&url)) {
             return Err(ServiceError::Cancelled);
         }
         let out = self.current.clone();
@@ -110,6 +111,30 @@ fn decode(value: &str, plus: bool) -> Option<String> {
     }
     String::from_utf8(out).ok()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn history_mode_preserves_queries_with_or_without_an_explicit_root_path() {
+        let routes = [("/".to_owned(), "home")];
+        for url in [
+            "http://localhost/?next=https://example.invalid",
+            "http://localhost?next=https://example.invalid",
+            "/?next=https://example.invalid",
+        ] {
+            let RouteState::Found(found) = match_location(url, RouteMode::History, &routes) else {
+                panic!("expected a root match for {url}");
+            };
+            assert_eq!(found.path, "/");
+            assert_eq!(
+                found.query,
+                [("next".into(), "https://example.invalid".into())]
+            );
+        }
+    }
+}
 pub fn match_location<T: Clone>(
     url: &str,
     mode: RouteMode,
@@ -117,12 +142,12 @@ pub fn match_location<T: Clone>(
 ) -> RouteState<T> {
     let relative = if mode == RouteMode::Hash {
         url.split_once('#').map_or("/", |(_, r)| r)
+    } else if url.starts_with('/') {
+        url
+    } else if let Some((_, rest)) = url.split_once("://") {
+        rest.find(['/', '?', '#']).map_or("/", |i| &rest[i..])
     } else {
-        if let Some((_, rest)) = url.split_once("://") {
-            rest.find('/').map_or("/", |i| &rest[i..])
-        } else {
-            url
-        }
+        url
     };
     let (base, fragment) = relative.split_once('#').unwrap_or((relative, ""));
     let (path, query) = base.split_once('?').unwrap_or((base, ""));

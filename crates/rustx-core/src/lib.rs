@@ -368,7 +368,7 @@ struct Owner {
     context: HashMap<TypeId, Rc<dyn Any>>,
 }
 struct Value {
-    value: Box<dyn Any>,
+    value: Option<Rc<dyn Any>>,
     subscribers: HashSet<u64>,
 }
 #[derive(Clone)]
@@ -377,9 +377,25 @@ enum Job {
     Memo(Rc<dyn Fn()>),
     Effect(Rc<dyn Fn() -> Cleanup>),
 }
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum Phase {
+    Memo,
+    View,
+    Effect,
+}
+impl Job {
+    fn phase(&self) -> Phase {
+        match self {
+            Self::Memo(_) => Phase::Memo,
+            Self::View(..) => Phase::View,
+            Self::Effect(_) => Phase::Effect,
+        }
+    }
+}
 struct Observer {
     job: Job,
     cleanup: Option<Cleanup>,
+    dependencies: HashSet<u64>,
 }
 struct CommitGuard(Rc<Cell<bool>>);
 impl CommitGuard {
@@ -399,9 +415,25 @@ struct Inner {
     owners: HashMap<u64, Owner>,
     values: HashMap<u64, Value>,
     observers: HashMap<u64, Observer>,
-    dirty: BTreeSet<u64>,
+    dirty: BTreeSet<(Phase, u64)>,
     wake: Option<Rc<dyn Fn()>>,
     stats: Commit,
+}
+impl Inner {
+    fn mark_dirty(&mut self, ids: impl IntoIterator<Item = u64>) {
+        self.dirty.extend(
+            ids.into_iter()
+                .filter_map(|id| self.observers.get(&id).map(|o| (o.job.phase(), id))),
+        );
+    }
+
+    fn unsubscribe(&mut self, id: u64, dependencies: HashSet<u64>) {
+        for signal in dependencies {
+            if let Some(value) = self.values.get_mut(&signal) {
+                value.subscribers.remove(&id);
+            }
+        }
+    }
 }
 thread_local! {static TRACK:RefCell<Option<(Weak<RefCell<Inner>>,u64)>>=const{RefCell::new(None)};}
 struct TrackGuard(Option<(Weak<RefCell<Inner>>, u64)>);
@@ -471,6 +503,9 @@ impl Scope {
             .is_some_and(|i| i.borrow().owners.contains_key(&self.id))
     }
     pub fn signal<T: 'static>(&self, value: T) -> Signal<T> {
+        self.signal_slot(Some(value))
+    }
+    fn signal_slot<T: 'static>(&self, value: Option<T>) -> Signal<T> {
         let i = self.inner.upgrade().expect("disposed scope");
         assert!(self.is_alive(), "disposed scope");
         let id = next(&i);
@@ -478,7 +513,7 @@ impl Scope {
         b.values.insert(
             id,
             Value {
-                value: Box::new(value),
+                value: value.map(|value| Rc::new(value) as Rc<dyn Any>),
                 subscribers: HashSet::new(),
             },
         );
@@ -494,17 +529,21 @@ impl Scope {
         assert!(self.is_alive(), "disposed scope");
         let id = next(&i);
         let mut b = i.borrow_mut();
-        b.observers.insert(id, Observer { job, cleanup: None });
+        let phase = job.phase();
+        b.observers.insert(
+            id,
+            Observer {
+                job,
+                cleanup: None,
+                dependencies: HashSet::new(),
+            },
+        );
         b.owners.get_mut(&self.id).unwrap().observers.push(id);
-        b.dirty.insert(id);
+        b.dirty.insert((phase, id));
         id
     }
     pub fn memo<T: Clone + PartialEq + 'static>(&self, f: impl Fn() -> T + 'static) -> Signal<T> {
-        let v = {
-            let _g = untracked();
-            f()
-        };
-        let signal = self.signal(v);
+        let signal = self.signal_slot(None);
         let out = signal.clone();
         let id = self.observer(Job::Memo(Rc::new(move || {
             let v = f();
@@ -532,9 +571,12 @@ impl Scope {
     }
     fn remove_cleanup(&self, id: u64) {
         if let Some(i) = self.inner.upgrade() {
-            if let Some(o) = i.borrow_mut().owners.get_mut(&self.id) {
-                o.cleanups.remove(&id);
-            }
+            let removed = i
+                .borrow_mut()
+                .owners
+                .get_mut(&self.id)
+                .and_then(|owner| owner.cleanups.remove(&id));
+            drop(removed);
         }
     }
     pub fn cleanup_count(&self) -> usize {
@@ -582,14 +624,28 @@ impl<T: Clone + 'static> Signal<T> {
     pub fn try_get(&self) -> Result<T, Disposed> {
         let i = self.inner.upgrade().ok_or(Disposed)?;
         let tracker = TRACK.with(|t| t.borrow().clone());
-        let mut b = i.borrow_mut();
-        let v = b.values.get_mut(&self.id).ok_or(Disposed)?;
-        if let Some((other, id)) = tracker {
-            if Weak::ptr_eq(&other, &self.inner) {
-                v.subscribers.insert(id);
+        let value = {
+            let mut inner = i.borrow_mut();
+            let value = inner
+                .values
+                .get(&self.id)
+                .and_then(|entry| entry.value.clone())
+                .ok_or(Disposed)?;
+            if let Some((_, id)) = tracker.filter(|(other, _)| Weak::ptr_eq(other, &self.inner)) {
+                if let Some(observer) = inner.observers.get_mut(&id) {
+                    if observer.dependencies.insert(self.id) {
+                        inner
+                            .values
+                            .get_mut(&self.id)
+                            .unwrap()
+                            .subscribers
+                            .insert(id);
+                    }
+                }
             }
-        }
-        v.value.downcast_ref::<T>().cloned().ok_or(Disposed)
+            value
+        };
+        value.downcast_ref::<T>().cloned().ok_or(Disposed)
     }
     pub fn get(&self) -> T {
         self.try_get().expect("signal read after scope disposal")
@@ -600,14 +656,18 @@ impl<T: Clone + 'static> Signal<T> {
     }
     pub fn set(&self, value: T) -> Result<(), Disposed> {
         let i = self.inner.upgrade().ok_or(Disposed)?;
-        let wake = {
+        let (previous, wake) = {
             let mut b = i.borrow_mut();
             let v = b.values.get_mut(&self.id).ok_or(Disposed)?;
-            v.value = Box::new(value);
+            let previous = v.value.replace(Rc::new(value));
             let subscribers = v.subscribers.clone();
-            b.dirty.extend(subscribers);
-            b.wake.clone()
+            b.mark_dirty(subscribers);
+            (previous, b.wake.clone())
         };
+        {
+            let _tracking = untracked();
+            drop(previous);
+        }
         if let Some(f) = wake {
             f()
         }
@@ -636,30 +696,34 @@ fn dispose(i: &Rc<RefCell<Inner>>, m: &Mount) {
     for c in children {
         dispose(i, &c)
     }
-    let (cleanups, context) = {
+    let (values, observers, cleanups, context) = {
         let mut b = i.borrow_mut();
         let Some(mut o) = b.owners.remove(&id) else {
             return;
         };
-        for id in o.signals {
-            b.values.remove(&id);
-        }
+        let values = o
+            .signals
+            .into_iter()
+            .filter_map(|id| b.values.remove(&id))
+            .collect::<Vec<_>>();
+        let mut observers = Vec::with_capacity(o.observers.len());
         for id in o.observers {
-            b.dirty.remove(&id);
             if let Some(mut obs) = b.observers.remove(&id) {
+                b.dirty.remove(&(obs.job.phase(), id));
+                b.unsubscribe(id, std::mem::take(&mut obs.dependencies));
                 if let Some(c) = obs.cleanup.take() {
                     o.cleanups.insert(id, c);
                 }
-            }
-            for v in b.values.values_mut() {
-                v.subscribers.remove(&id);
+                observers.push(obs);
             }
         }
         b.stats.scopes_unmounted += 1;
-        (o.cleanups, o.context)
+        (values, observers, o.cleanups, o.context)
     };
-    // Context resources may inspect scopes during Drop. The owner has already
-    // been invalidated, and no runtime borrow may span user destruction.
+    // User destructors can read other live scopes after this owner is invalidated.
+    let _tracking = untracked();
+    drop(values);
+    drop(observers);
     drop(context);
     for (_, cleanup) in cleanups {
         cleanup()
@@ -719,18 +783,25 @@ fn reconcile(
                 r.0.set(Some(b.id));
             }
         }
-        m.borrow_mut().node = node.clone();
+        let retired = std::mem::replace(&mut m.borrow_mut().node, node.clone());
+        drop(retired);
         if let Some(f) = node.binding {
             let scope = m.borrow().scope.clone();
             let ids = i.borrow().owners[&scope.id].observers.clone();
             for id in ids {
-                let mut b = i.borrow_mut();
-                if let Some(o) = b.observers.get_mut(&id) {
-                    if matches!(o.job, Job::View(..)) {
-                        o.job = Job::View(f.clone(), Rc::downgrade(&m));
-                        b.dirty.insert(id);
-                    }
-                }
+                let retired = {
+                    let mut b = i.borrow_mut();
+                    b.observers
+                        .get_mut(&id)
+                        .filter(|o| matches!(o.job, Job::View(..)))
+                        .map(|o| {
+                            std::mem::replace(&mut o.job, Job::View(f.clone(), Rc::downgrade(&m)))
+                        })
+                        .inspect(|_| {
+                            b.dirty.insert((Phase::View, id));
+                        })
+                };
+                drop(retired);
             }
         } else {
             reconcile_children(i, &m, node.children)
@@ -779,15 +850,17 @@ fn reconcile_children(i: &Rc<RefCell<Inner>>, parent: &Mount, nodes: Vec<Node>) 
         }
     }
     let old = std::mem::take(&mut parent.borrow_mut().children);
+    let keyed: HashMap<_, _> = old
+        .iter()
+        .enumerate()
+        .filter_map(|(index, m)| m.borrow().node.key.clone().map(|key| (key, index)))
+        .collect();
     let mut slots: Vec<Option<Mount>> = old.into_iter().map(Some).collect();
-    let mut result = vec![];
+    let mut result = Vec::with_capacity(nodes.len());
     let scope = parent.borrow().scope.id;
     for (index, node) in nodes.into_iter().enumerate() {
         let pos = if let Some(k) = &node.key {
-            slots.iter().position(|m| {
-                m.as_ref()
-                    .is_some_and(|m| m.borrow().node.key.as_ref() == Some(k))
-            })
+            keyed.get(k).copied()
         } else {
             Some(index).filter(|x| {
                 slots
@@ -811,14 +884,17 @@ fn reconcile_children(i: &Rc<RefCell<Inner>>, parent: &Mount, nodes: Vec<Node>) 
 fn run_job(i: &Rc<RefCell<Inner>>, id: u64) {
     let (job, cleanup) = {
         let mut b = i.borrow_mut();
-        b.dirty.remove(&id);
-        for v in b.values.values_mut() {
-            v.subscribers.remove(&id);
-        }
         let Some(o) = b.observers.get_mut(&id) else {
             return;
         };
-        (o.job.clone(), o.cleanup.take())
+        let (job, cleanup, dependencies) = (
+            o.job.clone(),
+            o.cleanup.take(),
+            std::mem::take(&mut o.dependencies),
+        );
+        b.dirty.remove(&(job.phase(), id));
+        b.unsubscribe(id, dependencies);
+        (job, cleanup)
     };
     if let Some(c) = cleanup {
         let _g = untracked();
@@ -880,51 +956,41 @@ impl Runtime {
         rt
     }
     pub fn set_waker(&mut self, f: impl Fn() + 'static) {
-        self.inner.borrow_mut().wake = Some(Rc::new(f));
+        let previous = self.inner.borrow_mut().wake.replace(Rc::new(f));
+        drop(previous);
     }
     pub fn flush(&mut self) -> Commit {
         let _commit = CommitGuard::enter(self.inner.borrow().committing.clone());
         self.inner.borrow_mut().stats = Commit::default();
-        for _ in 0..1000 {
-            let next = {
-                let b = self.inner.borrow();
-                b.dirty
-                    .iter()
-                    .find(|id| matches!(b.observers.get(id).map(|o| &o.job), Some(Job::Memo(_))))
-                    .or_else(|| {
-                        b.dirty.iter().find(|id| {
-                            matches!(b.observers.get(id).map(|o| &o.job), Some(Job::View(..)))
-                        })
-                    })
-                    .copied()
+        let mut runs = HashMap::<u64, usize>::new();
+        let mut total = 0;
+        loop {
+            let next = self.inner.borrow().dirty.first().copied();
+            let Some((phase, id)) = next else {
+                break;
             };
-            if let Some(id) = next {
-                run_job(&self.inner, id)
-            } else {
+            if phase == Phase::Effect {
                 break;
             }
+            let count = runs.entry(id).or_default();
+            *count += 1;
+            total += 1;
+            assert!(
+                *count <= 1000,
+                "reactive observer {id} exceeded 1000 runs in one commit"
+            );
+            // A runaway view can keep creating observers with new IDs.
+            assert!(
+                total <= 1_000_000,
+                "reactive commit exceeded its work limit"
+            );
+            run_job(&self.inner, id);
         }
-        assert!(
-            !{
-                let b = self.inner.borrow();
-                b.dirty.iter().any(|id| {
-                    b.observers
-                        .get(id)
-                        .is_some_and(|o| !matches!(o.job, Job::Effect(_)))
-                })
-            },
-            "reactive cycle exceeded 1000 jobs"
-        );
         let effects = {
             let b = self.inner.borrow();
             b.dirty
                 .iter()
-                .filter(|id| {
-                    b.observers
-                        .get(id)
-                        .is_some_and(|o| matches!(o.job, Job::Effect(_)))
-                })
-                .copied()
+                .filter_map(|&(phase, id)| (phase == Phase::Effect).then_some(id))
                 .collect::<Vec<_>>()
         };
         for id in effects {
@@ -1549,5 +1615,120 @@ impl Runtime {
 impl Drop for Runtime {
     fn drop(&mut self) {
         dispose(&self.inner, &self.root)
+    }
+}
+
+#[cfg(test)]
+mod runtime_tests {
+    use super::*;
+
+    struct ReadsSignal(Signal<u32>);
+
+    impl Clone for ReadsSignal {
+        fn clone(&self) -> Self {
+            assert_eq!(self.0.get(), 7);
+            Self(self.0.clone())
+        }
+    }
+
+    #[derive(Clone)]
+    struct WritesOnDrop(Option<Signal<u32>>);
+
+    impl Drop for WritesOnDrop {
+        fn drop(&mut self) {
+            if let Some(signal) = self.0.take() {
+                let _ = signal.update(|value| *value += 1);
+            }
+        }
+    }
+
+    #[test]
+    fn signal_clone_replacement_and_unmount_allow_access_to_live_scopes() {
+        let saved = Rc::new(RefCell::new(None));
+        let out = saved.clone();
+        let mut runtime = Runtime::new(move |cx| {
+            let count = cx.signal(7);
+            let value = cx.signal(ReadsSignal(count.clone()));
+            assert!(value.try_get().is_ok());
+            let replace = cx.signal(WritesOnDrop(Some(count.clone())));
+            replace.set(WritesOnDrop(None)).unwrap();
+            assert_eq!(count.get(), 8);
+
+            let show = cx.signal(true);
+            *out.borrow_mut() = Some((show.clone(), count.clone()));
+            dynamic(move || {
+                if show.get() {
+                    let count = count.clone();
+                    Node::component("child", move |child| {
+                        child.signal(WritesOnDrop(Some(count.clone())));
+                        Node::text("child")
+                    })
+                } else {
+                    Node::text("gone")
+                }
+            })
+        });
+        let (show, count) = saved.borrow().as_ref().unwrap().clone();
+        show.set(false).unwrap();
+        runtime.flush();
+        assert_eq!(count.get(), 9);
+    }
+
+    #[test]
+    fn many_independent_observers_settle_in_one_commit() {
+        let saved = Rc::new(RefCell::new(None));
+        let out = saved.clone();
+        let mut runtime = Runtime::new(move |cx| {
+            let value = cx.signal(0);
+            *out.borrow_mut() = Some(value.clone());
+            Node::fragment(
+                (0..1_001)
+                    .map(|_| {
+                        let value = value.clone();
+                        dynamic(move || Node::text(value.get().to_string()))
+                    })
+                    .collect(),
+            )
+        });
+        saved.borrow().as_ref().unwrap().set(1).unwrap();
+        assert_eq!(runtime.flush().components_rendered, 1_001);
+        assert!(!runtime.needs_update());
+    }
+
+    #[test]
+    #[should_panic(expected = "exceeded 1000 runs in one commit")]
+    fn a_repeatedly_self_scheduled_observer_remains_bounded() {
+        Runtime::new(|cx| {
+            let value = cx.signal(0);
+            dynamic(move || {
+                let next = value.get() + 1;
+                value.set(next).unwrap();
+                Node::text(next.to_string())
+            })
+        });
+    }
+
+    #[test]
+    fn memo_initializes_once_and_tracks_its_reads() {
+        let calls = Rc::new(Cell::new(0));
+        let counter = calls.clone();
+        let saved = Rc::new(RefCell::new(None));
+        let out = saved.clone();
+        let mut runtime = Runtime::new(move |cx| {
+            let input = cx.signal(2);
+            let arg = input.clone();
+            let counter = counter.clone();
+            let output = cx.memo(move || {
+                counter.set(counter.get() + 1);
+                arg.get() * 2
+            });
+            *out.borrow_mut() = Some((input, output));
+            Node::text("memo")
+        });
+        let (input, output) = saved.borrow().as_ref().unwrap().clone();
+        assert_eq!((calls.get(), output.get()), (1, 4));
+        input.set(3).unwrap();
+        runtime.flush();
+        assert_eq!((calls.get(), output.get()), (2, 6));
     }
 }
