@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-const inventory = JSON.parse(await fs.readFile('docs/evidence/stage4-licenses.json')),
+const inventory = JSON.parse(await fs.readFile('.rustx/audit/licenses/inventory.json')),
   metadata = JSON.parse(
     execFileSync('cargo', ['metadata', '--format-version', '1', '--locked'], {
       encoding: 'utf8',
@@ -77,8 +77,10 @@ for (let i = 0; i < pending.length; i += 4) {
       if (!vcs.git?.sha1?.match(/^[a-f0-9]{40}$/)) return;
       for (const file of await retrieve(match[1], vcs.git.sha1)) {
         const relative = `${entry.name}-${entry.version}/${file.name}`;
-        await fs.mkdir(path.join('releases/licenses', path.dirname(relative)), { recursive: true });
-        await fs.writeFile(path.join('releases/licenses', relative), file.bytes);
+        await fs.mkdir(path.join('.rustx/audit/licenses', path.dirname(relative)), {
+          recursive: true,
+        });
+        await fs.writeFile(path.join('.rustx/audit/licenses', relative), file.bytes);
         entry.license_files.push(relative);
         (entry.upstream_notices ??= []).push({
           file: relative,
@@ -92,8 +94,10 @@ for (let i = 0; i < pending.length; i += 4) {
 inventory.missingLicenseCopies = inventory.packages.filter(
   (p) => p.source && !p.license_files.length,
 );
-await fs.writeFile('docs/evidence/stage4-licenses.json', JSON.stringify(inventory, null, 2) + '\n');
-await fs.writeFile('releases/licenses/inventory.json', JSON.stringify(inventory, null, 2) + '\n');
+await fs.writeFile(
+  '.rustx/audit/licenses/inventory.json',
+  JSON.stringify(inventory, null, 2) + '\n',
+);
 console.log(
   JSON.stringify(
     {

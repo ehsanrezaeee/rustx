@@ -9,12 +9,10 @@
 /dist-native/
 
 *.log
-!/docs/evidence/*.log
-!/docs/evidence/**/*.log
-# Generated delivery archives, binaries, editor packages and dependency notices.
+# Generated editor packages and local deliverables.
 /releases/
 .DS_Store
-# Local compiler jobs, development state and temporary bundle output.
+# Local validation suites, audit reports, compiler jobs and build staging.
 /.rustx/
 
 # SDK archive for cargo packaging only. Checkout builds embed tracked source

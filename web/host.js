@@ -172,6 +172,7 @@ async function mountHost() {
       return;
     }
     renderer = 'cpu';
+    app.invalidate();
     setStatus('RustX · CPU recovery · ' + reason);
     schedule();
   }
@@ -351,6 +352,7 @@ async function mountHost() {
   listen(window, 'pageshow', (event) => {
     if (!event.persisted || disposed) return;
     suspended = false;
+    if (!ready) return;
     app.invalidate();
     resized();
   });
@@ -376,6 +378,9 @@ async function mountHost() {
         renderer = 'gpu';
       } catch (e) {
         reason = 'GPU initialization failed; software mode active.';
+        app.drop_gpu();
+        activeDevice?.destroy();
+        activeDevice = null;
         const replacement = canvas.cloneNode();
         canvas.replaceWith(replacement);
         canvas = replacement;

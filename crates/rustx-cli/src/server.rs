@@ -385,16 +385,24 @@ fn respond(mut stream: TcpStream, root: &Path) {
         let _ = stream.write_all(&body);
     }
 }
-pub fn serve(root: &Path, port: &str) -> Result<(), String> {
-    serve_on(root, port, "127.0.0.1")
-}
 pub fn serve_on(root: &Path, port: &str, host: &str) -> Result<(), String> {
+    let (root, listener) = bind(root, port, host)?;
+    serve_listener(root, listener);
+    Ok(())
+}
+pub fn bind(root: &Path, port: &str, host: &str) -> Result<(PathBuf, TcpListener), String> {
     let host: std::net::IpAddr = host
         .parse()
         .map_err(|_| "Invalid bind IP address".to_owned())?;
     let root = root
         .canonicalize()
         .map_err(|e| format!("Build the bundle first: {e}"))?;
+    if !root.join("index.html").is_file() {
+        return Err(format!(
+            "Build the web bundle first: no index.html in {}",
+            root.display()
+        ));
+    }
     let port: u16 = port.parse().map_err(|_| "Invalid port".to_owned())?;
     let listener = TcpListener::bind((host, port)).map_err(|e| e.to_string())?;
     println!(
@@ -402,11 +410,13 @@ pub fn serve_on(root: &Path, port: &str, host: &str) -> Result<(), String> {
         root.display(),
         listener.local_addr().map_err(|e| e.to_string())?
     );
+    Ok((root, listener))
+}
+pub fn serve_listener(root: PathBuf, listener: TcpListener) {
     for stream in listener.incoming() {
         let root = root.clone();
         if let Ok(stream) = stream {
             std::thread::spawn(move || respond(stream, &root));
         }
     }
-    Ok(())
 }

@@ -6,6 +6,5 @@ if ! command -v wasm-bindgen >/dev/null || [[ "$(wasm-bindgen --version)" != 'wa
   cargo install wasm-bindgen-cli --version 0.2.100 --locked
 fi
 cargo build -p rustx-cli --locked
-# Explicit development inspection keeps inherited integration tests runnable.
-# For production: target/debug/rustx build --target web --release --out dist-release
+# Local build with the inspector enabled.
 exec target/debug/rustx build --target web --release --devtools "$@"

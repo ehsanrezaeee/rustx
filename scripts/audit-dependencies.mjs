@@ -9,7 +9,7 @@ const metadata = JSON.parse(
     maxBuffer: 32 * 1024 * 1024,
   }),
 );
-const dir = 'releases/licenses';
+const dir = '.rustx/audit/licenses';
 await fs.mkdir(dir, { recursive: true });
 const inventory = [];
 for (const p of metadata.packages) {
@@ -59,7 +59,6 @@ const report = {
   ],
 };
 await fs.writeFile(dir + '/inventory.json', JSON.stringify(report, null, 2) + '\n');
-await fs.writeFile('docs/evidence/stage4-licenses.json', JSON.stringify(report, null, 2) + '\n');
 const blocks = (await fs.readFile('Cargo.lock', 'utf8')).split('[[package]]').slice(1);
 const packages = blocks
   .filter((s) => /^source = "registry\+/m.test(s))
@@ -118,10 +117,7 @@ try {
   audit.error = String(error);
   process.exitCode = 1;
 } finally {
-  await fs.writeFile(
-    'docs/evidence/stage4-cargo-audit.json',
-    JSON.stringify(audit, null, 2) + '\n',
-  );
+  await fs.writeFile('.rustx/audit/cargo-audit.json', JSON.stringify(audit, null, 2) + '\n');
   console.log(
     JSON.stringify(
       {

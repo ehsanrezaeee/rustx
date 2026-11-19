@@ -2,7 +2,7 @@
 fn main() {
     let services = rustx::ServiceClient::default();
     let tasks = rustx::TaskQueue::default();
-    let (e, http) = rustx_lab::engine_with_environment(
+    let (e, http) = rustx_lab_app::engine_with_environment(
         rustx::HostCapabilities::get_cancel(),
         services.clone(),
         tasks.clone(),

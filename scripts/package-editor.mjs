@@ -7,8 +7,9 @@ const root = fileURLToPath(new URL('../', import.meta.url)),
   folder = path.join(root, '.rustx/editor-vsix');
 await fs.rm(folder, { recursive: true, force: true });
 await fs.mkdir(path.join(folder, 'extension'), { recursive: true });
-for (const name of ['package.json', 'extension.cjs', 'README.md'])
+for (const name of ['package.json', 'extension.cjs'])
   await fs.copyFile(path.join(root, 'editors/vscode', name), path.join(folder, 'extension', name));
+await fs.copyFile(path.join(root, 'docs/FEATURES.md'), path.join(folder, 'extension/README.md'));
 await fs.writeFile(
   path.join(folder, '[Content_Types].xml'),
   '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="json" ContentType="application/json"/><Default Extension="cjs" ContentType="application/javascript"/><Default Extension="md" ContentType="text/markdown"/><Default Extension="vsixmanifest" ContentType="text/xml"/></Types>',

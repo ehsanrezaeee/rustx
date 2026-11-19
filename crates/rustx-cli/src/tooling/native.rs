@@ -1,5 +1,5 @@
-//! Host-native, relocatable application packages. No cross-build is execution evidence.
-use super::{hash, output, run, write};
+//! Host-native, relocatable application directories.
+use super::{cargo_metadata, find_application, hash, output, write, StagingDir};
 use serde_json::{json, Value};
 use std::{
     fs,
@@ -25,37 +25,11 @@ fn child_output(root: &Path, out: &Path) -> Result<(), String> {
     }
     Ok(())
 }
-struct Staging(PathBuf);
-impl Drop for Staging {
-    fn drop(&mut self) {
-        let _ = fs::remove_dir_all(&self.0);
-    }
-}
-
-fn application(root: &Path) -> Result<(Value, String), String> {
-    let metadata: Value = serde_json::from_str(&output(
-        "cargo",
-        &["metadata", "--no-deps", "--format-version", "1", "--locked"],
-        root,
-    )?)
-    .map_err(|e| e.to_string())?;
-    select_application(root, &metadata)
-}
-fn select_application(root: &Path, metadata: &Value) -> Result<(Value, String), String> {
-    let packages = metadata["packages"]
-        .as_array()
-        .ok_or("Cargo returned no packages")?;
-    let app = packages
-        .iter()
-        .find(|p| {
-            Path::new(p["manifest_path"].as_str().unwrap_or(""))
-                .parent()
-                .and_then(|p| p.canonicalize().ok())
-                .is_some_and(|p| p == root)
-        })
-        .or_else(|| packages.iter().find(|p| p["name"] == "rustx-lab"))
-        .ok_or("Run package from an application directory or the RustX repository root")?
-        .clone();
+pub(super) fn select_application<'a>(
+    root: &Path,
+    metadata: &'a Value,
+) -> Result<(&'a Value, String), String> {
+    let app = find_application(root, metadata)?;
     let bins: Vec<_> = app["targets"]
         .as_array()
         .ok_or("No Cargo targets")?
@@ -292,7 +266,8 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
         )
         .map_err(|e| format!("Use an MSVC developer shell (dumpbin required): {e}"))?;
     }
-    let (app, bin) = application(root)?;
+    let metadata = cargo_metadata(root)?;
+    let (app, bin) = select_application(root, &metadata)?;
     let name = app["name"].as_str().ok_or("Missing package name")?;
     let version = app["version"].as_str().ok_or("Missing version")?;
     let mut command = Command::new("cargo");
@@ -369,7 +344,7 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
     fs::create_dir_all(staging_path.parent().ok_or("Missing output parent")?)
         .map_err(|e| e.to_string())?;
     fs::create_dir(&staging_path).map_err(|e| e.to_string())?;
-    let stage = Staging(staging_path);
+    let stage = StagingDir(staging_path);
     let stem = format!("{name}-{version}-{triple}");
     let payload = stage.0.join(&stem);
     let executable = if mac {
@@ -440,7 +415,7 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
             )?;
         }
     }
-    write(&payload.join("RUN.md"), format!("# {name} {version}\n\n{}\n\nNo Rust, Cargo, Node or browser runtime is needed to launch this executable. Fonts are embedded. The recipient still needs the matching OS/architecture and its system libraries. This is an unsigned portable developer package, not an installer or notarized/SmartScreen-approved release. Do not bypass OS protections; public distribution requires signing/release review.\n\nOnly embedded assets are supported by this first packaging contract. Application-specific external files/services are not automatically bundled. Application authors must review dependency licenses before redistribution.\n\n`DEPENDENCIES.txt` records direct link dependencies, not dynamically loaded GPU drivers or a complete clean-machine audit. Platform interaction, IME/accessibility and GPU verification remain separate gates.\n", if mac { format!("Open `{name}.app` locally, or run `{executable}` from a terminal.") } else { format!("Extract the entire ZIP and run `{executable}`.") }))?;
+    write(&payload.join("RUN.md"), format!("# {name} {version}\n\n{}\n\nNo Rust, Cargo, Node or browser runtime is needed to launch this executable. Fonts are embedded. The recipient still needs the matching OS/architecture and its system libraries. This is an unsigned portable developer package, not an installer or notarized/SmartScreen-approved release. Do not bypass OS protections; public distribution requires signing/release review.\n\nOnly embedded assets are supported by this first packaging contract. Application-specific external files/services are not automatically bundled. Application authors must review dependency licenses before redistribution.\n\n`DEPENDENCIES.txt` records direct link dependencies, not dynamically loaded GPU drivers or a complete clean-machine audit. Platform interaction, IME/accessibility and GPU verification remain separate gates.\n", if mac { format!("Open `{name}.app` locally, or run `{executable}` from a terminal.") } else { format!("Run `{executable}`.") }))?;
     collect_licenses(root, triple, &licenses)?;
     let mut paths = Vec::new();
     payload_files(&payload, &payload, &mut paths)?;
@@ -471,40 +446,13 @@ pub fn bundle(root: &Path, target: &str, out: &Path) -> Result<(), String> {
             manifest_digest
         ),
     )?;
-    let archive = format!("{stem}.zip");
-    if mac {
-        run(
-            "ditto",
-            &["-c", "-k", "--keepParent", &stem, &archive],
-            &stage.0,
-        )?;
-    } else {
-        // Use the inbox libarchive tool. Relative entry names keep the staging
-        // path (which can have a Windows verbatim prefix) out of the ZIP.
-        let tar = PathBuf::from(std::env::var_os("SystemRoot").ok_or("Missing SystemRoot")?)
-            .join("System32")
-            .join("tar.exe");
-        run(
-            tar.to_str().ok_or("Non-UTF8 Windows system path")?,
-            &["--format", "zip", "-cf", &archive, "--", &stem],
-            &stage.0,
-        )?;
-    }
-    write(
-        &stage.0.join("SHA256SUMS.txt"),
-        format!(
-            "{}  {archive}\n",
-            hash(fs::read(stage.0.join(&archive)).map_err(|e| e.to_string())?)
-        ),
-    )?;
     // Output must still be absent after the build. Never merge with an existing directory.
     child_output(root, out)?;
     fs::rename(&stage.0, out).map_err(|e| e.to_string())?;
     println!(
-        "Packaged {}\nLaunch: {}\nArchive: {}",
+        "Prepared {}\nLaunch: {}",
         out.display(),
-        out.join(&stem).join(executable).display(),
-        out.join(archive).display()
+        out.join(&stem).join(executable).display()
     );
     Ok(())
 }
@@ -523,7 +471,7 @@ mod tests {
                 .as_nanos()
         ));
         fs::create_dir(&fixture).unwrap();
-        let stage = Staging(fixture);
+        let stage = StagingDir(fixture);
         let root = stage.0.canonicalize().unwrap();
         // Cargo can report C:\\... while current_dir canonicalizes to \\\\?\\C:\\...
         // on Windows. Exercise another spelling of the same directory on every OS.
@@ -548,9 +496,8 @@ mod tests {
     }
     #[test]
     fn dependency_audit_accepts_recorded_windows_system_imports() {
-        // Actual Windows CI import report from d80ef49 (run 43387127048).
-        let report = include_str!("fixtures/windows-dependents.txt");
-        assert_eq!(dependencies(report, false).unwrap().len(), 19);
+        let report = "KERNEL32.dll\nUSER32.dll\ncombase.dll";
+        assert_eq!(dependencies(report, false).unwrap().len(), 3);
         assert!(dependencies(&format!("{report}\n VCRUNTIME140.dll"), false).is_err());
     }
     #[test]

@@ -4,7 +4,7 @@ services:
       context: .
       target: demo
     ports:
-      - '127.0.0.1:${RUSTX_PORT:-3000}:3000'
+      - '${RUSTX_BIND:-127.0.0.1}:${RUSTX_PORT:-3000}:3000'
     init: true
     read_only: true
     security_opt:

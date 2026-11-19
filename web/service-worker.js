@@ -3,7 +3,11 @@ const CACHE = '__RUSTX_CACHE__';
 const FILES = __RUSTX_FILES__;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(FILES)));
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then((cache) => cache.addAll(FILES.map((url) => new Request(url, { cache: 'reload' })))),
+  );
 });
 
 self.addEventListener('activate', (event) => {
@@ -32,9 +36,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (event.request.mode === 'navigate') {
-    event.respondWith(fetch(event.request).catch(() => caches.match('/index.html')));
-  } else {
-    event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
+  const navigation = event.request.mode === 'navigate';
+  if (!navigation && !FILES.includes(url.pathname)) return;
+
+  const cached = () =>
+    caches.open(CACHE).then((cache) => cache.match(navigation ? '/index.html' : event.request));
+  if (!navigation && /\.[a-f0-9]{12}\./.test(url.pathname)) {
+    event.respondWith(cached().then((response) => response || fetch(event.request)));
+    return;
   }
+  event.respondWith(
+    fetch(event.request).catch(async (error) => {
+      const response = await cached();
+      if (response) return response;
+      throw error;
+    }),
+  );
 });

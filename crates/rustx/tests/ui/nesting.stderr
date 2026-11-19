@@ -1,5 +1,0 @@
-error: expected closing </Text>
- --> tests/ui/nesting.rs:2:46
-  |
-2 | fn main(){let _=rustx!{<Div><Text>{"hello"}</Div></Text>};}
-  |                                              ^^^

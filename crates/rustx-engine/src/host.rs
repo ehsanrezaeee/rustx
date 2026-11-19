@@ -371,8 +371,19 @@ impl ApplicationHandler<()> for App {
                     w.request_redraw();
                 }
             }
-            WindowEvent::Focused(false) | WindowEvent::CursorLeft { .. } => {
+            WindowEvent::CursorLeft { .. } => {
+                if self.engine.runtime.captured_pointer(0).is_none() {
+                    self.engine.cancel();
+                }
+                w.request_redraw();
+            }
+            WindowEvent::Focused(false) => {
                 self.engine.cancel();
+                self.touch = None;
+                self.shift = false;
+                self.ctrl = false;
+                self.alt = false;
+                self.meta = false;
                 if let Some(id) = self.active_input {
                     if let Some(editor) = self.engine.runtime.editor(id) {
                         editor.composition_cancel();
@@ -380,6 +391,7 @@ impl ApplicationHandler<()> for App {
                         self.engine.invalidate();
                     }
                 }
+                w.request_redraw();
             }
             WindowEvent::Touch(touch) => {
                 let point = Point::new(
@@ -446,7 +458,7 @@ impl ApplicationHandler<()> for App {
             WindowEvent::MouseWheel { delta, .. } => {
                 let y = match delta {
                     MouseScrollDelta::LineDelta(_, y) => y as f64 * 40.,
-                    MouseScrollDelta::PixelDelta(p) => p.y,
+                    MouseScrollDelta::PixelDelta(p) => p.y / w.scale_factor(),
                 };
                 self.engine.scroll_at(self.pointer, -y);
                 w.request_redraw();

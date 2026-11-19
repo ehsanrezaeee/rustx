@@ -1,0 +1,70 @@
+name: RustX source checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    name: Native CPU demo (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    env:
+      RUSTX_RENDERER: cpu
+      RUSTX_SMOKE_FRAMES: '2'
+      RUSTX_DEMO: applications
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - name: Build the native demo from source
+        run: cargo run -p rustx-cli --locked -- build --target native --out dist-native
+      - name: Run the built demo for two CPU frames
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            ./dist-native/rustx-lab.exe
+          else
+            ./dist-native/rustx-lab
+          fi
+
+  browser-demo:
+    name: Current source-built web demo
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+      - name: Rust formatting and unit checks
+        run: |
+          rustup component add rustfmt
+          cargo fmt --all -- --check
+          cargo test --workspace --locked
+      - name: Build and start the current demo
+        run: docker compose up --build -d --wait
+      - name: Check the served build and fixture data
+        run: |
+          base=http://127.0.0.1:3000
+          curl --fail --silent --show-error "$base/" | grep -F 'id="surface"'
+          curl --fail --silent --show-error "$base/assets.json" | jq -er '.build'
+          curl --fail --silent --show-error "$base/api/users" | jq -e 'length > 0'
+      - name: Stop the demo
+        if: always()
+        run: |
+          docker compose logs --no-color
+          docker compose down

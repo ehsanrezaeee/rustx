@@ -1,3 +1,0 @@
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.05s
-     Running `target/debug/rustx serve dist 3038`
-RustX serving /private/tmp/rustx-clean-checkout.vdxdrW/dist at http://127.0.0.1:3038

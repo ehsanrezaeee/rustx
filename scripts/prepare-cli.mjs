@@ -11,7 +11,6 @@ async function walk(relative) {
   for (const entry of await fs.readdir(relative, { withFileTypes: true })) {
     if (entry.isSymbolicLink()) throw Error('SDK symlink ' + relative);
     const name = path.posix.join(relative, entry.name);
-    if (name === 'docs/evidence') continue;
     if (entry.isDirectory()) await walk(name);
     else if (!/\.(png|pdf)$/.test(name)) paths.push(name);
   }
@@ -19,8 +18,8 @@ async function walk(relative) {
 for (const entry of await fs.readdir('crates', { withFileTypes: true })) {
   if (entry.isDirectory() && entry.name !== 'rustx-cli') await walk('crates/' + entry.name);
 }
-for (const dir of ['web', 'fixtures', 'playground', 'docs']) await walk(dir);
-paths.push('LICENSE', 'NOTICE.md', 'rust-toolchain.toml', 'Cargo.lock');
+for (const dir of ['web', 'fixtures', 'playground']) await walk(dir);
+paths.push('LICENSE', 'NOTICE.md', 'rust-toolchain.toml', 'Cargo.lock', 'docs/FEATURES.md');
 paths.sort();
 const chunks = [];
 function add(name, bytes) {

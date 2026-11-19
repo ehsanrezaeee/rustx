@@ -10,6 +10,12 @@ use std::{
     time::{Duration, SystemTime},
 };
 pub const FRAMEWORK: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
+struct StagingDir(PathBuf);
+impl Drop for StagingDir {
+    fn drop(&mut self) {
+        let _ = fs::remove_dir_all(&self.0);
+    }
+}
 pub fn hash(bytes: impl AsRef<[u8]>) -> String {
     format!("{:x}", Sha256::digest(bytes.as_ref()))
 }
@@ -108,6 +114,7 @@ pub fn scaffold(destination: &Path, framework: &Path) -> Result<(), String> {
     {
         return Err("Use a Rust package name: letters, numbers, hyphens or underscores".into());
     }
+    let module = format!("{}_app", name.replace('-', "_"));
     fs::create_dir_all(destination).map_err(|e| e.to_string())?;
     copy_tree(
         &framework.join("crates"),
@@ -141,6 +148,7 @@ edition = "2021"
 license = "MIT"
 rust-version = "1.90"
 [lib]
+name = "{module}"
 crate-type = ["cdylib", "rlib"]
 [dependencies]
 rustx = {{ path = "vendor/crates/rustx" }}
@@ -165,7 +173,7 @@ codegen-units = 1
         &destination.join("src/lib.rs"),
         include_str!("../../templates/scaffold-lib.rs"),
     )?;
-    write(&destination.join("src/main.rs"),format!("#![cfg_attr(target_os=\"windows\", windows_subsystem=\"windows\")]\n#[cfg(not(target_arch=\"wasm32\"))]\nfn main() {{ {}::native(); }}\n#[cfg(target_arch=\"wasm32\")]\nfn main() {{}}\n",name.replace('-',"_")))?;
+    write(&destination.join("src/main.rs"),format!("#![cfg_attr(target_os=\"windows\", windows_subsystem=\"windows\")]\n#[cfg(not(target_arch=\"wasm32\"))]\nfn main() {{ {module}::native(); }}\n#[cfg(target_arch=\"wasm32\")]\nfn main() {{}}\n"))?;
     for file in ["src/lib.rs", "src/main.rs", "src/app.rustx"] {
         let path = destination.join(file);
         write(
@@ -182,7 +190,7 @@ codegen-units = 1
         "/target/\n/dist/\n/dist-native/\n/releases/\n/.rustx/\n",
     )?;
     write(&destination.join(".vscode/settings.json"),"{\"files.associations\":{\"*.rustx\":\"rust\"},\"editor.formatOnSave\":true,\"rust-analyzer.check.command\":\"check\"}\n")?;
-    write(&destination.join("README.md"),format!("# {name}\n\nCreated from complete local RustX source. Edit `src/app.rustx`; setup runs once per mount.\n\n```sh\nrustx doctor\nrustx dev --target native\nrustx package --target native\n# Optional browser target:\nrustx dev --target web\nrustx fmt --check\nrustx check\nrustx test\nrustx build --target web --release\n```\n\nNo Node/Python/Docker runtime is required. Rust 1.90.0, the wasm32 target and wasm-bindgen 0.2.100 are required for web builds. Native Windows needs MSVC/C++ build tools (use a developer shell for packaging). `rustx package --target native` produces a macOS .app or Windows portable ZIP in dist-native, with dependency inspection, licenses and checksums. Recipients do not need Rust installed. Packages are unsigned; signing/clean-machine acceptance remains separate. Existing package directories are never overwritten; use --out to select a new output. `rustx build --target windows` must run on Windows. Vendored framework source and licenses make this project independent of the original checkout. Install the supplied VS Code extension for markup formatting/completions; rust-analyzer supplies Rust diagnostics/navigation.\n"))?;
+    write(&destination.join("README.md"),format!("# {name}\n\nCreated from complete local RustX source. Edit `src/app.rustx`; setup runs once per mount.\n\n```sh\nrustx doctor\nrustx dev --target native\nrustx package --target native\n# Optional browser target:\nrustx dev --target web\nrustx fmt --check\nrustx check\nrustx test\nrustx build --target web --release\n```\n\nNo Node/Python/Docker runtime is required. Rust 1.90.0, the wasm32 target and wasm-bindgen 0.2.100 are required for web builds. Native Windows needs MSVC/C++ build tools. `rustx package --target native` writes a macOS .app or Windows executable in a local directory with dependency and license inventories. Use a developer shell for dependency inspection on Windows. Recipients do not need Rust installed. Packages are unsigned; signing/clean-machine acceptance remains separate. Existing package directories are never overwritten; use --out to select a new output. `rustx build --target windows` must run on Windows. Vendored framework source and licenses make this project independent of the original checkout. Install the optional VS Code extension for markup formatting/completions; rust-analyzer supplies Rust diagnostics/navigation.\n"))?;
     fs::copy(framework.join("Cargo.lock"), destination.join("Cargo.lock"))
         .map_err(|e| e.to_string())?;
     let dest = destination.canonicalize().map_err(|e| e.to_string())?;
@@ -264,19 +272,30 @@ pub fn format_project(root: &Path, check: bool, stdin: bool) -> Result<(), Strin
         Ok(())
     }
 }
-fn package(root: &Path) -> Result<(String, String, PathBuf), String> {
-    let v: Value = serde_json::from_str(&output(
+fn cargo_metadata(root: &Path) -> Result<Value, String> {
+    serde_json::from_str(&output(
         "cargo",
         &["metadata", "--no-deps", "--format-version", "1", "--locked"],
         root,
     )?)
-    .map_err(|e| e.to_string())?;
-    let packages = v["packages"].as_array().ok_or("No packages")?;
-    let p = packages
+    .map_err(|e| e.to_string())
+}
+fn find_application<'a>(root: &Path, metadata: &'a Value) -> Result<&'a Value, String> {
+    let packages = metadata["packages"].as_array().ok_or("No packages")?;
+    packages
         .iter()
-        .find(|p| Path::new(p["manifest_path"].as_str().unwrap()).parent() == Some(root))
+        .find(|p| {
+            Path::new(p["manifest_path"].as_str().unwrap_or(""))
+                .parent()
+                .and_then(|path| path.canonicalize().ok())
+                .is_some_and(|path| path == root)
+        })
         .or_else(|| packages.iter().find(|p| p["name"] == "rustx-lab"))
-        .ok_or("Run from an application package or framework root")?;
+        .ok_or_else(|| "Run from an application package or framework root".into())
+}
+fn web_package(root: &Path) -> Result<(String, String, PathBuf), String> {
+    let v = cargo_metadata(root)?;
+    let p = find_application(root, &v)?;
     let name = p["name"].as_str().unwrap().to_owned();
     let module = p["targets"]
         .as_array()
@@ -341,20 +360,28 @@ pub fn build(
     }
     if target != "web" {
         if target == "windows" && !cfg!(windows) {
-            return Err("Windows packaging requires an actual Windows/MSVC runner; no cross-build is presented as execution evidence".into());
+            return Err("The Windows build target requires a Windows host".into());
         }
         if !["native", "windows"].contains(&target) {
             return Err("Target must be web, native or windows".into());
         }
-        run("cargo", &["build", "--release", "--locked"], root)?;
-        let (name, _, dir) = package(root)?;
-        let suffix = if cfg!(windows) { ".exe" } else { "" };
+        let metadata = cargo_metadata(root)?;
+        let (app, bin) = native::select_application(root, &metadata)?;
+        let name = app["name"].as_str().ok_or("Missing package name")?;
+        run(
+            "cargo",
+            &["build", "--release", "--locked", "-p", name, "--bin", &bin],
+            root,
+        )?;
+        let executable = format!("{bin}{}", std::env::consts::EXE_SUFFIX);
+        let dir = Path::new(
+            metadata["target_directory"]
+                .as_str()
+                .ok_or("Missing target directory")?,
+        );
         fs::create_dir_all(out).map_err(|e| e.to_string())?;
-        fs::copy(
-            dir.join("release").join(format!("{name}{suffix}")),
-            out.join(format!("{name}{suffix}")),
-        )
-        .map_err(|e| e.to_string())?;
+        fs::copy(dir.join("release").join(&executable), out.join(executable))
+            .map_err(|e| e.to_string())?;
         write(
             &out.join("assets.json"),
             b"{\"version\":1,\"target\":\"native\"}",
@@ -362,7 +389,7 @@ pub fn build(
         write(&out.join("RUN.md"),"Run the included executable. Native execution/IME/accessibility/DPI acceptance must be recorded on this actual target.\n")?;
         return Ok(());
     }
-    let (name, module, target_dir) = package(root)?;
+    let (name, module, target_dir) = web_package(root)?;
     let mut args = vec![
         "build",
         "-p",
@@ -388,10 +415,14 @@ pub fn build(
             .collect());
     }
     eprint!("{}", String::from_utf8_lossy(&built.stderr));
-    let temporary = root.join(".rustx/bundle-next");
-    if temporary.exists() {
-        fs::remove_dir_all(&temporary).map_err(|e| e.to_string())?;
-    }
+    let mut nonce = [0; 8];
+    getrandom::fill(&mut nonce).map_err(|e| e.to_string())?;
+    let staging_root = root
+        .join(".rustx")
+        .join(format!("web-{}", &hash(nonce)[..16]));
+    fs::create_dir_all(&staging_root).map_err(|e| e.to_string())?;
+    let stage = StagingDir(staging_root);
+    let temporary = stage.0.join("bundle");
     fs::create_dir_all(temporary.join("pkg")).map_err(|e| e.to_string())?;
     let wasm = target_dir
         .join("wasm32-unknown-unknown/release")
@@ -451,7 +482,7 @@ pub fn build(
             write(&temporary.join(name), source)?;
         }
     }
-    let guide = include_str!(concat!(env!("OUT_DIR"), "/tutorial.md"))
+    let guide = include_str!(concat!(env!("OUT_DIR"), "/features.md"))
         .replace('&', "&amp;")
         .replace('<', "&lt;")
         .replace('>', "&gt;");
@@ -548,10 +579,22 @@ pub fn build(
             write(&PathBuf::from(format!("{}.br", path.display())), compressed)?;
         }
     }
+    fs::create_dir_all(out.parent().ok_or("Missing output parent")?).map_err(|e| e.to_string())?;
+    let previous = stage.0.join("previous");
     if out.exists() {
-        fs::remove_dir_all(out).map_err(|e| e.to_string())?;
+        fs::rename(out, &previous).map_err(|e| e.to_string())?;
     }
-    fs::rename(&temporary, out).map_err(|e| e.to_string())?;
+    if let Err(error) = fs::rename(&temporary, out) {
+        if previous.exists() {
+            if let Err(restore) = fs::rename(&previous, out) {
+                std::mem::forget(stage);
+                return Err(format!(
+                    "Web build could not replace {out:?}: {error}. Previous bundle is at {previous:?}: {restore}"
+                ));
+            }
+        }
+        return Err(error.to_string());
+    }
     println!("Built {} ({build_id})", out.display());
     Ok(())
 }
@@ -570,8 +613,10 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
         for p in paths {
             if matches!(
                 p.extension().and_then(|s| s.to_str()),
-                Some("rs" | "rustx" | "toml" | "js" | "html")
+                Some("rs" | "rustx" | "toml" | "lock")
             ) {
+                h.update(p.as_os_str().as_encoded_bytes());
+                h.update([0]);
                 h.update(fs::read(p).map_err(|e| e.to_string())?);
             }
         }
@@ -579,18 +624,23 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
     };
     let mut previous = fingerprint()?;
     if target != "web" {
-        let (name, _, dir) = package(root)?;
-        let executable = dir
-            .join("release")
-            .join(format!("{name}{}", if cfg!(windows) { ".exe" } else { "" }));
+        let (_, bin) = native::select_application(root, &cargo_metadata(root)?)?;
+        let name = format!("{bin}{}", std::env::consts::EXE_SUFFIX);
+        let executable = root.join(".rustx/dev-native").join(&name);
+        fs::create_dir_all(executable.parent().unwrap()).map_err(|e| e.to_string())?;
+        fs::copy(out.join(&name), &executable).map_err(|e| e.to_string())?;
         let mut child = Command::new(&executable)
             .current_dir(root)
             .spawn()
             .map_err(|e| e.to_string())?;
         loop {
             std::thread::sleep(Duration::from_millis(500));
-            if child.try_wait().map_err(|e| e.to_string())?.is_some() {
-                return Ok(());
+            if let Some(status) = child.try_wait().map_err(|e| e.to_string())? {
+                return if status.success() {
+                    Ok(())
+                } else {
+                    Err(format!("Native demo exited with {status}"))
+                };
             }
             let next = fingerprint()?;
             if next != previous {
@@ -599,6 +649,7 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
                     Ok(()) => {
                         let _ = child.kill();
                         let _ = child.wait();
+                        fs::copy(out.join(&name), &executable).map_err(|e| e.to_string())?;
                         child = Command::new(&executable)
                             .current_dir(root)
                             .spawn()
@@ -610,13 +661,8 @@ pub fn dev(root: &Path, target: &str, port: &str, compiler: Option<&str>) -> Res
         }
     }
     write(&out.join("dev.json"), b"{\"revision\":0,\"error\":null}")?;
-    let served = out.clone();
-    let port = port.to_owned();
-    std::thread::spawn(move || {
-        if let Err(e) = crate::server::serve(&served, &port) {
-            eprintln!("{e}");
-        }
-    });
+    let (served, listener) = crate::server::bind(&out, port, "127.0.0.1")?;
+    std::thread::spawn(move || crate::server::serve_listener(served, listener));
     loop {
         std::thread::sleep(Duration::from_millis(500));
         let next = fingerprint()?;

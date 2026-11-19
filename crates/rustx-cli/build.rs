@@ -77,7 +77,7 @@ fn main() {
         ("playground/preview.html", "preview.html"),
         ("playground/preview.js", "preview.js"),
         ("playground/worker.js", "worker.js"),
-        ("docs/TUTORIAL.md", "tutorial.md"),
+        ("docs/FEATURES.md", "features.md"),
         ("rust-toolchain.toml", "rust-toolchain.toml"),
         ("crates/rustx-core/src/widgets.rs", "core-widgets.rs"),
         ("crates/rustx-macros/src/lib.rs", "macros.rs"),
@@ -94,16 +94,12 @@ fn main() {
             files(&e.path(), &mut paths);
         }
     }
-    for folder in ["web", "fixtures", "playground", "docs"] {
+    for folder in ["web", "fixtures", "playground"] {
         if source.join(folder).exists() {
             files(&source.join(folder), &mut paths);
         }
     }
-    // Only public authoring documentation belongs in the embedded SDK, not historical evidence.
-    paths.retain(|p| {
-        !p.components().any(|part| part.as_os_str() == "evidence")
-            && p.extension().is_none_or(|e| e != "pdf" && e != "png")
-    });
+    paths.push(source.join("docs/FEATURES.md"));
     paths.sort();
     for p in paths {
         println!("cargo:rerun-if-changed={}", p.display());

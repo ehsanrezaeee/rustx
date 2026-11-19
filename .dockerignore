@@ -16,8 +16,7 @@
 !fixtures/
 !fixtures/**
 !docs/
-!docs/**
+!docs/FEATURES.md
 crates/rustx-cli/assets/
-docs/evidence/
 **/target/
 **/.DS_Store

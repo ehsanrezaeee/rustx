@@ -1,57 +1,10 @@
 # RustX
 
-RustX is an experimental declarative UI framework for writing interactive applications in Rust. Compose typed components with `rustx!` markup, manage state in Rust, and compile to WebAssembly for the browser or a shared native application. The current demos run in browsers and as a shared native application. Our post–Stage 4 direction is native-first architecture with full browser application coverage on canvas.
+RustX is an experimental declarative UI framework for Rust. Build with typed components and `rustx!` markup. The same retained application can draw to a browser canvas through WebAssembly or run in a native desktop window. Rust owns component identity, state, layout, text shaping, editing, and the scene.
 
-Rust owns component identity, reactive state, layout, text shaping, editing, hit testing and the rendered scene. A canvas displays the UI through WebGPU or a CPU renderer. A small browser host connects platform features such as input, accessibility semantics, networking, storage and clipboard. Component setup runs once per mount; reactive updates change retained state and views.
+## Try the demo
 
-## Run the full project archive
-
-Extract the project ZIP. For the native counter, open the ZIP for your platform in `releases/RP-007/`, extract it, and launch `native-demo.exe` on Windows x64 or `native-demo.app` on Apple silicon. These developer packages are unsigned.
-
-For the web examples on Windows, run the following from the extracted project directory and open `http://127.0.0.1:3000/`.
-
-```powershell
-.\releases\rustx-windows-x64.exe serve dist 3000
-```
-
-For a Git checkout, use the source-build or Docker instructions below.
-
-## Goals and current scope
-
-- Let developers build applications with typed Rust components and styles, without authoring HTML, CSS or JavaScript for ordinary application UI.
-- Share application logic and the layout/text/rendering engine between browser and native targets.
-- Support practical applications: dashboards, API clients, forms, virtual collections and interactive drawing tools.
-- Provide a complete development workflow: scaffolding, formatting, diagnostics, source watching, inspection, production web builds and an optional isolated Rust playground.
-- Measure rendering, startup and resource use against explicit acceptance criteria.
-
-This is a Stage 4 implementation candidate, **not an accepted v1 release**. Full Windows interaction and clean-machine installation, real OS IME, human screen-reader tasks, physical mobile/Safari coverage, the strict GPU frame budget and dependency findings remain open. See the [acceptance ledger](docs/ACCEPTANCE.md) and [support matrix](docs/stage4/SUPPORT.md) for evidence and limits.
-
-## Since Stage 4: toward React/TSX application parity
-
-Stage 4 established the CLI, editor tooling, production web builds and application demos. Subsequent work is strengthening that foundation rather than declaring a finished React replacement:
-
-| Delivered increment | What changed |
-| --- | --- |
-| RP-001 initial audit | A React capability matrix, explicit gaps, DOM exception register and comparative workload plan; the exhaustive audit is still unfinished |
-| RP-002 semantic lifetime | Removed projection-owned DOM nodes and listeners on disposal, preserving unrelated children |
-| RP-003 scoped context | Hardened nearest-provider lookup, replacement and owner disposal; added isolation and reentrant lifetime regressions |
-| RP-006 external stores | Added coherent versioned snapshots, bounded scoped subscriptions, deduplication, source replacement and explicit commit-time rejection; this is a UI-thread push API, not full React hook compatibility |
-| RP-004 browser host | Added repeatable DOM budgets and CI checks, complete singleton host teardown/restart, pending-request cleanup, and production status-badge removal |
-| RP-007 native packaging | Windows x64 and macOS arm64 CI build, extract, verify and launch the packaged counter on the CPU renderer. [Runner evidence](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) |
-| RP-008 native interaction | The Windows counter replay exercises keyboard activation and state retention across a window resize. [Interaction evidence](docs/evidence/react-parity/RP-008/README.md) |
-| Demo onboarding | Added the optional Docker source-build workflow so trying the browser examples does not require a local Rust toolchain |
-
-Our goal is to become a practical alternative to React + TSX and demonstrate a measurable advantage on equivalent applications. Native applications are the architectural priority, with a long-term goal of removing the DOM as far as platform capabilities permit. Browser behavior remains a full workstream: RustX draws ordinary UI on canvas while retaining the browser bridges needed for accessibility, text input and platform services. We will not remove those bridges merely to reduce a DOM count.
-
-Native work continues in **RP-008 interaction**, followed by **RP-009 text/accessibility** and **RP-010 rendering/performance**. RP-007 still needs clean-machine and distribution checks. RP-001’s exhaustive audit, RP-005’s matched benchmarks, RP-011 browser input/AT and the existing release gates remain open.
-
-Follow the [React parity roadmap](docs/REACT_PARITY_PLAN.md), [capability matrix](docs/REACT_PARITY_MATRIX.md), [execution ledger](docs/REACT_PARITY_TASKS.md), and [DOM exception budgets](docs/DOM_EXCEPTIONS.md). Existing Stage 4 acceptance criteria remain binding.
-
-## Quick demo with Docker (Windows, macOS or Linux)
-
-To try RustX, you do **not** need Rust, rustup, Visual Studio Build Tools, Node or wasm-bindgen on your computer. Install and start [Docker Desktop](https://docs.docker.com/compose/install/) (or Docker Engine with Compose on Linux). On Windows, use Docker Desktop's **Linux containers** mode; follow its [Windows setup requirements](https://docs.docker.com/desktop/setup/install/windows-install/) if WSL 2/virtualization needs enabling.
-
-From PowerShell or a macOS/Linux terminal:
+Clone this repository and run Docker Compose on a Windows, macOS, or Linux computer.
 
 ```sh
 git clone https://github.com/ehsanrezaeee/rustx.git
@@ -59,195 +12,68 @@ cd rustx
 docker compose up --build -d --wait
 ```
 
-You can also download and extract the repository ZIP instead of installing Git. Run the Compose command from the extracted directory containing `compose.yaml`.
+Open `http://127.0.0.1:3000/#/capabilities`. The guide links to Applications, People Explorer, the rendering engine, and the runtime lab. Docker builds the current checkout with its pinned Rust and Wasm tools. On Windows use Docker Desktop's Linux container mode.
 
-Open **http://127.0.0.1:3000/?renderer=cpu#/capabilities**. Start with the Applications form demo, People Explorer's **Load local sample**, the Visual engine, and the external-store demo at `#/store`. The container builds the pinned Rust/Wasm toolchain and all browser assets from source, then runs a production server with the fixture APIs. The actual UI renders in your host browser; Docker does not need GPU passthrough. Remove `renderer=cpu` to let the browser try WebGPU.
+To refresh the demo after the branch changes, run `git pull --ff-only` and `docker compose up --build -d --wait`, then reload the page. The bundle ID at `/assets.json` identifies the build currently served. Stop the demo with `docker compose down`.
 
-The first build downloads Linux images, Rust dependencies and tools and can take several minutes; allow sufficient Docker disk space and memory. Later builds reuse layers and compiler caches. No prebuilt checkout files, source bind mounts or Windows-specific paths are required. Ports are published only on your computer's loopback interface.
+### Open it on a phone or tablet
 
-```sh
-docker compose logs -f demo          # View server output; Ctrl+C stops following logs
-docker compose down                  # Stop and remove this demo's container/network
-git pull
-docker compose up --build -d --wait   # Rebuild after pulling source changes
-```
+Connect the device and host computer to the same trusted local network. Replace `192.168.1.20` with the host computer's LAN address.
 
-If port 3000 is already in use, choose another host port in PowerShell:
+**Windows PowerShell**
 
 ```powershell
-$env:RUSTX_PORT = '3010'
+$env:RUSTX_BIND = '192.168.1.20'
 docker compose up --build -d --wait
 ```
 
-On macOS/Linux: `RUSTX_PORT=3010 docker compose up --build -d --wait`. Then open `http://127.0.0.1:3010/?renderer=cpu#/capabilities`. Use the same port setting for subsequent Compose commands. If Docker reports that it cannot connect to its daemon, start Docker Desktop and wait for the engine to be ready.
-
-This image serves the browser examples, including local data/error/cancel fixtures. It does **not** run a native Windows window or enable live playground compilation; the latter still requires the separately documented, sandboxed compiler service. It also does not provide automatic source watching: rebuild with Compose after edits. See [container verification](docs/evidence/docker-demo/README.md) for the actual tested platform and remaining Windows verification.
-
-## Build from source without Docker
-
-Install Git and Rust through rustup, including the native linker/build tools for your OS. macOS needs Xcode Command Line Tools; Windows needs the MSVC Rust toolchain and Visual Studio C++ Build Tools. Linux builds of the native workspace need its X11 development libraries. Initial setup needs network access to download the pinned toolchain and locked dependencies. Node is optional for application builds; contributor tests and packaging use Node 24 and npm.
+**macOS or Linux**
 
 ```sh
-git clone https://github.com/ehsanrezaeee/rustx.git
-cd rustx
-rustup toolchain install 1.90.0 --profile minimal --component rustfmt --target wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --version 0.2.100 --locked
+RUSTX_BIND=192.168.1.20 docker compose up --build -d --wait
 ```
 
-The repository pins Rust 1.90.0 in `rust-toolchain.toml`. The wasm-bindgen CLI must match the locked Rust crate version, 0.2.100.
+Allow incoming TCP port 3000 on the host's private network if required. On the other device open `http://192.168.1.20:3000/?renderer=cpu#/capabilities`. Plain HTTP on a LAN address may limit browser features such as WebGPU, offline caching, and clipboard access. Use the browser's CPU mode for this setup. Physical mobile support remains under verification.
 
-Build the demo on macOS/Linux or Git Bash:
+## Develop from source
 
-```sh
-bash scripts/build-web.sh --compiler-url http://127.0.0.1:3002
+Install Rust through rustup. Use the version pinned in `rust-toolchain.toml`. Windows needs the MSVC toolchain and Visual Studio C++ Build Tools. macOS needs Xcode Command Line Tools. The web build scripts install the Wasm target and the matching wasm-bindgen CLI when needed.
+
+**Windows PowerShell**
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-web.ps1
 cargo run -p rustx-cli --locked -- serve dist 3000
 ```
 
-In Windows PowerShell, use the equivalent build script:
+**macOS or Linux**
 
-```powershell
-./scripts/build-web.ps1 -BuildArguments @('--compiler-url', 'http://127.0.0.1:3002')
+```sh
+bash scripts/build-web.sh
 cargo run -p rustx-cli --locked -- serve dist 3000
 ```
 
-Wait for the build and server startup, then open **http://127.0.0.1:3000/?renderer=cpu**. Remove `?renderer=cpu` to request WebGPU with CPU fallback. The server binds loopback. First builds can take several minutes. The application works without the optional compiler service; live playground compilation requires the service described below.
+For Rust source watching and browser reload use `cargo run -p rustx-cli --locked -- dev --target web`. Restart this command after editing the browser host embedded in the CLI. For a browser build with developer features disabled, use `cargo run -p rustx-cli --locked -- build --target web --release`. Serve that build with `serve dist 3000 --host <host-LAN-IP>` to reach it from another device.
 
-**A clone contains source, not prebuilt bundles.** `dist/`, `dist-release/`, `dist-bench/`, `dist-native/`, `target/`, `node_modules/`, `.rustx/` and `releases/` are generated and ignored by Git. Running `serve dist` before building cannot launch the application. The scripts above recreate `dist/` from tracked source, fonts, fixtures and lockfiles. The generated `crates/rustx-cli/assets/framework.bin` is needed only when packaging the standalone CLI; checkout builds embed the tracked SDK source directly. No ignored delivery files need to be copied from another machine.
-
-## Explore the demo
-
-The homepage links these RustX-authored applications:
-
-| Route | What it demonstrates |
-| --- | --- |
-| `#/lab` | Reactive state, keyed identity, mount/unmount and runtime behavior |
-| `#/store` | Coherent external-store snapshots, source switching and scoped subscription lifetime |
-| `#/capabilities` | Application ideas, working examples and current limits |
-| `#/people` | API data explorer, search, details, loading/error/cancel states, copy and printable export |
-| `#/applications` | Persian/English forms, validation, password/multiline editing, dialogs, drafts and files |
-| `#/engine` | Themes, 100,000 virtual records and a 10,000-object drawing board with pan/zoom/export |
-| `#/playground` | Editable Rust source, real Wasm compilation and source diagnostics with the optional compiler |
-
-People Explorer can use deterministic fixtures or the public JSONPlaceholder API; the live API needs internet access.
-
-## Develop and create applications
-
-After installing the prerequisites above, rebuild and reload this demo as source changes:
+### Run natively on Windows or macOS
 
 ```sh
-cargo run -p rustx-cli --locked -- dev --target web --compiler-url http://127.0.0.1:3002
-```
-
-Stop any server already using port 3000 first, or select another port with `--port`. `dev` builds the initial bundle, watches source and reports compilation errors while retaining the last working bundle.
-
-To install the CLI and create a separate application:
-
-```sh
-cargo install --path crates/rustx-cli --bin rustx --locked
-rustx doctor
-rustx new my-app
-cd my-app
-rustx dev --target web
-```
-
-Edit `src/app.rustx` in the generated project. The CLI carries the source SDK and vendors framework source, fonts, notices and locks into the application, so it does not depend on the original checkout's path. `doctor` reports tool availability; install any missing tools before building.
-
-```sh
-rustx fmt
-rustx check
-rustx test
-rustx build --target web --release
-rustx serve dist 3000
-```
-
-Development builds enable the inspector and bounded event/layout profiler. Production builds disable developer APIs by default. To create a production bundle of this repository's demo, run from the repository root:
-
-```sh
-cargo run -p rustx-cli --locked -- build --target web --release --out dist-release
-cargo run -p rustx-cli --locked -- serve dist-release 3011
-```
-
-See the [developer tutorial](docs/TUTORIAL.md), [tooling guide](docs/STAGE4.md) and [deployment guide](docs/stage4/DEPLOYMENT.md). The offline shell does not cache API data or provide offline compilation.
-
-## Optional local Rust playground
-
-Keep the demo server running on port 3000. In a second terminal at the repository root:
-
-```sh
-cargo run -p rustx-cli --locked -- playground --port 3002 --app-origin http://127.0.0.1:3000
-```
-
-Wait for `isolated compiler serving`, then open `http://127.0.0.1:3000/?renderer=cpu#/playground`. Use that exact application origin; if you change it, change `--app-origin` too. Initial trusted compiler preparation can take time.
-
-Compilation requires the pinned toolchain, dependencies and a functioning OS sandbox. macOS Seatbelt is the locally exercised provider; the Linux bubblewrap provider remains unverified, and Windows compiler isolation is unavailable. Missing isolation fails closed. Compiled output runs in an opaque iframe and bounded worker. See the [playground guide](docs/stage4/PLAYGROUND.md) for resource bounds and isolation limits.
-
-## Native application and packages
-
-Create and package your own native app (developer machines need Rust and native build tools):
-
-```sh
-cargo install --path crates/rustx-cli --bin rustx --locked
-rustx new my-native-app
-cd my-native-app
-rustx dev --target native
-# Close the development window, then:
-rustx package --target native
-```
-
-On Windows, run packaging from Developer PowerShell for Visual Studio with the MSVC toolchain and `dumpbin` available. No Node/wasm-bindgen is needed for native packaging. The generated `dist-native/` contains a macOS .app or Windows portable executable, ZIP, dependency report, license inventory and checksums. **Recipients launch the extracted app without Rust, Node or a browser runtime.** The output targets the build machine's OS/architecture; it is not a cross-build or signed installer. Existing output is preserved: choose `--out releases/native-v2` for another package.
-
-The native packaging guide covers prerequisites, artifact layout and signing/clean-machine gates. The evidence ledger records Windows and macOS startup. [Native packaging](docs/NATIVE_PACKAGING.md) · [RP-007 results](docs/evidence/react-parity/RP-007/README.md).
-
-To run the repository's shared demo directly:
-
-From the repository root on macOS/Linux:
-
-```sh
-RUSTX_DEMO=applications cargo run -p rustx-lab --bin rustx-lab --locked
-```
-
-In PowerShell:
-
-```powershell
-$env:RUSTX_DEMO = 'applications'
 cargo run -p rustx-lab --bin rustx-lab --locked
 ```
 
-Set `RUSTX_RENDERER=cpu` to force software rendering. Keep the demo fixture server on port 3000 for relative native API URLs. Windows x64/MSVC packaging uses `scripts/build-windows.ps1`. Native startup evidence and remaining GPU/DPI/services/UIA/NVDA/IME tasks are documented in [PLATFORM_CHECKS.md](docs/PLATFORM_CHECKS.md).
+Build a local executable with `cargo run -p rustx-cli --locked -- build --target native --out dist-native`. The optional `rustx package --target native` command produces a local application directory with a dependency and license inventory. On Windows, run that command in a Visual Studio developer shell with `dumpbin` available. The app delivery uses the checkout and the current demo build.
 
-## Contributor checks and editor tools
-
-Install Node 24, then run from the repository root after building the demo:
+### Start your own project
 
 ```sh
-npm ci
-npm run format:check
-cargo fmt --all -- --check
-cargo test --workspace --locked
-npm run test:host
-npm run test:wasm
-npm run test:stage2
-npm run test:http
-npm run test:stage3:services
+cargo install --path crates/rustx-cli --bin rustx --locked
+rustx new my-app
+cd my-app
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli --version 0.2.100 --locked
+rustx dev --target web
 ```
 
-Stop the demo server before `test:http` (it starts its own server on port 3000), or set `RUSTX_TEST_PORT` to a free port. Browser tests require a real browser installation; install the test engines with `npx playwright install`. Detailed browser, compiler, deployment and benchmark commands are in [NEXT_AGENT.md](docs/NEXT_AGENT.md). Automated checks do not certify OS IME or human assistive-technology use. Python is not a project build/runtime dependency. Docker is an optional way to build and serve the demos; native source development does not require it.
+Use `rustx dev --target native` on a supported desktop host. The built-in demo runs without Node or Python. Node is used for contributor formatting, dependency audits, and optional editor packaging.
 
-Build the optional VS Code extension with `npm run package:editor`, then install the generated `releases/rustx-editor-0.1.0.vsix` and rust-analyzer. See [editor instructions](editors/vscode/README.md). To package the standalone CLI crate, first generate its SDK archive with `node scripts/prepare-cli.mjs`, then run `cargo package -p rustx-cli --locked`. Delivery archives may contain prebuilt bundles and tools; those are separate from a source checkout. Existing build manifests and evidence identify those historical deliveries, not newly rebuilt artifacts.
-
-## Source map and license
-
-| Path | Purpose |
-| --- | --- |
-| `crates/rustx-core` | Reactive runtime, typed components, styles, events and services |
-| `crates/rustx-macros` | Rust component and `rustx!` markup macros |
-| `crates/rustx-engine` | Retained layout, text, scenes, CPU/GPU rendering and native host |
-| `crates/rustx-web` | Rust browser bindings |
-| `crates/rustx-cli` | Scaffolding, formatting, builds, dev server and isolated compiler |
-| `examples/lab` | Shared demo application source |
-| `web`, `playground` | Browser platform bridges and compilation preview host |
-| `docs`, `scripts` | Architecture, acceptance evidence and reproducible tooling |
-
-Read the [blueprint](docs/BLUEPRINT.md) for the design contract and [status](docs/STATUS.md) for implementation progress.
-
-MIT © 2026 ehsanrezaeee. See [LICENSE](LICENSE); bundled fonts and dependencies retain their separate notices in [NOTICE.md](NOTICE.md).
+See [Features](docs/FEATURES.md), [Roadmap](docs/ROADMAP.md), and the [agent guide](docs/AGENT_GUIDE.md).
