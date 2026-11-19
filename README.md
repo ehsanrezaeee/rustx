@@ -11,7 +11,7 @@ The source-built demo includes mount-once components, reactive state, typed layo
 | Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Safari, Firefox, and physical mobile interaction are still open. |
 | Windows native | The source-built release demo passed a CPU smoke run. Tab and Shift+Tab, off-screen focus reveal, and nested dialog restoration passed with UI Automation readback. |
 | macOS native | An earlier native startup check passed. Multi-control keyboard and dialog interaction still need a native replay. |
-| Linux native | A Debian 12 amd64 release build passed the two-frame X11 CPU smoke check under Xvfb. Desktop interaction and Wayland checks remain open. |
+| Linux native | Debian 12 amd64 passed the X11 CPU startup and keyboard form replays under Xvfb. Physical desktop and Wayland checks remain open. |
 
 The active milestone is **RP-008 native interaction**. Detailed results and open platform checks are in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
 
@@ -20,7 +20,7 @@ The active milestone is **RP-008 native interaction**. Detailed results and open
 - **Web.** Match or beat optimized vanilla JavaScript drawing the same interface to canvas. Compare rendering time and responsiveness with equivalent output and interactions.
 - **Native.** Build pure-Rust apps for Windows, macOS, and Linux that run substantially faster and respond more smoothly than equivalent browser apps on the same hardware. Use Rust for native rendering, networking, background work, and optional application HTTP servers.
 
-These are performance targets awaiting comparative measurements. The next platform steps are the macOS and Linux form replays and adding Linux X11 startup coverage to CI. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
+These are performance targets awaiting comparative measurements. The next platform steps are the macOS form replay and a physical Linux desktop replay. CI checks native CPU startup on Windows, macOS, and Linux X11. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
 
 ## Try the demo
 
@@ -75,13 +75,15 @@ cargo run -p rustx-cli --locked -- serve dist 3000
 
 For Rust source watching and browser reload use `cargo run -p rustx-cli --locked -- dev --target web`. Restart this command after editing the browser host embedded in the CLI. For a browser build with developer features disabled, use `cargo run -p rustx-cli --locked -- build --target web --release`. Serve that build with `serve dist 3000 --host <host-LAN-IP>` to reach it from another device.
 
-### Run natively on Windows or macOS
+### Run the native demo
 
 ```sh
 cargo run -p rustx-lab --bin rustx-lab --locked
 ```
 
-Build a local executable with `cargo run -p rustx-cli --locked -- build --target native --out dist-native`. The optional `rustx package --target native` command produces a local application directory with a dependency and license inventory. On Windows, run that command in a Visual Studio developer shell with `dumpbin` available. The app delivery uses the checkout and the current demo build.
+On Linux, use an X11 session. The Debian 12 validation used `libx11-6`, `libx11-xcb1`, `libxcursor1`, `libxi6`, and `libxkbcommon-x11-0`. Headless startup checks also use `xvfb` and `xauth`.
+
+Build a local executable with `cargo run -p rustx-cli --locked -- build --target native --out dist-native`. On Windows and macOS the optional `rustx package --target native` command produces a local application directory with a dependency and license inventory. On Windows, run that command in a Visual Studio developer shell with `dumpbin` available. The app delivery uses the checkout and the current demo build.
 
 ### Start your own project
 

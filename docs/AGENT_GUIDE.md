@@ -19,7 +19,7 @@ Use application workflows to decide what to build. For web performance, compare 
 
 ## Continue RP-008
 
-Use the Applications demo or an ignored local scaffold for the multi-control form. Replay the form on macOS and an X11 desktop, including forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. Windows has passed that CPU scenario. The Debian 12 Xvfb CPU startup check has also passed and can be added to CI. Record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
+Use the Applications demo or an ignored local scaffold to replay the multi-control form on macOS and a physical Linux X11 desktop. Check forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. The CPU scenario has passed on Windows and on Debian 12 under Xvfb. GitHub Actions also runs the Linux X11 CPU startup check. Record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
 
 ## Validate and hand off
 

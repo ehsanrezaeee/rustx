@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2025, macos-15]
+        os: [windows-2025, macos-15, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     env:
@@ -31,6 +31,12 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
         with:
           persist-credentials: false
+      - name: Install Linux X11 smoke dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            xvfb xauth libxkbcommon-x11-0 libx11-6 libx11-xcb1 libxcursor1 libxi6
       - name: Build the native demo from source
         run: cargo run -p rustx-cli --locked -- build --target native --out dist-native
       - name: Run the built demo for two CPU frames
@@ -38,6 +44,8 @@ jobs:
         run: |
           if [[ "$RUNNER_OS" == Windows ]]; then
             ./dist-native/rustx-lab.exe
+          elif [[ "$RUNNER_OS" == Linux ]]; then
+            timeout 30s xvfb-run -a ./dist-native/rustx-lab
           else
             ./dist-native/rustx-lab
           fi
