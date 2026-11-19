@@ -6,6 +6,10 @@ Run `scripts/test-windows-interaction.ps1 -Executable <extracted native-demo.exe
 
 The first replay on an actual Windows desktop used the [RP-007 Windows package](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428/job/134972697816) from `324c1e4`. Executable SHA-256 `b8f799312ffc56b99f58e5b88e0f7c911a5ea553437bbb96aadfd47b33438c3b`. It timed out at the first assertion. UI Automation returned the heading “Hello from RustX” and the button “Increase”, but unnamed static text elements. The Windows AccessKit adapter reads a label node's name from its value. RustX had supplied only its label. The native projection now supplies the semantic text as the AccessKit label node's value.
 
+The corrected executable from `75c169e` passed on both the Windows Server 2025 runner and the Windows desktop that reproduced the failure. Both read 0 → 1 → 1 → 2 through UI Automation and exited with code zero. The runner window went from 1166 × 939 to 640 × 480, and the desktop window went from 1747 × 1406 to 640 × 480. Both reports identify the same executable SHA-256. [Windows job](https://github.com/ehsanrezaeee/rustx/actions/runs/44365893495/job/135019369073) · [CI measurements](windows-ci-44365893495.json) · [Desktop measurements](windows-desktop.json).
+
+The macOS arm64 runner also built, extracted and launched the corrected package for two CPU frames. Its first job was cancelled while waiting for hosted capacity. The retry passed. The Mac job exercises RP-007 startup only. [Completed workflow](https://github.com/ehsanrezaeee/rustx/actions/runs/44365893495) · [Package reports](../RP-007/ci-44365893495).
+
 ## Remaining interaction tasks
 
 Use the same task expectations on Windows and macOS. Record OS, package source/hash, backend and input method for each run.

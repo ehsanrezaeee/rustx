@@ -1,5 +1,7 @@
 # RP-007 — Native package workflow
 
+18 November. Both native runner jobs passed at `324c1e4`. The run-specific directory contains the original reports, dependency audits, manifests and startup logs. [GitHub Actions replay](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) · [Retained reports](ci-44352793428).
+
 16 November 2026; source baseline `4e65327`. Implemented native packaging and corrected the execution roadmap to explicit native priorities. **Overall RP-007 remains implemented with open target/release gates**, not fully verified. The finite macOS scaffold/package/extract/startup contract has actual evidence below. Windows workflow results are tracked separately from source implementation.
 
 ## Deliverable

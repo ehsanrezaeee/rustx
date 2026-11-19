@@ -23,3 +23,5 @@ The corrected actual Windows CI run is pending at this checkpoint. Only its comp
 [Windows job 134344559162](https://github.com/ehsanrezaeee/rustx/actions/runs/44169523267/job/134344559162) on `9dd0724` built the application and passed DLL inspection. PowerShell's archive module then passed a null destination parent to `Join-Path` while resolving the canonical staging path. The CLI reported `Native ZIP archive failed`. The macOS job passed.
 
 The Windows writer now runs the system libarchive executable in the staging directory and passes the archive and payload names as individual relative arguments. The existing integration test still uses an independent reader (PowerShell Expand-Archive) to extract the ZIP and check its layout and contents before launching it.
+
+The [repair workflow at `324c1e4`](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) passed on both platforms. The [retained evidence](../ci-44352793428) records hashes, DLL/dylib inspection and extracted CPU startup. The local Windows workspace suite passed all 162 tests with one ignored native network fixture. Rustfmt and the project formatting checks passed.

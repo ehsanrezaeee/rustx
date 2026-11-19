@@ -1,4 +1,10 @@
-# Continue here — native delivery and open RP work
+# Continue here — native interaction (RP-008)
+
+RP-008’s first Windows CPU interaction check passed on Windows Server 2025 and a Windows desktop using the same extracted `75c169e` executable. UI Automation read counts 0 → 1 → 1 → 2 across Tab/Enter, resize and Space. The test sends window messages to the app. Physical keyboard, screen-reader and OS IME acceptance remain open. [Windows CI job](https://github.com/ehsanrezaeee/rustx/actions/runs/44365893495/job/135019369073) · [Desktop and CI evidence](evidence/react-parity/RP-008/README.md).
+
+18 November 2026. RP-007 passed the scaffold, package, extraction, checksum and two-frame CPU startup checks on Windows Server 2025 x64 and macOS arm64 at `324c1e4`. The Windows ZIP writer uses the system libarchive tool. Independent clean-machine installation, signing and installers remain open. [Native package run](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) · [Runner evidence](evidence/react-parity/RP-007/ci-44352793428).
+
+Continue RP-008 with the [native interaction tasks and Windows replay](evidence/react-parity/RP-008/README.md). Record keyboard/focus, pointer capture, scrolling, native services, mixed-DPI and multi-window results separately for each OS and renderer. RP-009 covers OS IME and human screen-reader tasks. Earlier dated entries below are historical.
 
 17 November 2026 continuation: repair the RP-007 Windows failure before advancing to RP-008. The original run 43916508107 rejected `dumpbin /?` despite an initialized MSVC shell. Actual PE-header probing and canonical Cargo path selection are implemented; the old path comparison fails the new regression, and 160 workspace tests pass. Read [repair evidence](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md), complete the actual native CI replay, preserve its results and regenerate the full runnable delivery. Do not infer Windows success from the local Mac checks.
 

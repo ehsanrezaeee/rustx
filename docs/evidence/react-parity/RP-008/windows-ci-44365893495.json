@@ -1,0 +1,21 @@
+﻿{
+    "executableSha256":  "68e8e93924b96d32273054760419e2489ed9095dbb65f4d5f6b6c3a645d061ce",
+    "osVersion":  "10.0.26100.0",
+    "renderer":  "cpu",
+    "input":  "Win32 posted Tab/Enter/Space messages, UI Automation counter readback",
+    "counts":  [
+                   0,
+                   1,
+                   1,
+                   2
+               ],
+    "windowBefore":  [
+                         1166,
+                         939
+                     ],
+    "windowAfter":  [
+                        640,
+                        480
+                    ],
+    "exitCode":  0
+}

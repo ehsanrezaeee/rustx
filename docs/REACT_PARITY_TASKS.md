@@ -1,6 +1,6 @@
 # Native and browser parity execution ledger — revision 2
 
-17 November 2026. Native delivery is the current execution priority. RP-007 is authorized for implementation, commit and push. Its Windows CI repair and replay are in progress; see [repair evidence](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md). RX release gates remain binding; finite verification is not full platform acceptance.
+18 November 2026. RP-007 package startup passes on both native runners. RP-008 native interaction is in progress. [Packaging replay](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) · [Interaction evidence](evidence/react-parity/RP-008/README.md).
 
 ## Complete task accounting (review before each increment)
 
@@ -13,8 +13,8 @@
 | RP-004 | **Verified measured CPU host/DOM slice; platform follow-ups open** | Actual BFCache restore, GPU lifecycle, multi-root ownership and physical browser input/AT remain unverified; do not mark full browser lifecycle complete |
 | RP-005 | **Proposed; not started** | Implement four equivalent RustX/React apps, fixtures/locks and real target baselines; missing content/media features block full workload D; no benchmark winner yet |
 | RP-006 | **Verified finite UI-thread push-store contract** | Generic pull/subscribe adapters, hydration and multithreaded semantics remain outside the implemented API; native interaction evidence still limited |
-| RP-007 | **Implemented; macOS package/startup verified, Windows and release gates open** | Delivered scaffold → package → extract → launch workflow; actual macOS CPU startup passed; Windows workflow results remain required; signing, installers and clean-machine checks remain explicit until verified |
-| RP-008 | **Proposed: native interaction conformance** | Keyboard/focus/pointer/scroll/clipboard/files/dialogs/DPI on actual Windows and macOS |
+| RP-007 | **Windows and macOS package/startup verified** | Independent clean-machine launch, signing, notarization, installers and updates remain open |
+| RP-008 | **In progress** | Windows CPU counter keyboard/resize replay added. Multi-control focus, pointer/scroll, clipboard, files/dialogs, DPI, multi-window and macOS tasks remain open. [Task results](evidence/react-parity/RP-008/README.md) |
 | RP-009 | **Proposed: native text and accessibility** | Real OS IME, multilingual editing, platform accessibility trees and human screen-reader tasks |
 | RP-010 | **Proposed: native rendering and performance** | CPU/GPU lifecycle/recovery, multi-window/resource cleanup and measured native workloads; RP-005 required for comparative claims |
 | RP-011 | **Proposed: browser input and accessibility conformance** | Carries the earlier browser-input proposal without taking the native RP-007 slot; full browser scope remains required |
@@ -78,7 +78,7 @@ Milestone M1/M3; owner current implementing agent; state **verified for the fini
 
 ## RP-007 — Native build and packaging
 
-Milestone M2/M5; owner current implementing agent; state **implemented_unverified for full delivery; macOS finite package/startup slice verified**. Depends on the existing native host/scaffold, not on claiming RP-001 or RP-005 complete. Outcome: developers can generate, package and hand over a standalone native app without a recipient Rust/browser toolchain. Windows/macOS are required; platform results stay separate.
+The scaffold/package/extract/CPU startup workflow passes on both Windows and macOS. RP-007 remains open for independent distribution checks.
 
 Deliver `rustx package --target native|macos|windows`, host-specific binary selection, macOS .app/ZIP and Windows portable ZIP, dependency inspection, static Windows CRT, package identity/checksums, framework/font/dependency license inventory, and a generated-project native quick start. Preserve the existing raw native build command. Refuse wrong-host packaging, unsafe output paths and replacement of existing package directories. No new browser/DOM UI is part of this task.
 
@@ -88,7 +88,7 @@ Sources: crates/rustx-cli/src/tooling/native.rs, scaffold templates, scripts/tes
 
 ## RP-008 — Native interaction conformance
 
-Milestone M2/M4; proposed. Use an extracted RP-007 package on actual Windows/macOS. Freeze tasks for keyboard/tab order/focus restoration, pointer capture, wheel/scroll, clipboard, file dialogs, window resizing, scale/DPI and multi-window isolation. Reproduce/fix concrete host gaps and record CPU and GPU separately. Mock service tests are not native OS evidence. Browser counterparts remain RP-011. Next: RP-009 text/AT.
+Milestone M2/M4 is in progress. Replay the packaged counter and the remaining native interaction tasks on actual Windows and macOS. Record the backend and input method for each result. [RP-008 tasks and evidence](evidence/react-parity/RP-008/README.md).
 
 ## RP-009 — Native text and accessibility
 

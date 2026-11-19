@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { createZip } from './zip.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
 if (git('status', '--porcelain'))
@@ -114,7 +115,7 @@ await fs.writeFile(
 );
 const archive = release + '.zip';
 await fs.rm(archive, { force: true });
-execFileSync('zip', ['-q', '-r', archive, path.basename(release)], { cwd: path.dirname(release) });
+createZip(archive, [path.basename(release)], path.dirname(release));
 const digest = createHash('sha256')
   .update(await fs.readFile(archive))
   .digest('hex');

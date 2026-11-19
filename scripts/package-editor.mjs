@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { createZip } from './zip.mjs';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 const root = fileURLToPath(new URL('../', import.meta.url)),
@@ -20,7 +20,7 @@ await fs.writeFile(
 await fs.mkdir(path.join(root, 'releases'), { recursive: true });
 const output = path.join(root, 'releases/rustx-editor-0.1.0.vsix');
 await fs.rm(output, { force: true });
-execFileSync('zip', ['-q', '-r', output, '.'], { cwd: folder });
+createZip(output, await fs.readdir(folder), folder);
 const digest = createHash('sha256')
   .update(await fs.readFile(output))
   .digest('hex');

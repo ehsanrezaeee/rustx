@@ -5,7 +5,9 @@
 **Targets:** post–Stage 4 native-first Windows/macOS delivery with full browser WebAssembly/canvas coverage; Linux expansion separately gated
 **Document status:** implementation contract with the Stage 4 delivery candidate; full v1 acceptance remains open.
 
-## 0. Current source and continuation — 13 November 2026
+## 0. Current source and continuation
+
+18 November 2026. Native package startup passed on actual Windows and macOS runners. RP-008 is exercising interaction on the packaged application. See docs/REACT_PARITY_TASKS.md and docs/evidence/react-parity/RP-008/README.md for the current scope.
 
 Post–Stage 4 execution correction, 16 November 2026: native delivery now has explicit RP-007 packaging, RP-008 interaction, RP-009 text/accessibility and RP-010 rendering/performance milestones. Browser conformance remains RP-011. REACT_PARITY_TASKS.md accounts for all task IDs and retains unfinished RP-001/RP-005 and platform gates. This changes future work priority, not the historical RX acceptance results below. See NATIVE_PACKAGING.md for the implemented native package workflow and its actual-target limits.
 

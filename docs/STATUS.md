@@ -1,4 +1,8 @@
-# Status — 17 November 2026
+# Status — 18 November 2026
+
+RP-008’s first Windows CPU interaction check passed on Windows Server 2025 and a Windows desktop using the same extracted `75c169e` executable. UI Automation read counts 0 → 1 → 1 → 2 across Tab/Enter, resize and Space. The test sends window messages to the app. Physical keyboard, screen-reader and OS IME acceptance remain open. [Windows CI job](https://github.com/ehsanrezaeee/rustx/actions/runs/44365893495/job/135019369073) · [Desktop and CI evidence](evidence/react-parity/RP-008/README.md).
+
+18 November 2026. RP-007 passed the scaffold, package, extraction, checksum and two-frame CPU startup checks on Windows Server 2025 x64 and macOS arm64 at `324c1e4`. The Windows ZIP writer uses the system libarchive tool. Independent clean-machine installation, signing and installers remain open. [Native package run](https://github.com/ehsanrezaeee/rustx/actions/runs/44352793428) · [Runner evidence](evidence/react-parity/RP-007/ci-44352793428).
 
 RP-007 Windows CI repair (17 November 2026): the original native-package run failed because `dumpbin /?` returned a nonzero status in a working Visual Studio shell. The CLI now probes actual PE headers and canonicalizes Cargo application paths. The new path regression reproduces the old failure; 160 local workspace tests pass. Actual corrected Windows package/startup results remain pending until recorded in [repair evidence](evidence/react-parity/RP-007/windows-fix-2026-11-17/README.md). Full platform/release gates remain open.
 

@@ -77,7 +77,7 @@ The [DOM component index](https://react.dev/reference/react-dom/components) cove
 | Browser lifecycle | host/services partial | Multiple roots, teardown, hidden/resume, memory pressure, GPU loss |
 | Find/translation/print/selection | Selectable Rust text and print text popup partial | Native find and translation; real printing, not export-only |
 | Network/storage/files/clipboard | services partial | CORS/auth/quota/permission failures, multi-tab synchronization |
-| Native distribution/services | Partial: RP-007 adds generic host-native package command, macOS .app/Windows ZIP, static Windows CRT, direct dependency inspection, notices/checksums and scaffold/extract/startup runner | Actual Windows package evidence, clean-machine install, signing/installers, Linux packaging remain RP-007 gates; interaction/DPI RP-008, UIA/IME RP-009, GPU/lifecycle RP-010 |
+| Native distribution/services | RP-007 passed Windows and macOS scaffold, ZIP extraction, checksum and CPU startup tasks. RP-008 adds a Windows keyboard/resize check. | Clean-machine install, signing/installers, Linux packaging, broader interaction/DPI, UIA/IME and GPU/lifecycle gates remain open. |
 | Server/content/progressive enhancement | Missing | Indexable content, stable activation, streaming and no-Wasm fallback |
 | Ecosystem/editor/migration | CLI/editor exists; library/migration contracts partial | Independent widget library, React region migration, state-preserving reload |
 
