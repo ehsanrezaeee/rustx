@@ -1,6 +1,6 @@
 # RustX agent guide
 
-Read the [roadmap](ROADMAP.md), [features](FEATURES.md), and [README](../README.md). Start with the next unchecked task in the current roadmap milestone. Keep the demos and CLI usable from a fresh checkout.
+Read the [roadmap](ROADMAP.md), [features](FEATURES.md), and [README](../README.md). Use the [vision implementation guide](VISION_IMPLEMENTATION.md) to connect the active milestone to the reference applications and performance targets. Start with the next unchecked task in the roadmap. Keep the demos and CLI usable from a fresh checkout.
 
 ## Where to work
 
@@ -14,6 +14,8 @@ Read the [roadmap](ROADMAP.md), [features](FEATURES.md), and [README](../README.
 | Demo pages, sample people, and editor | `examples/lab`, `fixtures/users.json`, `editors/vscode` |
 
 Keep visible UI layout, text, and editing in Rust. Keep platform APIs at the host boundaries. Preserve keyed identity and release scoped work when its owner is unmounted. Treat bundled fonts and demo data as runtime assets.
+
+Use application workflows to decide what to build. For web performance, compare RustX with optimized plain JavaScript drawing the same UI to canvas. For native performance, replay the same workloads against the browser builds on the same desktop. Record measurements using the protocol in the [vision implementation guide](VISION_IMPLEMENTATION.md).
 
 ## Continue RP-008
 

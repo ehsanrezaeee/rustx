@@ -1,6 +1,26 @@
 # RustX
 
-RustX is an experimental declarative UI framework for Rust. Build with typed components and `rustx!` markup. The same retained application can draw to a browser canvas through WebAssembly or run in a native desktop window. Rust owns component identity, state, layout, text shaping, editing, and the scene.
+RustX is an experimental UI framework for building browser canvas and native desktop apps from the same Rust source. It uses TSX-like `rustx!` markup for typed components and has its own runtime and renderer. Rust owns state, layout, text shaping, editing, and the scene. In the browser, WebAssembly draws the UI and a small JavaScript host connects it to browser APIs.
+
+## Where RustX is today
+
+The source-built demo includes mount-once components, reactive state, typed layout, editable forms, dialogs, virtual lists, canvas drawing, routing, and network requests. The CLI can scaffold an app, build the web or native target, and reload the web demo after Rust source edits.
+
+| Target | Verified so far |
+| --- | --- |
+| Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Safari, Firefox, and physical mobile interaction are still open. |
+| Windows native | The source-built release demo passed a CPU smoke run. Forward Tab and nested dialog focus restoration passed with UI Automation readback. |
+| macOS native | An earlier native startup check passed. Multi-control keyboard and dialog interaction still need a native replay. |
+| Linux native | The first X11 CPU build and desktop interaction baseline are planned. |
+
+The active milestone is **RP-008 native interaction**. Detailed results and open platform checks are in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
+
+## Where RustX is headed
+
+- **Web.** Match or beat optimized vanilla JavaScript drawing the same interface to canvas. Compare rendering time and responsiveness with equivalent output and interactions.
+- **Native.** Build pure-Rust apps for Windows, macOS, and Linux that run substantially faster and respond more smoothly than equivalent browser apps on the same hardware. Use Rust for native rendering, networking, background work, and optional application HTTP servers.
+
+These are performance targets awaiting comparative measurements. The next steps are Windows reverse Tab, a macOS form replay, and the first Linux native CPU baseline. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
 
 ## Try the demo
 
@@ -76,4 +96,4 @@ rustx dev --target web
 
 Use `rustx dev --target native` on a supported desktop host. The built-in demo runs without Node or Python. Node is used for contributor formatting, dependency audits, and optional editor packaging.
 
-See [Features](docs/FEATURES.md), [Roadmap](docs/ROADMAP.md), and the [agent guide](docs/AGENT_GUIDE.md).
+The [agent guide](docs/AGENT_GUIDE.md) points contributors to the active milestone, relevant code, and validation requirements.

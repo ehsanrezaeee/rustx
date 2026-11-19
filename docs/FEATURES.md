@@ -1,6 +1,6 @@
 # RustX features
 
-RustX is an experimental Rust UI framework. One retained Rust application can render into a browser canvas through WebAssembly or open a native desktop window. Rust owns state, layout, text shaping, editing, and hit testing.
+RustX is an experimental Rust UI framework with TSX-like markup for typed components. One retained Rust application can render into a browser canvas through WebAssembly or open a native desktop window. The RustX runtime owns state, layout, text shaping, editing, and hit testing in Rust.
 
 ## Author an application
 
@@ -49,4 +49,4 @@ pub fn app(cx: Scope) -> View {
 
 `cargo install --path crates/rustx-cli --bin rustx --locked` installs the CLI from a checkout. `rustx new my-app` generates an independent counter project. Use `rustx check`, `rustx fmt`, `rustx dev`, and `rustx build` in that project.
 
-The isolated compiler runs locally on supported hosts. The ordinary demo can run without it. For editor support, install rust-analyzer and run `npm run package:editor` to build the optional VS Code extension. Native IME, human screen-reader use, physical mobile coverage, and comparative performance still require verification.
+The isolated compiler runs locally on supported hosts. The ordinary demo can run without it. For editor support, install rust-analyzer and run `npm run package:editor` to build the optional VS Code extension. Native IME, human screen-reader use, and physical mobile coverage still require verification. The browser and native speed goals have their own evidence requirements. [Vision implementation guide](VISION_IMPLEMENTATION.md)
