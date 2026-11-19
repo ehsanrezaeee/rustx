@@ -298,7 +298,7 @@
     "releases/RP-007/native-demo-0.1.0-x86_64-pc-windows-msvc.zip": "8b5bfb44e94ccf564aadaed5d4180402774810e4dd4aa2c54740b58ae2dc15ad",
     "releases/RP-007/native-demo-0.1.0-x86_64-pc-windows-msvc.zip.sha256": "10cd10c31ab786e79320994a4337c20caadc4e87143b840086f134acdf2fe2a2"
   },
-  "source_manifest_sha256": "6813c5d53d30e9a16609dda4ce961231c20931ed6ee1b032c402922c94c07ed9",
+  "source_manifest_sha256": "633d88540daceb9bcc437d7646fa2ba867fee106f1891f597e99ccad1fc80a1b",
   "capabilities": {
     "route": "#/capabilities",
     "source": "examples/lab/src/capabilities.rustx",

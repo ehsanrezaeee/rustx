@@ -32,10 +32,10 @@ function Wait-For($description, [scriptblock]$probe) {
     throw "Timed out waiting for $description. Window tree: $($names -join ', ')"
 }
 
-function Find-Label([string]$name) {
+function Find-Label([string]$name, $root = $window) {
     $condition = [Windows.Automation.PropertyCondition]::new(
         [Windows.Automation.AutomationElement]::NameProperty, $name)
-    $window.FindFirst([Windows.Automation.TreeScope]::Descendants, $condition)
+    $root.FindFirst([Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
 function Send-WindowKey([int]$key, [int]$scan) {
@@ -57,12 +57,21 @@ $start.EnvironmentVariables['RUSTX_RENDERER'] = 'cpu'
 $start.EnvironmentVariables.Remove('RUSTX_SMOKE_FRAMES')
 $app = [Diagnostics.Process]::Start($start)
 try {
-    $handle = Wait-For 'counter window' {
+    $ready = Wait-For 'counter window showing Count: 0' {
         $app.Refresh()
-        if ($app.MainWindowHandle -ne [IntPtr]::Zero) { $app.MainWindowHandle }
+        $candidate = $app.MainWindowHandle
+        if ($candidate -eq [IntPtr]::Zero) { return }
+        try {
+            $element = [Windows.Automation.AutomationElement]::FromHandle($candidate)
+            if (Find-Label 'Count: 0' $element) {
+                [pscustomobject]@{ Handle = $candidate; Window = $element }
+            }
+        } catch [Windows.Automation.ElementNotAvailableException] {
+            # A startup window can disappear before its UI Automation tree is ready.
+        }
     }
-    $window = [Windows.Automation.AutomationElement]::FromHandle($handle)
-    $null = Wait-For 'Count: 0' { Find-Label 'Count: 0' }
+    $handle = $ready.Handle
+    $window = $ready.Window
     Send-WindowKey 0x09 0x0f # Tab to Increase
     Send-WindowKey 0x0d 0x1c # Enter
     $null = Wait-For 'Count: 1 after Tab and Enter' { Find-Label 'Count: 1' }

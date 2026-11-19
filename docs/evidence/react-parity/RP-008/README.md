@@ -10,6 +10,10 @@ The corrected executable from `75c169e` passed on both the Windows Server 2025 r
 
 The macOS arm64 runner also built, extracted and launched the corrected package for two CPU frames. Its first job was cancelled while waiting for hosted capacity. The retry passed. The Mac job exercises RP-007 startup only. [Completed workflow](https://github.com/ehsanrezaeee/rustx/actions/runs/44365893495) · [Package reports](../RP-007/ci-44365893495).
 
+On 19 November, the full delivery archive was extracted with Windows PowerShell and all 1,906 payload checksums and 215 source checksums matched. The Windows CLI from the archive served the recorded Wasm. Edge 157.0.4341.60 drew the CPU canvas and keyboard navigation opened the Applications demo.
+
+The first native interaction replay from that extraction timed out on an unnamed UI Automation pane. The immediate retry passed with the same executable hash. The test now refreshes the process window handle until UI Automation exposes “Count: 0” before it posts keyboard input. Five consecutive fresh launches of the extracted executable passed with the sequence 0 → 1 → 1 → 2 and exit code zero on Windows build 28000.
+
 ## Remaining interaction tasks
 
 Use the same task expectations on Windows and macOS. Record OS, package source/hash, backend and input method for each run.
