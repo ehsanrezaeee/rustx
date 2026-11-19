@@ -229,4 +229,4 @@ Evidence location and exact reproduction
 Next actionable change or command
 ```
 
-**First action.** Define the first scene editing and data workspace recordings in V00 and identify the demo routes that exercise them. For platform implementation, continue V01 by replaying the form on macOS and creating the first Linux X11 CPU baseline. Collect the first comparable frame-time samples as soon as the web and native workloads run.
+**First action.** Define the first scene editing and data workspace recordings in V00 and identify the demo routes that exercise them. For platform implementation, continue V01 by replaying the form on macOS and Linux and adding the verified Linux Xvfb startup check to CI. Collect the first comparable frame-time samples as soon as the web and native workloads run.
