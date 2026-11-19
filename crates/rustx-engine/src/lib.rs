@@ -54,6 +54,24 @@ fn first_tab_stop(node: &Snapshot) -> Option<NodeId> {
         node.children.iter().find_map(first_tab_stop)
     }
 }
+fn page_focus_rect(node: &BoxNode, id: NodeId) -> Option<Rect> {
+    if node.node.control.overlay {
+        return None;
+    }
+    if node.node.id == id {
+        return Some(node.rect);
+    }
+    let rect = node
+        .children
+        .iter()
+        .find_map(|child| page_focus_rect(child, id))?;
+    let visible = if node.node.style.clip {
+        rect.intersect(node.rect)
+    } else {
+        rect
+    };
+    (visible.width() > 0. && visible.height() > 0.).then_some(visible)
+}
 pub struct Engine {
     pub diagnostics: diagnostics::Diagnostics,
     pub runtime: Runtime,
@@ -67,6 +85,7 @@ pub struct Engine {
     scale: f64,
     dirty: bool,
     focus: Option<NodeId>,
+    focus_changed: bool,
     pressed: Option<NodeId>,
     hovered: Option<NodeId>,
     last_pointer: Option<Point>,
@@ -111,6 +130,7 @@ impl Engine {
             scale: 1.,
             dirty: true,
             focus: None,
+            focus_changed: false,
             pressed: None,
             hovered: None,
             last_pointer: None,
@@ -371,6 +391,7 @@ impl Engine {
             }
         }
         if self.focus != Some(id) {
+            self.focus_changed = true;
             self.text_drag = None;
             if let Some(old) = self.focus {
                 self.runtime
@@ -466,6 +487,19 @@ impl Engine {
         self.dirty = true;
     }
     pub fn frame(&mut self, width: f32, height: f32, scale: f64) -> bool {
+        self.frame_with_focus_reveal(width, height, scale, false)
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    pub(crate) fn native_frame(&mut self, width: f32, height: f32, scale: f64) -> bool {
+        self.frame_with_focus_reveal(width, height, scale, true)
+    }
+    fn frame_with_focus_reveal(
+        &mut self,
+        width: f32,
+        height: f32,
+        scale: f64,
+        reveal_focus: bool,
+    ) -> bool {
         let started = if self.diagnostics.enabled {
             diagnostics::now()
         } else {
@@ -620,11 +654,26 @@ impl Engine {
         self.scale = scale;
         self.dirty = false;
         let root = self.boxes.as_mut().unwrap();
-        self.scroll = self
-            .scroll
-            .clamp(0., (root.rect.height() - f64::from(height)).max(0.));
+        let height = f64::from(height);
+        let max_scroll = (root.rect.height() - height).max(0.);
+        self.scroll = self.scroll.clamp(0., max_scroll);
+        // Native focus follows the visible page. Browser semantics already reveal focus.
+        if std::mem::take(&mut self.focus_changed) && reveal_focus {
+            if let Some(rect) = self.focus.and_then(|id| page_focus_rect(root, id)) {
+                // Existing boxes already include the previous frame's page translation.
+                let offset = self.applied_scroll - self.scroll;
+                let top = rect.y0 + offset;
+                let bottom = rect.y1 + offset;
+                let delta = if top < 0. || rect.height() > height {
+                    top
+                } else {
+                    (bottom - height).max(0.)
+                };
+                self.scroll = (self.scroll + delta).clamp(0., max_scroll);
+            }
+        }
         root.scroll_translate(Vec2::new(0., self.applied_scroll - self.scroll));
-        root.position_overlays(width as f64, height as f64);
+        root.position_overlays(width as f64, height);
         self.applied_scroll = self.scroll;
         fn viewports(
             boxes: &mut BoxNode,
@@ -671,7 +720,7 @@ impl Engine {
             root,
             &mut self.text,
             &mut self.world,
-            Rect::new(0., 0., f64::from(width), f64::from(height)),
+            Rect::new(0., 0., f64::from(width), height),
             self.focus,
         );
         self.scene.reset();
@@ -1313,6 +1362,36 @@ mod focus_tests {
 
     fn button(id: &str) -> Node {
         Node::widget(Widget::Button).id(id).value(id)
+    }
+
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn native_tab_reveals_offscreen_controls_and_keeps_manual_scrolling() {
+        let mut engine = Engine::new(|_| {
+            Node::widget(Widget::Column).children(vec![
+                button("first"),
+                Node::widget(Widget::Column).style(rustx_core::Style::column().min_height(500.)),
+                button("last"),
+            ])
+        });
+        engine.native_frame(500., 240., 1.);
+        assert!(engine.boxes.as_ref().unwrap().find("last").unwrap().rect.y0 > 240.);
+
+        assert!(engine.key("Tab", true, false, false, false));
+        engine.native_frame(500., 240., 1.);
+        let last = engine.boxes.as_ref().unwrap().find("last").unwrap();
+        assert_eq!(engine.focused_node(), Some(last.node.id));
+        assert!(last.rect.y0 >= 0. && last.rect.y1 <= 240.);
+
+        engine.scroll(-80.);
+        engine.native_frame(500., 240., 1.);
+        assert!(engine.boxes.as_ref().unwrap().find("last").unwrap().rect.y0 > 240.);
+
+        assert!(engine.key("Tab", false, false, false, false));
+        engine.native_frame(500., 240., 1.);
+        let first = engine.boxes.as_ref().unwrap().find("first").unwrap();
+        assert_eq!(engine.focused_node(), Some(first.node.id));
+        assert!(first.rect.y0 >= 0. && first.rect.y1 <= 240.);
     }
 
     #[test]

@@ -9,7 +9,7 @@ The source-built demo includes mount-once components, reactive state, typed layo
 | Target | Verified so far |
 | --- | --- |
 | Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Safari, Firefox, and physical mobile interaction are still open. |
-| Windows native | The source-built release demo passed a CPU smoke run. Forward Tab and nested dialog focus restoration passed with UI Automation readback. |
+| Windows native | The source-built release demo passed a CPU smoke run. Tab and Shift+Tab, off-screen focus reveal, and nested dialog restoration passed with UI Automation readback. |
 | macOS native | An earlier native startup check passed. Multi-control keyboard and dialog interaction still need a native replay. |
 | Linux native | The first X11 CPU build and desktop interaction baseline are planned. |
 
@@ -20,7 +20,7 @@ The active milestone is **RP-008 native interaction**. Detailed results and open
 - **Web.** Match or beat optimized vanilla JavaScript drawing the same interface to canvas. Compare rendering time and responsiveness with equivalent output and interactions.
 - **Native.** Build pure-Rust apps for Windows, macOS, and Linux that run substantially faster and respond more smoothly than equivalent browser apps on the same hardware. Use Rust for native rendering, networking, background work, and optional application HTTP servers.
 
-These are performance targets awaiting comparative measurements. The next steps are Windows reverse Tab, a macOS form replay, and the first Linux native CPU baseline. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
+These are performance targets awaiting comparative measurements. The next platform steps are the macOS form replay and the first Linux native CPU baseline. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
 
 ## Try the demo
 

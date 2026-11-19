@@ -19,7 +19,7 @@ Use application workflows to decide what to build. For web performance, compare 
 
 ## Continue RP-008
 
-Use the Applications demo or an ignored local scaffold for the multi-control form. Continue with Windows Shift+Tab, then replay the full form on macOS, including disabled controls, dialog focus confinement, and Escape restoration. Use an actual native window and record the OS, renderer, input method, and expected versus actual results. Windows UI Automation can read back focus. For manual hardware or screen-reader coverage, record the device and assistive technology used.
+Use the Applications demo or an ignored local scaffold for the multi-control form. Replay the form on macOS, including forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. Windows has passed that CPU scenario. Start the Linux X11 CPU build baseline if a macOS host is unavailable. Use an actual native window and record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
 
 ## Validate and hand off
 

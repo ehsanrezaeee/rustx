@@ -565,7 +565,7 @@ impl ApplicationHandler<()> for App {
                     return;
                 }
                 let scale = w.scale_factor();
-                self.engine.frame(
+                self.engine.native_frame(
                     (size.width as f64 / scale) as f32,
                     (size.height as f64 / scale) as f32,
                     scale,

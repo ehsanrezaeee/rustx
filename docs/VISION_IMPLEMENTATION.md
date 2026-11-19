@@ -77,11 +77,11 @@ The `Vxx` IDs belong to this guide. Keep the existing `RP-xxx` milestones in the
 
 ### V01 · Stabilize the existing interaction slice and bring up Linux native
 
-**Deliver.** Finish RP-008 starting with Windows Shift+Tab and the macOS multi-control replay. Extend the same scenario to a Linux CPU build. Bring up a declared Linux distribution and X11 session first using the existing configuration. Validate Wayland separately before advertising it and document any dependency or service gap. Add a Linux source-build and virtual-display CPU smoke job after a local or runner repro. Keep a desktop interaction run separate from the CI smoke. Make progress on X11 and shared code when macOS hardware is unavailable.
+**Deliver.** Continue RP-008 from the Windows CPU form evidence in the roadmap. Replay the multi-control form and off-screen focus reveal on macOS. Extend the same scenario to a Linux CPU build. Bring up a declared Linux distribution and X11 session first using the existing configuration. Validate Wayland separately before advertising it and document any dependency or service gap. Add a Linux source-build and virtual-display CPU smoke job after a local or runner repro. Keep a desktop interaction run separate from the CI smoke. Make progress on X11 and shared code when macOS hardware is unavailable.
 
 **Technical view.** Start in `examples/lab/src/applications.rustx`, `crates/rustx-engine/src/host.rs`, and `crates/rustx-engine/src/accessibility.rs`. Route host events through the shared engine. Keep keyboard modifiers, logical units, focus, and redraw behavior consistent. Record platform services that currently rely on OS helper programs and verify capability reporting when helpers are missing.
 
-**Example.** Build with `cargo run -p rustx-cli --locked -- build --target native --out dist-native` on each desktop. In the form, move forward and backward between an editor, a disabled control, a hidden subtree, and a dialog opener. Open two dialogs and close them in reverse order. Verify that every Escape returns focus to its own opener. Record executable revision, OS and display server, CPU renderer, input method, and focus readback.
+**Example.** Build with `cargo run -p rustx-cli --locked -- build --target native --out dist-native` on each desktop. In the form, move forward and backward between an editor, a disabled control, a hidden subtree, and a dialog opener. Verify that an off-screen focused field scrolls into the viewport. Open two dialogs and close them in reverse order. Verify that every Escape returns focus to its own opener. Record executable revision, OS and display server, CPU renderer, input method, and focus readback.
 
 **Exit.** Windows, macOS, and at least one declared Linux desktop produce runnable native builds with repeatable interaction evidence. CI has build and CPU smoke coverage for each declared target. The roadmap retains any outstanding compositor, mixed-DPI, multi-window, pointer capture, clipboard, file, or hardware check as an individual item.
 
@@ -229,4 +229,4 @@ Evidence location and exact reproduction
 Next actionable change or command
 ```
 
-**First action.** Define the first scene editing and data workspace recordings in V00 and identify the demo routes that exercise them. For platform implementation, start V01 at the Windows CPU Shift+Tab check already identified in the roadmap. Then replay the form on macOS and create the first Linux CPU baseline. Collect the first comparable frame-time samples as soon as the web and native workloads run.
+**First action.** Define the first scene editing and data workspace recordings in V00 and identify the demo routes that exercise them. For platform implementation, continue V01 by replaying the form on macOS and creating the first Linux X11 CPU baseline. Collect the first comparable frame-time samples as soon as the web and native workloads run.

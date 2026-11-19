@@ -32,6 +32,7 @@ pub fn app(cx: Scope) -> View {
 ## Interaction and services
 
 - Pointer, keyboard, wheel, and touch event paths. Widgets include buttons, text fields, choices, sliders, dialogs, and lists.
+- On native windows, Tab and Shift+Tab scroll the top-level page when the next focused control is off-screen.
 - Forms support validation, error state, reset, and controlled values. The browser projects semantics into the DOM and uses a text input bridge. Native hosts project semantics through AccessKit.
 - Navigation, scoped HTTP requests, streaming, sockets, clipboard, storage, files, asset loading, and printing are available where the host supports them. Local fixture routes provide reproducible demos.
 
