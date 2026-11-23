@@ -10,8 +10,8 @@ The source-built demo includes mount-once components, reactive state, typed layo
 | --- | --- |
 | Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Safari, Firefox, and physical mobile interaction are still open. |
 | Windows native | The source-built release demo passed a CPU smoke run. Tab and Shift+Tab, off-screen focus reveal, and nested dialog restoration passed with UI Automation readback. |
-| macOS native | An earlier native startup check passed. Multi-control keyboard and dialog interaction still need a native replay. |
-| Linux native | Debian 12 amd64 passed the X11 CPU startup and keyboard form replays under Xvfb. Physical desktop and Wayland checks remain open. |
+| macOS native | The current source-built demo passed CPU startup on the macOS 15 Intel CI runner. Multi-control keyboard and dialog interaction and Apple Silicon coverage remain open. |
+| Linux native | Debian 12 amd64 passed X11 CPU startup, keyboard form, nested-scroll focus, and dialog restoration replays under Xvfb. Physical desktop and Wayland checks remain open. |
 
 The active milestone is **RP-008 native interaction**. Detailed results and open platform checks are in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
 
