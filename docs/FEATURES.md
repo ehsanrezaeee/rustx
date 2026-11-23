@@ -32,7 +32,7 @@ pub fn app(cx: Scope) -> View {
 ## Interaction and services
 
 - Pointer, keyboard, wheel, and touch event paths. Widgets include buttons, text fields, choices, sliders, dialogs, and lists.
-- On native windows, Tab and Shift+Tab scroll the top-level page when the next focused control is off-screen.
+- Focus reveal uses Rust layout to scroll nested regions from the inside out, then reveal the focused control on the top-level page. Scroll state clamps each request, and later manual scrolling stays in place.
 - Forms support validation, error state, reset, and controlled values. The browser projects semantics into the DOM and uses a text input bridge. Native hosts project semantics through AccessKit.
 - Navigation, scoped HTTP requests, streaming, sockets, clipboard, storage, files, asset loading, and printing are available where the host supports them. Local fixture routes provide reproducible demos.
 
@@ -41,7 +41,7 @@ pub fn app(cx: Scope) -> View {
 | Route | What you can try |
 | --- | --- |
 | `#/capabilities` | Guided tour and links to the examples |
-| `#/applications` | Forms, editing, and interaction |
+| `#/applications` | Forms, editing, interaction, and nested Workspace shortcuts |
 | `#/people` | Local sample, remote API, and request states |
 | `#/engine` | Layout, text, drawing, and virtual lists |
 | `#/lab` | Keyed identity and reactive scopes |

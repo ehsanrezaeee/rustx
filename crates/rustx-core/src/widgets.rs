@@ -693,10 +693,12 @@ pub fn scroll_view(state: ScrollState, content: View) -> View {
         };
         let wheel = state.clone();
         let keyboard = state.clone();
+        let reveal = state.clone();
         let mut node = Node::widget(Widget::ScrollView)
             .role("region")
             .tab_index(0)
             .style(Style::column().height(state.viewport as f32).clip())
+            .on_scroll_to(move |offset| reveal.scroll_to(offset))
             .on_wheel(move |e| {
                 if !e.default_prevented() && wheel.scroll_by(e.data.delta_y) {
                     e.prevent_default();

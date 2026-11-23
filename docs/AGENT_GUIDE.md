@@ -21,6 +21,8 @@ Use application workflows to decide what to build. For web performance, compare 
 
 Use the Applications demo or an ignored local scaffold to replay the multi-control form on macOS and a physical Linux X11 desktop. Check forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. The CPU scenario has passed on Windows and on Debian 12 under Xvfb. GitHub Actions also runs the Linux X11 CPU startup check. Record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
 
+The Applications demo now includes Workspace shortcuts with two nested scroll regions. Replay Tab and Shift+Tab through Workspace 01 to Workspace 12, Enter selection, independent wheel scrolling, and scrolling into the outer shortcuts after leaving the inner group. Rust now reveals nested regions and the page on both host paths. Their platform replays are pending; the latest session had no working Windows computer-use pipe or browser surface. Preserve offset clamping, dialog opener restoration, and manual scrolling after focus reveal.
+
 ## Validate and hand off
 
 - Run `cargo fmt --all -- --check`, `cargo test --workspace --locked`, and `npm run format:check` after installing the contributor Node dependencies with `npm ci`.

@@ -1,6 +1,6 @@
 # RustX roadmap
 
-RustX has delivered four implementation stages. The current milestone is **RP-008 native interaction**. The Windows CPU form and Linux X11 form under Xvfb have passed forward and reverse Tab, focus scrolling, and dialog restoration. The next platform check is the macOS interaction replay.
+RustX has delivered four implementation stages. The current milestone is **RP-008 native interaction**. The Windows CPU form and Linux X11 form under Xvfb have passed forward and reverse Tab, focus scrolling, and dialog restoration. The next platform checks are the macOS interaction replay and the new nested-scroll focus path on native and browser hosts.
 
 RustX uses TSX-like markup for authoring and its own runtime and renderer. The performance goals are to match or beat optimized plain JavaScript canvas rendering on the web and to deliver a substantial native speed and responsiveness advantage on equivalent desktop workloads. The [vision implementation guide](VISION_IMPLEMENTATION.md) defines the workloads and how to verify those goals.
 
@@ -21,12 +21,16 @@ RustX uses TSX-like markup for authoring and its own runtime and renderer. The p
 | RP-005 | Benchmark RustX Wasm against tuned plain JavaScript canvas implementations. Compare native RustX with the equivalent browser workloads on the same hardware. Record per-workload measurements and comparison limits. |
 | RP-002, RP-003, RP-004, and RP-006 | Browser semantics cleanup, context isolation, browser resource accounting, and external-store snapshots have shipped. Real BFCache restoration and broader device checks remain open. |
 | RP-007 | Windows and macOS developer-package startup was verified. The current delivery builds from source and produces no app ZIP. Clean-machine and signed distribution checks remain open if binary distribution resumes. |
-| **RP-008** | Windows CPU checks cover keyboard focus, resize, and off-screen focus reveal, with UI Automation readback. The Debian 12 X11 form passed forward and reverse traversal, page scrolling, and dialog focus confinement and restoration under Xvfb. The native CI matrix includes Linux X11 CPU startup. Next replay the form on macOS and a physical Linux desktop. Pointer capture, nested scroll containers, clipboard, files, mixed DPI, and multi-window state remain open. |
+| **RP-008** | Windows CPU checks cover keyboard focus, resize, and off-screen focus reveal, with UI Automation readback. The Debian 12 X11 form passed forward and reverse traversal, page scrolling, and dialog focus confinement and restoration under Xvfb. The native CI matrix includes Linux X11 CPU startup. Rust focus reveal now requests clamped offsets through nested scroll regions before scrolling the page; the Applications demo includes Workspace shortcuts to exercise it. Replay this new path on native and browser hosts, then continue the macOS form and physical Linux desktop checks. Pointer capture, clipboard, files, mixed DPI, and multi-window state remain open. |
 | RP-009 | Verify native text, IME composition, multilingual editing, and human screen-reader interaction. |
 | RP-010 | Verify native rendering and device-loss recovery. Measure frame work, latency, and sustainable throughput against the browser results and the native targets in the vision guide. |
 | RP-011 | Verify browser input and accessibility on desktop and physical Android/iOS, including Safari and Firefox coverage. |
 
 ## Evidence
+
+The nested-scroll implementation adds engine checks for inner/outer/page offsets in one engine frame, reverse Tab, manual scrolling, clamped and non-scrollable clips, and dialog restoration to a scrolled-out opener. All 32 workspace checks passed, with the existing loopback TCP check ignored. Rust formatting and `npm run format:check` passed after `npm ci`. The compiled demo's Wasm CPU path passed a Node 24.19.0 replay at 960 × 600 and 390 × 620, covering forward/reverse Tab defaults, Enter selection, manual inner wheel scrolling, wheel chaining at the inner boundary, retained form edits, stable node IDs, and Rust-rendered PNG inspection. The source-built release Applications demo also completed its two-frame CPU smoke run on Windows build 28000 with exit code 0. These are engine, Wasm, and native startup results; keyboard and wheel events in the Wasm replay were supplied directly to the exported API.
+
+Browser page reveal now uses the shared Rust engine rather than JavaScript geometry. Actual browser and native keyboard replays of this change remain pending: this session's Windows computer-use helper reported `Computer Use native pipe is unavailable` (`os error 2`), and browser discovery returned no available surfaces. Earlier platform evidence below predates this change.
 
 The source-check run for `2503896` passed the Windows CPU, Linux X11 CPU, and source-built web HTTP jobs. Its macOS job never acquired a hosted runner; GitHub reported ARM64 capacity constraints. The workflow now selects the supported `macos-15-intel` runner. A completed run on that runner and Apple Silicon coverage remain pending. [Failed run and job annotations](https://github.com/ehsanrezaeee/rustx/actions/runs/44587617785)
 

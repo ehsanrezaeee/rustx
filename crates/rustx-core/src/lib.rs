@@ -79,6 +79,7 @@ pub struct Node {
     pub drawing: Option<Rc<drawing::CanvasScene>>,
     pub camera: drawing::Camera,
     pub on_scroll: Option<Rc<dyn Fn(f64)>>,
+    pub on_scroll_to: Option<Rc<dyn Fn(f64)>>,
     pub on_focus: Option<Rc<dyn Fn()>>,
     pub on_canvas: Option<Rc<dyn Fn(drawing::CanvasEvent)>>,
     pub node_ref: Option<NodeRef>,
@@ -106,6 +107,7 @@ impl Node {
             drawing: None,
             camera: Default::default(),
             on_scroll: None,
+            on_scroll_to: None,
             on_focus: None,
             on_canvas: None,
             node_ref: None,
@@ -194,6 +196,11 @@ impl Node {
     }
     pub fn on_scroll(mut self, f: impl Fn(f64) + 'static) -> Self {
         self.on_scroll = Some(Rc::new(f));
+        self
+    }
+    /// Accept an absolute logical scroll offset, clamped by the owning state.
+    pub fn on_scroll_to(mut self, f: impl Fn(f64) + 'static) -> Self {
+        self.on_scroll_to = Some(Rc::new(f));
         self
     }
     pub fn node_ref(mut self, r: NodeRef) -> Self {
@@ -1067,6 +1074,7 @@ impl Runtime {
                     || b.node.on_input.is_some()
                     || b.node.drawing.is_some()
                     || b.node.on_scroll.is_some()
+                    || b.node.on_scroll_to.is_some()
                     || b.node.control.editable
                     || !b.node.listeners.is_empty()
                     || matches!(b.node.kind, Kind::Button | Kind::Input),
@@ -1567,6 +1575,19 @@ impl Runtime {
             }
         }
         false
+    }
+    /// Request an offset from this exact scroll region. The next commit publishes
+    /// its accepted offset and emits Scroll only if the position changed.
+    pub fn scroll_to(&mut self, id: NodeId, offset: f64) -> bool {
+        if !offset.is_finite() {
+            return false;
+        }
+        if let Some(f) = self.find(id).and_then(|node| node.on_scroll_to) {
+            f(offset);
+            true
+        } else {
+            false
+        }
     }
     pub fn click_id(&mut self, id: &str) -> bool {
         self.snapshot()

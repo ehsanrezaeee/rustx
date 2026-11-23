@@ -121,6 +121,10 @@ pub fn virtual_list(state: VirtualListState, render: impl Fn(usize) -> View + 's
                 let state = state.clone();
                 move |delta| state.scroll_by(delta)
             })
+            .on_scroll_to({
+                let state = state.clone();
+                move |offset| state.scroll_to(offset)
+            })
             .children(vec![Node::new(Kind::Div)
                 .style(
                     Style::column()

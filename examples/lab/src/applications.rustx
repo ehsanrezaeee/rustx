@@ -543,7 +543,89 @@ pub fn application(cx: Scope) -> View {
        Node::widget(Widget::Grid).style(Style::grid(2).responsive(320.).gap(18.)).children(vec![fields,controls]),status,
        row(vec![button("validate-name","Check name",validate),button("submit-profile","Review profile",submit),button("reset-profile","Reset",reset)]),
        row(vec![button("save-profile","Save draft",save),button("restore-profile","Restore draft",restore),button("copy-profile","Copy",copy),button("print-profile","Print",print),button("export-profile","Export",export),button("import-profile","Import",import)]),
-       dynamic(move||Node::widget(Widget::Toast).id("profile-feedback").value(feedback.get())),menu_view,table,recovery,service_panel(cx),modal,
+       dynamic(move||Node::widget(Widget::Toast).id("profile-feedback").value(feedback.get())),menu_view,table,recovery,workspace_shortcuts(&cx),service_panel(cx),modal,
+    ])
+}
+
+fn workspace_shortcuts(cx: &Scope) -> View {
+    let outer = ScrollState::new(cx, 240., 640.);
+    let inner = ScrollState::new(cx, 160., 480.);
+    let selected = cx.signal("Choose a shortcut.".to_string());
+    let shortcut = |id: String, label: String| {
+        let selected = selected.clone();
+        Node::widget(Widget::Button)
+            .id(id)
+            .value(&label)
+            .style(Style::column().height(40.).padding(8.))
+            .on_click(move |_| {
+                let _ = selected.set(format!("Selected {label}."));
+            })
+    };
+    let workspaces = (1..=12)
+        .map(|index| {
+            shortcut(
+                format!("shortcut-workspace-{index}"),
+                format!("Workspace {index:02}"),
+            )
+        })
+        .collect();
+    let mut tools = ["Overview", "Projects", "Documents", "Inbox"]
+        .into_iter()
+        .map(|label| shortcut(format!("shortcut-{}", label.to_lowercase()), label.into()))
+        .collect::<Vec<_>>();
+    tools.push(
+        Node::widget(Widget::Column)
+            .id("workspace-list")
+            .label("Workspaces")
+            .role("region")
+            .style(
+                Style::column()
+                    .gap(0.)
+                    .height(160.)
+                    .background(0x1b3041)
+                    .border(1., 0x45566c),
+            )
+            .children(vec![scroll_view(
+                inner,
+                Node::widget(Widget::Column)
+                    .style(Style::column().gap(0.))
+                    .children(workspaces),
+            )]),
+    );
+    tools.extend(
+        [
+            "Notes", "Calendar", "Members", "Activity", "Files", "Reports", "Settings", "Help",
+        ]
+        .into_iter()
+        .map(|label| shortcut(format!("shortcut-{}", label.to_lowercase()), label.into())),
+    );
+    Node::widget(Widget::Column).style(card()).children(vec![
+        heading("Workspace shortcuts"),
+        Node::text(
+            "Tab through the shortcuts or scroll inside each group. Enter selects a shortcut.",
+        ),
+        Node::widget(Widget::Column)
+            .id("workspace-shortcuts")
+            .label("Workspace shortcuts")
+            .role("region")
+            .style(
+                Style::column()
+                    .gap(0.)
+                    .height(240.)
+                    .background(0x0b121d)
+                    .border(1., 0x45566c),
+            )
+            .children(vec![scroll_view(
+                outer,
+                Node::widget(Widget::Column)
+                    .style(Style::column().gap(0.))
+                    .children(tools),
+            )]),
+        dynamic(move || {
+            Node::text(selected.get())
+                .id("shortcut-selection")
+                .role("status")
+        }),
     ])
 }
 

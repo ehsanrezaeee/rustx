@@ -72,6 +72,48 @@ fn page_focus_rect(node: &BoxNode, id: NodeId) -> Option<Rect> {
     };
     (visible.width() > 0. && visible.height() > 0.).then_some(visible)
 }
+fn reveal_delta(rect: Rect, viewport: Rect) -> f64 {
+    if rect.y0 < viewport.y0 || rect.height() > viewport.height() {
+        rect.y0 - viewport.y0
+    } else {
+        (rect.y1 - viewport.y1).max(0.)
+    }
+}
+fn nested_focus_scroll(
+    root: &BoxNode,
+    id: NodeId,
+    attempted: &std::collections::HashSet<NodeId>,
+) -> Option<(NodeId, f64)> {
+    fn path<'a>(node: &'a BoxNode, id: NodeId, out: &mut Vec<&'a BoxNode>) -> bool {
+        out.push(node);
+        if node.node.id == id || node.children.iter().any(|child| path(child, id, out)) {
+            return true;
+        }
+        out.pop();
+        false
+    }
+    let mut ancestors = Vec::new();
+    if !path(root, id, &mut ancestors) {
+        return None;
+    }
+    let mut rect = ancestors.pop()?.rect;
+    for ancestor in ancestors.into_iter().rev() {
+        if !ancestor.node.style.clip {
+            continue;
+        }
+        if let Some(offset) = ancestor.node.control.scroll_offset {
+            let delta = reveal_delta(rect, ancestor.rect);
+            if offset.is_finite() && delta.abs() > 0.01 && !attempted.contains(&ancestor.node.id) {
+                return Some((ancestor.node.id, offset + delta));
+            }
+        }
+        rect = rect.intersect(ancestor.rect);
+        if rect.width() <= 0. || rect.height() <= 0. {
+            return None;
+        }
+    }
+    None
+}
 pub struct Engine {
     pub diagnostics: diagnostics::Diagnostics,
     pub runtime: Runtime,
@@ -390,8 +432,8 @@ impl Engine {
                 return;
             }
         }
+        self.focus_changed = true;
         if self.focus != Some(id) {
-            self.focus_changed = true;
             self.text_drag = None;
             if let Some(old) = self.focus {
                 self.runtime
@@ -487,19 +529,6 @@ impl Engine {
         self.dirty = true;
     }
     pub fn frame(&mut self, width: f32, height: f32, scale: f64) -> bool {
-        self.frame_with_focus_reveal(width, height, scale, false)
-    }
-    #[cfg(not(target_arch = "wasm32"))]
-    pub(crate) fn native_frame(&mut self, width: f32, height: f32, scale: f64) -> bool {
-        self.frame_with_focus_reveal(width, height, scale, true)
-    }
-    fn frame_with_focus_reveal(
-        &mut self,
-        width: f32,
-        height: f32,
-        scale: f64,
-        reveal_focus: bool,
-    ) -> bool {
         let started = if self.diagnostics.enabled {
             diagnostics::now()
         } else {
@@ -605,7 +634,7 @@ impl Engine {
             }
             self.dirty = true;
         }
-        let layout_changed = self.size != (width, height)
+        let mut layout_changed = self.size != (width, height)
             || self.boxes.is_none()
             || commit.components_rendered > 0
             || model_changed
@@ -642,6 +671,31 @@ impl Engine {
             );
             self.applied_scroll = 0.;
         }
+        let reveal_focus = std::mem::take(&mut self.focus_changed);
+        if reveal_focus {
+            // Reveal the deepest region first and remeasure its accepted offset
+            // before revealing an ancestor. Each region receives at most one
+            // request, including when its declared extent clamps the request.
+            let mut attempted = std::collections::HashSet::new();
+            while let Some((id, offset)) = self.focus.and_then(|focus| {
+                nested_focus_scroll(self.boxes.as_ref().unwrap(), focus, &attempted)
+            }) {
+                attempted.insert(id);
+                if !self.runtime.scroll_to(id, offset) {
+                    continue;
+                }
+                self.runtime.flush();
+                self.model_epoch = self.runtime.model_epoch();
+                self.boxes = Some(self.layout.compute(
+                    &self.runtime.snapshot(),
+                    width,
+                    height,
+                    &mut self.text,
+                ));
+                self.applied_scroll = 0.;
+                layout_changed = true;
+            }
+        }
         if !self.dirty && !layout_changed && !resources_changed && self.scale == scale {
             return false;
         }
@@ -657,18 +711,14 @@ impl Engine {
         let height = f64::from(height);
         let max_scroll = (root.rect.height() - height).max(0.);
         self.scroll = self.scroll.clamp(0., max_scroll);
-        // Native focus follows the visible page. Browser semantics already reveal focus.
-        if std::mem::take(&mut self.focus_changed) && reveal_focus {
+        if reveal_focus {
             if let Some(rect) = self.focus.and_then(|id| page_focus_rect(root, id)) {
                 // Existing boxes already include the previous frame's page translation.
                 let offset = self.applied_scroll - self.scroll;
-                let top = rect.y0 + offset;
-                let bottom = rect.y1 + offset;
-                let delta = if top < 0. || rect.height() > height {
-                    top
-                } else {
-                    (bottom - height).max(0.)
-                };
+                let delta = reveal_delta(
+                    rect + Vec2::new(0., offset),
+                    Rect::new(0., 0., f64::from(width), height),
+                );
                 self.scroll = (self.scroll + delta).clamp(0., max_scroll);
             }
         }
@@ -1357,7 +1407,7 @@ impl Engine {
 #[cfg(test)]
 mod focus_tests {
     use super::*;
-    use rustx_core::{dialog, Node, OverlayState, Widget};
+    use rustx_core::{dialog, scroll_view, Node, OverlayState, ScrollState, Style, Widget};
     use std::{cell::RefCell, rc::Rc};
 
     fn button(id: &str) -> Node {
@@ -1365,8 +1415,7 @@ mod focus_tests {
     }
 
     #[test]
-    #[cfg(not(target_arch = "wasm32"))]
-    fn native_tab_reveals_offscreen_controls_and_keeps_manual_scrolling() {
+    fn tab_reveals_offscreen_controls_and_keeps_manual_scrolling() {
         let mut engine = Engine::new(|_| {
             Node::widget(Widget::Column).children(vec![
                 button("first"),
@@ -1374,24 +1423,202 @@ mod focus_tests {
                 button("last"),
             ])
         });
-        engine.native_frame(500., 240., 1.);
+        engine.frame(500., 240., 1.);
         assert!(engine.boxes.as_ref().unwrap().find("last").unwrap().rect.y0 > 240.);
 
         assert!(engine.key("Tab", true, false, false, false));
-        engine.native_frame(500., 240., 1.);
+        engine.frame(500., 240., 1.);
         let last = engine.boxes.as_ref().unwrap().find("last").unwrap();
         assert_eq!(engine.focused_node(), Some(last.node.id));
         assert!(last.rect.y0 >= 0. && last.rect.y1 <= 240.);
 
         engine.scroll(-80.);
-        engine.native_frame(500., 240., 1.);
+        engine.frame(500., 240., 1.);
         assert!(engine.boxes.as_ref().unwrap().find("last").unwrap().rect.y0 > 240.);
 
         assert!(engine.key("Tab", false, false, false, false));
-        engine.native_frame(500., 240., 1.);
+        engine.frame(500., 240., 1.);
         let first = engine.boxes.as_ref().unwrap().find("first").unwrap();
         assert_eq!(engine.focused_node(), Some(first.node.id));
         assert!(first.rect.y0 >= 0. && first.rect.y1 <= 240.);
+    }
+
+    #[test]
+    fn nested_focus_reveal_commits_inner_outer_and_page_offsets() {
+        let states = Rc::new(RefCell::new(None));
+        let saved = states.clone();
+        let events = Rc::new(RefCell::new(Vec::new()));
+        let recorded = events.clone();
+        let mut engine = Engine::new(move |cx| {
+            let outer = ScrollState::new(&cx, 180., 480.);
+            let inner = ScrollState::new(&cx, 120., 400.);
+            *saved.borrow_mut() = Some((outer.clone(), inner.clone()));
+            let inner = scroll_view(
+                inner,
+                Node::widget(Widget::Column)
+                    .style(Style::column().gap(0.))
+                    .children(vec![
+                        button("inner-first").style(Style::column().height(40.)),
+                        Node::widget(Widget::Column).style(Style::column().height(320.)),
+                        button("inner-last").style(Style::column().height(40.)),
+                    ]),
+            );
+            Node::widget(Widget::Column)
+                .style(Style::column().gap(0.))
+                .on_event(rustx_core::EventKind::Scroll, {
+                    let recorded = recorded.clone();
+                    move |event| {
+                        recorded
+                            .borrow_mut()
+                            .push((event.target, event.data.delta_y))
+                    }
+                })
+                .children(vec![
+                    Node::widget(Widget::Column).style(Style::column().height(300.)),
+                    scroll_view(
+                        outer,
+                        Node::widget(Widget::Column)
+                            .style(Style::column().gap(0.))
+                            .children(vec![
+                                button("outer-first").style(Style::column().height(40.)),
+                                Node::widget(Widget::Column).style(Style::column().height(120.)),
+                                inner,
+                                Node::widget(Widget::Column).style(Style::column().height(160.)),
+                                button("outer-last").style(Style::column().height(40.)),
+                            ]),
+                    ),
+                ])
+        });
+        engine.frame(500., 240., 1.);
+        let last = engine.runtime.snapshot().find("inner-last").unwrap().id;
+        engine.focus_node(last);
+        assert!(engine.frame(500., 240., 1.));
+        let (outer, inner) = states.borrow().as_ref().unwrap().clone();
+        assert_eq!(inner.offset.get(), 280.);
+        assert_eq!(outer.offset.get(), 100.);
+        assert_eq!(engine.scroll, 240.);
+        let rect = engine
+            .boxes
+            .as_ref()
+            .unwrap()
+            .find("inner-last")
+            .unwrap()
+            .rect;
+        assert!(rect.y0 >= 0. && rect.y1 <= 240.);
+        let mut deltas = events
+            .borrow()
+            .iter()
+            .map(|(_, delta)| *delta)
+            .collect::<Vec<_>>();
+        deltas.sort_by(f64::total_cmp);
+        assert_eq!(deltas, vec![100., 240., 280.]);
+        assert!(!engine.frame(500., 240., 1.));
+
+        // Reverse Tab reveals the first field without resetting the outer page.
+        assert!(engine.key("Tab", true, false, false, false));
+        engine.frame(500., 240., 1.);
+        let first = engine.boxes.as_ref().unwrap().find("inner-first").unwrap();
+        assert_eq!(engine.focused_node(), Some(first.node.id));
+        assert_eq!(inner.offset.get(), 0.);
+        assert_eq!(outer.offset.get(), 100.);
+        assert!(first.rect.y0 >= 0. && first.rect.y1 <= 240.);
+
+        // A subsequent manual scroll is not undone by an ordinary frame.
+        inner.scroll_to(100.);
+        engine.frame(500., 240., 1.);
+        assert_eq!(inner.offset.get(), 100.);
+        // An explicit focus request can reveal an already focused control again.
+        let first = engine.focused_node().unwrap();
+        engine.focus_node(first);
+        engine.frame(500., 240., 1.);
+        assert_eq!(inner.offset.get(), 0.);
+    }
+
+    #[test]
+    fn focus_reveal_stops_at_clamped_or_non_scrollable_clips() {
+        for scrollable in [true, false] {
+            let state = Rc::new(RefCell::new(None));
+            let saved = state.clone();
+            let mut engine = Engine::new(move |cx| {
+                let content = Node::widget(Widget::Column)
+                    .style(Style::column().gap(0.))
+                    .children(vec![
+                        Node::widget(Widget::Column).style(Style::column().height(360.)),
+                        button("clipped").style(Style::column().height(40.)),
+                    ]);
+                let region = if scrollable {
+                    // Deliberately shorter than the content: state remains authoritative.
+                    let state = ScrollState::new(&cx, 120., 160.);
+                    *saved.borrow_mut() = Some(state.clone());
+                    scroll_view(state, content)
+                } else {
+                    Node::widget(Widget::Column)
+                        .style(Style::column().height(120.).clip())
+                        .children(vec![content])
+                };
+                Node::widget(Widget::Column).children(vec![
+                    Node::widget(Widget::Column).style(Style::column().height(300.)),
+                    region,
+                ])
+            });
+            engine.frame(500., 240., 1.);
+            engine.focus_node(engine.runtime.snapshot().find("clipped").unwrap().id);
+            engine.frame(500., 240., 1.);
+            if let Some(state) = state.borrow().as_ref() {
+                assert_eq!(state.offset.get(), 40.);
+            }
+            assert_eq!(engine.scroll, 0.);
+            assert!(!engine.frame(500., 240., 1.));
+        }
+    }
+
+    #[test]
+    fn dialog_focus_skips_logical_scroll_ancestors_and_reveals_its_opener_on_close() {
+        let states = Rc::new(RefCell::new(None));
+        let saved = states.clone();
+        let mut engine = Engine::new(move |cx| {
+            let scroll = ScrollState::new(&cx, 120., 480.);
+            let modal = OverlayState::new(&cx);
+            *saved.borrow_mut() = Some((scroll.clone(), modal.clone()));
+            Node::widget(Widget::Column)
+                .style(Style::column().gap(0.))
+                .children(vec![
+                    Node::widget(Widget::Column).style(Style::column().height(300.)),
+                    scroll_view(
+                        scroll,
+                        Node::widget(Widget::Column)
+                            .style(Style::column().gap(0.))
+                            .children(vec![
+                                Node::widget(Widget::Column).style(Style::column().height(400.)),
+                                button("opener").style(Style::column().height(40.)),
+                                Node::widget(Widget::Column).style(Style::column().height(40.)),
+                                dialog(modal, "Nested dialog", button("dialog-first")),
+                            ]),
+                    ),
+                ])
+        });
+        engine.frame(500., 240., 1.);
+        let opener = engine.runtime.snapshot().find("opener").unwrap().id;
+        engine.focus_node(opener);
+        engine.frame(500., 240., 1.);
+        let (scroll, modal) = states.borrow().as_ref().unwrap().clone();
+        assert_eq!(scroll.offset.get(), 320.);
+        modal.show();
+        engine.frame(500., 240., 1.);
+        let dialog_first = engine.boxes.as_ref().unwrap().find("dialog-first").unwrap();
+        assert_eq!(engine.focused_node(), Some(dialog_first.node.id));
+        assert!(dialog_first.rect.y0 >= 0. && dialog_first.rect.y1 <= 240.);
+        assert_eq!(scroll.offset.get(), 320.);
+
+        scroll.scroll_to(0.);
+        engine.frame(500., 240., 1.);
+        assert_eq!(scroll.offset.get(), 0.);
+        assert!(engine.key("Escape", false, false, false, false));
+        engine.frame(500., 240., 1.);
+        assert_eq!(engine.focused_node(), Some(opener));
+        assert_eq!(scroll.offset.get(), 320.);
+        let opener = engine.boxes.as_ref().unwrap().find("opener").unwrap();
+        assert!(opener.rect.y0 >= 0. && opener.rect.y1 <= 240.);
     }
 
     #[test]

@@ -24,8 +24,8 @@ export function droppedFileMetadata(files) {
   });
 }
 export class SemanticProjection {
-  constructor(root, app, schedule, pump, reveal) {
-    Object.assign(this, { root, app, schedule, pump, reveal });
+  constructor(root, app, schedule, pump) {
+    Object.assign(this, { root, app, schedule, pump });
     this.elements = new Map();
     this.listeners = new WeakMap();
     this.disposed = false;
@@ -144,7 +144,6 @@ export class SemanticProjection {
     if (tag === 'button') el.type = 'button';
     listen('focus', () => {
       this.app.focus(n.id);
-      this.reveal(n.id);
       this.schedule();
     });
     listen('blur', () => {
@@ -441,7 +440,10 @@ export class SemanticProjection {
       arrange(order.slice(0, active), order[active]);
       arrange(order.slice(active + 1), null);
     } else arrange(order, null);
-    if (active >= 0 && active !== old) this.reveal(document.activeElement.dataset.node);
+    if (active >= 0 && active !== old) {
+      this.app.focus(Number(document.activeElement.dataset.node));
+      this.schedule();
+    }
     this.modal = modal;
     this.flat = flat;
     const allowed = new Set();

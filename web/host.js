@@ -86,22 +86,7 @@ async function mountHost() {
       animation = requestAnimationFrame(draw);
     }
   }
-  function reveal(id) {
-    const n = JSON.parse(app.inspect()).nodes.find((x) => x.node === Number(id));
-    const r = n?.scroll_parent
-      ? JSON.parse(app.inspect()).nodes.find((x) => x.node === n.scroll_parent)?.rect
-      : n?.rect;
-    if (r) {
-      if (r[1] < 0) {
-        app.scroll(r[1] - 16);
-        schedule();
-      } else if (r[1] + r[3] > innerHeight) {
-        app.scroll(r[1] + r[3] - innerHeight + 16);
-        schedule();
-      }
-    }
-  }
-  const projection = new SemanticProjection(root, app, schedule, pump, reveal);
+  const projection = new SemanticProjection(root, app, schedule, pump);
   function resourceError(source, code, status = null) {
     if (ready) projection.hostEvent('resource_error', { resource_error: { source, code, status } });
   }
