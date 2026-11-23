@@ -30,11 +30,14 @@ Clone this repository and run Docker Compose on a Windows, macOS, or Linux compu
 git clone https://github.com/ehsanrezaeee/rustx.git
 cd rustx
 docker compose up --build -d --wait
+docker compose port demo 3000
 ```
 
-Open `http://127.0.0.1:3000/#/capabilities`. The guide links to Applications, People Explorer, the rendering engine, and the runtime lab. Docker builds the current checkout with its pinned Rust and Wasm tools. On Windows use Docker Desktop's Linux container mode.
+The last command prints the demo address, for example `127.0.0.1:49152`. Open `http://127.0.0.1:49152/#/capabilities` using the printed port. Docker selects an available host port so the demo can run alongside other apps. The guide links to Applications, People Explorer, the rendering engine, and the runtime lab. Docker builds the current checkout with its pinned Rust and Wasm tools. On Windows use Docker Desktop's Linux container mode.
 
-To refresh the demo after the branch changes, run `git pull --ff-only` and `docker compose up --build -d --wait`, then reload the page. The bundle ID at `/assets.json` identifies the build currently served. Stop the demo with `docker compose down`.
+To refresh the demo after the branch changes, run `git pull --ff-only` and `docker compose up --build -d --wait`, then check `docker compose port demo 3000` and reload the page. The bundle ID at `/assets.json` identifies the build currently served. Stop the demo with `docker compose down`.
+
+For a fixed host port, set `RUSTX_PORT` before starting Compose (`$env:RUSTX_PORT = '3001'` in PowerShell, or `RUSTX_PORT=3001 docker compose up --build -d --wait` in Bash). If Docker reports that the port is already in use, choose another port or clear `RUSTX_PORT` to restore automatic selection. The container always serves on port 3000 internally.
 
 ### Open it on a phone or tablet
 
@@ -45,15 +48,17 @@ Connect the device and host computer to the same trusted local network. Replace 
 ```powershell
 $env:RUSTX_BIND = '192.168.1.20'
 docker compose up --build -d --wait
+docker compose port demo 3000
 ```
 
 **macOS or Linux**
 
 ```sh
 RUSTX_BIND=192.168.1.20 docker compose up --build -d --wait
+RUSTX_BIND=192.168.1.20 docker compose port demo 3000
 ```
 
-Allow incoming TCP port 3000 on the host's private network if required. On the other device open `http://192.168.1.20:3000/?renderer=cpu#/capabilities`. Plain HTTP on a LAN address may limit browser features such as WebGPU, offline caching, and clipboard access. Use the browser's CPU mode for this setup. Physical mobile support remains under verification.
+Allow the printed TCP port on the host's private network if required. On the other device open `http://192.168.1.20:<printed-port>/?renderer=cpu#/capabilities`. Set `RUSTX_PORT` as described above if a fixed port is needed for the firewall. Plain HTTP on a LAN address may limit browser features such as WebGPU, offline caching, and clipboard access. Use the browser's CPU mode for this setup. Physical mobile support remains under verification.
 
 ## Develop from source
 

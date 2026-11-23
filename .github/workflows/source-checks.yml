@@ -20,7 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2025, macos-15, ubuntu-24.04]
+        # Use Intel macOS to avoid the ARM hosted-runner capacity shortage.
+        os: [windows-2025, macos-15-intel, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     env:
@@ -67,7 +68,7 @@ jobs:
         run: docker compose up --build -d --wait
       - name: Check the served build and fixture data
         run: |
-          base=http://127.0.0.1:3000
+          base="http://$(docker compose port demo 3000)"
           curl --fail --silent --show-error "$base/" | grep -F 'id="surface"'
           curl --fail --silent --show-error "$base/assets.json" | jq -er '.build'
           curl --fail --silent --show-error "$base/api/users" | jq -e 'length > 0'

@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# Use Docker's bundled BuildKit frontend without an extra Docker Hub fetch.
 FROM rust:1.90.0-bookworm AS build
 WORKDIR /src
 RUN rustup target add wasm32-unknown-unknown \
