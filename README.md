@@ -13,7 +13,7 @@ The source-built demo includes mount-once components, reactive state, typed layo
 | macOS native | The source-built demo passed CPU startup on the macOS 15 Intel CI runner and on macOS 27.0.1 with Apple Silicon. An AppKit form replay on Apple Silicon passed keyboard traversal, nested focus reveal, and stacked dialog restoration with native accessibility readback. |
 | Linux native | Debian 12 amd64 passed X11 CPU startup, keyboard form, nested-scroll focus, and dialog restoration replays under Xvfb. Physical desktop and Wayland checks remain open. |
 
-The active work is **RP-009 native text editing**, starting on macOS. The remaining **RP-008 native interaction** platform checks are tracked in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
+The active work is **RP-010 native rendering**, starting with Metal presentation and controlled renderer recovery on Apple Silicon. The [roadmap](docs/ROADMAP.md) tracks those results and the remaining native input and accessibility checks. The [feature guide](docs/FEATURES.md) lists what you can try today.
 
 ## Where RustX is headed
 

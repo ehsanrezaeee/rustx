@@ -10,6 +10,21 @@ use vello::{
     wgpu, AaConfig, AaSupport, RenderParams, Renderer, RendererOptions,
 };
 use winit::{dpi::PhysicalSize, window::Window};
+
+pub(crate) enum PresentError {
+    Surface(wgpu::SurfaceError),
+    Render(String),
+}
+
+impl std::fmt::Display for PresentError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Surface(error) => error.fmt(f),
+            Self::Render(error) => f.write_str(error),
+        }
+    }
+}
+
 pub struct Gpu {
     context: RenderContext,
     renderer: Renderer,
@@ -63,7 +78,8 @@ impl Gpu {
         })
     }
     pub fn resize(&mut self, size: PhysicalSize<u32>) {
-        if size.width > 0
+        if !self.lost.load(Ordering::Acquire)
+            && size.width > 0
             && size.height > 0
             && (self.surface.config.width != size.width
                 || self.surface.config.height != size.height)
@@ -73,8 +89,12 @@ impl Gpu {
         }
     }
     pub fn draw(&mut self, engine: &Engine) -> Result<(), String> {
+        self.present(engine).map_err(|error| error.to_string())
+    }
+
+    pub(crate) fn present(&mut self, engine: &Engine) -> Result<(), PresentError> {
         if self.lost.load(Ordering::Acquire) {
-            return Err("GPU device lost".into());
+            return Err(PresentError::Render("GPU device lost".into()));
         }
         let frame = match self.surface.surface.get_current_texture() {
             Ok(f) => f,
@@ -85,9 +105,9 @@ impl Gpu {
                 self.surface
                     .surface
                     .get_current_texture()
-                    .map_err(|e| e.to_string())?
+                    .map_err(PresentError::Surface)?
             }
-            Err(e) => return Err(e.to_string()),
+            Err(e) => return Err(PresentError::Surface(e)),
         };
         let d = &self.context.devices[self.surface.dev_id];
         self.renderer
@@ -103,7 +123,7 @@ impl Gpu {
                     antialiasing_method: AaConfig::Area,
                 },
             )
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| PresentError::Render(e.to_string()))?;
         let mut enc = d.device.create_command_encoder(&Default::default());
         self.surface.blitter.copy(
             &d.device,

@@ -1,6 +1,9 @@
 //! Native semantic projection through AccessKit (Windows UI Automation and
 //! macOS NSAccessibility). Actual assistive-technology tasks remain platform
 //! acceptance gates; portable tree tests cannot certify a screen reader.
+#[cfg(target_os = "macos")]
+mod live_regions;
+
 use crate::{layout::BoxNode, Engine};
 use accesskit::{
     Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, DeactivationHandler,
@@ -106,29 +109,54 @@ fn bounds(node: &BoxNode, scale: f64, out: &mut HashMap<u64, Rect>) {
 /// update. All geometry is in physical pixels relative to the native client area.
 pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
     let semantic = engine.runtime.semantics();
+    fn find_visible(node: &SemanticNode, id: u64) -> Option<&SemanticNode> {
+        if node.control.hidden {
+            return None;
+        }
+        if node.id == id {
+            Some(node)
+        } else {
+            node.children
+                .iter()
+                .find_map(|child| find_visible(child, id))
+        }
+    }
+    // The same modal that owns keyboard focus owns native accessibility
+    // navigation. Its coordinates remain relative to the window.
+    let content = engine
+        .modal
+        .and_then(|id| find_visible(&semantic, id))
+        .unwrap_or(&semantic);
     let mut rects = HashMap::new();
     if let Some(boxes) = &engine.boxes {
         bounds(boxes, scale, &mut rects);
     }
     let mut ids = HashMap::new();
-    fn index(node: &SemanticNode, ids: &mut HashMap<String, NodeId>) {
+    type SemanticIds<'a> = HashMap<&'a str, (&'a SemanticNode, bool)>;
+    fn index<'a>(
+        node: &'a SemanticNode,
+        content_id: u64,
+        projected: bool,
+        ids: &mut SemanticIds<'a>,
+    ) {
         if node.control.hidden {
             return;
         }
-        if let Some(id) = &node.app_id {
-            ids.insert(id.clone(), NodeId(node.id));
+        let projected = projected || node.id == content_id;
+        if let Some(id) = node.app_id.as_deref() {
+            ids.insert(id, (node, projected));
         }
         for child in &node.children {
-            index(child, ids);
+            index(child, content_id, projected, ids);
         }
     }
-    index(&semantic, &mut ids);
+    index(&semantic, content.id, false, &mut ids);
     let mut nodes = vec![];
     fn walk(
         node: &SemanticNode,
         engine: &Engine,
         rects: &HashMap<u64, Rect>,
-        ids: &HashMap<String, NodeId>,
+        ids: &SemanticIds<'_>,
         nodes: &mut Vec<(NodeId, Node)>,
     ) {
         if node.control.hidden {
@@ -138,8 +166,6 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
         if accessible.role() == Role::Label && !node.control.password() {
             // AccessKit derives a static text node's platform name from its value.
             accessible.set_value(node.label.clone());
-        } else if !node.label.is_empty() {
-            accessible.set_label(node.label.clone());
         }
         // Password text is never published to platform diagnostics or AT.
         if !node.control.password() && !node.value.is_empty() {
@@ -217,20 +243,62 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
             accessible.set_author_id(app_id.clone());
             accessible.set_html_id(app_id.clone());
         }
+        let mut labels = Vec::new();
+        let mut label_outside_content = false;
+        let mut descriptions = Vec::new();
         for (relation, value) in [
             (0, &node.control.labelled_by),
             (1, &node.control.described_by),
             (2, &node.control.controls),
         ] {
             if let Some(value) = value {
-                for id in value.split_whitespace().filter_map(|id| ids.get(id)) {
+                for &(target, projected) in value
+                    .split_whitespace()
+                    .filter_map(|id| ids.get(id))
+                    .filter(|(target, _)| target.id != node.id)
+                {
+                    let id = NodeId(target.id);
+                    let text = target.label.trim();
                     match relation {
-                        0 => accessible.push_labelled_by(*id),
-                        1 => accessible.push_described_by(*id),
-                        _ => accessible.push_controlled(*id),
+                        0 => {
+                            if projected {
+                                accessible.push_labelled_by(id);
+                            }
+                            if !text.is_empty() {
+                                labels.push(text);
+                                label_outside_content |= !projected;
+                            }
+                        }
+                        1 => {
+                            if projected {
+                                accessible.push_described_by(id);
+                            }
+                            if !target.control.editable
+                                && !target.control.password()
+                                && !matches!(target.role, "textbox" | "combobox")
+                                && !text.is_empty()
+                            {
+                                descriptions.push(text);
+                            }
+                        }
+                        _ if projected => accessible.push_controlled(id),
+                        _ => {}
                     }
                 }
             }
+        }
+        if accessible.role() != Role::Label {
+            // Preserve referenced text even if the active dialog hides its
+            // source. AccessKit gives a direct label precedence over relations.
+            if label_outside_content {
+                accessible.set_label(labels.join(" "));
+            } else if labels.is_empty() && !node.label.is_empty() {
+                accessible.set_label(node.label.clone());
+            }
+        }
+        // The native description is read independently of the relation IDs.
+        if !descriptions.is_empty() {
+            accessible.set_description(descriptions.join(" "));
         }
         if let Some((position, _)) = node.position {
             accessible.set_position_in_set(position.saturating_sub(1));
@@ -335,11 +403,11 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
             walk(child, engine, rects, ids, nodes);
         }
     }
-    walk(&semantic, engine, &rects, &ids, &mut nodes);
+    walk(content, engine, &rects, &ids, &mut nodes);
     let mut window = Node::new(Role::Window);
     window.set_label("RustX");
-    if !semantic.control.hidden {
-        window.set_children(vec![NodeId(semantic.id)]);
+    if !content.control.hidden {
+        window.set_children(vec![NodeId(content.id)]);
     }
     nodes.push((ROOT, window));
     let valid: HashSet<_> = nodes.iter().map(|(id, _)| *id).collect();
@@ -529,6 +597,8 @@ pub struct NativeAccessibility {
     latest: Arc<Mutex<Option<TreeUpdate>>>,
     receiver: mpsc::Receiver<ActionRequest>,
     scale: f64,
+    #[cfg(target_os = "macos")]
+    live_regions: live_regions::LiveRegions,
 }
 impl NativeAccessibility {
     /// The window must still be invisible, as required by AccessKit/winit.
@@ -550,6 +620,8 @@ impl NativeAccessibility {
             latest,
             receiver,
             scale: window.scale_factor(),
+            #[cfg(target_os = "macos")]
+            live_regions: live_regions::LiveRegions::default(),
         }
     }
     pub fn process_event(&mut self, window: &Window, event: &WindowEvent) {
@@ -563,6 +635,13 @@ impl NativeAccessibility {
     }
     pub fn update_at_scale(&mut self, engine: &Engine, scale: f64) {
         let update = project(engine, scale);
+        #[cfg(target_os = "macos")]
+        let update = {
+            let mut update = update;
+            self.live_regions
+                .update(&mut update, engine.modal_openers.len());
+            update
+        };
         if let Ok(mut latest) = self.latest.lock() {
             *latest = Some(update.clone());
         }
@@ -577,5 +656,150 @@ impl NativeAccessibility {
             engine.invalidate();
         }
         changed
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rustx_core::{dialog, dynamic, Node as ViewNode, OverlayState, Widget};
+
+    #[test]
+    fn native_tree_follows_stacked_dialogs_and_preserves_referenced_text() {
+        let mut engine = Engine::new(|scope| {
+            let outer = OverlayState::new(&scope);
+            let inner = OverlayState::new(&scope);
+            let open_outer = outer.clone();
+            let open_inner = inner.clone();
+            ViewNode::widget(Widget::Column).children(vec![
+                ViewNode::text("Account").id("outside-label"),
+                ViewNode::text("Use the account email.").id("outside-help"),
+                ViewNode::widget(Widget::Button)
+                    .id("open-outer")
+                    .on_click(move |_| open_outer.show()),
+                dialog(
+                    outer,
+                    "Review",
+                    ViewNode::widget(Widget::Column).children(vec![
+                        ViewNode::text("Email").id("inside-label"),
+                        ViewNode::widget(Widget::TextInput)
+                            .id("field")
+                            .labelled_by("outside-label inside-label")
+                            .described_by("outside-help"),
+                        ViewNode::widget(Widget::Button)
+                            .id("open-inner")
+                            .on_click(move |_| open_inner.show()),
+                        dialog(
+                            inner,
+                            "Confirm",
+                            ViewNode::widget(Widget::Button).id("confirm"),
+                        ),
+                    ]),
+                ),
+            ])
+        });
+        let focused = |update: &TreeUpdate, id: &str| {
+            let node = update.nodes.iter().find(|(id, _)| *id == update.focus);
+            assert_eq!(node.and_then(|(_, node)| node.author_id()), Some(id));
+        };
+        let has_node = |update: &TreeUpdate, id: &str| {
+            update
+                .nodes
+                .iter()
+                .any(|(_, node)| node.author_id() == Some(id))
+        };
+
+        engine.frame(640., 480., 1.);
+        let open_outer = engine.runtime.snapshot().find("open-outer").unwrap().id;
+        engine.focus_node(open_outer);
+        assert!(engine.key("Enter", false, false, false, false));
+        engine.frame(640., 480., 1.);
+        let outer = project(&engine, 1.);
+        focused(&outer, "field");
+        assert!(!has_node(&outer, "open-outer"));
+        let (_, field) = outer
+            .nodes
+            .iter()
+            .find(|(_, n)| n.author_id() == Some("field"))
+            .unwrap();
+        assert_eq!(field.label(), Some("Account Email"));
+        assert_eq!(field.description(), Some("Use the account email."));
+        assert!(field.described_by().is_empty());
+
+        let open_inner = engine.runtime.snapshot().find("open-inner").unwrap().id;
+        engine.focus_node(open_inner);
+        assert!(engine.key("Enter", false, false, false, false));
+        engine.frame(640., 480., 1.);
+        let inner = project(&engine, 1.);
+        focused(&inner, "confirm");
+        assert!(!has_node(&inner, "field"));
+
+        assert!(engine.key("Escape", false, false, false, false));
+        engine.frame(640., 480., 1.);
+        let restored_outer = project(&engine, 1.);
+        focused(&restored_outer, "open-inner");
+        assert!(has_node(&restored_outer, "field"));
+        assert!(engine.key("Escape", false, false, false, false));
+        engine.frame(640., 480., 1.);
+        focused(&project(&engine, 1.), "open-outer");
+    }
+
+    #[test]
+    fn native_names_and_descriptions_follow_visible_form_relationships() {
+        let mut engine = Engine::new(|scope| {
+            let error = scope.signal(true);
+            let clear_error = error.clone();
+            ViewNode::widget(Widget::Column).children(vec![
+                ViewNode::widget(Widget::Label).id("name").value("Name"),
+                ViewNode::widget(Widget::TextInput)
+                    .id("field")
+                    .value("Ada")
+                    .labelled_by("name")
+                    .described_by("help error suppressed other-field missing"),
+                ViewNode::text("Use your full name.").id("help"),
+                dynamic(move || {
+                    ViewNode::text(if error.get() { "Name is required." } else { "" }).id("error")
+                }),
+                ViewNode::widget(Widget::Column)
+                    .hidden(true)
+                    .children(vec![ViewNode::text("Hidden").id("suppressed")]),
+                ViewNode::widget(Widget::TextInput)
+                    .id("other-field")
+                    .value("Private draft"),
+                ViewNode::widget(Widget::Button)
+                    .id("clear")
+                    .on_click(move |_| {
+                        let _ = clear_error.set(false);
+                    }),
+            ])
+        });
+        engine.frame(640., 480., 1.);
+        let snapshot = engine.runtime.snapshot();
+        let field = NodeId(snapshot.find("field").unwrap().id);
+        let label = NodeId(snapshot.find("name").unwrap().id);
+        let clear = snapshot.find("clear").unwrap().id;
+        let native_field = |engine: &Engine| {
+            project(engine, 1.)
+                .nodes
+                .into_iter()
+                .find_map(|(id, node)| (id == field).then_some(node))
+                .unwrap()
+        };
+
+        let native = native_field(&engine);
+        assert_eq!(native.label(), None);
+        assert_eq!(native.labelled_by(), &[label]);
+        assert_eq!(native.value(), Some("Ada"));
+        assert_eq!(
+            native.description(),
+            Some("Use your full name. Name is required.")
+        );
+
+        assert!(engine.runtime.click(clear, 0., 0.));
+        engine.frame(640., 480., 1.);
+        assert_eq!(
+            native_field(&engine).description(),
+            Some("Use your full name.")
+        );
     }
 }

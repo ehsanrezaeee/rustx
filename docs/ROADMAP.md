@@ -1,6 +1,6 @@
 # RustX roadmap
 
-RustX has delivered four implementation stages. **RP-009 native text editing** is underway on macOS. **RP-008 native interaction** remains open for Windows nested scrolling and a physical Linux desktop replay. Apple Silicon and Linux X11 under Xvfb have passed the nested-scroll focus path.
+RustX has delivered four implementation stages. **RP-010 native rendering** is underway on Apple Silicon. **RP-009 native text editing** and **RP-008 native interaction** still have platform checks open.
 
 RustX uses TSX-like markup for authoring and its own runtime and renderer. The performance goals are to match or beat optimized plain JavaScript canvas rendering on the web and to deliver a substantial native speed and responsiveness advantage on equivalent desktop workloads. The [vision implementation guide](VISION_IMPLEMENTATION.md) defines the workloads and how to verify those goals.
 
@@ -18,15 +18,52 @@ RustX uses TSX-like markup for authoring and its own runtime and renderer. The p
 | Milestone | State and next work |
 | --- | --- |
 | RP-001 | Define the reference application workflows, user-facing requirements, and acceptance checks. Begin with scene editing, a large data workspace, and live telemetry. |
-| RP-005 | Benchmark RustX Wasm against tuned plain JavaScript canvas implementations. Compare native RustX with the equivalent browser workloads on the same hardware. Record per-workload measurements and comparison limits. |
+| RP-005 | The first matched 2,000-shape CPU workload was measured on Apple M3. Software Canvas 2D had the lowest CPU frame time. GPU, presentation, and full interaction measurements remain open. |
 | RP-002, RP-003, RP-004, and RP-006 | Browser semantics cleanup, context isolation, browser resource accounting, and external-store snapshots have shipped. Real BFCache restoration and broader device checks remain open. |
 | RP-007 | Windows and macOS developer-package startup was verified. The current delivery builds from source and produces no app ZIP. Clean-machine and signed distribution checks remain open if binary distribution resumes. |
 | **RP-008** | Windows CPU checks cover keyboard focus, resize, and off-screen focus reveal, with UI Automation readback. Headless Edge, Debian 12 X11 under Xvfb, and a macOS Apple Silicon form passed nested focus reveal and dialog restoration. The macOS replay used app-local AppKit input and in-process NSAccessibility readback. Disabled groups keep their descendants out of the tab order and expose disabled state to host semantics. Next replay nested scrolling on Windows and the form on a physical Linux desktop. Pointer capture, clipboard, files, mixed DPI, and multi-window state remain open. |
-| **RP-009** | Native composition restores the previous edit when marked text clears or focus changes. The AppKit candidate anchor follows the caret and selection inside marked text. A hands-on macOS Japanese – Romaji check placed the candidate window near the caret. A replay through the live macOS input context verified cancel, Japanese commit, and one-step undo. VoiceOver and native input checks on Windows and Linux remain open. |
-| RP-010 | Verify native rendering and device-loss recovery. Measure frame work, latency, and sustainable throughput against the browser results and the native targets in the vision guide. |
+| **RP-009** | A hands-on macOS Japanese – Romaji check placed the candidate window near the caret. A replay through the live macOS input context verified cancel, Japanese commit, and one-step undo. The macOS Applications demo exposed linked form labels and validation help through NSAccessibility, confined navigation to the active modal, and posted new feedback without repeating unchanged messages after Escape. VoiceOver and native input checks on Windows and Linux remain open. |
+| **RP-010** | The M3 Applications demo presented through Metal. An injected drawable timeout retried on Metal, and intentional wgpu device destruction in a native fixture recovered on CPU with text and focus intact. The first matched CPU scene measurements are recorded below. Windows and Linux GPU validation, driver-induced loss, and comparative GPU, latency, and throughput measurements remain open. |
 | RP-011 | Verify browser input and accessibility on desktop and physical Android/iOS, including Safari and Firefox coverage. |
 
 ## Evidence
+
+### First 2,000-shape CPU benchmark
+
+The benchmark uses 2,000 opaque 8 × 8 rectangles on a 50 × 40 grid with 12-pixel spacing and a 640 × 512 pixel viewport at scale 1. In a repeating 60-frame sequence, the camera pans in 4-pixel steps and uses 1.25× zoom on frames 12–35. In the second half, 16 selected rectangles alternate between their base positions and a 4-pixel horizontal offset. The RustX paths share one retained scene implementation. The JavaScript reference reuses grouped coordinates and paints rectangles in color batches. Six full-buffer pixel hashes matched across all three paths in every trial.
+
+Apple M3 MacBook Air on AC power, macOS 27.0.1 (26A434), Rust 1.90.0 release profile, and headless Chrome 158.0.8127.38 with the software Canvas 2D path. Each of five interleaved trials per path warmed up for 60 frames and timed 120. The primary metric is pooled p95 CPU frame time. Timed work includes the scripted scene update and rasterization through pixel readiness. Canvas 2D uses a one-pixel read to flush drawing. The benchmark excludes display presentation, browser pixel upload, pointer dispatch, and accessibility work.
+
+| CPU path | Median (ms) | p95 (ms) | Trial p95 range (ms) |
+| --- | ---: | ---: | ---: |
+| Native RustX | 5.40 | 5.84 | 5.47–6.47 |
+| RustX Wasm | 11.70 | 12.00 | 12.00–12.00 |
+| JavaScript Canvas 2D | 0.40 | 0.50 | 0.50–0.50 |
+
+Canvas 2D led this workload. GPU comparisons, input-to-visible latency, and sustained presentation cadence remain open. The standalone harness and per-frame timings are in ignored local validation output.
+
+The profiling replay retained the same warm-up, frame sequence, and five trials for each RustX path. The six checkpoint hashes matched the Canvas 2D baseline in every trial. It timed the model update, `Engine::frame` preparation, and `CpuRenderer::draw` separately. Rasterization includes clearing the buffer, clipping, building CPU paths, and filling pixels.
+
+| RustX path | Model p95 (ms) | Preparation p95 (ms) | Rasterization p95 (ms) | Rasterization share of measured time |
+| --- | ---: | ---: | ---: | ---: |
+| Native | 0.14 | 0.75 | 4.72 | 85.6% |
+| Wasm | 0.30 | 1.70 | 10.20 | 86.0% |
+
+The profiled total p95 was 5.59 ms on native and 12.00 ms on Wasm. Each p95 is computed separately. Raw phase samples are in ignored local validation output.
+
+The CPU renderer now fills square-corner, axis-aligned rectangles directly when all device-pixel edges are integral. It uses the same paint and clip mask with antialiasing enabled. Fractional edges, rounded corners, and skewed or rotated rectangles use the general path renderer. A regression check compares translucent, masked rectangles against the general path, including clipping and reflection.
+
+On the same M3 protocol, five new trials matched all original checkpoint hashes. Native overall p95 fell from 5.84 to 3.35 ms and Wasm from 12.00 to 8.50 ms. The Canvas 2D reference remained at 0.50 ms. Separate phase runs measured rasterization p95 at 2.42 ms native and 6.50 ms Wasm, down from 4.72 and 10.20 ms. The benchmark measures CPU frame work through pixel readiness. The release Engine demo passed macOS CPU and Metal startup, and Chrome passed keyboard zoom in Engine and dialog restoration in Applications. Workspace tests passed 41 checks, with the existing loopback check ignored.
+
+### Platform replays
+
+On an Apple M3 MacBook Air running macOS 27.0.1 (26A434), the release Applications demo acquired 2300 × 1800 Metal drawables and reported nonzero presentation timestamps through `MTLDrawable` presentation callbacks. An app-local test returned no drawable once from `CAMetalLayer`. Before the fix, that timeout switched the app to CPU. The rebuilt host retried, and subsequent Metal drawables presented. A separate native fixture called `wgpu::Device::destroy` after editing its text field. RustX reported the renderer failure and presented on CPU. NSAccessibility confirmed the same focused field and edited value. The source-built release passed ordinary GPU and CPU startup and the new web bundle passed Chrome keyboard and dialog checks. All 39 workspace checks passed, with the existing loopback check ignored. Driver-induced device loss and comparative performance measurements remain open. The fixtures and logs are in ignored local validation output.
+
+On Apple Silicon macOS 27.0.1, an app-local replay recorded the NSAccessibility announcement requests emitted by the CPU Applications demo. Before the fix, closing the review dialog reposted unchanged validation and service messages. After the fix, one request was posted for each new validation, submission, and reset message, and Escape posted no stale feedback. Workspace tests passed 39 checks, with the existing loopback check ignored. The release native CPU smoke and Chrome review-dialog replay passed. The replay records requests at the AppKit boundary. Spoken VoiceOver output remains open.
+
+The Apple Silicon CPU Applications replay on macOS 27.0.1 found background form controls reachable through NSAccessibility during the review dialog. With the fix, the dialog and its controls formed the accessible window content. Escape restored the background form and focused **Review profile**. An engine regression also covers stacked dialogs, including Escape closing only the inner dialog and preserving its outer opener. It verifies that labels and help referenced outside the active dialog remain available as text. The release native CPU smoke and Chrome review-dialog replay passed. Workspace tests passed 37 checks, with the existing loopback check ignored. Spoken VoiceOver announcements remain open.
+
+On macOS 27.0.1 (Apple Silicon), an app-local NSAccessibility replay of the source-built CPU Applications demo found that the bio and edited fields used their values as accessible names. Linked validation errors were absent from the fields' accessibility help. After the native projection fix, NSAccessibility reported **About you / درباره شما**, **Name / نام**, and **Email** as the field titles. An invalid submission exposed **Enter your name** and **Enter a valid email** as field help. Updating the values through NSAccessibility cleared the errors and preserved the titles. The review dialog focused **Confirm**, and Escape restored focus to **Review profile**. The release native CPU smoke and Chrome text-entry replay passed. Workspace tests passed 36 checks, with the existing loopback check ignored. Spoken VoiceOver announcements remain open.
 
 In a hands-on replay of the Apple Silicon CPU Applications demo, the user selected Japanese – Romaji, typed `kanji` in **About you**, and pressed Space. They reported that the live candidate window appeared near the text caret. A separate native fixture used app-local keyboard events with the live Japanese – Romaji `NSTextInputContext` on macOS 27.0.1. Escape cleared the conversion and restored the original value. Return committed `漢字` once, and Command-Z restored the original value in one undo after keyboard control returned to the app. NSAccessibility supplied value readback. The fixture and logs are in ignored local validation output.
 

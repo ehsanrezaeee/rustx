@@ -28,6 +28,7 @@ pub fn app(cx: Scope) -> View {
 - Typed flex and grid styles, gaps, dimensions, responsive styles, absolute placement, themes, and reusable components.
 - Shared text layout with fallbacks, multiline editing, selection, and grapheme-aware operations.
 - Canvas drawing, images, viewport transforms, hit testing, and virtual lists. The browser uses WebGPU when available and can use the Rust CPU renderer. Native desktop rendering uses the same scene with platform-specific presentation.
+- The native host retries a GPU surface timeout. If the GPU renderer fails, the host can resume on CPU with the same application state.
 
 ## Interaction and services
 
@@ -35,6 +36,9 @@ pub fn app(cx: Scope) -> View {
 - Focus reveal uses Rust layout to scroll nested regions from the inside out, then reveal the focused control on the top-level page. Scroll state clamps each request, and later manual scrolling stays in place.
 - Disabling a group removes its descendants from keyboard traversal and projects their disabled state to the browser and native accessibility trees.
 - Forms support validation, error state, reset, and controlled values. The browser projects semantics into the DOM and uses a text input bridge. Native hosts project semantics through AccessKit.
+- Native controls use their linked labels for accessible names and expose linked help and errors as accessible descriptions.
+- While a native modal dialog is open, accessibility navigation stays inside it. Closing the dialog restores the previous accessibility tree and focus.
+- On macOS, restoring a dialog's background keeps unchanged status messages quiet. New feedback still posts an accessibility announcement.
 - Native text fields track the caret and selection reported inside marked text. Canceling composition restores the original value and selection. A committed composition is a single undoable edit.
 - Navigation, scoped HTTP requests, streaming, sockets, clipboard, storage, files, asset loading, and printing are available where the host supports them. Local fixture routes provide reproducible demos.
 

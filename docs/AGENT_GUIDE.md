@@ -17,9 +17,13 @@ Keep visible UI layout, text, and editing in Rust. Keep platform APIs at the hos
 
 Use application workflows to decide what to build. For web performance, compare RustX with optimized plain JavaScript drawing the same UI to canvas. For native performance, replay the same workloads against the browser builds on the same desktop. Record measurements using the protocol in the [vision implementation guide](VISION_IMPLEMENTATION.md).
 
-## Continue RP-009
+## Continue RP-010
 
-The native text bridge restores the original selection when AppKit clears marked text or focus moves to another control. The Apple Silicon fixture verified AppKit candidate anchors and NSAccessibility selection ranges while moving through unchanged marked text. A hands-on Japanese – Romaji replay checked candidate placement, and the live native input-context fixture checked cancel, commit, and undo. Next verify VoiceOver announcements and focus through a form dialog. Track Windows and Linux input sessions separately.
+Apple M3 Metal presentation, a drawable timeout retry, and CPU recovery after intentional device destruction passed. The 2,000-shape CPU benchmark matches output across native RustX, RustX Wasm, and software Canvas 2D. Direct fills for pixel-aligned rectangles reduced RustX rasterization p95. Profile clipping and per-shape paint work before choosing another optimization. Comparable GPU and presentation measurements and Windows and Linux GPU evidence remain open.
+
+## Finish RP-009 platform checks
+
+The Apple Silicon AppKit fixture verified marked-text selection and candidate anchors. A hands-on Japanese – Romaji replay checked candidate placement, and the live native input-context fixture checked cancel, commit, and undo. The Applications demo's NSAccessibility replay checked stable field titles, validation help, and how the review dialog confines accessibility navigation and restores focus. It also recorded one announcement request for each new form message and none for unchanged text when Escape closes the review dialog. Next verify the spoken VoiceOver announcements in that workflow. Track Windows and Linux input sessions separately.
 
 ## Finish RP-008 platform checks
 

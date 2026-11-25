@@ -2,21 +2,26 @@
 use rustx_core::drawing::{Camera, DrawShape, PathSegment, Primitive};
 use vello::kurbo::{Affine, BezPath, Rect, RoundedRect, Shape};
 pub fn geometry(shape: &DrawShape, camera: Camera, origin: (f64, f64)) -> (BezPath, Affine) {
+    (shape_path(shape), canvas_transform(shape, camera, origin))
+}
+
+pub(crate) fn canvas_transform(shape: &DrawShape, camera: Camera, origin: (f64, f64)) -> Affine {
     let b = shape.bounds;
-    let (a, bm, c, d, _, _) = {
-        let t = shape.transform.0;
-        (t[0], t[1], t[2], t[3], t[4], t[5])
-    };
+    let [a, bm, c, d, _, _] = shape.transform.0;
     let (x, y) = shape.transform.point(b.x0, b.y0);
     let (x, y) = camera.project(x, y);
-    let transform = Affine::new([
+    Affine::new([
         a * camera.zoom,
         bm * camera.zoom,
         c * camera.zoom,
         d * camera.zoom,
         origin.0 + x,
         origin.1 + y,
-    ]);
+    ])
+}
+
+pub(crate) fn shape_path(shape: &DrawShape) -> BezPath {
+    let b = shape.bounds;
     let mut path = BezPath::new();
     match &shape.primitive {
         Primitive::Rect { radius } => {
@@ -42,5 +47,5 @@ pub fn geometry(shape: &DrawShape, camera: Camera, origin: (f64, f64)) -> (BezPa
         }
         _ => path = Rect::new(0., 0., b.width(), b.height()).to_path(0.1),
     }
-    (path, transform)
+    path
 }

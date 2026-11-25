@@ -1,9 +1,9 @@
 //! Explicit software backend; layout and shaped glyph positions stay in Rust.
 use crate::{layout::BoxNode, text::TextEngine};
-use rustx_core::Kind;
+use rustx_core::{drawing::Primitive, Kind};
 use std::collections::HashMap;
 use tiny_skia::*;
-use vello::kurbo::{PathEl, RoundedRect, Shape};
+use vello::kurbo::{Affine, PathEl, Point as LayoutPoint, RoundedRect, Shape};
 pub struct CpuRenderer {
     pub pixmap: Pixmap,
     fonts: HashMap<u64, fontdue::Font>,
@@ -52,6 +52,31 @@ fn color(v: u32, alpha: f32) -> Color {
         (alpha.clamp(0., 1.) * 255.) as u8,
     )
 }
+
+fn pixel_aligned_rect(transform: Affine, width: f64, height: f64, scale: f32) -> Option<Rect> {
+    let [_, y_axis_skew, x_axis_skew, _, _, _] = transform.as_coeffs();
+    if y_axis_skew != 0. || x_axis_skew != 0. {
+        return None;
+    }
+    let start = transform * LayoutPoint::ORIGIN;
+    let end = transform * LayoutPoint::new(width, height);
+    let [x0, y0, x1, y1] = [
+        start.x as f32 * scale,
+        start.y as f32 * scale,
+        end.x as f32 * scale,
+        end.y as f32 * scale,
+    ];
+    // The rectangle scanner converts device edges to integers. Leave very
+    // large coordinates with the path scanner's clipping logic.
+    if [x0, y0, x1, y1]
+        .iter()
+        .any(|edge| edge.fract() != 0. || edge.abs() > (1 << 23) as f32)
+    {
+        return None;
+    }
+    Rect::from_ltrb(x0.min(x1), y0.min(y1), x0.max(x1), y0.max(y1))
+}
+
 impl CpuRenderer {
     pub fn new(w: u32, h: u32) -> Self {
         Self {
@@ -532,8 +557,20 @@ impl CpuRenderer {
         self.drawing_visible += ids.len();
         for id in ids {
             let shape = scene.shape(id);
-            let (geometry, t) =
-                crate::drawing::geometry(shape, b.node.camera, (b.rect.x0, b.rect.y0));
+            let t = crate::drawing::canvas_transform(shape, b.node.camera, (b.rect.x0, b.rect.y0));
+            let mut paint = Paint::default();
+            paint.set_color(color(shape.fill, alpha));
+            if matches!(shape.primitive, Primitive::Rect { radius: 0. }) {
+                if let Some(rect) =
+                    pixel_aligned_rect(t, shape.bounds.width(), shape.bounds.height(), scale)
+                {
+                    // Use the rectangle scanner with the same paint and clip.
+                    self.pixmap
+                        .fill_rect(rect, &paint, Transform::identity(), mask);
+                    continue;
+                }
+            }
+            let geometry = crate::drawing::shape_path(shape);
             let mut builder = PathBuilder::new();
             let map = |p: vello::kurbo::Point| {
                 let p = t * p;
@@ -566,8 +603,6 @@ impl CpuRenderer {
             let Some(path) = builder.finish() else {
                 continue;
             };
-            let mut paint = Paint::default();
-            paint.set_color(color(shape.fill, alpha));
             match &shape.primitive {
                 rustx_core::drawing::Primitive::Rect { .. } => self.pixmap.fill_path(
                     &path,
@@ -667,5 +702,62 @@ impl CpuRenderer {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rustx_core::drawing::{Bounds, Camera, DrawShape, Transform as DrawingTransform};
+
+    #[test]
+    fn pixel_aligned_rectangles_match_antialiased_paths_with_a_mask() {
+        let mut mask = Mask::new(48, 32).unwrap();
+        for (i, coverage) in mask.data_mut().iter_mut().enumerate() {
+            *coverage = (i % 256) as u8;
+        }
+
+        let mut shape = DrawShape::rect(1, Bounds::new(0., 0., 8., 6.), 0xca762b);
+        shape.primitive = Primitive::Rect { radius: 0. };
+        for transform in [
+            DrawingTransform::translate(-1., 1.),
+            DrawingTransform([-1., 0., 0., 2., 5., -2.]),
+        ] {
+            shape.transform = transform;
+            let (geometry, transform) =
+                crate::drawing::geometry(&shape, Camera::default(), (0., 0.));
+            let path = geometry_path(&(transform * geometry), 2.);
+            let rect =
+                pixel_aligned_rect(transform, shape.bounds.width(), shape.bounds.height(), 2.)
+                    .unwrap();
+            let mut paint = Paint::default();
+            paint.set_color(color(shape.fill, 0.6));
+            let mut expected = Pixmap::new(48, 32).unwrap();
+            expected.fill(color(0x102030, 1.));
+            let mut actual = expected.clone();
+            expected.fill_path(
+                &path,
+                &paint,
+                FillRule::Winding,
+                Transform::identity(),
+                Some(&mask),
+            );
+            actual.fill_rect(rect, &paint, Transform::identity(), Some(&mask));
+            for (i, (expected, actual)) in expected
+                .data()
+                .chunks_exact(4)
+                .zip(actual.data().chunks_exact(4))
+                .enumerate()
+            {
+                assert_eq!(expected, actual, "pixel ({}, {})", i % 48, i / 48);
+            }
+        }
+    }
+
+    #[test]
+    fn fractional_and_skewed_rectangles_keep_the_path_rasterizer() {
+        assert!(pixel_aligned_rect(Affine::translate((0.25, 0.)), 8., 8., 1.).is_none());
+        assert!(pixel_aligned_rect(Affine::rotate(0.2), 8., 8., 1.).is_none());
+        assert!(pixel_aligned_rect(Affine::IDENTITY, f64::INFINITY, 8., 1.).is_none());
     }
 }

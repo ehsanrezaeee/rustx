@@ -1,6 +1,10 @@
 //! Native event loop; scoped state remains on the UI thread.
 mod services;
-use crate::{cpu::CpuRenderer, gpu::Gpu, Engine};
+use crate::{
+    cpu::CpuRenderer,
+    gpu::{Gpu, PresentError},
+    Engine,
+};
 use rustx_core::{
     HostCommand, HostError, HttpClient, HttpResponse, ServiceClient, TaskQueue,
     HOST_PROTOCOL_VERSION,
@@ -12,16 +16,19 @@ use std::{
         atomic::{AtomicBool, Ordering},
         mpsc, Arc,
     },
+    time::{Duration, Instant},
 };
-use vello::kurbo::Point;
+use vello::{kurbo::Point, wgpu::SurfaceError};
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
-    event::{ElementState, Ime, MouseButton, MouseScrollDelta, WindowEvent},
+    event::{ElementState, Ime, MouseButton, MouseScrollDelta, StartCause, WindowEvent},
     event_loop::{ActiveEventLoop, ControlFlow, EventLoop, EventLoopProxy},
     keyboard::{Key, NamedKey},
     window::{Window, WindowId},
 };
+const SURFACE_RETRY_DELAY: Duration = Duration::from_millis(16);
+
 pub fn report_error(s: &str) {
     eprintln!("RustX: {s}");
 }
@@ -284,6 +291,15 @@ impl App {
     }
 }
 impl ApplicationHandler<()> for App {
+    fn new_events(&mut self, events: &ActiveEventLoop, cause: StartCause) {
+        if let StartCause::ResumeTimeReached { .. } = cause {
+            events.set_control_flow(ControlFlow::Wait);
+            if let Some(window) = &self.window {
+                window.request_redraw();
+            }
+        }
+    }
+
     fn resumed(&mut self, events: &ActiveEventLoop) {
         if self.window.is_some() {
             return;
@@ -593,12 +609,22 @@ impl ApplicationHandler<()> for App {
                 }
                 let r = if let Some(g) = &mut self.gpu {
                     g.resize(size);
-                    g.draw(&self.engine)
+                    g.present(&self.engine)
                 } else if let Some(c) = &mut self.cpu {
                     c.draw(&mut self.engine, size.width, size.height, scale as f32)
+                        .map_err(PresentError::Render)
                 } else {
                     Ok(())
                 };
+                if matches!(r, Err(PresentError::Surface(SurfaceError::Timeout))) {
+                    if !matches!(events.control_flow(), ControlFlow::WaitUntil(_)) {
+                        events.set_control_flow(ControlFlow::WaitUntil(
+                            Instant::now() + SURFACE_RETRY_DELAY,
+                        ));
+                    }
+                    return;
+                }
+                events.set_control_flow(ControlFlow::Wait);
                 if let Err(error) = r {
                     self.resource_failure(
                         rustx_core::ResourceSource::Renderer,
@@ -616,11 +642,13 @@ impl ApplicationHandler<()> for App {
                             Err(e) => {
                                 self.failure = Some(e);
                                 events.exit();
+                                return;
                             }
                         }
                     } else {
-                        self.failure = Some(error);
+                        self.failure = Some(error.to_string());
                         events.exit();
+                        return;
                     }
                 }
                 self.frames += 1;

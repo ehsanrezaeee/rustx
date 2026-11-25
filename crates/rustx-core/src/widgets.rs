@@ -476,7 +476,7 @@ fn overlay(state: OverlayState, label: String, content: View, modal: bool) -> Vi
         .label(&label)
         .modal(modal)
         .on_key_down(move |e| {
-            if e.data.key == "Escape" {
+            if e.data.key == "Escape" && !e.default_prevented() {
                 escape.close();
                 e.prevent_default();
             }
