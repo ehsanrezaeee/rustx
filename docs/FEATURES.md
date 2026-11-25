@@ -33,7 +33,9 @@ pub fn app(cx: Scope) -> View {
 
 - Pointer, keyboard, wheel, and touch event paths. Widgets include buttons, text fields, choices, sliders, dialogs, and lists.
 - Focus reveal uses Rust layout to scroll nested regions from the inside out, then reveal the focused control on the top-level page. Scroll state clamps each request, and later manual scrolling stays in place.
+- Disabling a group removes its descendants from keyboard traversal and projects their disabled state to the browser and native accessibility trees.
 - Forms support validation, error state, reset, and controlled values. The browser projects semantics into the DOM and uses a text input bridge. Native hosts project semantics through AccessKit.
+- Native text fields track the caret and selection reported inside marked text. Canceling composition restores the original value and selection. A committed composition is a single undoable edit.
 - Navigation, scoped HTTP requests, streaming, sockets, clipboard, storage, files, asset loading, and printing are available where the host supports them. Local fixture routes provide reproducible demos.
 
 ## Built-in demo

@@ -214,6 +214,7 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
             accessible.set_url(url.clone());
         }
         if let Some(app_id) = &node.app_id {
+            accessible.set_author_id(app_id.clone());
             accessible.set_html_id(app_id.clone());
         }
         for (relation, value) in [
@@ -320,9 +321,11 @@ pub fn project(engine: &Engine, scale: f64) -> TreeUpdate {
                 if let (Some(anchor), Some(focus)) = (anchor, focus) {
                     accessible.set_text_selection(TextSelection { anchor, focus });
                 }
-                accessible.add_action(Action::SetTextSelection);
-                if !node.control.read_only && !node.control.disabled {
-                    accessible.add_action(Action::ReplaceSelectedText);
+                if !node.control.disabled {
+                    accessible.add_action(Action::SetTextSelection);
+                    if !node.control.read_only {
+                        accessible.add_action(Action::ReplaceSelectedText);
+                    }
                 }
             }
         }

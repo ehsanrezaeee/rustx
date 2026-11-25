@@ -486,6 +486,21 @@ impl Editor {
         Ok(())
     }
     pub fn composition_update(&self, text: &str) -> Result<(), EditError> {
+        self.composition_update_with_selection(text, text.len()..text.len())
+    }
+    /// Update the marked text and its selection, using UTF-8 offsets within
+    /// the replacement text.
+    pub fn composition_update_with_selection(
+        &self,
+        text: &str,
+        selection: Range<usize>,
+    ) -> Result<(), EditError> {
+        if selection.start > selection.end
+            || !text.is_char_boundary(selection.start)
+            || !text.is_char_boundary(selection.end)
+        {
+            return Err(EditError::InvalidSelection);
+        }
         self.composition_start()?;
         let mut m = self.0.borrow_mut();
         let start = m.composition.as_ref().unwrap().selection.range().start;
@@ -495,9 +510,15 @@ impl Editor {
         }
         m.current.value.replace_range(range, text);
         // Preedit can join a grapheme with adjoining text. Keep the visible
-        // caret on a boundary while retaining the exact replacement span for
+        // selection on grapheme boundaries while retaining the replacement span for
         // subsequent composition updates, so they preserve those neighbors.
-        m.current.selection = Selection::caret(ceil_grapheme(&m.current.value, start + text.len()));
+        let focus = ceil_grapheme(&m.current.value, start + selection.end);
+        let anchor = if selection.is_empty() {
+            focus
+        } else {
+            floor_grapheme(&m.current.value, start + selection.start)
+        };
+        m.current.selection = Selection { anchor, focus };
         m.preedit = Some(Selection {
             anchor: start,
             focus: start + text.len(),
@@ -562,5 +583,36 @@ impl Editor {
     pub fn history_len(&self) -> (usize, usize) {
         let m = self.0.borrow();
         (m.undo.len(), m.redo.len())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn composition_selection_preserves_graphemes_and_replaces_the_full_preedit() {
+        let editor = Editor::new("abc");
+        editor.select(1, 2).unwrap();
+        assert!(matches!(
+            editor.composition_update_with_selection("か", 1..2),
+            Err(EditError::InvalidSelection)
+        ));
+        assert!(!editor.is_composing());
+
+        editor
+            .composition_update_with_selection("e\u{301}か", 1..3)
+            .unwrap();
+        assert_eq!(editor.value(), "ae\u{301}かc");
+        assert_eq!(editor.selection_utf16(), (1, 3));
+
+        editor
+            .composition_update_with_selection("かな", 0..0)
+            .unwrap();
+        assert_eq!(editor.value(), "aかなc");
+        assert_eq!(editor.selection_utf16(), (1, 1));
+        editor.composition_cancel();
+        assert_eq!(editor.value(), "abc");
+        assert_eq!(editor.selection_utf16(), (1, 2));
     }
 }

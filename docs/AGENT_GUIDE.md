@@ -17,11 +17,17 @@ Keep visible UI layout, text, and editing in Rust. Keep platform APIs at the hos
 
 Use application workflows to decide what to build. For web performance, compare RustX with optimized plain JavaScript drawing the same UI to canvas. For native performance, replay the same workloads against the browser builds on the same desktop. Record measurements using the protocol in the [vision implementation guide](VISION_IMPLEMENTATION.md).
 
-## Continue RP-008
+## Continue RP-009
 
-Use the Applications demo or an ignored local scaffold to replay the multi-control form on macOS and a physical Linux X11 desktop. Check forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. The CPU scenario has passed on Windows and on Debian 12 under Xvfb. GitHub Actions also runs the Linux X11 CPU startup check. Record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
+The native text bridge restores the original selection when AppKit clears marked text or focus moves to another control. The Apple Silicon fixture verified AppKit candidate anchors and NSAccessibility selection ranges while moving through unchanged marked text. A hands-on Japanese – Romaji replay checked candidate placement, and the live native input-context fixture checked cancel, commit, and undo. Next verify VoiceOver announcements and focus through a form dialog. Track Windows and Linux input sessions separately.
 
-The Applications demo now includes Workspace shortcuts with two nested scroll regions. Headless Edge 158 on Windows passed Tab and Shift+Tab through Workspace 01 to Workspace 12, Enter selection, independent wheel scrolling, chaining into outer shortcuts, dialog restoration, and retained form editing at wide and narrow sizes. A Debian 12 X11 CPU form also passed nested focus reveal and dialog restoration under Xvfb using xdotool, with networking disabled. Next replay nested scrolling on Windows and the form on macOS and a physical Linux desktop; the Windows computer-use pipe was still unavailable in the latest session. Preserve offset clamping, dialog opener restoration, and manual scrolling after focus reveal. The current source-check run also passed macOS 15 Intel CPU startup; Apple Silicon remains open.
+## Finish RP-008 platform checks
+
+Use the Applications demo or an ignored local scaffold to replay nested scrolling on Windows and the multi-control form on a physical Linux X11 desktop. Check forward and reverse Tab, off-screen focus reveal, disabled controls, dialog focus confinement, and Escape restoration. The earlier CPU form passed on Windows, and the nested variant passed on Debian 12 under Xvfb. GitHub Actions also runs the Linux X11 CPU startup check. Record the OS, renderer, input method, and expected versus actual results. For manual hardware or screen-reader coverage, record the device and assistive technology used.
+
+The Applications demo includes Workspace shortcuts with two nested scroll regions. Headless Edge 158 on Windows passed Tab and Shift+Tab through Workspace 01 to Workspace 12, Enter selection, independent wheel scrolling, chaining into outer shortcuts, dialog restoration, and retained form editing at wide and narrow sizes. A Debian 12 X11 CPU form also passed nested focus reveal and dialog restoration under Xvfb using xdotool. Preserve offset clamping, dialog opener restoration, and manual scrolling after focus reveal.
+
+macOS CPU startup passed on Intel in CI and on Apple Silicon locally. The Apple Silicon form replay used app-local AppKit events and read focused control identifiers and bounds through NSAccessibility in the fixture. Host-wide input and external assistive-technology checks remain open. Shared Rust checks and Chrome and Playwright WebKit CPU replays verify that Tab and Shift+Tab skip controls inside disabled groups.
 
 ## Validate and hand off
 

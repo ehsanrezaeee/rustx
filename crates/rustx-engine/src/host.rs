@@ -220,11 +220,29 @@ impl App {
         }
         self.tasks.poll();
     }
+    fn cancel_composition(&mut self) {
+        if let Some(editor) = self
+            .active_input
+            .and_then(|id| self.engine.runtime.editor(id))
+            .filter(|editor| editor.is_composing())
+        {
+            editor.composition_cancel();
+            self.engine.runtime.invalidate_model();
+            self.engine.invalidate();
+            if let Some(window) = &self.window {
+                window.request_redraw();
+            }
+        }
+    }
     fn focus_input(&mut self) {
-        self.active_input = self
+        let input = self
             .engine
             .focused_node()
             .filter(|id| self.engine.runtime.editor(*id).is_some());
+        if input != self.active_input {
+            self.cancel_composition();
+            self.active_input = input;
+        }
         if let Some(w) = &self.window {
             w.set_ime_allowed(
                 self.active_input
@@ -384,13 +402,7 @@ impl ApplicationHandler<()> for App {
                 self.ctrl = false;
                 self.alt = false;
                 self.meta = false;
-                if let Some(id) = self.active_input {
-                    if let Some(editor) = self.engine.runtime.editor(id) {
-                        editor.composition_cancel();
-                        self.engine.runtime.invalidate_model();
-                        self.engine.invalidate();
-                    }
-                }
+                self.cancel_composition();
                 w.request_redraw();
             }
             WindowEvent::Touch(touch) => {
@@ -466,32 +478,30 @@ impl ApplicationHandler<()> for App {
                 w.request_redraw();
             }
             WindowEvent::Ime(Ime::Commit(s)) => {
-                if let Some(id) = self.active_input {
-                    if let Some(editor) = self.engine.runtime.editor(id) {
-                        editor.composition_cancel();
-                    }
-                }
+                self.cancel_composition();
                 self.engine.insert_text(&s);
                 w.request_redraw();
             }
-            WindowEvent::Ime(Ime::Preedit(s, _)) => {
-                if let Some(id) = self.active_input {
-                    if let Some(editor) = self.engine.runtime.editor(id) {
-                        let _ = editor.composition_update(&s);
+            WindowEvent::Ime(Ime::Preedit(s, _)) if s.is_empty() => {
+                // Winit also clears preedit immediately before sending a commit.
+                // Restoring the original selection lets the commit replace it.
+                self.cancel_composition();
+            }
+            WindowEvent::Ime(Ime::Preedit(s, selection)) => {
+                if let Some(editor) = self
+                    .active_input
+                    .and_then(|id| self.engine.runtime.editor(id))
+                {
+                    let range = selection.map_or(s.len()..s.len(), |(start, end)| start..end);
+                    if editor.composition_update_with_selection(&s, range).is_ok() {
                         self.engine.runtime.invalidate_model();
                         self.engine.invalidate();
+                        w.request_redraw();
                     }
                 }
-                w.request_redraw();
             }
             WindowEvent::Ime(Ime::Disabled) => {
-                if let Some(id) = self.active_input {
-                    if let Some(editor) = self.engine.runtime.editor(id) {
-                        editor.composition_cancel();
-                        self.engine.runtime.invalidate_model();
-                        self.engine.invalidate();
-                    }
-                }
+                self.cancel_composition();
             }
             WindowEvent::KeyboardInput { event, .. } if event.state == ElementState::Pressed => {
                 let key = match &event.logical_key {
@@ -502,7 +512,14 @@ impl ApplicationHandler<()> for App {
                 };
                 let handled = self
                     .engine
-                    .key(&key, self.shift, self.ctrl, self.alt, self.meta);
+                    .key_action(&key, self.shift, self.ctrl, self.alt, self.meta)
+                    || !self.ctrl
+                        && !self.meta
+                        && (!self.alt || cfg!(target_os = "macos"))
+                        && event
+                            .text
+                            .as_deref()
+                            .is_some_and(|text| self.engine.insert_key_text(text));
                 if !handled && (self.ctrl || self.meta) && !self.alt {
                     if let Some(id) = self.active_input {
                         if let Some(editor) = self.engine.runtime.editor(id) {

@@ -1030,9 +1030,17 @@ impl Runtime {
         !self.inner.borrow().dirty.is_empty()
     }
     pub fn snapshot(&self) -> Snapshot {
-        fn snap(m: &Mount) -> Snapshot {
+        fn snap(m: &Mount, parent_disabled: bool) -> Snapshot {
             let b = m.borrow();
-            let mut children: Vec<_> = b.children.iter().map(snap).collect();
+            // Dispatch already rejects input through a disabled ancestor.
+            // Focus and host semantics need the same effective control state.
+            let mut control = b.node.control.clone();
+            control.disabled |= parent_disabled;
+            let mut children: Vec<_> = b
+                .children
+                .iter()
+                .map(|child| snap(child, control.disabled))
+                .collect();
             if b.node.control.selectable {
                 // Text/Paragraph children are text content, not a second
                 // accessible editing representation. Retain their scopes but
@@ -1052,7 +1060,7 @@ impl Runtime {
                 source: b.node.source.clone(),
                 owner: b.scope.id,
                 component: b.node.component.as_ref().map(|(name, _)| *name),
-                control: b.node.control.clone(),
+                control,
                 editing: b.node.editing.as_ref().map(Editor::snapshot),
                 id: b.id,
                 role: b.node.role,
@@ -1081,7 +1089,7 @@ impl Runtime {
                 children,
             }
         }
-        snap(&self.root)
+        snap(&self.root, false)
     }
     pub fn semantics(&self) -> SemanticNode {
         fn sem(s: Snapshot) -> SemanticNode {

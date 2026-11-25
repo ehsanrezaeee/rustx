@@ -8,19 +8,19 @@ The source-built demo includes mount-once components, reactive state, typed layo
 
 | Target | Verified so far |
 | --- | --- |
-| Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Safari, Firefox, and physical mobile interaction are still open. |
+| Browser Wasm | Edge on Windows passed CPU canvas rendering, keyboard and text editing checks, live reload, and offline reload. Headless Chrome and Playwright WebKit on macOS passed CPU form keyboard checks. Safari, Firefox, and physical mobile interaction remain open. |
 | Windows native | The source-built release demo passed a CPU smoke run. Tab and Shift+Tab, off-screen focus reveal, and nested dialog restoration passed with UI Automation readback. |
-| macOS native | The current source-built demo passed CPU startup on the macOS 15 Intel CI runner. Multi-control keyboard and dialog interaction and Apple Silicon coverage remain open. |
+| macOS native | The source-built demo passed CPU startup on the macOS 15 Intel CI runner and on macOS 27.0.1 with Apple Silicon. An AppKit form replay on Apple Silicon passed keyboard traversal, nested focus reveal, and stacked dialog restoration with native accessibility readback. |
 | Linux native | Debian 12 amd64 passed X11 CPU startup, keyboard form, nested-scroll focus, and dialog restoration replays under Xvfb. Physical desktop and Wayland checks remain open. |
 
-The active milestone is **RP-008 native interaction**. Detailed results and open platform checks are in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
+The active work is **RP-009 native text editing**, starting on macOS. The remaining **RP-008 native interaction** platform checks are tracked in the [roadmap](docs/ROADMAP.md). The [feature guide](docs/FEATURES.md) lists what you can try today.
 
 ## Where RustX is headed
 
 - **Web.** Match or beat optimized vanilla JavaScript drawing the same interface to canvas. Compare rendering time and responsiveness with equivalent output and interactions.
 - **Native.** Build pure-Rust apps for Windows, macOS, and Linux that run substantially faster and respond more smoothly than equivalent browser apps on the same hardware. Use Rust for native rendering, networking, background work, and optional application HTTP servers.
 
-These are performance targets awaiting comparative measurements. The next platform steps are the macOS form replay and a physical Linux desktop replay. CI checks native CPU startup on Windows, macOS, and Linux X11. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
+These are performance targets awaiting comparative measurements. The next native platform steps are Windows nested scrolling and a physical Linux desktop replay. CI checks native CPU startup on Windows, macOS, and Linux X11. The benchmark plan starts with a scene editor, a large data workspace, and a live telemetry dashboard. [Vision and implementation stages](docs/VISION_IMPLEMENTATION.md)
 
 ## Try the demo
 

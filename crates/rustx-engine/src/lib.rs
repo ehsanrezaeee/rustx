@@ -1024,6 +1024,10 @@ impl Engine {
     /// Native keyboard entry point; browser bridges dispatch first and then call
     /// `key_target` only when the synchronous event did not cancel its default.
     pub fn key(&mut self, key: &str, shift: bool, ctrl: bool, alt: bool, meta: bool) -> bool {
+        self.key_action(key, shift, ctrl, alt, meta)
+            || !ctrl && !meta && !alt && key.chars().count() == 1 && self.insert_text(key)
+    }
+    fn key_action(&mut self, key: &str, shift: bool, ctrl: bool, alt: bool, meta: bool) -> bool {
         if key == "Tab" && self.focus.is_none() {
             self.tab(shift);
             return true;
@@ -1041,13 +1045,17 @@ impl Engine {
             self.dirty = true;
             return true;
         }
-        if self.key_target(id, key, shift, ctrl, alt, meta) {
-            return true;
-        }
-        if !ctrl && !meta && !alt && key.chars().count() == 1 {
-            return self.insert_text(key);
-        }
-        false
+        self.key_target(id, key, shift, ctrl, alt, meta)
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    fn insert_key_text(&mut self, text: &str) -> bool {
+        !text.is_empty()
+            && !text.chars().any(char::is_control)
+            && self
+                .focus
+                .and_then(|id| self.runtime.editor(id))
+                .is_some_and(|editor| !editor.is_composing())
+            && self.insert_text(text)
     }
     pub fn insert_text(&mut self, value: &str) -> bool {
         let Some(id) = self.focus else {
@@ -1412,6 +1420,98 @@ mod focus_tests {
 
     fn button(id: &str) -> Node {
         Node::widget(Widget::Button).id(id).value(id)
+    }
+
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn native_key_text_preserves_graphemes_and_leaves_active_preedit_alone() {
+        let mut engine = Engine::new(|_| Node::widget(Widget::TextArea).id("editor"));
+        engine.frame(500., 240., 1.);
+        let id = engine.runtime.snapshot().find("editor").unwrap().id;
+        engine.focus_node(id);
+        let editor = engine.runtime.editor(id).unwrap();
+        let text = "e\u{301}👩🏽‍💻";
+        assert!(engine.insert_key_text(text));
+        assert_eq!(editor.value(), text);
+        assert!(!engine.insert_key_text("\r"));
+        assert_eq!(editor.value(), text);
+
+        editor.composition_update("かな").unwrap();
+        assert!(!engine.insert_key_text("a"));
+        assert_eq!(editor.value(), format!("{text}かな"));
+        editor.composition_cancel();
+        assert!(engine.key("Backspace", false, false, false, false));
+        assert_eq!(editor.value(), "e\u{301}");
+    }
+
+    #[test]
+    fn disabled_groups_keep_descendants_out_of_focus_until_enabled() {
+        let disabled = Rc::new(RefCell::new(None));
+        let saved = disabled.clone();
+        let mut engine = Engine::new(move |cx| {
+            let disabled = cx.signal(true);
+            *saved.borrow_mut() = Some(disabled.clone());
+            Node::widget(Widget::Column).children(vec![
+                button("before"),
+                rustx_core::dynamic(move || {
+                    Node::widget(Widget::Column)
+                        .disabled(disabled.get())
+                        .children(vec![Node::widget(Widget::Column)
+                            .children(vec![Node::widget(Widget::TextInput).id("field")])])
+                }),
+                button("after"),
+            ])
+        });
+        engine.frame(500., 240., 1.);
+        let snapshot = engine.runtime.snapshot();
+        let before = snapshot.find("before").unwrap().id;
+        let field = snapshot.find("field").unwrap().id;
+        let after = snapshot.find("after").unwrap().id;
+
+        engine.key("Tab", false, false, false, false);
+        assert_eq!(engine.focused_node(), Some(before));
+        engine.key("Tab", false, false, false, false);
+        assert_eq!(engine.focused_node(), Some(after));
+        engine.key("Tab", true, false, false, false);
+        assert_eq!(engine.focused_node(), Some(before));
+        engine.focus_node(field);
+        assert_eq!(engine.focused_node(), Some(before));
+
+        let disabled = disabled.borrow().as_ref().unwrap().clone();
+        disabled.set(false).unwrap();
+        engine.frame(500., 240., 1.);
+        engine.key("Tab", false, false, false, false);
+        assert_eq!(engine.focused_node(), Some(field));
+
+        disabled.set(true).unwrap();
+        engine.frame(500., 240., 1.);
+        assert_eq!(engine.focused_node(), None);
+        fn find(node: &rustx_core::SemanticNode, id: NodeId) -> Option<&rustx_core::SemanticNode> {
+            if node.id == id {
+                Some(node)
+            } else {
+                node.children.iter().find_map(|child| find(child, id))
+            }
+        }
+        let semantics = engine.runtime.semantics();
+        let projected = find(&semantics, field).unwrap();
+        assert!(projected.control.disabled);
+        assert!(!projected.focusable);
+
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            use accesskit::{Action, NodeId};
+            let tree = crate::accessibility::project(&engine, 1.);
+            let (_, projected) = tree
+                .nodes
+                .iter()
+                .find(|(id, _)| *id == NodeId(field))
+                .unwrap();
+            assert_eq!(projected.author_id(), Some("field"));
+            assert!(projected.is_disabled());
+            assert!(!projected.supports_action(Action::Focus));
+            assert!(!projected.supports_action(Action::SetTextSelection));
+        }
     }
 
     #[test]
